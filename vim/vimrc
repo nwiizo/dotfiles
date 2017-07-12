@@ -72,3 +72,8 @@ set smartindent
 "改行時に入力された行の末尾に合わせて次の行のインデントを増減する
 syntax enable
 " シンタックスハイライトを有効にする
+"(）と{}を補完する
+inoremap { {}<Left>
+inoremap {<Enter> {}<Left><CR><ESC><S-o>
+inoremap ( ()<ESC>i
+inoremap (<Enter> ()<Left><CR><ESC><S-o>))))}}}}
