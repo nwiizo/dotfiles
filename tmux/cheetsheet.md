@@ -84,8 +84,6 @@ tmuxチートシート
     
     ※viモードで無い場合は、設定ファイルに set-window-option -g mode-keys vi を追加
 
-# 設定エトセトラ
-
 基本
 tmuxの設定は ~/.tmux.conf か /etc/tmux.conf に記述する
 set-option, set-window-option, bind-key コマンドを使って設定
