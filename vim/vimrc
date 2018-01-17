@@ -49,12 +49,18 @@ call neobundle#begin(expand('~/.vim/bundle/'))
 " Required:
 NeoBundleFetch 'Shougo/neobundle.vim'
 " Add or remove your Bundles here:
+" Using Rust 
 NeoBundle 'rust-lang/rust.vim'
 NeoBundle 'Shougo/neosnippet.vim'
 NeoBundle 'Shougo/neosnippet-snippets'
 NeoBundle 'tpope/vim-fugitive'
 NeoBundle 'ctrlpvim/ctrlp.vim'
+" terraform and Ansible
 NeoBundle 'flazz/vim-colorschemes'
+NeoBundle 'mrk21/yaml-vim'
+NeoBundle 'hashivim/vim-terraform'
+NeoBundle 'vim-syntastic/syntastic'
+NeoBundle 'juliosueiras/vim-terraform-completion'
 
 
 " My Bundles here:
