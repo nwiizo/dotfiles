@@ -2,7 +2,7 @@
 :GoInstallBinaries
 
 
-Global
+### Global
 :help keyword - open help for keyword  
 :saveas file - save file as  
 :close - close current pane  
