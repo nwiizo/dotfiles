@@ -1,3 +1,7 @@
+### Go環境の構築
+:GoInstallBinaries
+
+
 Global
 :help keyword - open help for keyword  
 :saveas file - save file as  
