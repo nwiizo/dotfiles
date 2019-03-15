@@ -93,3 +93,6 @@ zle -N tab_rename
 bindkey '^[tab_rename' tab_rename
  
 bindkey '^[word-remove-right' kill-word
+
+export GOPATH=$HOME/go
+export PATH=$PATH:$GOPATH/bin
