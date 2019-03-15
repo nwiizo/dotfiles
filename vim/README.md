@@ -1,6 +1,51 @@
 ### Go環境の構築
 :GoInstallBinaries
 
+## Vim
+Vimはviから発展したテキストエディタです。コード補完、コンパイルまたエラージャンプなど、プログラミングに特化した機能が豊富です。広くプログラマに使用されています。
+
+![](images/1.4.vim.png?raw=true)
+
+図1.9 VIMエディタのGoの自動補完画面
+
+ 1. vimハイライト表示の設定
+
+		cp -r $GOROOT/misc/vim/* ~/.vim/
+
+ 2. ~/.vimrcファイルで文法のハイライト表示を追加します
+
+		filetype plugin indent on
+		syntax on
+
+ 3. [Gocode](https://github.com/nsf/gocode/)をインストールします
+
+		go get -u github.com/nsf/gocode
+
+	gocodeはデフォルトで`$GOPATH/bin`の下にインストールされています。
+
+ 4. [Gocode](https://github.com/nsf/gocode/)を設定します。
+
+		~ cd $GOPATH/src/github.com/nsf/gocode/vim
+		~ ./update.bash
+		~ gocode set propose-builtins true
+		propose-builtins true
+		~ gocode set lib-path "/home/border/gocode/pkg/linux_amd64"
+		lib-path "/home/border/gocode/pkg/linux_amd64"
+		~ gocode set
+		propose-builtins true
+		lib-path "/home/border/gocode/pkg/linux_amd64"
+
+	>gocode setの２つのパラメータの意味を説明します：
+	>
+	>propose-builtins：はGoのビルトイン関数を補完するかです。タイプは定数です。デフォルトはfalseで、表示しません。
+	>
+	>lib-path:デフォルトで、gocodeは**$GOPATH/pkg/$GOOS_$GOARCH**と**$GOROOT/pkg/$GOOS_$GOARCH**ディレクトリのパッケージを検索するだけです。当然この設定には私達の外側のlibを検索できるようパスを設定することができます。
+
+
+ 5. おめでとうございます。インストール完了です。あなたは今から`:e main.go`でGoで開発する面白さを体験することができます。
+
+より多くのVIMの設定は、[リンク](http://monnand.me/p/vim-golang-environment/zhCN/)をご参照ください。
+
 
 ### Global
 :help keyword - open help for keyword  
