@@ -94,5 +94,13 @@ bindkey '^[tab_rename' tab_rename
  
 bindkey '^[word-remove-right' kill-word
 
-export GOPATH=$HOME/go
-export PATH=$PATH:$GOPATH/bin
+export GOPATH=$HOME/.go
+export GOROOT=/usr/local/go
+export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
+
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+export KUBECONFIG=./kubeconfig.yaml:~/.kube/config
+HISTSIZE=50000
+HISTTIMEFORMAT='%Y/%m/%d %H:%M:%S'
