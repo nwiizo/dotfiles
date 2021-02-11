@@ -1,5 +1,7 @@
-set GOPATH $HOME/.go
+set GOPATH $HOME/go
 set GOROOT /usr/local/go
+set DOCKER_BUILDKIT 1
+set -x GO111MODULE on
 set -x KUBECONFIG ./kubeconfig.yaml:/home/smotouchi/.kube/config
 set PATH $PATH $GOPATH/bin $GOROOT/bin /usr/local/kubebuilder/bin
 set -g theme_display_git no
