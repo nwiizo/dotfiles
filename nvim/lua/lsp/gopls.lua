@@ -11,7 +11,7 @@ local config = {
 				fillreturns = true,
 				nonewvars = true,
 				undeclaredname = true,
-				unusedparams = false,
+				unusedparams = true,
 				ST1000 = false,
 				ST1005 = false,
 			},
@@ -26,3 +26,4 @@ local config = {
 return {
 	config = function(_) return config end,
 }
+
