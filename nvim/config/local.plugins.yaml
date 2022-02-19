@@ -4,6 +4,8 @@
 - repo: glepnir/galaxyline.nvim
 - repo: glepnir/spaceline.vim
 - repo: liuchengxu/eleline.vim
+- repo: mattn/vim-goimports
+
 - repo: fatih/vim-go
   if: 0
   on_ft: [ go, gomod, gotexttmpl, gohtmltmpl ]
