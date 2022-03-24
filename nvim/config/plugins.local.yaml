@@ -1,6 +1,0 @@
-# Choose only ONE of these statuslines ;)
-- repo: itchyny/lightline.vim
-- repo: vim-airline/vim-airline
-- repo: glepnir/galaxyline.nvim
-- repo: glepnir/spaceline.vim
-- repo: liuchengxu/eleline.vim
