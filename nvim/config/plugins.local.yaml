@@ -1,0 +1,11 @@
+# Choose only ONE of these statuslines ;)
+- repo: itchyny/lightline.vim
+- repo: vim-airline/vim-airline
+- repo: glepnir/galaxyline.nvim
+- repo: glepnir/spaceline.vim
+- repo: liuchengxu/eleline.vim
+
+# https://mattn.kaoriya.net/software/vim/20200106103137.htm
+- repo: mattn/vim-goimports
+
+
