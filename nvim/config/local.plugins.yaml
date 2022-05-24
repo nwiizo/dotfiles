@@ -5,7 +5,10 @@
 - repo: glepnir/spaceline.vim
 - repo: liuchengxu/eleline.vim
 - repo: mattn/vim-goimports
-  
+- repo: dense-analysis/ale
+- repo: bufbuild/vim-buf
+
+
 - repo: fatih/vim-go
   if: 0
   on_ft: [ go, gomod, gotexttmpl, gohtmltmpl ]

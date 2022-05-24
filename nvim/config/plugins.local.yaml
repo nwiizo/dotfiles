@@ -8,4 +8,8 @@
 # https://mattn.kaoriya.net/software/vim/20200106103137.htm
 - repo: mattn/vim-goimports
 
+- repo: sebdah/vim-delve
 
+# https://docs.buf.build/editor-integration#vim
+- repo: dense-analysis/ale
+- repo: bufbuild/vim-buf
