@@ -1,6 +1,9 @@
 oh-my-fish/theme-bobthefish
+decors/fish-ghq
+jorgebucaran/autopair.fish
 jethrokuan/z
+acomagu/fish-async-prompt
+jorgebucaran/spark.fish
+andreiborisov/sponge
+oh-my-fish/plugin-peco
 jethrokuan/fzf
-jorgebucaran/fisher
-ilancosman/tide
-jorgebucaran/nvm.fish

@@ -1,4 +1,10 @@
-/Users/nwiizo/.config/fish/fishfile
 oh-my-fish/theme-bobthefish
-jethrokuan/z
 decors/fish-ghq
+jorgebucaran/autopair.fish
+jethrokuan/z
+/Users/nwiizo/.config/fish/fishfile
+acomagu/fish-async-prompt
+jorgebucaran/spark.fish
+andreiborisov/sponge
+oh-my-fish/plugin-peco
+jethrokuan/fzf

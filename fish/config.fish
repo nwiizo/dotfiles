@@ -1,9 +1,10 @@
 set GOPATH $HOME/go
-set GOROOT /usr/local/go
+set GOROOT $HOME/go
 set DOCKER_BUILDKIT 1
 set -x GO111MODULE on
 set -x GOPROXY direct
 set -x GOSUMDB off
+set -x GOPRIVATE gitlab.com/3-shake/metis/metis.git
 set -x KUBECONFIG ./kubeconfig.yaml:/Users/nwiizo/.kube/config
 set -gx PATH $PATH $HOME/.krew/bin
 set PATH $PATH $GOPATH/bin $GOROOT/bin /usr/local/kubebuilder/bin
@@ -15,6 +16,11 @@ set -g theme_display_git_master_branch yes
 set -g theme_color_scheme dracula
 set -g theme_display_date no
 set -g theme_display_cmd_duration no
+
+# git aliases
+alias 'gf'='git commit --amend --no-edit'
+alias 'gb'='gh browse'
+alias 'gl'='git log --graph --decorate --pretty=oneline --abbrev-commit'
 
 alias k kubectl
 alias vim nvim
@@ -39,15 +45,18 @@ source /opt/homebrew/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.fish
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f '/private/tmp/google-cloud-sdk/path.fish.inc' ]; . '/private/tmp/google-cloud-sdk/path.fish.inc'; end
 
-# ghq + fzf
-function ghq_fzf_repo -d 'Repository search'
-  ghq list --full-path | fzf --reverse --height=100% | read select
-  [ -n "$select" ]; and cd "$select"
-  echo " $select "
-  commandline -f repaint
+# ghq + peco
+function ghq_peco_repo
+  set selected_repository (ghq list -p | peco --query "$LBUFFER")
+  if [ -n "$selected_repository" ]
+    cd $selected_repository
+    echo " $selected_repository "
+    commandline -f repaint
+  end
 end
 
 # fish key bindings
 function fish_user_key_bindings
-  bind \cg ghq_fzf_repo
+  bind /cg ghq_peco_repo
 end
+
