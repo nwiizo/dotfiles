@@ -7,7 +7,7 @@
 - repo: mattn/vim-goimports
 - repo: dense-analysis/ale
 - repo: bufbuild/vim-buf
-
+- repo: mattn/vim-goimpl
 
 - repo: fatih/vim-go
   if: 0

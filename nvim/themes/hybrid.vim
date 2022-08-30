@@ -188,10 +188,17 @@ highlight! link TelescopePreviewBorder FloatBorder
 highlight! link TelescopePreviewLine WildMenu
 " }}}
 
-" Plugin: NvimTree {{{
+" Plugin: neo-tree {{{
 " ---
-highlight! link NvimTreeIndentMarker FloatBorder
+" Normal ctermfg=250 ctermbg=234 guifg=#C5C8C6 guibg=#1d1f21
+highlight! NeoTreeGitAdded     guifg=#85B293
+" highlight! NeoTreeGitConflict  guifg=#C5C8C6
+highlight! NeoTreeGitDeleted   guifg=#804152
+" highlight! NeoTreeGitIgnored   guifg=#C5C8C6
+highlight! NeoTreeGitModified  guifg=#C88D8D
+highlight! NeoTreeGitUntracked guifg=#9C9D9C
 
+highlight! NeoTreeModified     guifg=#C88D8D
 " }}}
 
 " Plugin: Bqf {{{

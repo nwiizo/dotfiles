@@ -28,8 +28,8 @@ endif
 nmap <Leader><Leader> V
 xmap <Leader><Leader> <Esc>
 
-" Toggle fold
-nnoremap <CR> za
+" Toggle fold or select option from popup menu
+nnoremap <expr><CR> pumvisible() ? '<CR>' : 'za'
 
 " Focus the current fold by closing all others
 nnoremap <S-Return> zMzv
@@ -275,6 +275,9 @@ nnoremap <Leader>S ^vg_y:execute @@<CR>:echo 'Sourced line.'<CR>
 nnoremap g<C-i> <cmd>call <SID>jump_buffer(-1)<CR>
 nnoremap g<C-o> <cmd>call <SID>jump_buffer(1)<CR>
 
+" Context aware menu. See lua/contextmenu.lua
+nnoremap <LocalLeader>c  <cmd>lua require'contextmenu'.show()<CR>
+
 if has('mac')
 	" Open the macOS dictionary on current word
 	nnoremap <Leader>? <cmd>silent !open dict://<cword><CR>
@@ -452,7 +455,7 @@ endfunction "}}}
 
 if dein#tap('telescope.nvim')
 	" General pickers
-	nnoremap <localleader>r <cmd>Telescope resume<CR>
+	nnoremap <localleader>r <cmd>Telescope resume initial_mode=normal<CR>
 	nnoremap <localleader>R <cmd>Telescope pickers<CR>
 	nnoremap <localleader>f <cmd>Telescope find_files<CR>
 	nnoremap <localleader>g <cmd>Telescope live_grep<CR>
@@ -479,7 +482,7 @@ if dein#tap('telescope.nvim')
 
 	" Location-specific find files/directories
 	nnoremap <localleader>n <cmd>lua require('plugins.telescope').pickers.plugin_directories()<CR>
-	nnoremap <localleader>w <cmd>lua require('plugins.telescope').pickers.notebook()<CR>
+	nnoremap <localleader>w <cmd>ZkNotes<CR>
 
 	" Navigation
 	nnoremap <leader>/ <cmd>Telescope current_buffer_fuzzy_find<CR>
@@ -496,14 +499,15 @@ if dein#tap('telescope.nvim')
 	xnoremap <localleader>da :Telescope lsp_range_code_actions<CR>
 endif
 
-if dein#tap('nvim-tree.lua')
-	nnoremap <LocalLeader>e <cmd>NvimTreeToggle<CR>
-	nnoremap <LocalLeader>a <cmd>NvimTreeFindFile<CR>
+if dein#tap('neo-tree.nvim')
+	nnoremap <LocalLeader>e <cmd>Neotree filesystem left toggle dir=./<CR>
+	nnoremap <LocalLeader>a <cmd>Neotree filesystem left reveal<CR>
 endif
 
 if dein#tap('kommentary')
 	nnoremap <Leader>v <Plug>kommentary_line_default
 	xnoremap <Leader>v <Plug>kommentary_visual_default<C-c>
+	xnoremap <Leader>V <Plug>kommentary_visual_increase<C-c>
 endif
 
 if dein#tap('symbols-outline.nvim')
@@ -696,7 +700,7 @@ if dein#tap('nvim-spectre')
 	nnoremap <Leader>so <cmd>lua require('spectre').open()<CR>
 	" Search current word
 	nnoremap <Leader>sw <cmd>lua require('spectre').open_visual({select_word=true})<CR>
-	xnoremap <silent><Leader>s :lua require('spectre').open_visual()<CR>
+	xnoremap <silent><Leader>s <Esc>:lua require('spectre').open_visual()<CR>
 	" Search in current file
 	nnoremap <silent><Leader>sp viw:lua require('spectre').open_file_search()<CR>
 endif
@@ -729,7 +733,7 @@ if dein#tap('vim-asterisk')
 	xmap gz# <Plug>(asterisk-gz#)
 endif
 
-if dein#tap('nvim-ts-hint-textobject')
+if dein#tap('nvim-treehopper')
 	omap              am <cmd>lua require('tsht').nodes()<CR>
 	xnoremap <silent> am :lua require('tsht').nodes()<CR>
 endif

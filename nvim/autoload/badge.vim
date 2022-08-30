@@ -137,14 +137,17 @@ function! badge#filename(...) abort
 			let l:icon = ''
 		elseif l:filetype ==# 'NeogitStatus'
 			let l:icon = ''
-		elseif l:filetype ==# 'lsp-installer'
+		elseif l:filetype ==# 'mason.nvim'
 			let l:icon = ''
-			let parts = [ 'LSP Installer' ]
+			let parts = [ 'Mason' ]
 		elseif l:filetype ==# 'spectre_panel'
 			let l:icon = ''
 			let parts = [ 'Spectre' ]
-		elseif l:filetype ==# 'NvimTree'
+		elseif l:filetype ==# 'neo-tree'
 			let l:icon = ''
+		elseif l:filetype ==# 'neo-tree-popup'
+			let l:icon = ''
+			let parts = [ 'neo-tree' ]
 		elseif get(g:, 'nvim_web_devicons')
 			let l:icon = luaeval(
 				\ 'require"nvim-web-devicons".get_icon(_A[1], _A[2], { default = true })',

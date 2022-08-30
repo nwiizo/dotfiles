@@ -3,17 +3,14 @@
 
 -- Enable neovim runtime filetype.lua
 vim.g.do_filetype_lua = 1
--- Disable neovim runtime filetype.vim
--- vim.g.did_load_filetypes = 1
 
 vim.filetype.add({
-	-- extension = {
-	-- 	foo = "fooscript",
-	-- },
 	filename = {
+		Brewfile = 'ruby',
+		justfile = 'just',
+		Justfile = 'just',
+		Tmuxfile = 'tmux',
 		['go.sum'] = 'go',
-		['Brewfile'] = 'ruby',
-		['Tmuxfile'] = 'tmux',
 		['yarn.lock'] = 'yaml',
 		['.buckconfig'] = 'toml',
 		['.flowconfig'] = 'ini',

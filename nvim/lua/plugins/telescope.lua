@@ -78,19 +78,12 @@ pickers.zoxide = function()
 	})
 end
 
-pickers.notebook = function()
-	require'telescope.builtin'.find_files({
-		prompt_title = '[ Notebook ]',
-		cwd = '$HOME/docs/blog',
-	})
-end
-
 pickers.plugin_directories = function(opts)
 	local utils = require('telescope.utils')
 	local dir = vim.fn.expand('$VIM_DATA_PATH/dein/repos/github.com')
 
 	opts = opts or {}
-	opts.cmd = utils.get_default(opts.cmd, {
+	opts.cmd = vim.F.if_nil(opts.cmd, {
 		vim.o.shell,
 		'-c',
 		'find '..vim.fn.shellescape(dir)..' -mindepth 2 -maxdepth 2 -type d',
@@ -256,7 +249,7 @@ local setup = function()
 					['u'] = actions.drop_all,
 					['J'] = actions.toggle_selection + actions.move_selection_next,
 					['K'] = actions.toggle_selection + actions.move_selection_previous,
-					['<Space>'] = {
+					[' '] = {
 						actions.toggle_selection + actions.move_selection_next,
 						type = 'action',
 						opts = { nowait = true },
@@ -268,6 +261,7 @@ local setup = function()
 					['sv'] = actions.select_horizontal,
 					['sg'] = actions.select_vertical,
 					['st'] = actions.select_tab,
+					['l'] = actions.select_default,
 
 					['w'] = myactions.smart_send_to_qflist,
 					['e'] = myactions.send_to_qflist,

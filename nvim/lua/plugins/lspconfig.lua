@@ -1,13 +1,16 @@
 -- plugin: nvim-lspconfig
 -- see: https://github.com/neovim/nvim-lspconfig
---      https://github.com/williamboman/nvim-lsp-installer
+--      https://github.com/williamboman/mason.nvim
+--      https://github.com/williamboman/mason-lspconfig.nvim
 --      https://github.com/ray-x/lsp_signature.nvim
 --      https://github.com/kosayoda/nvim-lightbulb
 -- rafi settings
 
 -- Buffer attached
 local on_attach = function(client, bufnr)
-	local function map_buf(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+	local function map_buf(...)
+		vim.api.nvim_buf_set_keymap(bufnr, ...)
+	end
 
 	-- Keyboard mappings
 	local opts = { noremap = true, silent = true }
@@ -66,7 +69,7 @@ local on_attach = function(client, bufnr)
 
 	if client.config.flags then
 		client.config.flags.allow_incremental_sync = true
-		client.config.flags.debounce_text_changes  = vim.opt.updatetime:get()
+		-- client.config.flags.debounce_text_changes  = vim.opt.updatetime:get()
 	end
 
 	-- Set autocommands conditional on server capabilities
@@ -88,9 +91,6 @@ local function make_config(server_name)
 	c.on_attach = on_attach
 	local cap = vim.lsp.protocol.make_client_capabilities()
 	c.capabilities = require('cmp_nvim_lsp').update_capabilities(cap)
-	c.flags = {
-		debounce_text_changes = vim.opt.updatetime:get(),
-	}
 
 	-- Merge user-defined lsp settings.
 	-- These can be overridden locally by lua/lsp-local/<server_name>.lua
@@ -164,20 +164,32 @@ local function setup()
 	)
 
 	-- Configure signature help (,s) handler
-	vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(
+	vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(
 		vim.lsp.handlers.signature_help, { border = 'rounded' }
 	)
 
-	-- Setup language servers using nvim-lsp-installer
-	-- See https://github.com/williamboman/nvim-lsp-installer
-	local lsp_installer = require('nvim-lsp-installer')
-	lsp_installer.setup()
+	-- Setup language servers using mason and mason-lspconfig
+	-- See https://github.com/williamboman/mason.nvim
+	-- and https://github.com/williamboman/mason-lspconfig.nvim
+	require('mason').setup()
+	local mason_lspconfig = require('mason-lspconfig')
+	mason_lspconfig.setup()
+	local packages = mason_lspconfig.get_installed_servers()
 
 	-- Setup language servers using nvim-lspconfig
 	local lspconfig = require('lspconfig')
-	for _, ls in pairs(lsp_installer.get_installed_servers()) do
-		local opts = make_config(ls.name)
-		lspconfig[ls.name].setup(opts)
+	for _, ls in pairs(packages) do
+		local opts = make_config(ls)
+		lspconfig[ls].setup(opts)
+	end
+
+	-- Reload if files were supplied in command-line arguments
+	if vim.fn.argc() > 0
+		and vim.fn.has('vim_starting')
+		and not vim.o.modified
+	then
+		-- triggers the FileType autocmd that starts the servers
+		vim.cmd('windo e')
 	end
 
 	-- global custom location-list diagnostics window toggle.
