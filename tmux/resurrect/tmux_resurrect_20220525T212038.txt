@@ -1,0 +1,17 @@
+pane	dev	1	0	:-Z	0	:/Users/nwiizo	0	fish	:
+pane	dev	1	0	:-Z	1	:/Users/nwiizo/ghq/gitlab.com/3-shake/metis/metis/backend/go/monitor	0	fish	:
+pane	dev	1	0	:-Z	2	:/Users/nwiizo/ghq/gitlab.com/3-shake/metis/metis	0	fish	:
+pane	dev	1	0	:-Z	3	:/Users/nwiizo/ghq/gitlab.com/3-shake/metis/metis-idl/protobuf	1	fish	:
+pane	dev	2	1	:*	0	:/Users/nwiizo/git/QRGO-v2	0	fish	:
+pane	dev	2	1	:*	1	:/Users/nwiizo/git/QRGO-v2	1	fish	:
+pane	dev	3	0	:	0	:/Users/nwiizo/git/workspace_2022/sloth/sloth_getting_started	0	fish	:
+pane	dev	3	0	:	1	:/Users/nwiizo/git/workspace_2022/sloth/sloth_getting_started	0	fish	:
+pane	dev	3	0	:	2	:/Users/nwiizo/git/workspace_2022/sloth/sloth_getting_started	1	fish	:
+pane	dev	4	0	:	0	:/Users/nwiizo/.config/nvim	1	fish	:
+pane	te	1	1	:*	0	:/Users/nwiizo	1	fish	:
+window	dev	1	:fish	0	:-Z	d764,179x36,0,0[179x18,0,0{89x18,0,0,1,89x18,90,0,2},179x17,0,19{89x17,0,19,3,89x17,90,19,4}]	:
+window	dev	2	:fish	1	:*	61af,179x36,0,0[179x18,0,0,5,179x17,0,19,6]	:
+window	dev	3	:fish	0	:	6a86,179x36,0,0[179x18,0,0,7,179x17,0,19{89x17,0,19,8,89x17,90,19,9}]	:
+window	dev	4	:fish	0	:	638f,179x36,0,0,10	:
+window	te	1	:fish	1	:*	6390,179x36,0,0,11	:
+state	dev	te

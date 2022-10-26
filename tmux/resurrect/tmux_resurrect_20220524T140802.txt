@@ -1,0 +1,15 @@
+pane	dev	1	0	:-	0	:/Users/nwiizo/workspace/metis/metis/backend/go/monitor	0	grpcui	:grpcui -plaintext localhost:7103
+pane	dev	1	0	:-	1	:/Users/nwiizo/ghq/gitlab.com/3-shake/metis	1	fish	:sl
+sl
+pane	dev	1	0	:-	2	:/Users/nwiizo/workspace/metis/metis	0	fish	:
+pane	dev	1	0	:-	3	:/Users/nwiizo/ghq/gitlab.com/3-shake/metis/metis	0	fish	:fish
+pane	dev	2	0	:	0	:/Users/nwiizo/git/QRGO-v2	0	fish	:
+pane	dev	2	0	:	1	:/Users/nwiizo/git/QRGO-v2	1	fish	:
+pane	dev	3	1	:*	0	:/Users/nwiizo/git/dotfiles	0	fish	:
+pane	dev	3	1	:*	1	:/Users/nwiizo	1	fish	:
+pane	dev	4	0	:	0	:/Users/nwiizo/.config/nvim	1	fish	:
+window	dev	1	:fish	0	:-	4391,179x35,0,0[179x17,0,0{89x17,0,0,0,89x17,90,0,3},179x17,0,18{89x17,0,18,1,89x17,90,18,2}]	:
+window	dev	2	:fish	0	:	61ad,179x36,0,0[179x18,0,0,4,179x17,0,19,6]	:
+window	dev	3	:fish	1	:*	b9b3,179x35,0,0[179x17,0,0,7,179x17,0,18,9]	:
+window	dev	4	:fish	0	:	c6c5,179x36,0,0,8	:
+state	dev	

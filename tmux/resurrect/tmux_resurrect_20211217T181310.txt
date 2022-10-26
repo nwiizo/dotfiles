@@ -1,0 +1,9 @@
+pane	dev	1	1	:*	0	:/Users/nwiizo/git/workspace_2021/dapr-getting-started/quickstarts/hello-world	0	fish	:
+pane	dev	1	1	:*	1	:/Users/nwiizo	1	fish	:
+pane	dev	1	1	:*	2	:/Users/nwiizo/git/workspace_2021/dapr-getting-started/quickstarts/hello-world	0	fish	:
+pane	dev	2	0	:-	0	:/Users/nwiizo	0	fish	:
+pane	dev	2	0	:-	1	:	0	zsh	:sudo su - release08
+pane	dev	2	0	:-	2	:/Users/nwiizo/workspace/paylab/mac-ansible	1	fish	:
+window	dev	1	:fish	1	:*	f1be,170x34,0,0[170x15,0,0{85x15,0,0,0,84x15,86,0,6},170x18,0,16,1]	:
+window	dev	2	:fish	0	:-	1f16,170x34,0,0[170x16,0,0{84x16,0,0,2,85x16,85,0,4},170x17,0,17,3]	:
+state	dev	

@@ -1,0 +1,13 @@
+pane	dev	1	1	:*Z	0	:/Users/nwiizo/git/ai-pf-development	0	fish	:kubie ctx
+pane	dev	1	1	:*Z	1	:/Users/nwiizo/git/ai-pf-development/tools/ops/get_hash_artifacts_registry	0	fish	:kubie ctx
+pane	dev	1	1	:*Z	2	:/Users/nwiizo/git/ai-pf-development/infrastructure/k8s-manifests/helm	1	fish	:kubie ctx
+pane	dev	1	1	:*Z	3	:/Users/nwiizo/git/ai-pf-development	0	fish	:kubie ctx
+pane	dev	2	0	:-Z	0	:/Users/nwiizo/git/workspace_2022	0	fish	:
+pane	dev	2	0	:-Z	1	:/Users/nwiizo/git/workspace_2022	0	fish	:
+pane	dev	2	0	:-Z	2	:/Users/nwiizo/git/workspace_2022/django-logging-tutorial/django_logging_tutorial	1	fish	:
+pane	dev	3	0	:Z	0	:/Users/nwiizo/git/workspace_2022/trivy-operator	0	fish	:
+pane	dev	3	0	:Z	1	:/Users/nwiizo/.config/nvim	1	fish	:
+window	dev	1	:fish	1	:*Z	cecd,213x43,0,0[213x23,0,0{104x23,0,0,0,108x23,105,0,3},213x19,0,24{104x19,0,24,1,108x19,105,24,2}]	:
+window	dev	2	:fish	0	:-Z	fbe3,213x43,0,0[213x19,0,0,4,213x23,0,20{106x23,0,20,6,106x23,107,20,13}]	:
+window	dev	3	:fish	0	:Z	57ea,89x27,0,0[89x12,0,0,8,89x14,0,13,9]	:
+state	dev	
