@@ -7,7 +7,7 @@ set -x GOSUMDB off
 set -x GOPRIVATE gitlab.com/3-shake/metis/metis.git
 set -x KUBECONFIG ./kubeconfig.yaml:/Users/nwiizo/.kube/config
 set -gx PATH $PATH $HOME/.krew/bin
-set PATH $PATH $GOPATH/bin $GOROOT/bin /usr/local/kubebuilder/bin
+set PATH $PATH $GOPATH/bin $GOROOT/bin /usr/local/kubebuilder/bin $HOME/.istioctl/bin
 
 # set omf theme-bobthefish
 set -g fish_prompt_pwd_dir_length 0
