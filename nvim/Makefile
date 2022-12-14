@@ -16,7 +16,9 @@ create-dirs:
 	@mkdir -vp ./spell "$(VIM_DATA_HOME)"/{backup,sessions,swap,undo,vsnip}
 
 update-repo:
+	git stash
 	git pull --ff --ff-only
+	git stash apply
 
 update-plugins:
 	$(nvim) -V1 -es -i NONE -n --noplugin -u config/init.vim \
