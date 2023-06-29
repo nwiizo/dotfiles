@@ -11,7 +11,7 @@ vim.opt.relativenumber = true
 lvim.log.level = "info"
 lvim.format_on_save = {
 	enabled = true,
-	pattern = "*",
+	-- pattern = "*.lua",
 	timeout = 1000,
 }
 -- to disable icons and use a minimalist setup, uncomment the following
@@ -22,13 +22,14 @@ lvim.leader = "space"
 -- add your own keymapping
 lvim.keys.normal_mode["<C-s>"] = ":w<cr>"
 
+-- lvim style
+lvim.builtin.lualine.style = "lvim"
+
 -- lvim.keys.normal_mode["<S-l>"] = ":BufferLineCycleNext<CR>"
 -- lvim.keys.normal_mode["<S-h>"] = ":BufferLineCyclePrev<CR>"
 
 -- -- Use which-key to add extra bindings with the leader-key prefix
--- lvim.builtin.which_key.mappings["W"] = { "<ccmp.event:on("menu_opened", function()
-vim.b.copilot_suggestion_hidden = true
--- end)md>noautocmd w<cr>", "Save without formatting" }
+-- lvim.builtin.which_key.mappings["W"] = { "<cmd>noautocmd w<cr>", "Save without formatting" }
 -- lvim.builtin.which_key.mappings["P"] = { "<cmd>Telescope projects<CR>", "Projects" }
 
 -- -- Change theme settings
@@ -79,10 +80,17 @@ lvim.builtin.treesitter.auto_install = true
 local formatters = require("lvim.lsp.null-ls.formatters")
 formatters.setup({
 	{ command = "stylua" },
+	-- setup typescript formatters
 	{
 		command = "prettier",
 		extra_args = { "--print-width", "100" },
 		filetypes = { "typescript", "typescriptreact" },
+	},
+	-- setup javascript formatters
+	{
+		command = "prettier",
+		extra_args = { "--print-width", "100" },
+		filetypes = { "javascript", "javascriptreact" },
 	},
 	-- setup Go formatters
 	{ command = "gofumpt", filetypes = { "go" } },
@@ -106,20 +114,18 @@ linters.setup({
 	{ command = "revive", filetypes = { "go" } },
 	{ command = "staticcheck", filetypes = { "go" } },
 	-- setup HCL linters
-	{ command = "yamllint", filetypes = { "yaml" } },
+	-- { command = "yamllint", filetypes = { "yaml" } },
 })
 
 -- -- Additional Plugins <https://www.lunarvim.org/docs/plugins#user-plugins>
 lvim.plugins = {
-
 	--     {
 	--       "folke/trouble.nvim",
 	--       cmd = "TroubleToggle",
 	--     },
-	-- { "folke/tokyonight.nvim" },
 	{
 		"zbirenbaum/copilot.lua",
-		event = { "VimEnter" },
+		event = { "InsertEnter" },
 		config = function()
 			vim.defer_fn(function()
 				require("copilot").setup({
@@ -139,8 +145,8 @@ lvim.plugins = {
 						yaml = true,
 						markdown = true,
 						help = false,
-						gitcommit = false,
-						gitrebase = false,
+						gitcommit = true,
+						gitrebase = true,
 						hgcommit = false,
 						svn = false,
 						cvs = false,
@@ -162,7 +168,7 @@ lvim.plugins = {
 
 -- Can not be placed into the config method of the plugins.
 lvim.builtin.cmp.formatting.source_names["copilot"] = "(Copilot)"
-table.insert(lvim.builtin.cmp.sources, 1, { name = "copilot" })
+table.insert(lvim.builtin.cmp.sources, 3, { name = "copilot" })
 
 -- -- Autocommands (`:help autocmd`) <https://neovim.io/doc/user/autocmd.html>
 -- vim.api.nvim_create_autocmd("FileType", {
