@@ -151,6 +151,7 @@ lvim.plugins = {
 						svn = false,
 						cvs = false,
 						["."] = false,
+						["*"] = true,
 					},
 				})
 			end, 100)
