@@ -1,11 +1,30 @@
 return {
   {
     "stevearc/conform.nvim",
-    -- event = 'BufWritePre', -- uncomment for format on save
+    event = 'BufWritePre', -- uncomment for format on save
     config = function()
-      require "configs.conform"
+      local options = {
+        formatters_by_ft = {
+          lua = { "stylua" },
+          terraform = { "terraform_fmt" },
+          bash = { "shfmt" },
+          python = { "black", "isort" },
+          rust = { "rustfmt" },
+          go = { "gofmt", "goimports" },
+          -- css = { "prettier" },
+          -- html = { "prettier" },
+        },
+
+        format_on_save = true, -- format_on_save を true に設定
+        format_options = {
+          timeout_ms = 500,
+          lsp_fallback = true,
+        },
+      }
+      require("conform").setup(options)
     end,
   },
+
 
   -- These are some examples, uncomment them if you want to see them work!
   {
@@ -21,11 +40,14 @@ return {
    	opts = {
    		ensure_installed = {
    			"lua-language-server", "stylua",
-   			"html-lsp", "css-lsp" , "prettier",
-        "lua-language-server","stylua",
-        "css-lsp","html-lsp","typescript-language-server","deno","emmet-ls","json-lsp",
-        "shfmt","shellcheck",
-        "goimports","gopls",
+   			"html-lsp", "css-lsp", "prettier",
+        "lua-language-server", "stylua",
+        "css-lsp", "html-lsp", "typescript-language-server", "deno", "emmet-ls", "json-lsp",
+        "shfmt", "shellcheck",
+        "goimports", "gopls",
+        "terraform-ls",
+        "black", "isort",
+        "rust-analyzer",
    		},
    	},
    },
@@ -35,7 +57,12 @@ return {
    	opts = {
    		ensure_installed = {
    			"vim", "lua", "vimdoc",
-        "html", "css","Markdown"
+        "html", "css", "markdown",
+        "terraform", "hcl",
+        "bash",
+        "python",
+        "rust",
+        "go",
    		},
    	},
   },
