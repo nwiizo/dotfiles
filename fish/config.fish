@@ -9,6 +9,7 @@ set -x GO111MODULE on
 set -x GOPROXY direct
 set -x GOSUMDB off
 set -x USE_GKE_GCLOUD_AUTH_PLUGIN True
+set -gx KUBE_EDITOR nvim
 
 # Homebrew
 set -gx HOMEBREW_PREFIX "/opt/homebrew"
@@ -91,6 +92,9 @@ eval (/opt/homebrew/bin/brew shellenv)
 
 # asdf version manager
 source /opt/homebrew/opt/asdf/libexec/asdf.fish
+
+# cargo environment variables
+source "$HOME/.cargo/env.fish"
 
 # Google Cloud SDK
 source "$(brew --prefix)/share/google-cloud-sdk/path.fish.inc"
