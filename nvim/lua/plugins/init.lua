@@ -1,7 +1,7 @@
 return {
   {
     "stevearc/conform.nvim",
-    event = "BufWritePre", -- uncomment for format on save
+    event = "BufWritePre",
     config = function()
       local options = {
         formatters_by_ft = {
@@ -12,11 +12,9 @@ return {
           python = { "black", "isort" },
           rust = { "rustfmt", lsp_format = "fallback" },
           go = { "gofmt", "goimports", "gofumpt" },
-          -- css = { "prettier" },
-          -- html = { "prettier" },
         },
 
-        format_on_save = true, -- format_on_save を true に設定
+        format_on_save = true,
         format_options = {
           timeout_ms = 500,
           lsp_fallback = true,
@@ -26,15 +24,27 @@ return {
     end,
   },
 
-  -- These are some examples, uncomment them if you want to see them work!
   {
     "neovim/nvim-lspconfig",
     config = function()
       require("nvchad.configs.lspconfig").defaults()
+      local lspconfig = require "lspconfig"
+
+      lspconfig.rust_analyzer.setup {
+        settings = {
+          ["rust-analyzer"] = {
+            checkOnSave = {
+              command = "clippy",
+              extraArgs = { "--all", "--", "-W", "clippy::all" },
+            },
+          },
+        },
+      }
+
       require "configs.lspconfig"
     end,
   },
-  --
+
   {
     "williamboman/mason.nvim",
     opts = {
@@ -44,10 +54,6 @@ return {
         "html-lsp",
         "css-lsp",
         "prettier",
-        "lua-language-server",
-        "stylua",
-        "css-lsp",
-        "html-lsp",
         "typescript-language-server",
         "deno",
         "emmet-ls",
@@ -59,6 +65,9 @@ return {
         "terraform-ls",
         "black",
         "isort",
+        -- Clippyは自動インストールできないため、手動でインストールが必要です
+        -- https://rust-lang.github.io/rust-clippy/master/index.html
+        -- `rustup component add clippy`
         "rust-analyzer",
       },
     },
