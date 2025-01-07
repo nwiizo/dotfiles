@@ -168,17 +168,20 @@ return {
       "hrsh7th/cmp-cmdline",
       "saadparwaiz1/cmp_luasnip",
       "zbirenbaum/copilot-cmp",
+      "sourcegraph/sg.nvim",
     },
     config = function()
       local cmp = require "cmp"
       dofile(vim.g.base46_cache .. "cmp")
 
+      vim.api.nvim_set_hl(0, "CmpItemKindCody", { fg = "#00ff00" })
+
       local cmp_ui = require("nvconfig").ui.cmp
       local cmp_style = cmp_ui.style
 
-      -- Define source labels and their priority
       local source_config = {
         copilot = { label = "[Copilot]", group_index = 2, priority = 1000 },
+        cody = { label = "[Cody]", group_index = 2, priority = 950 },
         nvim_lsp = { label = "[LSP]", group_index = 1, priority = 900 },
         luasnip = { label = "[Snippet]", group_index = 1, priority = 800 },
         nvim_lua = { label = "[Lua]", group_index = 1, priority = 700 },
@@ -186,13 +189,11 @@ return {
         path = { label = "[Path]", group_index = 3, priority = 400 },
       }
 
-      -- Define completion item arrangement
       local field_arrangement = {
         atom = { "kind", "abbr", "menu" },
         atom_colored = { "kind", "abbr", "menu" },
       }
 
-      -- Helper function for borders
       local function border(hl_name)
         return {
           { "╭", hl_name },
@@ -206,7 +207,6 @@ return {
         }
       end
 
-      -- Format completion items
       local formatting_style = {
         fields = field_arrangement[cmp_style] or { "abbr", "kind", "menu" },
 
@@ -229,7 +229,6 @@ return {
         end,
       }
 
-      -- Define keymappings
       local keymaps = {
         ["<C-p>"] = cmp.mapping.select_prev_item(),
         ["<C-n>"] = cmp.mapping.select_next_item(),
@@ -240,6 +239,13 @@ return {
         ["<CR>"] = cmp.mapping.confirm {
           behavior = cmp.ConfirmBehavior.Insert,
           select = true,
+        },
+        ["<C-a>"] = cmp.mapping.complete {
+          config = {
+            sources = {
+              { name = "cody" },
+            },
+          },
         },
         ["<Tab>"] = cmp.mapping(function(fallback)
           if cmp.visible() then
@@ -261,7 +267,6 @@ return {
         end, { "i", "s" }),
       }
 
-      -- Configure completion sources
       local sources = vim.tbl_map(function(name)
         local conf = source_config[name]
         return {
@@ -271,6 +276,7 @@ return {
         }
       end, {
         "copilot",
+        "cody",
         "nvim_lsp",
         "luasnip",
         "nvim_lua",
@@ -278,7 +284,6 @@ return {
         "path",
       })
 
-      -- Main configuration
       local options = {
         completion = {
           completeopt = "menu,menuone,noselect",
@@ -319,15 +324,12 @@ return {
         },
       }
 
-      -- Add border if not using atom style
       if cmp_style ~= "atom" and cmp_style ~= "atom_colored" then
         options.window.completion.border = border "CmpBorder"
       end
 
-      -- Setup completion
       cmp.setup(options)
 
-      -- Set up special completion for specific filetypes
       cmp.setup.filetype("gitcommit", {
         sources = cmp.config.sources {
           { name = "conventional_commits" },
@@ -335,7 +337,6 @@ return {
         },
       })
 
-      -- Set up completion for search mode
       cmp.setup.cmdline("/", {
         mapping = cmp.mapping.preset.cmdline(),
         sources = {
@@ -343,7 +344,6 @@ return {
         },
       })
 
-      -- Set up completion for command mode
       cmp.setup.cmdline(":", {
         mapping = cmp.mapping.preset.cmdline(),
         sources = cmp.config.sources({
@@ -353,5 +353,120 @@ return {
         }),
       })
     end,
+  },
+  --- nvim-cmp source for cody
+  {
+    "sourcegraph/sg.nvim",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "nvim-telescope/telescope.nvim",
+    },
+    build = "nvim -l build/init.lua",
+    event = { "BufReadPre", "BufNewFile" },
+    -- プラグインを読み込んだ後に設定を適用
+    config = function()
+      require("sg").setup {
+        enable_cody = true,
+        cody = {
+          -- デバッグログを有効化
+          debug = {
+            enable = true,
+            verbose = true,
+          },
+          -- コードコンテキストの設定
+          experimental = {
+            symfContext = true, -- シンボリックコンテキストを有効化
+          },
+          -- チャットウィンドウの設定
+          window = {
+            border = "rounded",
+            winhighlight = "Normal:CodeyWindow,FloatBorder:CodeyBorder",
+            zindex = 50,
+          },
+
+          -- リクエスト設定
+          request = {
+            timeout = 10,
+            max_tokens = 2048,
+            temperature = 0.5,
+          },
+        },
+      }
+    end,
+  },
+  --- add avante.nvim to your neovim config
+  {
+    "yetone/avante.nvim",
+    event = "VeryLazy",
+    lazy = false,
+    version = false,
+    opts = {
+      provider = "copilot", -- copilotを使用
+      auto_suggestions_provider = "copilot", -- 自動提案もcopilotを使用
+
+      behaviour = {
+        auto_suggestions = false,
+        auto_set_highlight_group = true,
+        auto_set_keymaps = true,
+        auto_apply_diff_after_generation = false,
+        support_paste_from_clipboard = false,
+        minimize_diff = true,
+      },
+
+      windows = {
+        position = "right",
+        wrap = true,
+        width = 30,
+        sidebar_header = {
+          enabled = true,
+          align = "center",
+          rounded = true,
+        },
+        input = {
+          prefix = "> ",
+          height = 8,
+        },
+        edit = {
+          border = "rounded",
+          start_insert = true,
+        },
+        ask = {
+          floating = false,
+          start_insert = true,
+          border = "rounded",
+          focus_on_apply = "ours",
+        },
+      },
+    },
+    build = "make",
+    dependencies = {
+      "stevearc/dressing.nvim",
+      "nvim-lua/plenary.nvim",
+      "MunifTanjim/nui.nvim",
+      "hrsh7th/nvim-cmp",
+      "nvim-tree/nvim-web-devicons",
+      "zbirenbaum/copilot.lua",
+      {
+        "HakonHarnes/img-clip.nvim",
+        event = "VeryLazy",
+        opts = {
+          default = {
+            embed_image_as_base64 = false,
+            prompt_for_file_name = false,
+            drag_and_drop = {
+              insert_mode = true,
+            },
+            use_absolute_path = true,
+          },
+        },
+      },
+      {
+        "MeanderingProgrammer/render-markdown.nvim",
+        opts = {
+          file_types = { "markdown", "Avante" },
+        },
+        ft = { "markdown", "Avante" },
+      },
+    },
   },
 }
