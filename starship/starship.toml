@@ -1,0 +1,118 @@
+format = """
+[](fg:#9A348E)\
+$directory\
+[](fg:#DA627D bg:#9A348E)\
+$git_branch\
+$git_status\
+[](fg:#FCA17D bg:#DA627D)\
+$kubernetes\
+[](fg:#86BBD8 bg:#FCA17D)\
+$aws\
+[](fg:#33658A bg:#86BBD8)\
+$docker_context\
+[](fg:#06969A bg:#33658A)\
+$golang\
+[](fg:#1B9F62 bg:#06969A)\
+$python\
+[](fg:#33658A bg:#1B9F62)\
+$nodejs\
+[](fg:#86BBD8 bg:#33658A)\
+$rust\
+[](fg:#06969A bg:#86BBD8)\
+$terraform\
+[](fg:#33658A bg:#06969A)\
+$gcloud\
+[](fg:#86BBD8 bg:#33658A)\
+$time\
+[ ](fg:#86BBD8)\
+$line_break\
+$character"""
+
+[directory]
+style = "fg:#E4E4E4 bg:#9A348E"
+format = '[ $path ]($style)'
+truncation_length = 3
+truncation_symbol = "…/"
+
+[git_branch]
+symbol = " "
+style = "fg:#E4E4E4 bg:#DA627D"
+format = '[ $symbol$branch ]($style)'
+
+[git_status]
+style = "fg:#E4E4E4 bg:#DA627D"
+format = '[$all_status$ahead_behind ]($style)'
+conflicted = "≠"
+ahead = "⇡${count}"
+behind = "⇣${count}"
+diverged = "⇕"
+untracked = "±${count}"
+stashed = "※"
+modified = "!${count}"
+staged = "+${count}"
+renamed = "»${count}"
+deleted = "×${count}"
+
+[kubernetes]
+symbol = "☸ "
+style = "fg:#E4E4E4 bg:#FCA17D"
+format = '[ $symbol$context(\($namespace\)) ]($style)'
+disabled = false
+
+[aws]
+symbol = "☁ "
+style = "fg:#E4E4E4 bg:#86BBD8"
+format = '[ $symbol($profile)(\($region\)) ]($style)'
+disabled = false
+
+[docker_context]
+symbol = "🐋 "
+style = "fg:#E4E4E4 bg:#33658A"
+format = '[ $symbol$context ]($style)'
+
+[golang]
+symbol = "🐹 "
+style = "fg:#E4E4E4 bg:#06969A"
+format = '[ $symbol($version) ]($style)'
+
+[python]
+symbol = "🐍 "
+style = "fg:#E4E4E4 bg:#1B9F62"
+format = '[ $symbol($version) ]($style)'
+detect_extensions = ["py"]
+python_binary = ["python", "python3"]
+
+[nodejs]
+symbol = "⬢ "
+style = "fg:#E4E4E4 bg:#33658A"
+format = '[ $symbol($version) ]($style)'
+detect_extensions = ["js", "ts", "tsx"]
+detect_files = ["package.json", "tsconfig.json"]
+
+[rust]
+symbol = "⚙ "
+style = "fg:#E4E4E4 bg:#86BBD8"
+format = '[ $symbol($version) ]($style)'
+detect_extensions = ["rs"]
+detect_files = ["Cargo.toml", "Cargo.lock"]
+
+[terraform]
+symbol = "🏗 "
+style = "fg:#E4E4E4 bg:#06969A"
+format = '[ $symbol$workspace ]($style)'
+
+[gcloud]
+symbol = "🌐 "
+style = "fg:#E4E4E4 bg:#33658A"
+format = '[ $symbol$account(@$domain)(\($project\)) ]($style)'
+
+[time]
+disabled = false
+time_format = "%R"
+style = "fg:#E4E4E4 bg:#86BBD8"
+format = '[ $time ]($style)'
+
+[character]
+success_symbol = "❯"
+error_symbol = "❯"
+vimcmd_symbol = "❮"
