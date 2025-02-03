@@ -5,6 +5,7 @@ return {
     config = function()
       local options = {
         formatters_by_ft = {
+          typescript = { "prettier", "deno_fmt" },
           lua = { "stylua" },
           terraform = { "terraform_fmt" },
           ansible = { "ansible-lint" },
@@ -12,6 +13,8 @@ return {
           python = { "black", "isort" },
           rust = { "rustfmt", lsp_format = "fallback" },
           go = { "gofmt", "goimports", "gofumpt" },
+          yaml = { "prettier", "prettierd" },
+          buf = { "buf" },
         },
 
         format_on_save = true,
@@ -49,25 +52,44 @@ return {
     "williamboman/mason.nvim",
     opts = {
       ensure_installed = {
+        -- Lua language server
         "lua-language-server",
+        -- Lua formatter
         "stylua",
+        -- HTML language server
         "html-lsp",
+        -- CSS language server
         "css-lsp",
+        -- Prettier formatter
         "prettier",
+        -- TypeScript language server
         "typescript-language-server",
+        -- Deno language server
         "deno",
+        -- Emmet language server
         "emmet-ls",
+        -- JSON language server
         "json-lsp",
+        -- Shell script formatter
         "shfmt",
+        -- Shell script linter
         "shellcheck",
+        -- Go imports formatter
         "goimports",
+        -- Go language server
         "gopls",
+        -- Terraform language server
         "terraform-ls",
+        -- Python formatter
         "black",
+        -- Python import sorter
         "isort",
+        -- TypeScript
+        "denols",
         -- Clippyは自動インストールできないため、手動でインストールが必要です
         -- https://rust-lang.github.io/rust-clippy/master/index.html
         -- `rustup component add clippy`
+        -- Rust analyzer
         "rust-analyzer",
       },
     },
@@ -89,6 +111,7 @@ return {
         "python",
         "rust",
         "go",
+        "typescript",
       },
     },
   },
@@ -402,15 +425,15 @@ return {
     version = false,
     opts = {
       provider = "copilot", -- copilotを使用
-      auto_suggestions_provider = "copilot", -- 自動提案もcopilotを使用
+      -- auto_suggestions_provider = "copilot", -- 自動提案もcopilotを使用
 
       behaviour = {
-        auto_suggestions = false,
-        auto_set_highlight_group = true,
-        auto_set_keymaps = true,
-        auto_apply_diff_after_generation = false,
-        support_paste_from_clipboard = false,
-        minimize_diff = true,
+        auto_suggestions = false, -- 自動提案を有効化
+        auto_set_highlight_group = true, -- ハイライトグループを自動設定
+        auto_set_keymaps = true, -- キーマップを自動設定
+        auto_apply_diff_after_generation = true, -- 生成後に差分を自動適用
+        support_paste_from_clipboard = true, -- クリップボードからの貼り付けをサポート
+        minimize_diff = true, -- 差分を最小化
       },
 
       windows = {
@@ -468,5 +491,131 @@ return {
         ft = { "markdown", "Avante" },
       },
     },
+  },
+  -- codecompanion.nvim
+  -- {
+  --   "olimorris/codecompanion.nvim",
+  --   dependencies = {
+  --     "nvim-lua/plenary.nvim",
+  --     "nvim-treesitter/nvim-treesitter",
+  --   },
+  --   opts = {
+  --     adapters = {
+  --       copilot = function()
+  --         return require("codecompanion.adapters").extend("copilot", {
+  --           -- 必要に応じてCopilotの設定をここに追加
+  --         })
+  --       end,
+  --     },
+  --     strategies = {
+  --       -- デフォルトアダプターとしてcopilotを使用
+  --       chat = {
+  --         adapter = "copilot",
+  --       },
+  --       inline = {
+  --         adapter = "copilot",
+  --       },
+  --     },
+  --   },
+  --   cmd = {
+  --     "CodeCompanion",
+  --     "CodeCompanionChat",
+  --     "CodeCompanionToggle",
+  --   },
+  --   keys = {
+  --     -- お好みのキーマップを設定
+  --     { "<leader>cc", "<cmd>CodeCompanionChat<cr>", desc = "Open CodeCompanion Chat" },
+  --     { "<leader>ct", "<cmd>CodeCompanionChat Toggle<cr>", desc = "Toggle CodeCompanion Chat" },
+  --   },
+  -- },
+  -- crates.nvim
+  {
+    "saecki/crates.nvim",
+    tag = "stable",
+    ft = { "toml" },
+    config = function()
+      require("crates").setup()
+    end,
+  },
+  -- rustaceanvim
+  {
+    "mrcjkb/rustaceanvim",
+    version = "^5", -- Recommended
+    lazy = false, -- This plugin is already lazy
+  },
+  -- nwiizo/nvim-cargo-add
+  {
+    "nwiizo/nvim-cargo-add",
+    -- ローカル開発用の設定
+    dir = vim.fn.expand "~/ghq/github.com/nwiizo/nvim-cargo-add",
+    build = function()
+      vim.notify("Building nvim-cargo-add...", vim.log.levels.INFO)
+      local plugin_dir = vim.fn.expand "~/ghq/github.com/nwiizo/nvim-cargo-add"
+
+      -- ビルドコマンドの実行
+      local result = vim.fn.system(string.format("cd %s && cargo build --release", vim.fn.shellescape(plugin_dir)))
+
+      -- ビルド結果の確認
+      local lib_path = plugin_dir .. "/target/release/libnvim_cargo_add.dylib"
+      if vim.fn.filereadable(lib_path) == 0 then
+        error("Failed to build: " .. result)
+      end
+
+      vim.notify("Build completed successfully", vim.log.levels.INFO)
+    end,
+    config = function()
+      -- プラグインの設定
+      require("nvim_cargo_add").setup {
+        auto_format = true, -- 自動フォーマットを有効化
+        float_preview = true, -- フローティングウィンドウでのプレビューを有効化
+      }
+    end,
+    -- プラグインの読み込み設定
+    lazy = false,
+    -- 依存関係の指定（必要に応じて）
+    dependencies = {
+      -- 必要な依存関係があれば追加
+    },
+    -- Cargo.tomlを開いたときに読み込む
+    ft = { "toml" },
+    -- コマンドを使用したときに読み込む
+    cmd = {
+      "CargoAdd",
+      "CargoAddDev",
+      "CargoRemove",
+      "CargoDeps",
+      "CargoAddDebug",
+    },
+  },
+  -- nwiizo/cargo.nvim
+  {
+    "nwiizo/cargo.nvim",
+    dir = vim.fn.expand "~/ghq/github.com/nwiizo/cargo.nvim",
+    build = function()
+      local plugin_dir = vim.fn.expand "~/ghq/github.com/nwiizo/cargo.nvim"
+      vim.fn.system(string.format("cd %s && cargo build --release", vim.fn.shellescape(plugin_dir)))
+    end,
+    ft = { "rust", "toml" },
+    cmd = {
+      "CargoBench",
+      "CargoBuild",
+      "CargoClean",
+      "CargoDoc",
+      "CargoNew",
+      "CargoRun",
+      "CargoTest",
+      "CargoUpdate",
+      "CargoCheck",
+      "CargoFmt",
+      "CargoClippy",
+    },
+    opts = {
+      float_window = true,
+      window_width = 0.8,
+      window_height = 0.8,
+      close_timeout = 30000,
+      show_progress = true,
+    },
+    config = true,
   },
 }
