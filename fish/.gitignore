@@ -1,0 +1,32 @@
+# Fish Shell - .gitignore
+
+# ローカル設定（マシン固有）
+local.fish
+
+# Fish内部ファイル
+fish_variables
+fishd.*
+
+# バックアップ
+backups/
+*.backup
+*.backup.*
+
+# 一時ファイル
+*.tmp
+*.swp
+*.swo
+*~
+
+# OS固有
+.DS_Store
+Thumbs.db
+
+# フォント（サイズが大きいため）
+fonts/
+
+# プラグイン管理ツールの自動生成ファイル
+fisher_path/
+
+# 個人的なスクリプト（必要に応じてコメント解除）
+# scripts/personal/
