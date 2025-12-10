@@ -1,11 +1,51 @@
+# Neovim - .gitignore
+
+# Plugin data (auto-generated)
+plugin/
+
+# Lazy.nvim plugin directory
+lazy/
+
+# Swap files
+*.swp
+*.swo
 *~
-/benchmarks/
-/spell/
+
+# Session files
+Session.vim
+
+# Undo history
+undo/
+
+# ShaDa (shared data)
+shada/
+
+# NvChad cache
+nvchad/
+
+# Copilot (contains auth tokens)
+copilot/
+
+# Local overrides (machine-specific)
+lua/custom/
+local.lua
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Backup files
+*.bak
+*.backup
+
+# Spell files
+spell/
+
+# Old config patterns (no longer used)
 /.vault.vim
 /.local.vimrc
 /.stignore
 /.stfolder
 /.stversions
-/config/plugins.local.yaml
-/config/local.plugins.yaml
-/config/local.vim
+/config/
+/benchmarks/

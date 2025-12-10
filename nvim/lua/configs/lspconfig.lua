@@ -2,9 +2,7 @@ local on_attach = require("nvchad.configs.lspconfig").on_attach
 local on_init = require("nvchad.configs.lspconfig").on_init
 local capabilities = require("nvchad.configs.lspconfig").capabilities
 
-local lspconfig = require "lspconfig"
-
--- Language server configurations
+-- Language server configurations using new vim.lsp.config API (Neovim 0.11+)
 local servers = {
   -- Web Development
   "html",
@@ -76,6 +74,7 @@ local custom_configs = {
       ["rust-analyzer"] = {
         checkOnSave = {
           command = "clippy",
+          extraArgs = { "--all", "--", "-W", "clippy::all" },
         },
         cargo = {
           allFeatures = true,
@@ -85,7 +84,7 @@ local custom_configs = {
   },
 }
 
--- Setup all servers
+-- Setup all servers using new vim.lsp.config API (Neovim 0.11+)
 for _, lsp in ipairs(servers) do
   local config = {
     on_attach = on_attach,
@@ -98,7 +97,17 @@ for _, lsp in ipairs(servers) do
     config = vim.tbl_deep_extend("force", config, custom_configs[lsp])
   end
 
-  lspconfig[lsp].setup(config)
+  -- Use new vim.lsp.config API for Neovim 0.11+
+  if vim.lsp.config then
+    vim.lsp.config(lsp, config)
+    vim.lsp.enable(lsp)
+  else
+    -- Fallback for older Neovim versions
+    local ok, lspconfig = pcall(require, "lspconfig")
+    if ok then
+      lspconfig[lsp].setup(config)
+    end
+  end
 end
 
 -- Additional keymaps and settings can be added here

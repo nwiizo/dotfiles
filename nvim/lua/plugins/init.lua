@@ -26,28 +26,15 @@ return {
       require("conform").setup(options)
     end,
   },
-
   {
     "neovim/nvim-lspconfig",
     config = function()
       require("nvchad.configs.lspconfig").defaults()
-      local lspconfig = require "lspconfig"
 
-      lspconfig.rust_analyzer.setup {
-        settings = {
-          ["rust-analyzer"] = {
-            checkOnSave = {
-              command = "clippy",
-              extraArgs = { "--all", "--", "-W", "clippy::all" },
-            },
-          },
-        },
-      }
-
+      -- Load the main lspconfig which handles all servers including rust_analyzer
       require "configs.lspconfig"
     end,
   },
-
   {
     "williamboman/mason.nvim",
     opts = {
@@ -126,6 +113,10 @@ return {
         panel = { enabled = false },
         server_opts_overrides = {
           trace = "verbose",
+          cmd = {
+            vim.fn.expand "~/.config/nvim/copilot/bin/copilot-language-server",
+            "--stdio",
+          },
           settings = {
             advanced = {
               listCount = 10,
@@ -167,6 +158,7 @@ return {
       { "nvim-lua/plenary.nvim" }, -- for curl, log wrapper
     },
     opts = {
+      model = "claude-opus-4", -- model name
       debug = true, -- Enable debugging
       -- See Configuration section for rest
     },
@@ -393,8 +385,8 @@ return {
         cody = {
           -- デバッグログを有効化
           debug = {
-            enable = true,
-            verbose = true,
+            enable = false,
+            verbose = false,
           },
           -- コードコンテキストの設定
           experimental = {
@@ -409,7 +401,7 @@ return {
 
           -- リクエスト設定
           request = {
-            timeout = 10,
+            timeout = 30,
             max_tokens = 2048,
             temperature = 0.5,
           },
@@ -418,28 +410,133 @@ return {
     end,
   },
   --- add avante.nvim to your neovim config
+  -- avante.nvim - Cursor AI IDE-like features for Neovim
+  -- Usage:
+  --   <leader>aa - Ask AI about current code
+  --   <leader>ae - Edit code with AI assistance
+  --   <leader>ar - Refresh AI response
+  --   :MCPHub - Open MCP server management UI (if mcphub.nvim is installed)
   {
     "yetone/avante.nvim",
     event = "VeryLazy",
     lazy = false,
-    version = false,
+    version = false, -- Never set this value to "*"! Never!
     opts = {
-      provider = "copilot", -- copilotを使用
-      -- auto_suggestions_provider = "copilot", -- 自動提案もcopilotを使用
+      debug = false, -- Enable debug mode for troubleshooting
+      provider = "copilot", -- use copilot
+      auto_suggestions_provider = "copilot", -- use copilot for auto suggestions
+      -- WARNING: auto-suggestions with copilot can be expensive due to high request frequency
+      -- Consider using a different provider or disabling auto_suggestions in behaviour
+      mode = "agentic", -- use agent mode
+
+      -- Updated configuration structure per migration guide
+      providers = {
+        copilot = {
+          endpoint = "https://api.githubcopilot.com",
+          model = "claude-sonnet-4", -- Use claude-sonnet-4 as requested
+          timeout = 30000,
+          extra_request_body = {
+            temperature = 0,
+            max_tokens = 8096,
+            -- max_completion_tokens = 8096, -- For reasoning models
+            -- reasoning_effort = "medium", -- low|medium|high for reasoning models
+          },
+        },
+        -- Optional: Add other providers for easy switching
+        -- openai = {
+        --   endpoint = "https://api.openai.com/v1",
+        --   model = "gpt-4-turbo-preview",
+        --   timeout = 30000,
+        --   extra_request_body = {
+        --     temperature = 0.7,
+        --     max_tokens = 4096,
+        --   },
+        -- },
+      },
+
+      -- MCP Integration via mcphub.nvim
+      -- system_prompt and custom_tools are functions to ensure mcphub is loaded
+      system_prompt = function()
+        -- Check if mcphub is loaded and available
+        local ok, mcphub = pcall(require, "mcphub")
+        if not ok then
+          return "" -- Return empty string if mcphub is not available
+        end
+
+        local hub = mcphub.get_hub_instance()
+        return hub and hub:get_active_servers_prompt() or ""
+      end,
+
+      -- Custom tools configuration for MCP
+      custom_tools = function()
+        -- Check if mcphub is loaded and available
+        local ok, mcphub = pcall(require, "mcphub")
+        if not ok then
+          return {} -- Return empty table if mcphub is not available
+        end
+
+        return {
+          require("mcphub.extensions.avante").mcp_tool(),
+        }
+      end,
+
+      -- Add custom keymaps
+      mappings = {
+        ask = "<leader>aa",
+        edit = "<leader>ae",
+        refresh = "<leader>ar",
+        diff = {
+          ours = "<leader>ao",
+          theirs = "<leader>at",
+          all = "<leader>aA",
+          both = "<leader>ab",
+          none = "<leader>a0",
+          current = "<leader>ac",
+        },
+        suggestion = {
+          accept = "<Tab>",
+          dismiss = "<C-]>",
+          next = "<M-]>",
+          prev = "<M-[>",
+        },
+        jump = {
+          next = "]]",
+          prev = "[[",
+        },
+        submit = {
+          normal = "<CR>",
+          insert = "<C-s>",
+        },
+      },
 
       behaviour = {
-        auto_suggestions = false, -- 自動提案を有効化
-        auto_set_highlight_group = true, -- ハイライトグループを自動設定
-        auto_set_keymaps = true, -- キーマップを自動設定
-        auto_apply_diff_after_generation = true, -- 生成後に差分を自動適用
-        support_paste_from_clipboard = true, -- クリップボードからの貼り付けをサポート
-        minimize_diff = true, -- 差分を最小化
+        auto_suggestions = false, -- Disabled due to high cost with copilot provider
+        auto_set_highlight_group = true, -- Automatically set highlight group
+        auto_set_keymaps = true, -- Automatically set keymaps
+        auto_apply_diff_after_generation = true, -- Automatically apply diff after generation
+        support_paste_from_clipboard = true, -- Support paste from clipboard
+        enable_cursor_planning_mode = true, -- Enable cursor planning mode
+        minimize_diff = true, -- Minimize diff
+        jump_result_buffer_on_finish = false, -- Jump to result buffer after generation
+      },
+
+      -- Suggestion settings
+      suggestion = {
+        debounce = 300, -- Debounce time in ms
+        delay = 1000, -- Delay before showing suggestions
+        -- Note: auto-suggestions can be expensive with copilot provider
+      },
+
+      -- Add diff mode configuration
+      diff = {
+        autojump = true, -- Automatically jump to the next diff
+        list_opener = "copen", -- Command to open the diff list
       },
 
       windows = {
         position = "right",
         wrap = true,
-        width = 30,
+        width = 30, -- Default width
         sidebar_header = {
           enabled = true,
           align = "center",
@@ -454,15 +551,45 @@ return {
           start_insert = true,
         },
         ask = {
-          floating = false,
+          floating = false, -- Consider true for floating window
           start_insert = true,
           border = "rounded",
-          focus_on_apply = "ours",
+          focus_on_apply = "ours", -- "ours"|"theirs"|false
         },
+        -- Add response window configuration
+        response = {
+          border = "rounded",
+        },
+      },
+
+      -- Add highlights configuration
+      highlights = {
+        diff = {
+          current = "DiffText",
+          incoming = "DiffAdd",
+        },
+      },
+
+      -- Add history configuration
+      -- History configuration
+      history = {
+        storage_path = vim.fn.stdpath "state" .. "/avante",
+        max_tokens = 4096, -- Max tokens for history context
+        paste = {
+          extension = "png",
+          filename = "pasted-%Y-%m-%d-%H-%M-%S",
+        },
+      },
+
+      -- Image paste configuration
+      img_paste = {
+        url_encode_path = true,
+        template = "\nimage: $FILE_PATH\n",
       },
     },
     build = "make",
     dependencies = {
+      "nvim-treesitter/nvim-treesitter",
       "stevearc/dressing.nvim",
       "nvim-lua/plenary.nvim",
       "MunifTanjim/nui.nvim",
@@ -490,44 +617,67 @@ return {
         },
         ft = { "markdown", "Avante" },
       },
+      {
+        -- MCP (Model Context Protocol) integration for avante.nvim
+        -- Provides AI tools and resources management
+        "ravitemer/mcphub.nvim",
+        dependencies = {
+          "nvim-lua/plenary.nvim",
+        },
+        cmd = "MCPHub", -- Lazy load on :MCPHub command
+        build = "npm install -g mcp-hub@latest",
+        config = function()
+          require("mcphub").setup {
+            -- Optional configuration (defaults work fine)
+            config = vim.fn.expand "~/.config/mcphub/servers.json",
+            port = 37373,
+            auto_approve = false, -- Set to true to auto-approve tool calls
+            extensions = {
+              avante = {
+                make_slash_commands = true, -- Enable /mcp:server:prompt commands
+              },
+            },
+          }
+        end,
+      },
     },
   },
   -- codecompanion.nvim
-  -- {
-  --   "olimorris/codecompanion.nvim",
-  --   dependencies = {
-  --     "nvim-lua/plenary.nvim",
-  --     "nvim-treesitter/nvim-treesitter",
-  --   },
-  --   opts = {
-  --     adapters = {
-  --       copilot = function()
-  --         return require("codecompanion.adapters").extend("copilot", {
-  --           -- 必要に応じてCopilotの設定をここに追加
-  --         })
-  --       end,
-  --     },
-  --     strategies = {
-  --       -- デフォルトアダプターとしてcopilotを使用
-  --       chat = {
-  --         adapter = "copilot",
-  --       },
-  --       inline = {
-  --         adapter = "copilot",
-  --       },
-  --     },
-  --   },
-  --   cmd = {
-  --     "CodeCompanion",
-  --     "CodeCompanionChat",
-  --     "CodeCompanionToggle",
-  --   },
-  --   keys = {
-  --     -- お好みのキーマップを設定
-  --     { "<leader>cc", "<cmd>CodeCompanionChat<cr>", desc = "Open CodeCompanion Chat" },
-  --     { "<leader>ct", "<cmd>CodeCompanionChat Toggle<cr>", desc = "Toggle CodeCompanion Chat" },
-  --   },
-  -- },
+  {
+    "olimorris/codecompanion.nvim",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "nvim-treesitter/nvim-treesitter",
+    },
+    opts = {
+      adapters = {
+        copilot = function()
+          return require("codecompanion.adapters").extend("copilot", {
+            -- 必要に応じてCopilotの設定をここに追加
+          })
+        end,
+      },
+      strategies = {
+        -- デフォルトアダプターとしてcopilotを使用
+        chat = {
+          adapter = "copilot",
+        },
+        inline = {
+          adapter = "copilot",
+        },
+      },
+    },
+    cmd = {
+      "CodeCompanion",
+      "CodeCompanionChat",
+      "CodeCompanionToggle",
+    },
+    keys = {
+      -- お好みのキーマップを設定
+      { "<leader>cc", "<cmd>CodeCompanionChat<cr>", desc = "Open CodeCompanion Chat" },
+      { "<leader>ct", "<cmd>CodeCompanionChat Toggle<cr>", desc = "Toggle CodeCompanion Chat" },
+    },
+  },
   -- crates.nvim
   {
     "saecki/crates.nvim",
@@ -542,50 +692,6 @@ return {
     "mrcjkb/rustaceanvim",
     version = "^5", -- Recommended
     lazy = false, -- This plugin is already lazy
-  },
-  -- nwiizo/nvim-cargo-add
-  {
-    "nwiizo/nvim-cargo-add",
-    -- ローカル開発用の設定
-    dir = vim.fn.expand "~/ghq/github.com/nwiizo/nvim-cargo-add",
-    build = function()
-      vim.notify("Building nvim-cargo-add...", vim.log.levels.INFO)
-      local plugin_dir = vim.fn.expand "~/ghq/github.com/nwiizo/nvim-cargo-add"
-
-      -- ビルドコマンドの実行
-      local result = vim.fn.system(string.format("cd %s && cargo build --release", vim.fn.shellescape(plugin_dir)))
-
-      -- ビルド結果の確認
-      local lib_path = plugin_dir .. "/target/release/libnvim_cargo_add.dylib"
-      if vim.fn.filereadable(lib_path) == 0 then
-        error("Failed to build: " .. result)
-      end
-
-      vim.notify("Build completed successfully", vim.log.levels.INFO)
-    end,
-    config = function()
-      -- プラグインの設定
-      require("nvim_cargo_add").setup {
-        auto_format = true, -- 自動フォーマットを有効化
-        float_preview = true, -- フローティングウィンドウでのプレビューを有効化
-      }
-    end,
-    -- プラグインの読み込み設定
-    lazy = false,
-    -- 依存関係の指定（必要に応じて）
-    dependencies = {
-      -- 必要な依存関係があれば追加
-    },
-    -- Cargo.tomlを開いたときに読み込む
-    ft = { "toml" },
-    -- コマンドを使用したときに読み込む
-    cmd = {
-      "CargoAdd",
-      "CargoAddDev",
-      "CargoRemove",
-      "CargoDeps",
-      "CargoAddDebug",
-    },
   },
   -- nwiizo/cargo.nvim
   {
@@ -603,11 +709,13 @@ return {
       "CargoDoc",
       "CargoNew",
       "CargoRun",
+      "CargoRunTerm",
       "CargoTest",
       "CargoUpdate",
       "CargoCheck",
       "CargoFmt",
       "CargoClippy",
+      "CargoAutodd",
     },
     opts = {
       float_window = true,
@@ -615,7 +723,57 @@ return {
       window_height = 0.8,
       close_timeout = 30000,
       show_progress = true,
+      wrap_output = true,
     },
     config = true,
+  },
+  {
+    "ravitemer/mcphub.nvim",
+    dependencies = {
+      "nvim-lua/plenary.nvim", -- Required for Job and HTTP requests
+    },
+    -- comment the following line to ensure hub will be ready at the earliest
+    cmd = "MCPHub", -- lazy load by default
+    build = "npm install -g mcp-hub@latest", -- Installs required mcp-hub npm module
+    -- uncomment this if you don't want mcp-hub to be available globally or can't use -g
+    -- build = "bundled_build.lua",  -- Use this and set use_bundled_binary = true in opts  (see Advanced configuration)
+    config = function()
+      require("mcphub").setup()
+    end,
+  },
+  --- greggh/claude-code.nvim
+  {
+    "greggh/claude-code.nvim",
+    dependencies = {
+      "nvim-lua/plenary.nvim", -- Required for git operations
+    },
+    config = function()
+      require("claude-code").setup()
+    end,
+    cmd = {
+      "ClaudeCode",
+      "ClaudeCodeContinue",
+      "ClaudeCodeResume",
+      "ClaudeCodeVerbose",
+    },
+    keys = {
+      { "<leader>cl", "<cmd>ClaudeCode<cr>", desc = "Toggle Claude Code terminal window" },
+      { "<leader>cc", "<cmd>ClaudeCodeContinue<cr>", desc = "Resume most recent conversation" },
+      { "<leader>cr", "<cmd>ClaudeCodeResume<cr>", desc = "Show interactive conversation picker" },
+      { "<leader>cv", "<cmd>ClaudeCodeVerbose<cr>", desc = "Enable verbose logging" },
+    },
+  },
+  -- marp.nvim for local development
+  {
+    "nwiizo/marp.nvim",
+    ft = "markdown",
+    config = function()
+      require("marp").setup {
+        -- Optional configuration
+        marp_command = "/opt/homebrew/opt/node/bin/node /opt/homebrew/bin/marp",
+        browser = nil, -- auto-detect
+        server_mode = false, -- Use watch mode (-w)
+      }
+    end,
   },
 }

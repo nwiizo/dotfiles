@@ -72,7 +72,8 @@ set -gx KUBECONFIG $HOME/.kube/config
 if type -q bat
     set -gx MANPAGER "sh -c 'col -bx | bat -l man -p'"
     set -gx BAT_THEME "Dracula"
-    set -gx BAT_STYLE "numbers,changes,header"
+    # パイプ時は行数を表示しない（plain style）
+    set -gx BAT_STYLE "changes,header"
 end
 
 set -gx LANG en_US.UTF-8
@@ -101,10 +102,10 @@ if type -q fzf
     end
 
     if type -q bat; and type -q eza
-        set -gx FZF_CTRL_T_OPTS "--preview 'if test -d {}; eza --tree --level=2 --color=always --icons {}; else; bat --style=numbers,changes --color=always --line-range :500 {}; end'"
+        set -gx FZF_CTRL_T_OPTS "--preview 'if test -d {}; eza --tree --level=2 --color=always --icons {}; else; bat --style=numbers,changes,header --color=always --line-range :500 {}; end'"
         set -gx FZF_ALT_C_OPTS "--preview 'eza --tree --level=2 --color=always --icons {} | head -200'"
     else if type -q bat
-        set -gx FZF_CTRL_T_OPTS "--preview 'bat --style=numbers,changes --color=always --line-range :500 {}'"
+        set -gx FZF_CTRL_T_OPTS "--preview 'bat --style=numbers,changes,header --color=always --line-range :500 {}'"
     end
 end
 
@@ -115,8 +116,17 @@ set -g fish_prompt_pwd_dir_length 3
 set -g fish_history_size 10000
 set -g fish_history_max_size 20000
 
+# 補完の改善
 set -g fish_complete_path $fish_complete_path $XDG_CONFIG_HOME/fish/completions
 set -g fish_function_path $fish_function_path $XDG_CONFIG_HOME/fish/functions
+
+# 補完動作の調整
+set -g fish_autosuggestion_enabled 1
+set -g fish_color_autosuggestion brblack
+set -g fish_pager_color_completion normal
+set -g fish_pager_color_description yellow
+set -g fish_pager_color_prefix cyan
+set -g fish_pager_color_progress cyan
 
 if test -n "$TMUX"
     set -g fish_term24bit 1
@@ -146,7 +156,14 @@ end
 
 if type -q bat
     function cat --wraps bat --description "Cat with syntax highlighting"
-        bat --paging=never $argv
+        # パイプやリダイレクト時は行数を表示しない
+        if isatty stdout
+            # ターミナル出力時は通常のスタイル
+            bat --paging=never $argv
+        else
+            # パイプやリダイレクト時はプレーンテキスト
+            bat --paging=never --style=plain $argv
+        end
     end
 end
 
@@ -260,44 +277,77 @@ end
 # 10. ABBREVIATIONS
 # ═══════════════════════════════════════════════════════════════════════════
 if status is-interactive
+    # 既存のabbreviationをクリーンアップ（エラーを無視）
+    abbr --erase -- - 2>/dev/null
+    abbr --erase .. 2>/dev/null
+    abbr --erase ... 2>/dev/null
+    abbr --erase .... 2>/dev/null
+    abbr --erase g 2>/dev/null
+    abbr --erase ga 2>/dev/null
+    abbr --erase gaa 2>/dev/null
+    abbr --erase gc 2>/dev/null
+    abbr --erase gcm 2>/dev/null
+    abbr --erase gco 2>/dev/null
+    abbr --erase gcb 2>/dev/null
+    abbr --erase gp 2>/dev/null
+    abbr --erase gpl 2>/dev/null
+    abbr --erase gst 2>/dev/null
+    abbr --erase gd 2>/dev/null
+    abbr --erase gl 2>/dev/null
+    abbr --erase gf 2>/dev/null
+    abbr --erase d 2>/dev/null
+    abbr --erase dc 2>/dev/null
+    abbr --erase dcu 2>/dev/null
+    abbr --erase dcd 2>/dev/null
+    abbr --erase dps 2>/dev/null
+    abbr --erase k 2>/dev/null
+    abbr --erase kgp 2>/dev/null
+    abbr --erase kgs 2>/dev/null
+    abbr --erase kgd 2>/dev/null
+    abbr --erase c 2>/dev/null
+    abbr --erase v 2>/dev/null
+    abbr --erase vim 2>/dev/null
+    abbr --erase lg 2>/dev/null
+
     # ナビゲーション
-    abbr -a -- - 'cd -'
-    abbr -a .. 'cd ..'
-    abbr -a ... 'cd ../..'
-    abbr -a .... 'cd ../../..'
+    abbr --add --global -- - 'cd -'
+    abbr --add --global .. 'cd ..'
+    abbr --add --global ... 'cd ../..'
+    abbr --add --global .... 'cd ../../..'
 
     # Git
-    abbr -a g git
-    abbr -a ga 'git add'
-    abbr -a gaa 'git add --all'
-    abbr -a gc 'git commit -v'
-    abbr -a gcm 'git commit -m'
-    abbr -a gco 'git checkout'
-    abbr -a gcb 'git checkout -b'
-    abbr -a gp 'git push'
-    abbr -a gpl 'git pull'
-    abbr -a gst 'git status'
-    abbr -a gd 'git diff'
-    abbr -a gl 'git log'
-    abbr -a gf 'git commit --amend --no-edit'
+    abbr --add --global g git
+    abbr --add --global ga 'git add'
+    abbr --add --global gaa 'git add --all'
+    abbr --add --global gc 'git commit -v'
+    abbr --add --global gcm 'git commit -m'
+    abbr --add --global gco 'git checkout'
+    abbr --add --global gcb 'git checkout -b'
+    abbr --add --global gp 'git push'
+    abbr --add --global gpl 'git pull'
+    abbr --add --global gst 'git status'
+    abbr --add --global gd 'git diff'
+    abbr --add --global gl 'git log'
+    abbr --add --global gf 'git commit --amend --no-edit'
 
     # Docker
-    abbr -a d docker
-    abbr -a dc 'docker compose'
-    abbr -a dcu 'docker compose up'
-    abbr -a dcd 'docker compose down'
-    abbr -a dps 'docker ps'
+    abbr --add --global d docker
+    abbr --add --global dc 'docker compose'
+    abbr --add --global dcu 'docker compose up'
+    abbr --add --global dcd 'docker compose down'
+    abbr --add --global dps 'docker ps'
 
     # Kubernetes
-    abbr -a k kubectl
-    abbr -a kgp 'kubectl get pods'
-    abbr -a kgs 'kubectl get svc'
-    abbr -a kgd 'kubectl get deploy'
+    abbr --add --global k kubectl
+    abbr --add --global kgp 'kubectl get pods'
+    abbr --add --global kgs 'kubectl get svc'
+    abbr --add --global kgd 'kubectl get deploy'
 
     # その他
-    abbr -a c 'claude --model sonnet'
-    abbr -a v nvim
-    abbr -a lg lazygit
+    abbr --add --global c 'claude --dangerously-skip-permissions'
+    abbr --add --global v nvim
+    abbr --add --global vim nvim
+    abbr --add --global lg lazygit
 end
 
 # ═══════════════════════════════════════════════════════════════════════════
