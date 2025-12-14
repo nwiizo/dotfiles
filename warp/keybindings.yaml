@@ -1,3 +1,80 @@
+# Warp Keybindings - Developer Productivity Setup
+# Last updated: 2024-12
+# Reference: https://docs.warp.dev/getting-started/keyboard-shortcuts
 ---
+
+# =============================================================================
+# Pane Management (tmux-like operations)
+# =============================================================================
+# Split panes
+"pane_group:add_right": cmd-d
+"pane_group:add_down": cmd-shift-d
 "pane_group:add_left": shift-cmd-|
 "pane_group:add_up": shift-cmd-_
+
+# Navigate between panes (vim-style with Ctrl)
+"pane_group:navigate_left": ctrl-h
+"pane_group:navigate_down": ctrl-j
+"pane_group:navigate_up": ctrl-k
+"pane_group:navigate_right": ctrl-l
+
+# Close pane
+"pane_group:close_pane": cmd-w
+
+# Zoom/maximize current pane
+"pane_group:toggle_maximize_pane": cmd-shift-return
+
+# =============================================================================
+# Block Operations (Warp's unique feature)
+# =============================================================================
+# Navigate blocks
+"terminal:select_block_above": cmd-up
+"terminal:select_block_below": cmd-down
+
+# Copy block output
+"terminal:copy_block_output": cmd-shift-c
+
+# Clear all blocks
+"terminal:clear_blocks": cmd-k
+
+# Bookmark block for later reference
+"terminal:bookmark_block": cmd-shift-b
+
+# =============================================================================
+# Terminal Navigation
+# =============================================================================
+# Quick access to AI
+"terminal:open_natural_language_command": ctrl-`
+
+# Command search (history)
+"terminal:open_command_search": ctrl-r
+
+# Warp Drive (saved commands)
+"terminal:open_warp_drive": cmd-\
+
+# Command palette
+"workspace:toggle_command_palette": cmd-shift-p
+
+# =============================================================================
+# Tab Management
+# =============================================================================
+"workspace:new_tab": cmd-t
+"workspace:close_tab": cmd-shift-w
+"workspace:next_tab": cmd-shift-]
+"workspace:previous_tab": cmd-shift-[
+
+# =============================================================================
+# Editor (Input)
+# =============================================================================
+# Clear input line
+"editor:clear_line": ctrl-u
+
+# Delete word backward
+"editor:delete_word_left": ctrl-w
+
+# Move cursor
+"editor:move_to_line_start": ctrl-a
+"editor:move_to_line_end": ctrl-e
+
+# Accept autosuggestion
+"editor:accept_autosuggestion": ctrl-f
