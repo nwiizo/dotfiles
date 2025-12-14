@@ -1,118 +1,95 @@
+# Starship Configuration - Fixed version without errors
+
 format = """
-[](fg:#9A348E)\
+$username\
+$hostname\
 $directory\
-[](fg:#DA627D bg:#9A348E)\
 $git_branch\
 $git_status\
-[](fg:#FCA17D bg:#DA627D)\
-$kubernetes\
-[](fg:#86BBD8 bg:#FCA17D)\
-$aws\
-[](fg:#33658A bg:#86BBD8)\
-$docker_context\
-[](fg:#06969A bg:#33658A)\
 $golang\
-[](fg:#1B9F62 bg:#06969A)\
-$python\
-[](fg:#33658A bg:#1B9F62)\
-$nodejs\
-[](fg:#86BBD8 bg:#33658A)\
 $rust\
-[](fg:#06969A bg:#86BBD8)\
+$python\
+$nodejs\
 $terraform\
-[](fg:#33658A bg:#06969A)\
-$gcloud\
-[](fg:#86BBD8 bg:#33658A)\
-$time\
-[ ](fg:#86BBD8)\
+$docker_context\
+$aws\
+$kubernetes\
+$cmd_duration\
 $line_break\
 $character"""
 
-[directory]
-style = "fg:#E4E4E4 bg:#9A348E"
-format = '[ $path ]($style)'
-truncation_length = 3
-truncation_symbol = "…/"
+# Basic prompt settings
+add_newline = true
+scan_timeout = 10
+command_timeout = 500
 
+# Directory
+[directory]
+truncation_length = 3
+truncate_to_repo = true
+style = "cyan bold"
+
+# Character
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"
+
+# Git branch
 [git_branch]
 symbol = " "
-style = "fg:#E4E4E4 bg:#DA627D"
-format = '[ $symbol$branch ]($style)'
+style = "bold purple"
 
+# Git status - Fixed to avoid parsing errors
 [git_status]
-style = "fg:#E4E4E4 bg:#DA627D"
-format = '[$all_status$ahead_behind ]($style)'
-conflicted = "≠"
-ahead = "⇡${count}"
-behind = "⇣${count}"
+format = "([$conflicted$stashed$deleted$renamed$modified$staged$untracked$ahead_behind]($style) )"
+style = "bold red"
+stashed = "📦"
+ahead = "⇡"
+behind = "⇣"
+untracked = "?"
+modified = "!"
+staged = "+"
+renamed = "»"
+deleted = "✘"
+conflicted = "="
 diverged = "⇕"
-untracked = "±${count}"
-stashed = "※"
-modified = "!${count}"
-staged = "+${count}"
-renamed = "»${count}"
-deleted = "×${count}"
 
-[kubernetes]
-symbol = "☸ "
-style = "fg:#E4E4E4 bg:#FCA17D"
-format = '[ $symbol$context(\($namespace\)) ]($style)'
-disabled = false
+# Command duration
+[cmd_duration]
+min_time = 2_000
+format = "took [$duration](bold yellow)"
 
-[aws]
-symbol = "☁ "
-style = "fg:#E4E4E4 bg:#86BBD8"
-format = '[ $symbol($profile)(\($region\)) ]($style)'
-disabled = false
-
-[docker_context]
-symbol = "🐋 "
-style = "fg:#E4E4E4 bg:#33658A"
-format = '[ $symbol$context ]($style)'
-
+# Languages
 [golang]
-symbol = "🐹 "
-style = "fg:#E4E4E4 bg:#06969A"
-format = '[ $symbol($version) ]($style)'
-
-[python]
-symbol = "🐍 "
-style = "fg:#E4E4E4 bg:#1B9F62"
-format = '[ $symbol($version) ]($style)'
-detect_extensions = ["py"]
-python_binary = ["python", "python3"]
-
-[nodejs]
-symbol = "⬢ "
-style = "fg:#E4E4E4 bg:#33658A"
-format = '[ $symbol($version) ]($style)'
-detect_extensions = ["js", "ts", "tsx"]
-detect_files = ["package.json", "tsconfig.json"]
+symbol = " "
+format = "via [$symbol($version )]($style)"
 
 [rust]
-symbol = "⚙ "
-style = "fg:#E4E4E4 bg:#86BBD8"
-format = '[ $symbol($version) ]($style)'
-detect_extensions = ["rs"]
-detect_files = ["Cargo.toml", "Cargo.lock"]
+symbol = " "
+format = "via [$symbol($version )]($style)"
+
+[python]
+symbol = " "
+format = 'via [$symbol($version )(\($virtualenv\) )]($style)'
+
+[nodejs]
+symbol = " "
+format = "via [$symbol($version )]($style)"
+
+# Cloud
+[aws]
+format = 'on [$symbol$profile(\($region\))]($style) '
+symbol = "☁️ "
+
+[kubernetes]
+format = 'on [$symbol$context( \($namespace\))]($style) '
+symbol = "☸ "
+disabled = false
 
 [terraform]
-symbol = "🏗 "
-style = "fg:#E4E4E4 bg:#06969A"
-format = '[ $symbol$workspace ]($style)'
+format = 'via [$symbol$workspace]($style) '
+symbol = "💠 "
 
-[gcloud]
-symbol = "🌐 "
-style = "fg:#E4E4E4 bg:#33658A"
-format = '[ $symbol$account(@$domain)(\($project\)) ]($style)'
-
-[time]
-disabled = false
-time_format = "%R"
-style = "fg:#E4E4E4 bg:#86BBD8"
-format = '[ $time ]($style)'
-
-[character]
-success_symbol = "❯"
-error_symbol = "❯"
-vimcmd_symbol = "❮"
+[docker_context]
+format = 'via [$symbol$context]($style) '
+symbol = "🐋 "

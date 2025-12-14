@@ -1,38 +1,15 @@
-# Fish Shell Plugins - Managed by Fisher
-# Last updated: 2025-12-08
-
-# Plugin Manager
-jorgebucaran/fisher
-
-# FZF Integration
-jethrokuan/fzf
-
-# ghq Integration
+/Users/nwiizo/.config/fish/fishfile
+oh-my-fish/theme-bobthefish
 decors/fish-ghq
-
-# Auto-pair brackets/quotes
-jorgebucaran/autopair.fish
-
-# Remove failed commands from history
-andreiborisov/sponge
-
-# SSH Agent
-danhper/fish-ssh-agent
-
-# Bash compatibility (for sourcing bash scripts)
-edc/bass
-
-# Expand !! and !$ like bash
-nickeb96/puffer-fish
-
-# Auto-pair (alternative)
-laughedelic/pisces
-
-# Fast directory navigation shortcuts
-danhper/fish-fastdir
-
-# Notification when long command finishes
-franciscolourenco/done
-
-# Spark line charts
+acomagu/fish-async-prompt
 jorgebucaran/spark.fish
+andreiborisov/sponge
+oh-my-fish/plugin-peco
+jethrokuan/fzf
+danhper/fish-ssh-agent
+edc/bass
+nickeb96/puffer-fish
+laughedelic/pisces
+danhper/fish-fastdir
+jorgebucaran/autopair.fish
+franciscolourenco/done
