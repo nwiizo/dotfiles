@@ -15,14 +15,16 @@ dotfiles/
 ├── warp/           # Warpターミナル設定
 ├── starship/       # Starshipプロンプト設定
 ├── git/            # Git関連スクリプト
-├── bash/           # Bash設定
-├── zsh/            # Zsh設定
-├── vim/            # Vim設定（レガシー）
-├── lvim/           # LunarVim設定
-├── nvchad/         # NvChad設定
 ├── ssh/            # SSH設定テンプレート
-├── tmux/           # tmux設定（レガシー）
-└── dockerfile/     # Dockerfileテンプレート
+├── dockerfile/     # Dockerfileテンプレート
+│
+│   # レガシー（現在未使用）
+├── bash/           # Bash設定（レガシー → Fish）
+├── zsh/            # Zsh設定（レガシー → Fish）
+├── vim/            # Vim設定（レガシー → Neovim）
+├── lvim/           # LunarVim設定（レガシー → NvChad）
+├── nvchad/         # NvChad設定（参照用）
+└── tmux/           # tmux設定（レガシー → Warp）
 ```
 
 ## 主要コンポーネント
