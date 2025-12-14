@@ -12,8 +12,8 @@ nwiizoの開発環境設定ファイル集。macOS向けに最適化されたモ
 dotfiles/
 ├── fish/           # Fish shell設定（メインシェル）
 ├── nvim/           # Neovim設定（メインエディタ）
+├── warp/           # Warpターミナル設定
 ├── starship/       # Starshipプロンプト設定
-├── tmux/           # tmux設定
 ├── git/            # Git関連スクリプト
 ├── bash/           # Bash設定
 ├── zsh/            # Zsh設定
@@ -21,6 +21,7 @@ dotfiles/
 ├── lvim/           # LunarVim設定
 ├── nvchad/         # NvChad設定
 ├── ssh/            # SSH設定テンプレート
+├── tmux/           # tmux設定（レガシー）
 └── dockerfile/     # Dockerfileテンプレート
 ```
 
@@ -48,9 +49,12 @@ dotfiles/
 
 クロスシェル対応のプロンプト。Git状態、言語バージョン、クラウド環境を表示。
 
-### tmux (`tmux/`)
+### Warp Terminal (`warp/`)
 
-ターミナルマルチプレクサ設定。セッション永続化対応。
+[Warp](https://www.warp.dev/)を使用。AI機能、ブロックベースの出力、セッション管理などtmux相当の機能を内蔵。
+
+- **keybindings.yaml**: カスタムキーバインド（ペイン分割など）
+- **themes/**: カスタムテーマ
 
 ## インストール
 
@@ -64,7 +68,7 @@ dotfiles/
 
 ```bash
 # Homebrew経由で必要なツールをインストール
-brew install fish neovim starship tmux
+brew install fish neovim starship
 brew install eza bat ripgrep fd fzf zoxide ghq
 
 # Fisherプラグインマネージャ
@@ -86,8 +90,9 @@ ln -sf ~/ghq/github.com/nwiizo/dotfiles/nvim ~/.config/nvim
 # Starship
 ln -sf ~/ghq/github.com/nwiizo/dotfiles/starship/starship.toml ~/.config/starship.toml
 
-# tmux
-ln -sf ~/ghq/github.com/nwiizo/dotfiles/tmux/tmux.conf ~/.tmux.conf
+# Warp
+ln -sf ~/ghq/github.com/nwiizo/dotfiles/warp/keybindings.yaml ~/.warp/keybindings.yaml
+ln -sf ~/ghq/github.com/nwiizo/dotfiles/warp/themes ~/.warp/themes
 ```
 
 ## 主要なキーバインド
@@ -133,8 +138,8 @@ kgp  = kubectl get pods
 |-------------|-------------|------|
 | `fish/` | `config.fish` | 13セクション構成のFish設定 |
 | `nvim/` | `init.lua`, `lua/plugins/` | lazy.nvimベースのNeovim設定 |
+| `warp/` | `keybindings.yaml`, `themes/` | Warpターミナル設定 |
 | `starship/` | `starship.toml` | プロンプトテーマ設定 |
-| `tmux/` | `tmux.conf` | tmux設定とチートシート |
 | `git/` | `power_pull.sh` | Git便利スクリプト |
 
 ## Author
