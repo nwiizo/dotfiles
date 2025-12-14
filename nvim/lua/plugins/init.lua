@@ -1,4 +1,207 @@
 return {
+  -- ═══════════════════════════════════════════════════════════════════════════
+  -- 2025 BEST PRACTICES - Core Navigation & Search
+  -- ═══════════════════════════════════════════════════════════════════════════
+
+  -- Telescope: Fuzzy finder (2025 essential)
+  -- Reference: https://dotfyle.com/neovim/plugins/top
+  {
+    "nvim-telescope/telescope.nvim",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
+      "nvim-telescope/telescope-ui-select.nvim",
+    },
+    cmd = "Telescope",
+    keys = {
+      { "<leader>ff", "<cmd>Telescope find_files<cr>", desc = "Find Files" },
+      { "<leader>fg", "<cmd>Telescope live_grep<cr>", desc = "Live Grep" },
+      { "<leader>fb", "<cmd>Telescope buffers<cr>", desc = "Buffers" },
+      { "<leader>fh", "<cmd>Telescope help_tags<cr>", desc = "Help Tags" },
+      { "<leader>fr", "<cmd>Telescope oldfiles<cr>", desc = "Recent Files" },
+      { "<leader>fc", "<cmd>Telescope git_commits<cr>", desc = "Git Commits" },
+      { "<leader>fs", "<cmd>Telescope git_status<cr>", desc = "Git Status" },
+      { "<leader>fd", "<cmd>Telescope diagnostics<cr>", desc = "Diagnostics" },
+      { "<leader>fw", "<cmd>Telescope grep_string<cr>", desc = "Grep Word" },
+      { "<leader><leader>", "<cmd>Telescope buffers<cr>", desc = "Buffers" },
+      { "<C-p>", "<cmd>Telescope find_files<cr>", desc = "Find Files" },
+    },
+    config = function()
+      local telescope = require "telescope"
+      local actions = require "telescope.actions"
+      telescope.setup {
+        defaults = {
+          prompt_prefix = "   ",
+          selection_caret = " ",
+          sorting_strategy = "ascending",
+          layout_strategy = "horizontal",
+          layout_config = {
+            horizontal = { prompt_position = "top", preview_width = 0.55 },
+            width = 0.87,
+            height = 0.80,
+          },
+          mappings = {
+            i = {
+              ["<C-j>"] = actions.move_selection_next,
+              ["<C-k>"] = actions.move_selection_previous,
+              ["<C-q>"] = actions.send_selected_to_qflist + actions.open_qflist,
+              ["<Esc>"] = actions.close,
+            },
+          },
+          file_ignore_patterns = { "node_modules", ".git/", "target/", "dist/", "build/" },
+        },
+        pickers = {
+          find_files = { hidden = true },
+          live_grep = { additional_args = function() return { "--hidden" } end },
+        },
+        extensions = {
+          fzf = { fuzzy = true, override_generic_sorter = true, override_file_sorter = true, case_mode = "smart_case" },
+          ["ui-select"] = { require("telescope.themes").get_dropdown() },
+        },
+      }
+      telescope.load_extension "fzf"
+      telescope.load_extension "ui-select"
+    end,
+  },
+
+  -- oil.nvim: Modern file manager (2025 best - edit filesystem like buffer)
+  -- Reference: https://github.com/stevearc/oil.nvim
+  {
+    "stevearc/oil.nvim",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    lazy = false,
+    keys = {
+      { "-", "<cmd>Oil<cr>", desc = "Open parent directory" },
+      { "<leader>e", "<cmd>Oil<cr>", desc = "File Explorer (Oil)" },
+    },
+    config = function()
+      require("oil").setup {
+        default_file_explorer = true,
+        columns = { "icon", "permissions", "size", "mtime" },
+        delete_to_trash = true,
+        skip_confirm_for_simple_edits = true,
+        view_options = { show_hidden = true, natural_order = true },
+        float = { padding = 2, max_width = 120, max_height = 40, border = "rounded" },
+        keymaps = {
+          ["g?"] = "actions.show_help",
+          ["<CR>"] = "actions.select",
+          ["<C-v>"] = "actions.select_vsplit",
+          ["<C-s>"] = "actions.select_split",
+          ["<C-t>"] = "actions.select_tab",
+          ["<C-p>"] = "actions.preview",
+          ["<C-c>"] = "actions.close",
+          ["<C-r>"] = "actions.refresh",
+          ["-"] = "actions.parent",
+          ["_"] = "actions.open_cwd",
+          ["gs"] = "actions.change_sort",
+          ["gx"] = "actions.open_external",
+          ["g."] = "actions.toggle_hidden",
+        },
+      }
+    end,
+  },
+
+  -- flash.nvim: Fast navigation (2025 best - hop.nvim is unmaintained)
+  -- Reference: https://github.com/folke/flash.nvim
+  {
+    "folke/flash.nvim",
+    event = "VeryLazy",
+    keys = {
+      { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
+      { "S", mode = { "n", "x", "o" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
+      { "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
+      { "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
+      { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
+    },
+    opts = {
+      labels = "asdfghjklqwertyuiopzxcvbnm",
+      search = { multi_window = true, forward = true, wrap = true },
+      jump = { jumplist = true, pos = "start", autojump = false },
+      label = { uppercase = false, rainbow = { enabled = true, shade = 5 } },
+      modes = { char = { jump_labels = true }, search = { enabled = true } },
+    },
+  },
+
+  -- diffview.nvim: Git diff visualization (2025 essential)
+  -- Reference: https://github.com/sindrets/diffview.nvim
+  {
+    "sindrets/diffview.nvim",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    cmd = { "DiffviewOpen", "DiffviewClose", "DiffviewFileHistory" },
+    keys = {
+      { "<leader>gd", "<cmd>DiffviewOpen<cr>", desc = "Git Diff" },
+      { "<leader>gh", "<cmd>DiffviewFileHistory %<cr>", desc = "File History" },
+      { "<leader>gH", "<cmd>DiffviewFileHistory<cr>", desc = "Branch History" },
+      { "<leader>gq", "<cmd>DiffviewClose<cr>", desc = "Close Diffview" },
+    },
+    opts = {
+      enhanced_diff_hl = true,
+      use_icons = true,
+      view = {
+        default = { layout = "diff2_horizontal" },
+        merge_tool = { layout = "diff3_horizontal", disable_diagnostics = true },
+        file_history = { layout = "diff2_horizontal" },
+      },
+      file_panel = {
+        listing_style = "tree",
+        tree_options = { flatten_dirs = true, folder_statuses = "only_folded" },
+        win_config = { position = "left", width = 35 },
+      },
+    },
+  },
+
+  -- trouble.nvim v3: Better diagnostics UI (complete rewrite in 2024)
+  -- Reference: https://github.com/folke/trouble.nvim
+  {
+    "folke/trouble.nvim",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    cmd = "Trouble",
+    keys = {
+      { "<leader>xx", "<cmd>Trouble diagnostics toggle<cr>", desc = "Diagnostics (Trouble)" },
+      { "<leader>xX", "<cmd>Trouble diagnostics toggle filter.buf=0<cr>", desc = "Buffer Diagnostics" },
+      { "<leader>xs", "<cmd>Trouble symbols toggle focus=false<cr>", desc = "Symbols (Trouble)" },
+      { "<leader>xl", "<cmd>Trouble lsp toggle focus=false win.position=right<cr>", desc = "LSP Definitions" },
+      { "<leader>xL", "<cmd>Trouble loclist toggle<cr>", desc = "Location List" },
+      { "<leader>xQ", "<cmd>Trouble qflist toggle<cr>", desc = "Quickfix List" },
+    },
+    opts = {
+      auto_close = true,
+      auto_preview = true,
+      focus = true,
+      use_diagnostic_signs = true,
+    },
+  },
+
+  -- todo-comments.nvim: Highlight TODO/FIXME/NOTE
+  -- Reference: https://github.com/folke/todo-comments.nvim
+  {
+    "folke/todo-comments.nvim",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    event = { "BufReadPost", "BufNewFile" },
+    keys = {
+      { "<leader>xt", "<cmd>Trouble todo toggle<cr>", desc = "Todo (Trouble)" },
+      { "<leader>xT", "<cmd>TodoTelescope<cr>", desc = "Todo (Telescope)" },
+      { "]t", function() require("todo-comments").jump_next() end, desc = "Next Todo" },
+      { "[t", function() require("todo-comments").jump_prev() end, desc = "Prev Todo" },
+    },
+    opts = {
+      signs = true,
+      keywords = {
+        FIX = { icon = " ", color = "error", alt = { "FIXME", "BUG", "FIXIT", "ISSUE" } },
+        TODO = { icon = " ", color = "info" },
+        HACK = { icon = " ", color = "warning" },
+        WARN = { icon = " ", color = "warning", alt = { "WARNING", "XXX" } },
+        PERF = { icon = " ", alt = { "OPTIM", "PERFORMANCE", "OPTIMIZE" } },
+        NOTE = { icon = " ", color = "hint", alt = { "INFO" } },
+        TEST = { icon = "⏲ ", color = "test", alt = { "TESTING", "PASSED", "FAILED" } },
+      },
+      highlight = { multiline = true, keyword = "wide", after = "fg", comments_only = true },
+    },
+  },
+
+  -- ═══════════════════════════════════════════════════════════════════════════
+  -- Formatting & LSP
+  -- ═══════════════════════════════════════════════════════════════════════════
   {
     "stevearc/conform.nvim",
     event = "BufWritePre",
@@ -39,47 +242,43 @@ return {
     "williamboman/mason.nvim",
     opts = {
       ensure_installed = {
-        -- Lua language server
+        -- Lua
         "lua-language-server",
-        -- Lua formatter
         "stylua",
-        -- HTML language server
+        -- Web Development (2025)
         "html-lsp",
-        -- CSS language server
         "css-lsp",
-        -- Prettier formatter
         "prettier",
-        -- TypeScript language server
         "typescript-language-server",
-        -- Deno language server
+        "eslint-lsp", -- ESLint LSP
         "deno",
-        -- Emmet language server
         "emmet-ls",
-        -- JSON language server
         "json-lsp",
-        -- Shell script formatter
+        -- YAML (2025)
+        "yaml-language-server",
+        -- Shell
         "shfmt",
-        -- Shell script linter
         "shellcheck",
-        -- Go imports formatter
+        "bash-language-server",
+        -- Go
         "goimports",
-        -- Go language server
         "gopls",
-        -- Terraform language server
-        "terraform-ls",
-        -- Python formatter
+        "golangci-lint-langserver",
+        -- Python
         "black",
-        -- Python import sorter
         "isort",
-        -- TypeScript
-        "denols",
-        -- Clippyは自動インストールできないため、手動でインストールが必要です
-        -- https://rust-lang.github.io/rust-clippy/master/index.html
-        -- `rustup component add clippy`
-        -- Rust analyzer
+        "python-lsp-server",
+        -- Terraform/IaC
+        "terraform-ls",
+        -- Rust (clippy: rustup component add clippy)
         "rust-analyzer",
       },
     },
+  },
+  -- SchemaStore for JSON/YAML schemas (2025 essential)
+  {
+    "b0o/schemastore.nvim",
+    lazy = true,
   },
   -- tree
   {

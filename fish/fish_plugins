@@ -1,15 +1,23 @@
-/Users/nwiizo/.config/fish/fishfile
-oh-my-fish/theme-bobthefish
+# Fish Shell Plugins (Fisher)
+# Updated: 2025-12-14
+# Install: curl -sL https://git.io/fisher | source && fisher update
+
+# Core (2025 essential)
+jorgebucaran/fisher
+PatrickF1/fzf.fish
+jethrokuan/z
+
+# Git & Development
+jhillyerd/plugin-git
 decors/fish-ghq
-acomagu/fish-async-prompt
-jorgebucaran/spark.fish
-andreiborisov/sponge
-oh-my-fish/plugin-peco
-jethrokuan/fzf
-danhper/fish-ssh-agent
-edc/bass
+
+# Shell Enhancement
+jorgebucaran/autopair.fish
+meaningful-ooo/sponge
+franciscolourenco/done
 nickeb96/puffer-fish
 laughedelic/pisces
-danhper/fish-fastdir
-jorgebucaran/autopair.fish
-franciscolourenco/done
+
+# Utilities
+danhper/fish-ssh-agent
+edc/bass

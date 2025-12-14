@@ -354,6 +354,16 @@ end
 # 11. TOOL INTEGRATIONS (local.fishより前に読み込む)
 # ═══════════════════════════════════════════════════════════════════════════
 
+# direnv (2025 essential - project-specific environment)
+# Reference: https://direnv.net/docs/hook.html
+if type -q direnv
+    # eval_on_arrow: trigger direnv at prompt and on every directory change (default)
+    # eval_after_arrow: trigger only after directory changes before executing command
+    # disable_arrow: trigger direnv at prompt only
+    set -g direnv_fish_mode eval_on_arrow
+    direnv hook fish | source
+end
+
 # mise (asdf の後継)
 if type -q mise
     if test (pwd) = $HOME; or test -f .mise.toml; or test -f .tool-versions
