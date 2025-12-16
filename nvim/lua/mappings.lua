@@ -2,76 +2,112 @@ require "nvchad.mappings"
 
 local map = vim.keymap.set
 
--- General
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Basic Operations
+-- ═══════════════════════════════════════════════════════════════════════════
+
 map("n", ";", ":", { desc = "CMD enter command mode" })
 map("i", "jk", "<ESC>", { desc = "Exit insert mode" })
-map("n", "<Esc>", "<cmd>noh<CR>", { desc = "Clear search highlights" })
+map({ "n", "i", "v" }, "<C-s>", "<cmd>w<cr>", { desc = "Save file" })
+map("n", "<Esc>", "<cmd>nohlsearch<cr>", { desc = "Clear search highlight" })
 
--- Save
-map({ "n", "i", "v" }, "<C-s>", "<cmd>w<CR>", { desc = "Save file" })
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Navigation
+-- ═══════════════════════════════════════════════════════════════════════════
 
--- Better navigation
-map("n", "<C-d>", "<C-d>zz", { desc = "Scroll down and center" })
-map("n", "<C-u>", "<C-u>zz", { desc = "Scroll up and center" })
-map("n", "n", "nzzzv", { desc = "Next search result centered" })
-map("n", "N", "Nzzzv", { desc = "Previous search result centered" })
+-- Centered scrolling
+map("n", "<C-d>", "<C-d>zz", { desc = "Scroll down (centered)" })
+map("n", "<C-u>", "<C-u>zz", { desc = "Scroll up (centered)" })
+map("n", "n", "nzzzv", { desc = "Next search result (centered)" })
+map("n", "N", "Nzzzv", { desc = "Prev search result (centered)" })
 
 -- Window navigation
-map("n", "<C-h>", "<C-w>h", { desc = "Move to left window" })
-map("n", "<C-j>", "<C-w>j", { desc = "Move to bottom window" })
-map("n", "<C-k>", "<C-w>k", { desc = "Move to top window" })
-map("n", "<C-l>", "<C-w>l", { desc = "Move to right window" })
-
--- Resize windows
-map("n", "<C-Up>", "<cmd>resize +2<CR>", { desc = "Increase window height" })
-map("n", "<C-Down>", "<cmd>resize -2<CR>", { desc = "Decrease window height" })
-map("n", "<C-Left>", "<cmd>vertical resize -2<CR>", { desc = "Decrease window width" })
-map("n", "<C-Right>", "<cmd>vertical resize +2<CR>", { desc = "Increase window width" })
+map("n", "<C-h>", "<C-w>h", { desc = "Go to left window" })
+map("n", "<C-j>", "<C-w>j", { desc = "Go to lower window" })
+map("n", "<C-k>", "<C-w>k", { desc = "Go to upper window" })
+map("n", "<C-l>", "<C-w>l", { desc = "Go to right window" })
 
 -- Buffer navigation
-map("n", "<S-h>", "<cmd>bprevious<CR>", { desc = "Previous buffer" })
-map("n", "<S-l>", "<cmd>bnext<CR>", { desc = "Next buffer" })
-map("n", "<leader>x", "<cmd>bd<CR>", { desc = "Close buffer" })
+map("n", "<S-h>", "<cmd>bprevious<cr>", { desc = "Prev buffer" })
+map("n", "<S-l>", "<cmd>bnext<cr>", { desc = "Next buffer" })
+map("n", "<leader>x", "<cmd>bd<cr>", { desc = "Close buffer" })
 
--- Move lines
-map("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move line down" })
-map("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move line up" })
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Visual Mode Improvements
+-- ═══════════════════════════════════════════════════════════════════════════
+
+-- Move selected lines
+map("v", "J", ":m '>+1<cr>gv=gv", { desc = "Move lines down" })
+map("v", "K", ":m '<-2<cr>gv=gv", { desc = "Move lines up" })
 
 -- Better paste (don't overwrite register)
-map("x", "<leader>p", '"_dP', { desc = "Paste without yanking" })
+map("x", "<leader>p", [["_dP]], { desc = "Paste without overwrite" })
 
 -- Delete without yanking
-map({ "n", "v" }, "<leader>d", '"_d', { desc = "Delete without yanking" })
+map({ "n", "v" }, "<leader>d", [["_d]], { desc = "Delete without yank" })
 
--- Quick fix list
-map("n", "<leader>q", "<cmd>copen<CR>", { desc = "Open quickfix list" })
-map("n", "[q", "<cmd>cprev<CR>", { desc = "Previous quickfix item" })
-map("n", "]q", "<cmd>cnext<CR>", { desc = "Next quickfix item" })
+-- ═══════════════════════════════════════════════════════════════════════════
+-- LSP Keymaps (enhanced)
+-- ═══════════════════════════════════════════════════════════════════════════
 
--- Diagnostic
-map("n", "[d", vim.diagnostic.goto_prev, { desc = "Previous diagnostic" })
-map("n", "]d", vim.diagnostic.goto_next, { desc = "Next diagnostic" })
-map("n", "<leader>ld", vim.diagnostic.open_float, { desc = "Show diagnostic" })
-
--- Terminal
-map("t", "<C-x>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
-
--- Format
-map("n", "<leader>fm", function()
-  require("conform").format { lsp_fallback = true }
-end, { desc = "Format file" })
-
--- LSP (additional)
 map("n", "gD", vim.lsp.buf.declaration, { desc = "Go to declaration" })
 map("n", "gd", vim.lsp.buf.definition, { desc = "Go to definition" })
 map("n", "gi", vim.lsp.buf.implementation, { desc = "Go to implementation" })
 map("n", "gr", vim.lsp.buf.references, { desc = "Show references" })
-map("n", "K", vim.lsp.buf.hover, { desc = "Show hover info" })
+map("n", "K", vim.lsp.buf.hover, { desc = "Hover info" })
 map("n", "<leader>rn", vim.lsp.buf.rename, { desc = "Rename symbol" })
-map("n", "<leader>ca", vim.lsp.buf.code_action, { desc = "Code action" })
+map({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, { desc = "Code action" })
+map("n", "<leader>fm", function() require("conform").format { async = true } end, { desc = "Format buffer" })
+map("n", "<leader>lk", vim.lsp.buf.signature_help, { desc = "Signature help" })
+map("n", "<leader>lD", vim.lsp.buf.type_definition, { desc = "Type definition" })
+map("n", "<leader>lwa", vim.lsp.buf.add_workspace_folder, { desc = "Add workspace folder" })
+map("n", "<leader>lwr", vim.lsp.buf.remove_workspace_folder, { desc = "Remove workspace folder" })
+map("n", "<leader>lwl", function()
+  print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+end, { desc = "List workspace folders" })
 
--- Git (fugitive style with gitsigns)
-map("n", "<leader>gp", "<cmd>Gitsigns preview_hunk<CR>", { desc = "Preview hunk" })
-map("n", "<leader>gb", "<cmd>Gitsigns blame_line<CR>", { desc = "Blame line" })
-map("n", "]c", "<cmd>Gitsigns next_hunk<CR>", { desc = "Next hunk" })
-map("n", "[c", "<cmd>Gitsigns prev_hunk<CR>", { desc = "Previous hunk" })
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Diagnostics
+-- ═══════════════════════════════════════════════════════════════════════════
+
+map("n", "[d", vim.diagnostic.goto_prev, { desc = "Prev diagnostic" })
+map("n", "]d", vim.diagnostic.goto_next, { desc = "Next diagnostic" })
+map("n", "<leader>ld", vim.diagnostic.open_float, { desc = "Line diagnostics" })
+map("n", "<leader>lq", vim.diagnostic.setloclist, { desc = "Diagnostics to loclist" })
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Terminal
+-- ═══════════════════════════════════════════════════════════════════════════
+
+map("t", "<C-x>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
+map("t", "<C-h>", "<C-\\><C-n><C-w>h", { desc = "Go to left window" })
+map("t", "<C-j>", "<C-\\><C-n><C-w>j", { desc = "Go to lower window" })
+map("t", "<C-k>", "<C-\\><C-n><C-w>k", { desc = "Go to upper window" })
+map("t", "<C-l>", "<C-\\><C-n><C-w>l", { desc = "Go to right window" })
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Quick Actions (2025 productivity)
+-- ═══════════════════════════════════════════════════════════════════════════
+
+-- Yank to system clipboard
+map({ "n", "v" }, "<leader>y", [["+y]], { desc = "Yank to clipboard" })
+map("n", "<leader>Y", [["+Y]], { desc = "Yank line to clipboard" })
+
+-- Quick fix list navigation
+map("n", "<leader>j", "<cmd>cnext<cr>zz", { desc = "Next quickfix" })
+map("n", "<leader>k", "<cmd>cprev<cr>zz", { desc = "Prev quickfix" })
+
+-- Search and replace word under cursor
+map("n", "<leader>rr", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]], { desc = "Replace word under cursor" })
+
+-- Make file executable
+map("n", "<leader>cx", "<cmd>!chmod +x %<cr>", { silent = true, desc = "Make file executable" })
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Splits
+-- ═══════════════════════════════════════════════════════════════════════════
+
+map("n", "<leader>|", "<cmd>vsplit<cr>", { desc = "Vertical split" })
+map("n", "<leader>-", "<cmd>split<cr>", { desc = "Horizontal split" })
+map("n", "<leader>w=", "<C-w>=", { desc = "Equal split sizes" })
+map("n", "<leader>wm", "<cmd>only<cr>", { desc = "Maximize window" })

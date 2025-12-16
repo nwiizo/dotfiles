@@ -3,44 +3,70 @@ require "nvchad.options"
 local o = vim.o
 local opt = vim.opt
 
--- UI
-o.cursorlineopt = "both" -- Enable cursorline
-o.relativenumber = true -- Relative line numbers
-o.scrolloff = 8 -- Keep 8 lines above/below cursor
-o.sidescrolloff = 8 -- Keep 8 columns left/right of cursor
-o.signcolumn = "yes" -- Always show sign column
+-- 2025 Minimal UI Settings
+-- statusline-less workflow for maximum editing space
+o.cmdheight = 0 -- No command line (noice.nvim handles it)
+o.laststatus = 0 -- No statusline (incline.nvim handles it)
+o.showmode = false -- No mode text (modes.nvim shows via cursorline color)
 
--- Editing
-o.tabstop = 2 -- Tab width
-o.shiftwidth = 2 -- Indent width
-o.expandtab = true -- Use spaces instead of tabs
-o.smartindent = true -- Smart indentation
-o.wrap = false -- Don't wrap lines
+-- Line numbers (explicit settings to ensure they always appear)
+o.number = true -- Show absolute line number on current line
+o.relativenumber = true -- Show relative line numbers
+opt.number = true -- Redundant but explicit
+opt.relativenumber = true -- Redundant but explicit
+vim.cmd "set nu" -- Force enable line numbers
+vim.cmd "set rnu" -- Force enable relative line numbers
+o.numberwidth = 4 -- Width of number column
+
+-- Scrolling
+o.scrolloff = 8 -- Keep 8 lines visible above/below cursor
+o.sidescrolloff = 8 -- Keep 8 columns visible left/right of cursor
+
+-- Indentation
+o.tabstop = 2
+o.shiftwidth = 2
+o.expandtab = true
+o.smartindent = true
 
 -- Search
-o.ignorecase = true -- Ignore case in search
-o.smartcase = true -- Override ignorecase if search has uppercase
-o.hlsearch = true -- Highlight search results
-o.incsearch = true -- Incremental search
-
--- Performance
-o.updatetime = 250 -- Faster CursorHold
-o.timeoutlen = 300 -- Faster key sequence completion
-
--- Files
-o.undofile = true -- Persistent undo
-o.backup = false -- No backup files
-o.swapfile = false -- No swap files
-
--- Split behavior
-o.splitbelow = true -- Horizontal splits below
-o.splitright = true -- Vertical splits right
+o.ignorecase = true
+o.smartcase = true
+o.hlsearch = true
+o.incsearch = true
 
 -- Clipboard
-o.clipboard = "unnamedplus" -- Use system clipboard
+o.clipboard = "unnamedplus" -- System clipboard integration
 
--- Completion
-o.completeopt = "menu,menuone,noselect"
+-- Undo
+o.undofile = true -- Persistent undo
+o.undolevels = 10000
 
--- Spelling (for markdown, git commits)
-opt.spelllang = { "en_us" }
+-- Performance
+o.updatetime = 200 -- Faster completion
+o.timeoutlen = 300 -- Faster key sequence completion
+
+-- UI
+o.termguicolors = true
+o.signcolumn = "yes" -- Always show sign column
+o.cursorline = true -- Highlight current line (for modes.nvim)
+o.cursorlineopt = "both" -- Enable cursorline for modes.nvim
+
+-- Files
+o.swapfile = false -- No swap files
+o.backup = false -- No backup files
+
+-- Splits
+o.splitright = true -- Vertical splits to the right
+o.splitbelow = true -- Horizontal splits below
+
+-- Ensure line numbers are always enabled (autocmd for safety)
+vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter", "WinEnter" }, {
+  callback = function()
+    local exclude_ft = { "NvimTree", "lazy", "mason", "help", "TelescopePrompt", "Avante", "AvanteInput" }
+    if not vim.tbl_contains(exclude_ft, vim.bo.filetype) then
+      vim.wo.number = true
+      vim.wo.relativenumber = true
+    end
+  end,
+  desc = "Ensure line numbers are always shown",
+})
