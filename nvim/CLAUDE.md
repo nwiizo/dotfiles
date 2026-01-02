@@ -153,7 +153,7 @@ This configuration includes **6 AI tools**. Here's when to use each:
 
 ### Diffview
 
-#### Basic Operations
+### Basic Operations
 | Key | Description |
 |-----|-------------|
 | `<leader>gd` | Working tree diff |
@@ -166,7 +166,7 @@ This configuration includes **6 AI tools**. Here's when to use each:
 | `<leader>gq` | Close diffview |
 | `<leader>gt` | Toggle file panel |
 
-#### Inside Diffview
+### Inside Diffview
 | Key | Description |
 |-----|-------------|
 | `<tab>` / `<s-tab>` | Next/prev file |
@@ -178,7 +178,7 @@ This configuration includes **6 AI tools**. Here's when to use each:
 | `L` | Open commit log |
 | `g?` | Show help |
 
-#### Conflict Resolution
+### Conflict Resolution
 | Key | Description |
 |-----|-------------|
 | `[x` / `]x` | Prev/next conflict |

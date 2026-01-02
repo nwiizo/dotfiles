@@ -7,9 +7,6 @@ local servers = {
   -- Web Development
   "html",
   "cssls",
-  "ts_ls", -- TypeScript/JavaScript (2025: renamed from tsserver)
-  "eslint", -- ESLint integration
-  "jsonls", -- JSON with schema support
 
   -- Go Development
   "golangci_lint_ls",
@@ -24,7 +21,6 @@ local servers = {
   -- Infrastructure as Code
   "terraform_lsp",
   "terraformls",
-  "yamlls", -- YAML with schema support
 
   -- Rust
   "rust_analyzer",
@@ -83,60 +79,6 @@ local custom_configs = {
         cargo = {
           allFeatures = true,
         },
-      },
-    },
-  },
-
-  -- TypeScript/JavaScript (2025 best practices)
-  ts_ls = {
-    settings = {
-      typescript = {
-        inlayHints = {
-          includeInlayParameterNameHints = "all",
-          includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-          includeInlayFunctionParameterTypeHints = true,
-          includeInlayVariableTypeHints = true,
-          includeInlayPropertyDeclarationTypeHints = true,
-          includeInlayFunctionLikeReturnTypeHints = true,
-          includeInlayEnumMemberValueHints = true,
-        },
-      },
-      javascript = {
-        inlayHints = {
-          includeInlayParameterNameHints = "all",
-          includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-          includeInlayFunctionParameterTypeHints = true,
-          includeInlayVariableTypeHints = true,
-          includeInlayPropertyDeclarationTypeHints = true,
-          includeInlayFunctionLikeReturnTypeHints = true,
-          includeInlayEnumMemberValueHints = true,
-        },
-      },
-    },
-  },
-
-  -- JSON with schema support
-  jsonls = {
-    settings = {
-      json = {
-        schemas = require("schemastore").schemas(),
-        validate = { enable = true },
-      },
-    },
-  },
-
-  -- YAML with schema support
-  yamlls = {
-    settings = {
-      yaml = {
-        schemaStore = {
-          enable = false,
-          url = "",
-        },
-        schemas = require("schemastore").yaml_schemas(),
-        validate = true,
-        hover = true,
-        completion = true,
       },
     },
   },

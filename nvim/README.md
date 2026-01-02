@@ -150,7 +150,7 @@ nvim
 
 ### Git統合
 
-#### LazyGit (Snacks.nvim)
+### LazyGit (Snacks.nvim)
 
 | キー | 説明 |
 |------|------|
@@ -158,7 +158,7 @@ nvim
 | `<leader>gl` | LazyGit Log |
 | `<leader>gf` | ファイル履歴（LazyGit） |
 
-#### Diffview (Git Diff)
+### Diffview (Git Diff)
 
 | キー | 説明 |
 |------|------|
@@ -172,7 +172,7 @@ nvim
 | `<leader>gq` | Diffview閉じる |
 | `<leader>gt` | ファイルパネル切り替え |
 
-#### Diffview内操作
+### Diffview内操作
 
 | キー | 説明 |
 |------|------|
@@ -185,7 +185,7 @@ nvim
 | `L` | コミットログを開く |
 | `g?` | ヘルプ表示 |
 
-#### コンフリクト解決
+### コンフリクト解決
 
 | キー | 説明 |
 |------|------|
@@ -196,7 +196,7 @@ nvim
 | `<leader>ca` | 全て選択 |
 | `dx` | コンフリクト削除 |
 
-#### Gitsigns
+### Gitsigns
 
 | キー | 説明 |
 |------|------|
