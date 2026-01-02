@@ -1,17 +1,17 @@
 # Neovim Configuration
 
-NvChad v2.5ベースのNeovim設定。Rust、Go、TypeScript、Python開発とAI支援コーディングに最適化。
+NvChad v3.0ベースのNeovim設定。Rust、Go、TypeScript、Python開発とAI支援コーディングに最適化。
 
-**2025 Minimal UI**: statusline-less ワークフローで編集領域を最大化。
+**2026 Minimal UI**: statusline-less ワークフローで編集領域を最大化。
 
 ## 概要
 
-- **ベース**: NvChad v2.5
-- **テーマ**: bearded-arc
+- **ベース**: NvChad v3.0
+- **テーマ**: aquarium
 - **要件**: Neovim 0.11+
 - **UI哲学**: 最小限のUI、最大限の編集領域
 
-## 2025 Minimal UI アーキテクチャ
+## 2026 Minimal UI アーキテクチャ
 
 statusline/tabuflineを廃止し、必要な情報のみfloating windowで表示。
 
@@ -50,20 +50,18 @@ statusline/tabuflineを廃止し、必要な情報のみfloating windowで表示
 | プラグイン | 用途 | モデル |
 |-----------|------|--------|
 | GitHub Copilot | コード補完 | - |
-| CopilotChat | AIチャット | claude-opus-4 |
+| CopilotChat | AIチャット | claude-sonnet-4 |
 | avante.nvim | Cursor風IDE機能 | claude-sonnet-4 |
-| Sourcegraph Cody | コードインテリジェンス | - |
-| codecompanion.nvim | AIチャット | Copilot |
-| claude-code.nvim | Claude Code統合 | - |
+| claudecode.nvim | Claude Code統合 | - |
 
 ### 言語サポート
 
 | 言語 | LSP | フォーマッター |
 |------|-----|----------------|
-| Rust | rust-analyzer | rustfmt, clippy |
+| Rust | rust-analyzer | rustfmt |
 | Go | gopls | gofmt, goimports, gofumpt |
-| TypeScript | deno, ts_ls | prettier |
-| Python | pylsp | black, isort |
+| TypeScript | ts_ls, deno | prettier, deno_fmt |
+| Python | pyright | black, isort |
 | Lua | lua_ls | stylua |
 | Terraform | terraform-ls | terraform_fmt |
 | Bash | bashls | shfmt |
@@ -82,9 +80,18 @@ nvim/
     ├── options.lua       # Vimオプション
     ├── configs/
     │   ├── lazy.lua      # lazy.nvim設定
-    │   └── lspconfig.lua # LSPサーバー設定
+    │   ├── lspconfig.lua # LSPサーバー設定
+    │   └── conform.lua   # フォーマッター設定
     └── plugins/
-        └── init.lua      # プラグイン定義
+        ├── init.lua      # プラグインローダー
+        ├── ui.lua        # UI系（incline, modes, noice, notify, vimade, which-key）
+        ├── navigation.lua # ナビゲーション（snacks, telescope, oil, flash, overlook, hbac）
+        ├── git.lua       # Git（gitsigns, diffview）
+        ├── diagnostics.lua # 診断（trouble, todo-comments）
+        ├── lsp.lua       # LSP（conform, lspconfig, mason, treesitter）
+        ├── ai.lua        # AI（copilot, copilot-chat, avante, claudecode）
+        ├── completion.lua # 補完（nvim-cmp）
+        └── lang.lua      # 言語固有（rustaceanvim, crates）
 ```
 
 ## インストール
@@ -150,7 +157,7 @@ nvim
 
 ### Git統合
 
-### LazyGit (Snacks.nvim)
+#### LazyGit (Snacks.nvim)
 
 | キー | 説明 |
 |------|------|
@@ -158,7 +165,7 @@ nvim
 | `<leader>gl` | LazyGit Log |
 | `<leader>gf` | ファイル履歴（LazyGit） |
 
-### Diffview (Git Diff)
+#### Diffview (Git Diff)
 
 | キー | 説明 |
 |------|------|
@@ -172,7 +179,7 @@ nvim
 | `<leader>gq` | Diffview閉じる |
 | `<leader>gt` | ファイルパネル切り替え |
 
-### Diffview内操作
+#### Diffview内操作
 
 | キー | 説明 |
 |------|------|
@@ -185,7 +192,7 @@ nvim
 | `L` | コミットログを開く |
 | `g?` | ヘルプ表示 |
 
-### コンフリクト解決
+#### コンフリクト解決
 
 | キー | 説明 |
 |------|------|
@@ -196,7 +203,7 @@ nvim
 | `<leader>ca` | 全て選択 |
 | `dx` | コンフリクト削除 |
 
-### Gitsigns
+#### Gitsigns
 
 | キー | 説明 |
 |------|------|
@@ -274,11 +281,13 @@ nvim
 | キー | 説明 |
 |------|------|
 | `<leader>aa` | AI質問 (avante) |
-| `<leader>ae` | AIでコード編集 (avante) |
-| `<leader>ar` | AI応答更新 (avante) |
-| `<leader>cc` | CodeCompanion Chat |
-| `<leader>cl` | Claude Codeトグル |
-| `<C-a>` | Cody補完（インサートモード） |
+| `<leader>ax` | AIでコード編集 (avante) |
+| `<leader>ao` | CopilotChat開く |
+| `<leader>ae` | コード説明 |
+| `<leader>af` | コード修正 |
+| `<leader>at` | テスト生成 |
+| `<leader>cc` | Claude Codeトグル |
+| `<leader>cf` | Claude Codeフォーカス |
 
 ### ビジュアルモード
 
@@ -304,7 +313,7 @@ nvim
 
 ## プラグイン一覧
 
-### UI
+### UI (ui.lua)
 
 | プラグイン | 説明 |
 |-----------|------|
@@ -313,40 +322,72 @@ nvim
 | noice.nvim | floating cmdline/messages |
 | nvim-notify | 通知UI |
 | vimade | 非アクティブバッファdim |
+| better-escape.nvim | jk/jjで遅延なしエスケープ |
+| which-key.nvim | キーマップヒント |
+| indent-blankline.nvim | インデントガイド |
 
-### ナビゲーション
+### ナビゲーション (navigation.lua)
 
 | プラグイン | 説明 |
 |-----------|------|
-| Snacks.nvim | smart picker, lazygit, bufdelete |
+| Snacks.nvim | smart picker, lazygit, bufdelete, terminal |
 | telescope.nvim | fuzzy finder |
 | oil.nvim | ファイルマネージャ |
 | flash.nvim | 高速ジャンプ |
 | overlook.nvim | コードピーク |
+| hbac.nvim | 未使用バッファ自動クローズ |
 
-### Git
+### Git (git.lua)
 
 | プラグイン | 説明 |
 |-----------|------|
-| Snacks lazygit | LazyGit統合（nvim-remote対応） |
-| diffview.nvim | Git diff/履歴 |
-| gitsigns.nvim | Git signs |
+| gitsigns.nvim | Git signs, hunk操作 |
+| diffview.nvim | Git diff/履歴, コンフリクト解決 |
 
-### 診断・コード品質
+### 診断 (diagnostics.lua)
 
 | プラグイン | 説明 |
 |-----------|------|
 | trouble.nvim | 診断パネル |
 | todo-comments.nvim | TODO/FIXME/NOTE |
-| conform.nvim | フォーマッター |
 
-### バッファ管理
+### LSP (lsp.lua)
 
 | プラグイン | 説明 |
 |-----------|------|
-| mini.bufremove | バッファ削除 |
-| hbac.nvim | 非使用バッファ自動クローズ |
-| better-escape.nvim | jk/jjで遅延なしエスケープ |
+| nvim-lspconfig | LSP設定 |
+| mason.nvim | LSPインストーラー |
+| conform.nvim | フォーマッター |
+| nvim-treesitter | シンタックスハイライト |
+| schemastore.nvim | JSON/YAMLスキーマ |
+
+### AI (ai.lua)
+
+| プラグイン | 説明 |
+|-----------|------|
+| copilot.lua | GitHub Copilot |
+| copilot-cmp | Copilot補完ソース |
+| CopilotChat.nvim | AIチャット |
+| avante.nvim | Cursor風AI編集 |
+| claudecode.nvim | Claude Code統合 |
+
+### 補完 (completion.lua)
+
+| プラグイン | 説明 |
+|-----------|------|
+| nvim-cmp | 補完エンジン |
+| cmp-nvim-lsp | LSP補完ソース |
+| cmp-buffer | バッファ補完 |
+| cmp-path | パス補完 |
+| LuaSnip | スニペット |
+| lspkind.nvim | 補完アイコン |
+
+### 言語固有 (lang.lua)
+
+| プラグイン | 説明 |
+|-----------|------|
+| rustaceanvim | Rust強化 |
+| crates.nvim | Cargo.toml管理 |
 
 ## メンテナンス
 
@@ -389,7 +430,7 @@ nvim
 
 ## 要件
 
-- Neovim 0.11+ (vim.lsp.config API)
+- Neovim 0.11+
 - Node.js (Copilot, Mason)
 - Rust toolchain (rust-analyzer)
 - Go toolchain (gopls)

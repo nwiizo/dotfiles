@@ -4,38 +4,51 @@ This file provides guidance to Claude Code and AI assistants when working with t
 
 ## Overview
 
-This is a **NvChad v2.5-based Neovim configuration** optimized for:
+This is a **NvChad v3.0-based Neovim configuration** optimized for:
 - Rust, Go, TypeScript, Python development
-- Multiple AI assistant integrations
-- 2025 minimal UI workflow (statusline-less)
+- AI-assisted coding workflow
+- 2026 minimal UI workflow (statusline-less)
 
-**Last Updated:** 2025-12-16
-**Base:** NvChad v2.5 with lazy.nvim
+**Last Updated:** 2026-01
+**Base:** NvChad v3.0 with lazy.nvim
+**Theme:** aquarium
+**Requirements:** Neovim 0.11+
 
 ---
 
 ## Directory Structure
 
 ```
-~/.config/nvim/
-├── init.lua                 # Entry point
-├── lua/
-│   ├── chadrc.lua          # NvChad theme/UI config
-│   ├── options.lua         # Neovim options
-│   ├── mappings.lua        # Custom keymaps
-│   ├── configs/
-│   │   └── lspconfig.lua   # LSP server configurations
-│   └── plugins/
-│       └── init.lua        # All plugin definitions
-├── stylua.toml             # Lua formatter config
-└── lazy-lock.json          # Plugin version lock
+nvim/
+├── init.lua              # Entry point
+├── lazy-lock.json        # Plugin version lock
+├── .stylua.toml          # Lua formatter config
+├── CLAUDE.md             # This file
+└── lua/
+    ├── chadrc.lua        # NvChad theme settings
+    ├── mappings.lua      # Custom keymaps
+    ├── options.lua       # Vim options
+    ├── configs/
+    │   ├── lazy.lua      # lazy.nvim settings
+    │   ├── lspconfig.lua # LSP server configurations
+    │   └── conform.lua   # Formatter settings
+    └── plugins/
+        ├── init.lua      # Plugin loader (merges all modules)
+        ├── ui.lua        # UI plugins
+        ├── navigation.lua # Navigation plugins
+        ├── git.lua       # Git plugins
+        ├── diagnostics.lua # Diagnostic plugins
+        ├── lsp.lua       # LSP plugins
+        ├── ai.lua        # AI plugins
+        ├── completion.lua # Completion plugins
+        └── lang.lua      # Language-specific plugins
 ```
 
 ---
 
-## 2025 Minimal UI Architecture
+## 2026 Minimal UI Architecture
 
-This configuration follows a statusline-less workflow for maximum editing space:
+This configuration follows a statusline-less workflow for maximum editing space.
 
 ### UI Components
 
@@ -76,31 +89,30 @@ showmode = false   -- No mode text (modes.nvim shows via color)
 
 ---
 
-## AI Plugin Strategy (2025)
+## AI Plugin Strategy (2026)
 
-This configuration includes **6 AI tools**. Here's when to use each:
+This configuration includes **4 AI tools**:
 
-### Primary: Copilot + CopilotChat
+### Primary: GitHub Copilot + CopilotChat
 - **Use for:** Daily coding, inline completions, quick questions
-- **Keymaps:** Automatic completions, `<leader>cc` for chat
-- **Model:** claude-opus-4 (configurable)
+- **Keymaps:** Automatic completions, `<leader>ao` for chat
+- **CopilotChat Model:** claude-sonnet-4
 
 ### Secondary: Avante.nvim
 - **Use for:** Complex refactoring, code generation with context
+- **Model:** claude-sonnet-4
 - **Keymaps:**
   - `<leader>aa` - Ask AI about current code
-  - `<leader>ae` - Edit code with AI
+  - `<leader>ax` - Edit code with AI
   - `<leader>ar` - Refresh response
-- **Features:** Cursor-like IDE experience, MCP integration
+- **Features:** Cursor-like IDE experience
 
-### Supplementary Tools
-
-| Plugin | Use Case | Trigger |
-|--------|----------|---------|
-| **Cody (sg.nvim)** | Sourcegraph integration, codebase search | `<C-a>` in completion |
-| **CodeCompanion** | Alternative chat interface | `<leader>cc`, `<leader>ct` |
-| **claude-code.nvim** | Claude Code terminal | `<leader>cl` |
-| **mcphub.nvim** | MCP server management | `:MCPHub` |
+### Claude Code Integration
+- **Plugin:** claudecode.nvim
+- **Use for:** Claude Code terminal integration
+- **Keymaps:**
+  - `<leader>cc` - Toggle Claude Code
+  - `<leader>cf` - Focus Claude Code
 
 ---
 
@@ -153,7 +165,7 @@ This configuration includes **6 AI tools**. Here's when to use each:
 
 ### Diffview
 
-### Basic Operations
+#### Basic Operations
 | Key | Description |
 |-----|-------------|
 | `<leader>gd` | Working tree diff |
@@ -166,7 +178,7 @@ This configuration includes **6 AI tools**. Here's when to use each:
 | `<leader>gq` | Close diffview |
 | `<leader>gt` | Toggle file panel |
 
-### Inside Diffview
+#### Inside Diffview
 | Key | Description |
 |-----|-------------|
 | `<tab>` / `<s-tab>` | Next/prev file |
@@ -178,7 +190,7 @@ This configuration includes **6 AI tools**. Here's when to use each:
 | `L` | Open commit log |
 | `g?` | Show help |
 
-### Conflict Resolution
+#### Conflict Resolution
 | Key | Description |
 |-----|-------------|
 | `[x` / `]x` | Prev/next conflict |
@@ -240,7 +252,6 @@ This configuration includes **6 AI tools**. Here's when to use each:
 | `<leader>xx` | All diagnostics |
 | `<leader>xX` | Buffer diagnostics |
 | `<leader>xs` | Document symbols |
-| `<leader>xl` | LSP definitions |
 | `<leader>xt` | Todo list |
 | `]t` / `[t` | Next/prev todo |
 
@@ -279,14 +290,16 @@ This configuration includes **6 AI tools**. Here's when to use each:
 ## LSP Configuration
 
 ### Supported Languages
-- **Rust:** rust-analyzer with clippy
-- **Go:** gopls with gofumpt
-- **TypeScript/JavaScript:** ts_ls with inlay hints
-- **Python:** pylsp
-- **Lua:** lua_ls (Neovim API aware)
-- **JSON/YAML:** with SchemaStore support
-- **Terraform:** terraform-ls
-- **Bash:** bashls with shellcheck
+
+| Language | LSP | Formatter |
+|----------|-----|-----------|
+| Rust | rust-analyzer | rustfmt |
+| Go | gopls | gofmt, goimports, gofumpt |
+| TypeScript | ts_ls, deno | prettier, deno_fmt |
+| Python | pyright | black, isort |
+| Lua | lua_ls | stylua |
+| Terraform | terraform-ls | terraform_fmt |
+| Bash | bashls | shfmt |
 
 ### LSP Keymaps
 | Key | Description |
@@ -299,6 +312,39 @@ This configuration includes **6 AI tools**. Here's when to use each:
 | `<leader>rn` | Rename symbol |
 | `<leader>ca` | Code action |
 | `<leader>fm` | Format file |
+
+---
+
+## Plugin Modules
+
+### ui.lua
+- incline.nvim, modes.nvim, noice.nvim, nvim-notify
+- vimade, better-escape.nvim, which-key.nvim, indent-blankline.nvim
+
+### navigation.lua
+- Snacks.nvim, telescope.nvim, oil.nvim
+- flash.nvim, overlook.nvim, hbac.nvim
+
+### git.lua
+- gitsigns.nvim, diffview.nvim
+
+### diagnostics.lua
+- trouble.nvim, todo-comments.nvim
+
+### lsp.lua
+- nvim-lspconfig, mason.nvim, conform.nvim
+- nvim-treesitter, schemastore.nvim
+
+### ai.lua
+- copilot.lua, copilot-cmp, CopilotChat.nvim
+- avante.nvim, claudecode.nvim
+
+### completion.lua
+- nvim-cmp, cmp-nvim-lsp, cmp-buffer, cmp-path
+- LuaSnip, lspkind.nvim
+
+### lang.lua
+- rustaceanvim, crates.nvim
 
 ---
 
@@ -323,7 +369,6 @@ jk               - Exit insert mode
 :Telescope      - Fuzzy finder
 :Oil            - File manager
 :Trouble        - Diagnostics panel
-:MCPHub         - MCP servers
 :Noice          - Message history
 ```
 
