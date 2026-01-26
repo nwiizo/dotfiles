@@ -30,6 +30,22 @@ set -gx HOMEBREW_NO_ANALYTICS 1
 set -gx HOMEBREW_NO_ENV_HINTS 1
 
 # ═══════════════════════════════════════════════════════════════════════════
+# 2.5. NIX PACKAGE MANAGER
+# ═══════════════════════════════════════════════════════════════════════════
+# Nix daemon (multi-user installation)
+if test -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.fish
+    source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.fish
+# Nix single-user installation
+else if test -e $HOME/.nix-profile/etc/profile.d/nix.fish
+    source $HOME/.nix-profile/etc/profile.d/nix.fish
+end
+
+# Nix environment variables
+if test -d /nix
+    set -gx NIX_PATH nixpkgs=channel:nixpkgs-unstable $NIX_PATH
+end
+
+# ═══════════════════════════════════════════════════════════════════════════
 # 3. PATH CONFIGURATION
 # ═══════════════════════════════════════════════════════════════════════════
 set -gx PATH \
@@ -201,15 +217,62 @@ function update_all -d "Update all tools"
         brew update && brew upgrade && brew cleanup
     end
 
+    if type -q nix-channel
+        echo "❄️  Updating Nix..."
+        nix-channel --update
+        nix-env --upgrade 2>/dev/null
+    end
+
     if type -q mise
         echo "🔧 Updating mise..."
         mise self-update 2>/dev/null
         mise upgrade
     end
 
+    if type -q claude
+        echo "🤖 Updating Claude CLI..."
+        claude update
+    end
+
     if type -q rustup
         echo "🦀 Updating Rust..."
         rustup update
+    end
+
+    if type -q cargo
+        echo "📦 Updating Cargo packages..."
+        cargo install-update -a 2>/dev/null; or echo "   (cargo-update not installed, skipping)"
+    end
+
+    if type -q go
+        echo "🐹 Updating Go tools..."
+        go install golang.org/x/tools/gopls@latest 2>/dev/null
+        go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest 2>/dev/null
+    end
+
+    if type -q npm
+        echo "📦 Updating npm global packages..."
+        npm update -g 2>/dev/null
+    end
+
+    if type -q kubectl-krew
+        echo "☸️  Updating krew plugins..."
+        kubectl krew update && kubectl krew upgrade 2>/dev/null
+    end
+
+    if type -q gh
+        echo "🐙 Updating GitHub CLI extensions..."
+        gh extension upgrade --all 2>/dev/null
+    end
+
+    if type -q fisher
+        echo "🐟 Updating Fisher plugins..."
+        fisher update 2>/dev/null
+    end
+
+    if type -q nvim
+        echo "📝 Updating Neovim plugins..."
+        nvim --headless "+Lazy! sync" +qa 2>/dev/null; or echo "   (Lazy.nvim not configured, skipping)"
     end
 
     echo "✅ All updates complete!"
@@ -346,6 +409,7 @@ if status is-interactive
     # その他
     abbr --add --global c 'claude --dangerously-skip-permissions'
     abbr --add --global v nvim
+    abbr --add --global vi nvim
     abbr --add --global vim nvim
     abbr --add --global lg lazygit
 end
@@ -354,21 +418,16 @@ end
 # 11. TOOL INTEGRATIONS (local.fishより前に読み込む)
 # ═══════════════════════════════════════════════════════════════════════════
 
-# direnv (2025 essential - project-specific environment)
-# Reference: https://direnv.net/docs/hook.html
-if type -q direnv
-    # eval_on_arrow: trigger direnv at prompt and on every directory change (default)
-    # eval_after_arrow: trigger only after directory changes before executing command
-    # disable_arrow: trigger direnv at prompt only
-    set -g direnv_fish_mode eval_on_arrow
-    direnv hook fish | source
-end
-
 # mise (asdf の後継)
 if type -q mise
     if test (pwd) = $HOME; or test -f .mise.toml; or test -f .tool-versions
         mise activate fish 2>/dev/null | source
     end
+end
+
+# direnv (Nix開発環境との連携に便利)
+if type -q direnv
+    direnv hook fish | source
 end
 
 # zoxide (cd の改善版)
