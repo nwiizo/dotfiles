@@ -355,6 +355,12 @@ type -q kubectl; and kubectl completion fish 2>/dev/null | source
 # delta for git diff
 type -q delta; and set -gx GIT_PAGER delta
 
+# atuin - magical shell history (replaces Ctrl+R from fzf.fish)
+if type -q atuin
+    atuin init fish --disable-up-arrow | source
+    # fzf.fish history is disabled via fzf_configure_bindings in conf.d
+end
+
 # ═══════════════════════════════════════════════════════════════════════════
 # 13. LOCAL CONFIG (machine-specific, gitignored)
 # ═══════════════════════════════════════════════════════════════════════════
