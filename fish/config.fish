@@ -1,5 +1,5 @@
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# Fish Shell - Stable Configuration (Fixed)
+# Fish Shell Configuration - 2026 Best Practices (Fish 4.3+)
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -32,33 +32,27 @@ set -gx HOMEBREW_NO_ENV_HINTS 1
 # ═══════════════════════════════════════════════════════════════════════════
 # 2.5. NIX PACKAGE MANAGER
 # ═══════════════════════════════════════════════════════════════════════════
-# Nix daemon (multi-user installation)
 if test -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.fish
     source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.fish
-# Nix single-user installation
 else if test -e $HOME/.nix-profile/etc/profile.d/nix.fish
     source $HOME/.nix-profile/etc/profile.d/nix.fish
 end
 
-# Nix environment variables
 if test -d /nix
     set -gx NIX_PATH nixpkgs=channel:nixpkgs-unstable $NIX_PATH
 end
 
 # ═══════════════════════════════════════════════════════════════════════════
-# 3. PATH CONFIGURATION
+# 3. PATH CONFIGURATION (using fish_add_path - Fish 3.2+)
 # ═══════════════════════════════════════════════════════════════════════════
-set -gx PATH \
-    $HOME/.local/bin \
-    /opt/homebrew/bin \
-    /opt/homebrew/sbin \
-    $HOME/.cargo/bin \
-    $HOME/.krew/bin \
-    $HOME/go/bin \
-    $HOME/gopath/bin \
-    /usr/local/kubebuilder/bin \
-    $HOME/.istioctl/bin \
-    $PATH
+# fish_add_path automatically prevents duplicates and is idempotent
+fish_add_path --path $HOME/.local/bin
+fish_add_path --path $HOME/.cargo/bin
+fish_add_path --path $HOME/.krew/bin
+fish_add_path --path $HOME/go/bin
+fish_add_path --path $HOME/gopath/bin
+fish_add_path --path /usr/local/kubebuilder/bin
+fish_add_path --path $HOME/.istioctl/bin
 
 set -q MANPATH; or set MANPATH ''
 set -gx MANPATH "/opt/homebrew/share/man" $MANPATH
@@ -87,8 +81,7 @@ set -gx KUBECONFIG $HOME/.kube/config
 
 if type -q bat
     set -gx MANPAGER "sh -c 'col -bx | bat -l man -p'"
-    set -gx BAT_THEME "Dracula"
-    # パイプ時は行数を表示しない（plain style）
+    set -gx BAT_THEME Dracula
     set -gx BAT_STYLE "changes,header"
 end
 
@@ -126,356 +119,213 @@ if type -q fzf
 end
 
 # ═══════════════════════════════════════════════════════════════════════════
-# 6. FISH SHELL BEHAVIOR
+# 6. FISH SHELL BEHAVIOR (Fish 4.3+ settings)
 # ═══════════════════════════════════════════════════════════════════════════
 set -g fish_prompt_pwd_dir_length 3
-set -g fish_history_size 10000
-set -g fish_history_max_size 20000
 
-# 補完の改善
-set -g fish_complete_path $fish_complete_path $XDG_CONFIG_HOME/fish/completions
-set -g fish_function_path $fish_function_path $XDG_CONFIG_HOME/fish/functions
-
-# 補完動作の調整
-set -g fish_autosuggestion_enabled 1
+# Colors (Fish 4.3+ recommends setting in config.fish instead of universals)
 set -g fish_color_autosuggestion brblack
 set -g fish_pager_color_completion normal
 set -g fish_pager_color_description yellow
 set -g fish_pager_color_prefix cyan
 set -g fish_pager_color_progress cyan
 
+# TMUX optimizations
 if test -n "$TMUX"
-    set -g fish_term24bit 1
     set -g fish_escape_delay_ms 10
 end
 
 # ═══════════════════════════════════════════════════════════════════════════
-# 7. MODERN CLI TOOL REPLACEMENTS
+# 7. HISTORY CONTROL (Fish 4.0+ feature)
+# ═══════════════════════════════════════════════════════════════════════════
+function fish_should_add_to_history
+    set -l cmd (string trim -- $argv)
+
+    # Skip empty commands
+    test -z "$cmd"; and return 1
+
+    # Skip commands starting with space (private commands)
+    string match -qr '^\s' -- $argv; and return 1
+
+    # Skip sensitive commands
+    string match -qr '^(export|set).*(TOKEN|SECRET|PASSWORD|KEY|PASS)' -- $cmd; and return 1
+    string match -qr '(password|secret|token|api.?key)=' -- $cmd; and return 1
+
+    # Skip very short commands that are just noise
+    test (string length -- $cmd) -le 2; and return 1
+
+    return 0
+end
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 8. MODERN CLI TOOL REPLACEMENTS
 # ═══════════════════════════════════════════════════════════════════════════
 if type -q eza
-    function ls --wraps eza --description "List files with eza"
+    function ls --wraps eza -d "List files with eza"
         eza --icons --group-directories-first $argv
     end
 
-    function ll --wraps eza --description "Long list with eza"
+    function ll --wraps eza -d "Long list with eza"
         eza -l --icons --git --group-directories-first $argv
     end
 
-    function la --wraps eza --description "List all with eza"
+    function la --wraps eza -d "List all with eza"
         eza -la --icons --git --group-directories-first $argv
     end
 
-    function lt --wraps eza --description "Tree view with eza"
+    function lt --wraps eza -d "Tree view with eza"
         eza --tree --level=2 --icons $argv
     end
 end
 
 if type -q bat
-    function cat --wraps bat --description "Cat with syntax highlighting"
-        # パイプやリダイレクト時は行数を表示しない
+    function cat --wraps bat -d "Cat with syntax highlighting"
         if isatty stdout
-            # ターミナル出力時は通常のスタイル
             bat --paging=never $argv
         else
-            # パイプやリダイレクト時はプレーンテキスト
             bat --paging=never --style=plain $argv
         end
     end
 end
 
 if type -q rg
-    function grep --wraps rg --description "Grep with ripgrep"
+    function grep --wraps rg -d "Grep with ripgrep"
         rg $argv
     end
 end
 
 # ═══════════════════════════════════════════════════════════════════════════
-# 8. FUNCTIONS
+# 9. UTILITY FUNCTIONS
 # ═══════════════════════════════════════════════════════════════════════════
 function ghq_fzf_repo -d "Select repository with fzf"
-    if not type -q ghq; or not type -q fzf
-        echo "Error: ghq and fzf are required" >&2
-        return 1
-    end
+    type -q ghq; and type -q fzf; or return 1
 
     set -l selected (ghq list -p | fzf \
-        --prompt="📁 Repository: " \
-        --preview='ls -la {}' \
+        --prompt="Repository: " \
+        --preview='eza -la --icons --git {}' \
         --preview-window=right:50%:wrap)
 
-    if test -n "$selected"
-        cd $selected
-        commandline -f repaint
-    end
+    test -n "$selected"; and cd $selected; and commandline -f repaint
 end
 
 function update_all -d "Update all tools"
-    echo "🔄 Updating all tools..."
+    echo "Updating all tools..."
 
-    if type -q brew
-        echo "📦 Updating Homebrew..."
-        brew update && brew upgrade && brew cleanup
-    end
+    type -q brew; and echo "Homebrew..." && brew update && brew upgrade && brew cleanup
+    type -q mise; and echo "mise..." && mise self-update 2>/dev/null; mise upgrade
+    type -q claude; and echo "Claude CLI..." && claude update
+    type -q rustup; and echo "Rust..." && rustup update
+    type -q fisher; and echo "Fisher..." && fisher update 2>/dev/null
+    type -q nvim; and echo "Neovim plugins..." && nvim --headless "+Lazy! sync" +qa 2>/dev/null
 
-    if type -q nix-channel
-        echo "❄️  Updating Nix..."
-        nix-channel --update
-        nix-env --upgrade 2>/dev/null
-    end
-
-    if type -q mise
-        echo "🔧 Updating mise..."
-        mise self-update 2>/dev/null
-        mise upgrade
-    end
-
-    if type -q claude
-        echo "🤖 Updating Claude CLI..."
-        claude update
-    end
-
-    if type -q rustup
-        echo "🦀 Updating Rust..."
-        rustup update
-    end
-
-    if type -q cargo
-        echo "📦 Updating Cargo packages..."
-        cargo install-update -a 2>/dev/null; or echo "   (cargo-update not installed, skipping)"
-    end
-
-    if type -q go
-        echo "🐹 Updating Go tools..."
-        go install golang.org/x/tools/gopls@latest 2>/dev/null
-        go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest 2>/dev/null
-    end
-
-    if type -q npm
-        echo "📦 Updating npm global packages..."
-        npm update -g 2>/dev/null
-    end
-
-    if type -q kubectl-krew
-        echo "☸️  Updating krew plugins..."
-        kubectl krew update && kubectl krew upgrade 2>/dev/null
-    end
-
-    if type -q gh
-        echo "🐙 Updating GitHub CLI extensions..."
-        gh extension upgrade --all 2>/dev/null
-    end
-
-    if type -q fisher
-        echo "🐟 Updating Fisher plugins..."
-        fisher update 2>/dev/null
-    end
-
-    if type -q nvim
-        echo "📝 Updating Neovim plugins..."
-        nvim --headless "+Lazy! sync" +qa 2>/dev/null; or echo "   (Lazy.nvim not configured, skipping)"
-    end
-
-    echo "✅ All updates complete!"
-end
-
-function sysinfo -d "Display system information"
-    echo "System:   "(uname -s)" "(uname -m)
-    echo "Hostname: "(hostname)
-    echo "User:     "(whoami)
-
-    if test (uname) = Darwin
-        echo "Memory:   "(top -l 1 | grep "PhysMem" | awk '{print $2" used,",$6" free"}')
-    end
-
-    if type -q git; and test -d .git
-        echo "Git:      "(git rev-parse --abbrev-ref HEAD 2>/dev/null)
-    end
+    echo "Done!"
 end
 
 function mkcd -d "Create and enter directory"
-    if test (count $argv) -eq 0
-        echo "Usage: mkcd <directory>"
-        return 1
-    end
+    test (count $argv) -eq 0; and echo "Usage: mkcd <directory>"; and return 1
     mkdir -p $argv[1]; and cd $argv[1]
 end
 
-function port -d "Check port"
-    if test (count $argv) -eq 0
-        echo "Usage: port <port_number>"
-        return 1
-    end
+function port -d "Check process using port"
+    test (count $argv) -eq 0; and echo "Usage: port <number>"; and return 1
     lsof -i :$argv[1]
 end
 
 # ═══════════════════════════════════════════════════════════════════════════
-# 9. KEY BINDINGS
+# 10. KEY BINDINGS (Fish 4.0+ notation)
 # ═══════════════════════════════════════════════════════════════════════════
 function fish_user_key_bindings
-    # FZF キーバインド
+    # FZF integration
     if type -q fzf
-        if test -f /opt/homebrew/opt/fzf/shell/key-bindings.fish
-            source /opt/homebrew/opt/fzf/shell/key-bindings.fish
-        end
+        test -f /opt/homebrew/opt/fzf/shell/key-bindings.fish; and source /opt/homebrew/opt/fzf/shell/key-bindings.fish
 
-        # Ctrl+R: コマンド履歴検索
-        if functions -q fzf-history-widget
-            bind \cr fzf-history-widget
-        end
+        functions -q fzf-history-widget; and bind ctrl-r fzf-history-widget
+        functions -q fzf-file-widget; and bind ctrl-t fzf-file-widget
 
-        # Ctrl+G: ghq リポジトリ検索
-        bind \cg ghq_fzf_repo
-
-        # Ctrl+F: ファイル検索
-        if functions -q fzf-file-widget
-            bind \cf fzf-file-widget
-        end
+        bind ctrl-g ghq_fzf_repo
     end
 
-    # Ctrl+L: 画面クリア
-    bind \cl 'clear; commandline -f repaint'
+    bind ctrl-l 'clear; commandline -f repaint'
 end
 
 # ═══════════════════════════════════════════════════════════════════════════
-# 10. ABBREVIATIONS
+# 11. ABBREVIATIONS (Interactive shell only)
 # ═══════════════════════════════════════════════════════════════════════════
 if status is-interactive
-    # 既存のabbreviationをクリーンアップ（エラーを無視）
-    abbr --erase -- - 2>/dev/null
-    abbr --erase .. 2>/dev/null
-    abbr --erase ... 2>/dev/null
-    abbr --erase .... 2>/dev/null
-    abbr --erase g 2>/dev/null
-    abbr --erase ga 2>/dev/null
-    abbr --erase gaa 2>/dev/null
-    abbr --erase gc 2>/dev/null
-    abbr --erase gcm 2>/dev/null
-    abbr --erase gco 2>/dev/null
-    abbr --erase gcb 2>/dev/null
-    abbr --erase gp 2>/dev/null
-    abbr --erase gpl 2>/dev/null
-    abbr --erase gst 2>/dev/null
-    abbr --erase gd 2>/dev/null
-    abbr --erase gl 2>/dev/null
-    abbr --erase gf 2>/dev/null
-    abbr --erase d 2>/dev/null
-    abbr --erase dc 2>/dev/null
-    abbr --erase dcu 2>/dev/null
-    abbr --erase dcd 2>/dev/null
-    abbr --erase dps 2>/dev/null
-    abbr --erase k 2>/dev/null
-    abbr --erase kgp 2>/dev/null
-    abbr --erase kgs 2>/dev/null
-    abbr --erase kgd 2>/dev/null
-    abbr --erase c 2>/dev/null
-    abbr --erase v 2>/dev/null
-    abbr --erase vim 2>/dev/null
-    abbr --erase lg 2>/dev/null
-
-    # ナビゲーション
-    abbr --add --global -- - 'cd -'
-    abbr --add --global .. 'cd ..'
-    abbr --add --global ... 'cd ../..'
-    abbr --add --global .... 'cd ../../..'
+    # Navigation
+    abbr -a -- - 'cd -'
+    abbr -a .. 'cd ..'
+    abbr -a ... 'cd ../..'
+    abbr -a .... 'cd ../../..'
 
     # Git
-    abbr --add --global g git
-    abbr --add --global ga 'git add'
-    abbr --add --global gaa 'git add --all'
-    abbr --add --global gc 'git commit -v'
-    abbr --add --global gcm 'git commit -m'
-    abbr --add --global gco 'git checkout'
-    abbr --add --global gcb 'git checkout -b'
-    abbr --add --global gp 'git push'
-    abbr --add --global gpl 'git pull'
-    abbr --add --global gst 'git status'
-    abbr --add --global gd 'git diff'
-    abbr --add --global gl 'git log'
-    abbr --add --global gf 'git commit --amend --no-edit'
+    abbr -a g git
+    abbr -a ga 'git add'
+    abbr -a gaa 'git add --all'
+    abbr -a gc 'git commit -v'
+    abbr -a gcm 'git commit -m'
+    abbr -a gco 'git checkout'
+    abbr -a gcb 'git checkout -b'
+    abbr -a gp 'git push'
+    abbr -a gpl 'git pull'
+    abbr -a gst 'git status'
+    abbr -a gd 'git diff'
+    abbr -a gl 'git log --oneline'
+    abbr -a gf 'git commit --amend --no-edit'
 
     # Docker
-    abbr --add --global d docker
-    abbr --add --global dc 'docker compose'
-    abbr --add --global dcu 'docker compose up'
-    abbr --add --global dcd 'docker compose down'
-    abbr --add --global dps 'docker ps'
+    abbr -a d docker
+    abbr -a dc 'docker compose'
+    abbr -a dcu 'docker compose up'
+    abbr -a dcd 'docker compose down'
+    abbr -a dps 'docker ps'
 
     # Kubernetes
-    abbr --add --global k kubectl
-    abbr --add --global kgp 'kubectl get pods'
-    abbr --add --global kgs 'kubectl get svc'
-    abbr --add --global kgd 'kubectl get deploy'
+    abbr -a k kubectl
+    abbr -a kgp 'kubectl get pods'
+    abbr -a kgs 'kubectl get svc'
+    abbr -a kgd 'kubectl get deploy'
+    abbr -a kctx 'kubectl config use-context'
+    abbr -a kns 'kubectl config set-context --current --namespace'
 
-    # その他
-    abbr --add --global c 'claude --dangerously-skip-permissions'
-    abbr --add --global v nvim
-    abbr --add --global vi nvim
-    abbr --add --global vim nvim
-    abbr --add --global lg lazygit
+    # Tools
+    abbr -a c claude
+    abbr -a v nvim
+    abbr -a vi nvim
+    abbr -a vim nvim
+    abbr -a lg lazygit
 end
 
 # ═══════════════════════════════════════════════════════════════════════════
-# 11. TOOL INTEGRATIONS (local.fishより前に読み込む)
+# 12. TOOL INTEGRATIONS
 # ═══════════════════════════════════════════════════════════════════════════
+# mise (asdf successor) - always activate for version management
+type -q mise; and mise activate fish 2>/dev/null | source
 
-# mise (asdf の後継)
-if type -q mise
-    if test (pwd) = $HOME; or test -f .mise.toml; or test -f .tool-versions
-        mise activate fish 2>/dev/null | source
-    end
-end
+# direnv - for per-directory environments
+type -q direnv; and direnv hook fish | source
 
-# direnv (Nix開発環境との連携に便利)
-if type -q direnv
-    direnv hook fish | source
-end
+# zoxide - smarter cd
+type -q zoxide; and zoxide init fish --cmd z | source
 
-# zoxide (cd の改善版)
-if type -q zoxide
-    zoxide init fish --cmd z | source
-end
+# Rust
+test -f "$HOME/.cargo/env.fish"; and source "$HOME/.cargo/env.fish"
 
-# Cargo (Rust)
-if test -f "$HOME/.cargo/env.fish"
-    source "$HOME/.cargo/env.fish"
-end
+# GitHub CLI completion
+type -q gh; and gh completion -s fish 2>/dev/null | source
 
-# GitHub CLI
-if type -q gh
-    gh completion -s fish 2>/dev/null | source
-end
+# kubectl completion
+type -q kubectl; and kubectl completion fish 2>/dev/null | source
 
-# kubectl
-if type -q kubectl
-    kubectl completion fish 2>/dev/null | source
-end
-
-# delta (git diff)
-if type -q delta
-    set -gx GIT_PAGER 'delta'
-end
+# delta for git diff
+type -q delta; and set -gx GIT_PAGER delta
 
 # ═══════════════════════════════════════════════════════════════════════════
-# 12. LOAD LOCAL CONFIG (Starshipより前に)
+# 13. LOCAL CONFIG (machine-specific, gitignored)
 # ═══════════════════════════════════════════════════════════════════════════
-# 注意: local.fishでfish_promptを定義しないこと！
-if test -f $XDG_CONFIG_HOME/fish/local.fish
-    source $XDG_CONFIG_HOME/fish/local.fish
-end
+test -f $XDG_CONFIG_HOME/fish/local.fish; and source $XDG_CONFIG_HOME/fish/local.fish
 
 # ═══════════════════════════════════════════════════════════════════════════
-# 13. STARSHIP PROMPT (必ず最後に初期化)
+# 14. STARSHIP PROMPT (must be last)
 # ═══════════════════════════════════════════════════════════════════════════
-# Starshipの初期化は必ず最後に行うこと
-# これにより、他のツールがプロンプトを上書きするのを防ぐ
-if type -q starship
-    starship init fish | source
-end
-
-# ═══════════════════════════════════════════════════════════════════════════
-# 注意事項
-# ═══════════════════════════════════════════════════════════════════════════
-# 1. conf.d/ は Fish が自動的に読み込むため、ここで手動読み込みはしない
-# 2. local.fish で fish_prompt を定義しないこと（Starshipと競合）
-# 3. functions/fish_prompt.fish は削除すること（Starshipと競合）
-# 4. Starshipの初期化は必ず最後に行うこと
+type -q starship; and starship init fish | source
