@@ -235,16 +235,11 @@ end
 # 10. KEY BINDINGS (Fish 4.0+ notation)
 # ═══════════════════════════════════════════════════════════════════════════
 function fish_user_key_bindings
-    # FZF integration
-    if type -q fzf
-        test -f /opt/homebrew/opt/fzf/shell/key-bindings.fish; and source /opt/homebrew/opt/fzf/shell/key-bindings.fish
+    # PatrickF1/fzf.fish handles: Ctrl+R (history), Ctrl+Alt+F (files),
+    # Ctrl+Alt+L (git log), Ctrl+Alt+S (git status), Ctrl+Alt+P (processes), Ctrl+V (variables)
 
-        functions -q fzf-history-widget; and bind ctrl-r fzf-history-widget
-        functions -q fzf-file-widget; and bind ctrl-t fzf-file-widget
-
-        bind ctrl-g ghq_fzf_repo
-    end
-
+    # Custom bindings
+    bind ctrl-g ghq_fzf_repo
     bind ctrl-l 'clear; commandline -f repaint'
 end
 
