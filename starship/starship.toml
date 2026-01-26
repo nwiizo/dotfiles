@@ -19,7 +19,7 @@ $line_break\
 $character"""
 
 # Basic prompt settings
-add_newline = true
+add_newline = false
 scan_timeout = 10
 command_timeout = 500
 
