@@ -273,11 +273,11 @@ end
 # ═══════════════════════════════════════════════════════════════════════════
 # 10. KEY BINDINGS (Fish 4.0+ notation)
 # ═══════════════════════════════════════════════════════════════════════════
+# Note: Warp terminal ignores custom keybindings. Use abbreviations instead:
+#   ff=files, fgl=git log, fgs=git status, fp=processes, fh=history
+#   gb=branch, kc=kubectl ctx, de=docker exec, repo=ghq
 function fish_user_key_bindings
-    # PatrickF1/fzf.fish handles: Ctrl+R (history), Ctrl+Alt+F (files),
-    # Ctrl+Alt+L (git log), Ctrl+Alt+S (git status), Ctrl+Alt+P (processes), Ctrl+V (variables)
-
-    # Custom bindings
+    # These work in iTerm2, Ghostty, etc. but NOT in Warp
     bind ctrl-g ghq_fzf_repo
     bind ctrl-b git_fzf_branch
     bind ctrl-l 'clear; commandline -f repaint'
@@ -329,6 +329,18 @@ if status is-interactive
     abbr -a vi nvim
     abbr -a vim nvim
     abbr -a lg lazygit
+
+    # fzf shortcuts (Warp doesn't support custom keybindings)
+    abbr -a ff _fzf_search_directory
+    abbr -a fgl _fzf_search_git_log
+    abbr -a fgs _fzf_search_git_status
+    abbr -a fp _fzf_search_processes
+    abbr -a fv _fzf_search_variables
+    abbr -a fh 'atuin search -i'
+    abbr -a gb git_fzf_branch
+    abbr -a kc kubectl_fzf_ctx
+    abbr -a de docker_fzf_exec
+    abbr -a repo ghq_fzf_repo
 end
 
 # ═══════════════════════════════════════════════════════════════════════════
