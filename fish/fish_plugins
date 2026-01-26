@@ -1,15 +1,10 @@
-/Users/nwiizo/.config/fish/fishfile
-oh-my-fish/theme-bobthefish
+jorgebucaran/fisher
 decors/fish-ghq
-acomagu/fish-async-prompt
-jorgebucaran/spark.fish
-andreiborisov/sponge
-oh-my-fish/plugin-peco
 jethrokuan/fzf
 danhper/fish-ssh-agent
 edc/bass
 nickeb96/puffer-fish
-laughedelic/pisces
 danhper/fish-fastdir
 jorgebucaran/autopair.fish
 franciscolourenco/done
+andreiborisov/sponge
