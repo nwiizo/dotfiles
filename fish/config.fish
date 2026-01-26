@@ -231,6 +231,45 @@ function port -d "Check process using port"
     lsof -i :$argv[1]
 end
 
+function git_fzf_branch -d "Switch git branch with fzf"
+    git rev-parse --is-inside-work-tree >/dev/null 2>&1; or return 1
+
+    set -l branch (git branch -a --sort=-committerdate | \
+        string trim | \
+        string replace -r '^\* ' '' | \
+        string replace -r '^remotes/origin/' '' | \
+        sort -u | \
+        fzf --prompt="Branch: " \
+            --preview='git log --oneline --graph --color=always -20 {}' \
+            --preview-window=right:50%:wrap)
+
+    test -n "$branch"; and git checkout $branch; and commandline -f repaint
+end
+
+function kubectl_fzf_ctx -d "Switch kubectl context with fzf"
+    type -q kubectl; or return 1
+
+    set -l ctx (kubectl config get-contexts -o name | \
+        fzf --prompt="Context: " \
+            --preview='kubectl config view --context={} --minify' \
+            --preview-window=right:50%:wrap)
+
+    test -n "$ctx"; and kubectl config use-context $ctx; and commandline -f repaint
+end
+
+function docker_fzf_exec -d "Exec into docker container with fzf"
+    type -q docker; or return 1
+
+    set -l container (docker ps --format "table {{.Names}}\t{{.Image}}\t{{.Status}}" | \
+        tail -n +2 | \
+        fzf --prompt="Container: " \
+            --preview='docker logs --tail 20 {1}' \
+            --preview-window=right:50%:wrap | \
+        awk '{print $1}')
+
+    test -n "$container"; and docker exec -it $container /bin/sh -c "command -v bash >/dev/null && exec bash || exec sh"
+end
+
 # ═══════════════════════════════════════════════════════════════════════════
 # 10. KEY BINDINGS (Fish 4.0+ notation)
 # ═══════════════════════════════════════════════════════════════════════════
@@ -240,6 +279,7 @@ function fish_user_key_bindings
 
     # Custom bindings
     bind ctrl-g ghq_fzf_repo
+    bind ctrl-b git_fzf_branch
     bind ctrl-l 'clear; commandline -f repaint'
 end
 
