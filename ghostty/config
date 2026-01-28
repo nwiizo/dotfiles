@@ -39,17 +39,17 @@ keybind = cmd+t=new_tab
 keybind = cmd+w=close_surface
 
 # =============================================================================
-# Pane Management (Warp統一 - tmux-like operations)
+# Pane Management (Warp/tmux統一)
 # =============================================================================
 # Split panes (Warpと統一)
 keybind = cmd+d=new_split:right
 keybind = cmd+shift+d=new_split:down
 
-# Split panes (JP keyboard: | は Unicode直接指定)
+# Split panes (JP keyboard: | は Unicode直接指定, tmuxと統一)
 keybind = cmd+|=new_split:right
 keybind = cmd+shift+minus=new_split:down
 
-# Navigate between panes (vim-style with Ctrl - Warpと統一)
+# Navigate between panes (vim-style with Ctrl - Warp/tmuxと統一)
 keybind = ctrl+h=goto_split:left
 keybind = ctrl+j=goto_split:bottom
 keybind = ctrl+k=goto_split:top
@@ -68,7 +68,18 @@ keybind = cmd+shift+[=previous_tab
 # クリップボード設定
 clipboard-read = allow
 clipboard-write = allow
-clipboard-trim-trailing-spaces = false
+clipboard-trim-trailing-spaces = true
+copy-on-select = true
+clipboard-paste-protection = true
+
+# リンク設定
+link-url = true
+
+# 表示設定
+bold-is-bright = true
+
+# ウィンドウ閉じる確認（シェル統合有効時はプロンプトで自動スキップ）
+confirm-close-surface = false
 
 # シェル設定
 shell-integration-features = no-cursor
