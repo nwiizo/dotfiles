@@ -276,11 +276,32 @@ end
 # Note: Warp terminal ignores custom keybindings. Use abbreviations instead:
 #   ff=files, fgl=git log, fgs=git status, fp=processes, fh=history
 #   gb=branch, kc=kubectl ctx, de=docker exec, repo=ghq
+# 空のコマンドラインでTabを押した時に履歴から選択
+function __history_tab_complete
+    set -l cmd (commandline -b)
+
+    if test -z "$cmd"
+        # 空の場合、履歴からfzfで選択
+        set -l selected (history | fzf --height=40% --layout=reverse --prompt="History: ")
+
+        if test -n "$selected"
+            commandline -r "$selected"
+            commandline -f repaint
+        end
+    else
+        # 空でない場合は通常の補完
+        commandline -f complete
+    end
+end
+
 function fish_user_key_bindings
     # These work in iTerm2, Ghostty, etc. but NOT in Warp
     bind ctrl-g ghq_fzf_repo
     bind ctrl-b git_fzf_branch
     bind ctrl-l 'clear; commandline -f repaint'
+
+    # 空入力でTabを押した時に履歴から選択
+    bind \t __history_tab_complete
 end
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -324,7 +345,7 @@ if status is-interactive
     abbr -a kns 'kubectl config set-context --current --namespace'
 
     # Tools
-    abbr -a c claude
+    abbr -a c claude --dangerously-skip-permissions
     abbr -a v nvim
     abbr -a vi nvim
     abbr -a vim nvim

@@ -1,9 +1,11 @@
 # 🐟 Fish Shell Configuration
 
-**Version:** 2025 Best Practices Edition
-**Last Updated:** 2025-11-08
+**Version:** 2026 Best Practices Edition
+**Last Updated:** 2026-01-29
 
 This is a production-ready Fish shell configuration optimized for modern development workflows.
+
+> **ターミナル:** [Ghostty](../ghostty/) と組み合わせて使用することを推奨します。
 
 ## ✨ Features
 
@@ -141,10 +143,11 @@ truncate_to_repo = true
 - **mise** → runtime version manager
 
 ### Key Bindings
-- `Ctrl+R` - FZF history search
-- `Ctrl+G` - ghq repository search
-- `Ctrl+F` - File search
-- `Ctrl+L` - Clear screen
+- `Tab` (空入力時) - fzfで履歴から選択
+- `Ctrl+R` - atuin履歴検索
+- `Ctrl+G` - ghqリポジトリ検索
+- `Ctrl+B` - gitブランチ切り替え
+- `Ctrl+L` - 画面クリア
 
 ### Abbreviations
 
