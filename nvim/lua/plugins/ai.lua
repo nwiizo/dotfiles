@@ -31,7 +31,7 @@ return {
     branch = "main",
     dependencies = { "zbirenbaum/copilot.lua", "nvim-lua/plenary.nvim" },
     opts = {
-      model = "claude-sonnet-4",
+      model = "claude-opus-4.5",
       debug = false,
       window = { layout = "vertical", width = 0.35 },
       mappings = { close = { normal = "q", insert = "<C-c>" } },
@@ -60,7 +60,7 @@ return {
       providers = {
         copilot = {
           endpoint = "https://api.githubcopilot.com",
-          model = "claude-sonnet-4",
+          model = "claude-opus-4.5",
           timeout = 30000,
         },
       },
