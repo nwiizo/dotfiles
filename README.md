@@ -8,27 +8,37 @@
 
 ```
 dotfiles/
+# Active (2026)
 ├── fish/           # Fish shell
-├── nvim/           # Neovim (NvChad)
-├── warp/           # Warp terminal
+├── nvim/           # Neovim (NvChad v3.0)
+├── ghostty/        # Ghostty terminal ← NEW!
 ├── starship/       # Prompt
 ├── git/            # Git scripts
 │
-# Legacy (未使用)
-├── bash/, zsh/, vim/, tmux/, lvim/, nvchad/
+# Archive (参考用に保持)
+├── warp/           # Warp terminal → Ghosttyに移行
+├── bash/           # Bash → Fishに移行
+├── zsh/            # Zsh → Fishに移行
+├── vim/            # Vim → Neovimに移行
+├── tmux/           # tmux → Ghostty分割に移行
+├── lvim/           # LunarVim → NvChadに移行
+├── nvchad/         # 旧NvChad設定
+├── dockerfile/     # Dockerfile例
+├── ssh/            # SSH設定例
 ```
 
 ## セットアップ
 
 ```bash
 # ツール
-brew install fish neovim starship
-brew install eza bat ripgrep fd fzf zoxide ghq direnv delta lazygit
+brew install fish neovim starship ghostty
+brew install eza bat ripgrep fd fzf zoxide ghq direnv delta lazygit mise atuin
 
 # シンボリックリンク
 ln -sf ~/ghq/github.com/nwiizo/dotfiles/fish/config.fish ~/.config/fish/config.fish
 ln -sf ~/ghq/github.com/nwiizo/dotfiles/nvim ~/.config/nvim
 ln -sf ~/ghq/github.com/nwiizo/dotfiles/starship/starship.toml ~/.config/starship.toml
+mkdir -p ~/.config/ghostty && ln -sf ~/ghq/github.com/nwiizo/dotfiles/ghostty/config ~/.config/ghostty/config
 ```
 
 ---
