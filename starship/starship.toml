@@ -1,4 +1,4 @@
-# Starship Configuration - Fixed version without errors
+# Starship Configuration - Optimized with best practices
 
 format = """
 $username\
@@ -18,78 +18,160 @@ $cmd_duration\
 $line_break\
 $character"""
 
+# Right prompt - 時刻を右側に表示
+right_format = """$time"""
+
+# Continuation prompt - 複数行入力時
+continuation_prompt = "[  ](bright-black)"
+
 # Basic prompt settings
 add_newline = false
-scan_timeout = 10
+scan_timeout = 30
 command_timeout = 500
 
+# パフォーマンス最適化 - ネットワークファイルシステム対策
+follow_symlinks = true
+
+# =============================================================================
+# User & Host - SSH接続時のみ表示
+# =============================================================================
+[username]
+show_always = false
+format = "[$user]($style)@"
+style_user = "bold blue"
+style_root = "bold red"
+
+[hostname]
+ssh_only = true
+format = "[$hostname]($style) "
+style = "bold green"
+
+# =============================================================================
 # Directory
+# =============================================================================
 [directory]
 truncation_length = 3
 truncate_to_repo = true
 style = "cyan bold"
+read_only = " 🔒"
+home_symbol = "~"
 
+# =============================================================================
 # Character
+# =============================================================================
 [character]
 success_symbol = "[❯](bold green)"
 error_symbol = "[❯](bold red)"
+vimcmd_symbol = "[❮](bold green)"
 
-# Git branch
+# =============================================================================
+# Git
+# =============================================================================
 [git_branch]
 symbol = " "
 style = "bold purple"
+truncation_length = 20
+truncation_symbol = "…"
 
-# Git status - Fixed to avoid parsing errors
 [git_status]
-format = "([$conflicted$stashed$deleted$renamed$modified$staged$untracked$ahead_behind]($style) )"
+format = "([$all_status$ahead_behind]($style) )"
 style = "bold red"
 stashed = "📦"
-ahead = "⇡"
-behind = "⇣"
+ahead = "⇡${count}"
+behind = "⇣${count}"
+diverged = "⇕⇡${ahead_count}⇣${behind_count}"
 untracked = "?"
 modified = "!"
 staged = "+"
 renamed = "»"
 deleted = "✘"
 conflicted = "="
-diverged = "⇕"
 
-# Command duration
+# =============================================================================
+# Command Duration
+# =============================================================================
 [cmd_duration]
 min_time = 2_000
-format = "took [$duration](bold yellow)"
+format = " took [$duration](bold yellow)"
+show_notifications = false
 
-# Languages
+# =============================================================================
+# Time - 右プロンプトに表示
+# =============================================================================
+[time]
+disabled = false
+format = "[$time]($style)"
+style = "bright-black"
+time_format = "%H:%M"
+
+# =============================================================================
+# Languages - detect_files/detect_extensionsで自動検出
+# =============================================================================
 [golang]
 symbol = " "
 format = "via [$symbol($version )]($style)"
+detect_extensions = ["go"]
+detect_files = ["go.mod", "go.sum"]
 
 [rust]
 symbol = " "
 format = "via [$symbol($version )]($style)"
+detect_extensions = ["rs"]
+detect_files = ["Cargo.toml"]
 
 [python]
 symbol = " "
 format = 'via [$symbol($version )(\($virtualenv\) )]($style)'
+detect_extensions = ["py"]
+detect_files = ["requirements.txt", "pyproject.toml", "setup.py"]
 
 [nodejs]
 symbol = " "
 format = "via [$symbol($version )]($style)"
+detect_extensions = ["js", "ts"]
+detect_files = ["package.json"]
 
-# Cloud
+# =============================================================================
+# Cloud & Infrastructure
+# =============================================================================
 [aws]
 format = 'on [$symbol$profile(\($region\))]($style) '
 symbol = "☁️ "
+disabled = false
 
 [kubernetes]
 format = 'on [$symbol$context( \($namespace\))]($style) '
 symbol = "☸ "
 disabled = false
+detect_files = ["k8s", "kubernetes", "helmfile.yaml"]
 
 [terraform]
 format = 'via [$symbol$workspace]($style) '
 symbol = "💠 "
+detect_extensions = ["tf", "tfvars"]
 
 [docker_context]
 format = 'via [$symbol$context]($style) '
 symbol = "🐋 "
+only_with_files = true
+
+# =============================================================================
+# Disabled modules - パフォーマンス向上のため不要なものを無効化
+# =============================================================================
+[gcloud]
+disabled = true
+
+[azure]
+disabled = true
+
+[package]
+disabled = true
+
+[battery]
+disabled = true
+
+[memory_usage]
+disabled = true
+
+[env_var]
+disabled = true
