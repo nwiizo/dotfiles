@@ -12,7 +12,7 @@ cursor-style = bar
 cursor-style-blink = false
 
 # macOS固有のウィンドウ設定
-macos-titlebar-style = tabs
+macos-titlebar-style = hidden
 macos-option-as-alt = true
 macos-window-shadow = true
 window-padding-x = 12
@@ -88,6 +88,9 @@ clipboard-paste-protection = true
 # リンク設定
 link-url = true
 
+# ベル通知設定（Claude Code等の完了通知用）
+bell-features = title,attention,system
+
 # 表示設定
 bold-is-bright = true
 
@@ -122,10 +125,6 @@ scrollback-limit = 100000
 keybind = ctrl+u=scroll_page_fractional:-0.5
 # ctrl+d はデフォルト（EOF/exit）を使用
 
-# Vim風スクロール（Ctrl+B/F でページ）
-keybind = ctrl+b=scroll_page_up
-keybind = ctrl+f=scroll_page_down
-
 # G/gg でトップ/ボトム（Altキーと組み合わせ）
 keybind = alt+g=scroll_to_top
 keybind = alt+shift+g=scroll_to_bottom
@@ -159,3 +158,4 @@ quick-terminal-animation-duration = 0.2
 # macOS特有の追加設定
 macos-non-native-fullscreen = visible-menu
 window-save-state = always
+fullscreen = true
