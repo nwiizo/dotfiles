@@ -49,11 +49,12 @@ keybind = cmd+shift+d=new_split:down
 keybind = cmd+|=new_split:right
 keybind = cmd+shift+minus=new_split:down
 
-# Navigate between panes (vim-style with Ctrl - Warp/tmuxと統一)
-keybind = ctrl+h=goto_split:left
-keybind = ctrl+j=goto_split:bottom
-keybind = ctrl+k=goto_split:top
-keybind = ctrl+l=goto_split:right
+# Navigate between panes (vim-style with Ctrl - Warp/tmux/Neovim統一)
+# performable: Ghosttyスプリットがなければキーをアプリ(Neovim)に渡す
+keybind = performable:ctrl+h=goto_split:left
+keybind = performable:ctrl+j=goto_split:bottom
+keybind = performable:ctrl+k=goto_split:top
+keybind = performable:ctrl+l=goto_split:right
 
 # Zoom/maximize current pane (Warpと統一)
 keybind = cmd+shift+enter=toggle_split_zoom
@@ -82,8 +83,40 @@ bold-is-bright = true
 confirm-close-surface = false
 
 # シェル設定
-shell-integration-features = no-cursor
+shell-integration = fish
+shell-integration-features = no-cursor,sudo,title
 term = xterm-256color
+
+# =============================================================================
+# Fish Shell Integration
+# =============================================================================
+# 新規タブ/ウィンドウは前のターミナルのディレクトリを継承
+window-inherit-working-directory = true
+
+# プロンプト間ジャンプ（Ctrl+Shift+上下）
+keybind = ctrl+shift+up=jump_to_prompt:-1
+keybind = ctrl+shift+down=jump_to_prompt:1
+
+# Alt+クリックでカーソル移動（プロンプト位置で有効）
+cursor-click-to-move = true
+
+# =============================================================================
+# Vim User Settings
+# =============================================================================
+# スクロールバック（大きめに設定）
+scrollback-limit = 100000
+
+# Vim風スクロール（Ctrl+U/D で半ページ）
+keybind = ctrl+u=scroll_page_fractional:-0.5
+keybind = ctrl+d=scroll_page_fractional:0.5
+
+# Vim風スクロール（Ctrl+B/F でページ）
+keybind = ctrl+b=scroll_page_up
+keybind = ctrl+f=scroll_page_down
+
+# G/gg でトップ/ボトム（Altキーと組み合わせ）
+keybind = alt+g=scroll_to_top
+keybind = alt+shift+g=scroll_to_bottom
 
 # カラーテーマ設定（Tokyo Night風）
 background = #1a1b26
