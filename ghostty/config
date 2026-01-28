@@ -19,12 +19,17 @@ window-padding-x = 12
 window-padding-y = 12
 
 # 透明度と背景設定
-background-opacity = 0.95
+background-opacity = 1.0
 background-blur-radius = 20
 
-# アクティブでないウィンドウの設定
-unfocused-split-opacity = 0.85
-unfocused-split-fill = #2c2c2c
+# アクティブでないウィンドウ/スプリットの設定
+# 非フォーカス時の透明度を下げてより暗く
+unfocused-split-opacity = 0.4
+unfocused-split-fill = #0d0d0d
+
+# フォーカスが外れた時の表示設定
+focus-follows-mouse = false
+window-theme = auto
 
 # キーボード設定
 mouse-hide-while-typing = true
@@ -38,15 +43,22 @@ keybind = cmd+n=new_window
 keybind = cmd+t=new_tab
 keybind = cmd+w=close_surface
 
+# フォントサイズ変更
+keybind = cmd+plus=increase_font_size:1
+keybind = cmd+minus=decrease_font_size:1
+keybind = cmd+zero=reset_font_size
+
 # =============================================================================
-# Pane Management (Warp/tmux統一)
+# Pane Management (Warp統一 - tmux-like operations)
 # =============================================================================
 # Split panes (Warpと統一)
 keybind = cmd+d=new_split:right
 keybind = cmd+shift+d=new_split:down
 
-# Split panes (JP keyboard: | は Unicode直接指定, tmuxと統一)
+# Split panes
+# 縦分割: Unicode直接指定
 keybind = cmd+|=new_split:right
+# 横分割
 keybind = cmd+shift+minus=new_split:down
 
 # Navigate between panes (vim-style with Ctrl - Warp/tmux/Neovim統一)
@@ -106,9 +118,9 @@ cursor-click-to-move = true
 # スクロールバック（大きめに設定）
 scrollback-limit = 100000
 
-# Vim風スクロール（Ctrl+U/D で半ページ）
+# Vim風スクロール（Ctrl+U で半ページ上）
 keybind = ctrl+u=scroll_page_fractional:-0.5
-keybind = ctrl+d=scroll_page_fractional:0.5
+# ctrl+d はデフォルト（EOF/exit）を使用
 
 # Vim風スクロール（Ctrl+B/F でページ）
 keybind = ctrl+b=scroll_page_up
@@ -118,8 +130,8 @@ keybind = ctrl+f=scroll_page_down
 keybind = alt+g=scroll_to_top
 keybind = alt+shift+g=scroll_to_bottom
 
-# カラーテーマ設定（Tokyo Night風）
-background = #1a1b26
+# カラーテーマ設定（Tokyo Night風 - 少し明るめ）
+background = #24283b
 foreground = #c0caf5
 
 # カラーパレット
