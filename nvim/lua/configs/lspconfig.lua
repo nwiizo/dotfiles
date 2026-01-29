@@ -25,6 +25,9 @@ local servers = {
   -- Rust
   "rust_analyzer",
 
+  -- Zig
+  "zls",
+
   -- Lua
   "lua_ls",
 }
@@ -78,7 +81,93 @@ local custom_configs = {
         },
         cargo = {
           allFeatures = true,
+          loadOutDirsFromCheck = true,
+          buildScripts = { enable = true },
         },
+        procMacro = {
+          enable = true,
+          attributes = { enable = true },
+        },
+        inlayHints = {
+          enable = true,
+          chainingHints = { enable = true },
+          typeHints = { enable = true, hideClosureInitialization = true },
+          parameterHints = { enable = true },
+          closureReturnTypeHints = { enable = "with_block" },
+          lifetimeElisionHints = { enable = "skip_trivial", useParameterNames = true },
+          maxLength = 25,
+          bindingModeHints = { enable = true },
+          closureCaptureHints = { enable = true },
+          discriminantHints = { enable = "fieldless" },
+          expressionAdjustmentHints = { enable = "reborrow" },
+          rangeExclusiveHints = { enable = true },
+        },
+        completion = {
+          autoimport = { enable = true },
+          postfix = { enable = true },
+          callable = { snippets = "fill_arguments" },
+          fullFunctionSignatures = { enable = true },
+          privateEditable = { enable = true },
+        },
+        imports = {
+          granularity = { group = "module" },
+          prefix = "self",
+          preferNoStd = false,
+        },
+        lens = {
+          enable = true,
+          references = { enable = true, adt = { enable = true }, enumVariant = { enable = true }, method = { enable = true }, trait = { enable = true } },
+          implementations = { enable = true },
+          run = { enable = true },
+          debug = { enable = true },
+        },
+        diagnostics = {
+          enable = true,
+          experimental = { enable = true },
+          styleLints = { enable = true },
+        },
+        semanticHighlighting = {
+          operator = { specialization = { enable = true } },
+          punctuation = { enable = true, specialization = { enable = true } },
+          strings = { enable = true },
+        },
+        hover = {
+          actions = {
+            enable = true,
+            references = { enable = true },
+            run = { enable = true },
+            debug = { enable = true },
+            gotoTypeDef = { enable = true },
+            implementations = { enable = true },
+          },
+          documentation = { enable = true, keywords = { enable = true } },
+          links = { enable = true },
+        },
+        typing = {
+          autoClosingAngleBrackets = { enable = true },
+        },
+        workspace = {
+          symbol = { search = { kind = "all_symbols" } },
+        },
+      },
+    },
+  },
+
+  zls = {
+    settings = {
+      zls = {
+        enable_inlay_hints = true,
+        inlay_hints_show_builtin = true,
+        inlay_hints_exclude_single_argument = true,
+        inlay_hints_hide_redundant_param_names = true,
+        inlay_hints_hide_redundant_param_names_last_token = true,
+        warn_style = true,
+        highlight_global_var_declarations = true,
+        enable_autofix = true,
+        enable_import_pop = true,
+        include_at_in_builtins = true,
+        enable_build_on_save = true,
+        build_on_save_step = "check",
       },
     },
   },

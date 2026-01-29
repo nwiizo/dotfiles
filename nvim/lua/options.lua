@@ -3,7 +3,7 @@ require "nvchad.options"
 local o = vim.o
 local opt = vim.opt
 
--- 2025 Minimal UI Settings
+-- 2026 Minimal UI Settings
 -- statusline-less workflow for maximum editing space
 o.cmdheight = 0 -- No command line (noice.nvim handles it)
 o.laststatus = 0 -- No statusline (incline.nvim handles it)

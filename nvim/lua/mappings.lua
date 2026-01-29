@@ -86,7 +86,7 @@ map("t", "<C-k>", "<C-\\><C-n><C-w>k", { desc = "Go to upper window" })
 map("t", "<C-l>", "<C-\\><C-n><C-w>l", { desc = "Go to right window" })
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- Quick Actions (2025 productivity)
+-- Quick Actions (2026 productivity)
 -- ═══════════════════════════════════════════════════════════════════════════
 
 -- Yank to system clipboard
