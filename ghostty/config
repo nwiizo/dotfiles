@@ -121,9 +121,7 @@ cursor-click-to-move = true
 # スクロールバック（大きめに設定）
 scrollback-limit = 100000
 
-# Vim風スクロール（Ctrl+U で半ページ上）
-keybind = ctrl+u=scroll_page_fractional:-0.5
-# ctrl+d はデフォルト（EOF/exit）を使用
+# ctrl+u, ctrl+d はfishのデフォルト（backward-kill-line, exit）を使用
 
 # G/gg でトップ/ボトム（Altキーと組み合わせ）
 keybind = alt+g=scroll_to_top
