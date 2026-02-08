@@ -1,44 +1,60 @@
-# フォントの設定
+# 自動更新チャンネル（tip = nightly でメモリリーク修正版）
+auto-update-channel = tip
+
+# =============================================================================
+# Font
+# =============================================================================
 font-family = "Hack Nerd Font Mono"
 font-size = 24
 font-feature = -calt
 font-feature = -liga
 font-feature = -dlig
+font-synthetic-style = false
 
-# カーソル設定
+# =============================================================================
+# Cursor
+# =============================================================================
 cursor-color = #9d44b5
 cursor-opacity = 0.8
 cursor-style = bar
 cursor-style-blink = false
 
-# macOS固有のウィンドウ設定
-macos-titlebar-style = hidden
+# =============================================================================
+# Window & Appearance
+# =============================================================================
+macos-titlebar-style = tabs
 macos-option-as-alt = true
 macos-window-shadow = true
+macos-non-native-fullscreen = visible-menu
 window-padding-x = 12
 window-padding-y = 12
+window-padding-balance = true
+window-padding-color = extend
+window-theme = auto
+window-save-state = always
+window-new-tab-position = current
+fullscreen = true
+resize-overlay = after-first
 
-# 透明度と背景設定
+# 透明度と背景
 background-opacity = 1.0
 background-blur-radius = 20
 
-# アクティブでないウィンドウ/スプリットの設定
-# 非フォーカス時の透明度を下げてより暗く
+# 非フォーカスペインの視認性
 unfocused-split-opacity = 0.4
 unfocused-split-fill = #0d0d0d
-
-# フォーカスが外れた時の表示設定
 focus-follows-mouse = false
-window-theme = auto
 
-# キーボード設定
+# =============================================================================
+# Keyboard
+# =============================================================================
 mouse-hide-while-typing = true
 keybind = shift+enter=text:\n
 keybind = ctrl+enter=text:\n
 keybind = cmd+enter=text:\n
 keybind = global:cmd+shift+space=toggle_quick_terminal
 
-# 基本的なmacOSスタイルのキーバインド
+# macOS標準キーバインド
 keybind = cmd+n=new_window
 keybind = cmd+t=new_tab
 keybind = cmd+w=close_surface
@@ -49,89 +65,84 @@ keybind = cmd+minus=decrease_font_size:1
 keybind = cmd+zero=reset_font_size
 
 # =============================================================================
-# Pane Management (Warp統一 - tmux-like operations)
+# Pane Management (vim-style)
 # =============================================================================
-# Split panes (Warpと統一)
 keybind = cmd+d=new_split:right
 keybind = cmd+shift+d=new_split:down
-
-# Split panes
-# 縦分割: Unicode直接指定
 keybind = cmd+|=new_split:right
-# 横分割
 keybind = cmd+shift+minus=new_split:down
 
-# Navigate between panes (vim-style with Ctrl - Warp/tmux/Neovim統一)
-# performable: Ghosttyスプリットがなければキーをアプリ(Neovim)に渡す
+# performable: スプリットがなければアプリ(Neovim)にキーを渡す
 keybind = performable:ctrl+h=goto_split:left
 keybind = performable:ctrl+j=goto_split:bottom
 keybind = performable:ctrl+k=goto_split:top
 keybind = performable:ctrl+l=goto_split:right
 
-# Zoom/maximize current pane (Warpと統一)
 keybind = cmd+shift+enter=toggle_split_zoom
 
 # =============================================================================
-# Tab Management (Warpと統一)
+# Tab Management
 # =============================================================================
-# Note: Ghosttyには close_tab がない。close_surface でタブ/ペインを閉じる
 keybind = cmd+shift+]=next_tab
 keybind = cmd+shift+[=previous_tab
 
-# クリップボード設定
+# =============================================================================
+# Clipboard
+# =============================================================================
 clipboard-read = allow
 clipboard-write = allow
 clipboard-trim-trailing-spaces = true
 copy-on-select = true
 clipboard-paste-protection = true
 
-# リンク設定
-link-url = true
-
-# ベル通知設定（Claude Code等の完了通知用）
-bell-features = title,attention,system
-
-# 表示設定
-bold-is-bright = true
-
-# ウィンドウ閉じる確認（シェル統合有効時はプロンプトで自動スキップ）
-confirm-close-surface = false
-
-# シェル設定
+# =============================================================================
+# Shell Integration
+# =============================================================================
 shell-integration = fish
-shell-integration-features = no-cursor,sudo,title
+shell-integration-features = no-cursor,sudo,title,path
 term = xterm-256color
-
-# =============================================================================
-# Fish Shell Integration
-# =============================================================================
-# 新規タブ/ウィンドウは前のターミナルのディレクトリを継承
 window-inherit-working-directory = true
 
-# プロンプト間ジャンプ（Ctrl+Shift+上下）
+# プロンプト間ジャンプ
 keybind = ctrl+shift+up=jump_to_prompt:-1
 keybind = ctrl+shift+down=jump_to_prompt:1
-
-# Alt+クリックでカーソル移動（プロンプト位置で有効）
 cursor-click-to-move = true
 
 # =============================================================================
-# Vim User Settings
+# Scrollback & Vim-style Navigation
 # =============================================================================
-# スクロールバック（大きめに設定）
-scrollback-limit = 100000
+scrollback-limit = 5000
 
-# ctrl+u, ctrl+d はfishのデフォルト（backward-kill-line, exit）を使用
-
-# G/gg でトップ/ボトム（Altキーと組み合わせ）
+keybind = ctrl+u=scroll_page_fractional:-0.5
+keybind = alt+b=scroll_page_up
 keybind = alt+g=scroll_to_top
 keybind = alt+shift+g=scroll_to_bottom
 
-# カラーテーマ設定（Tokyo Night風 - 少し明るめ）
+# =============================================================================
+# Misc
+# =============================================================================
+link-url = true
+bold-is-bright = true
+confirm-close-surface = false
+desktop-notifications = true
+bell-features = title,attention,system
+minimum-contrast = 1.1
+title-report = false
+enquiry-response =
+image-storage-limit = 320000000
+
+# Quick Terminal
+quick-terminal-position = top
+quick-terminal-animation-duration = 0.2
+
+# =============================================================================
+# Tokyo Night Theme
+# =============================================================================
 background = #24283b
 foreground = #c0caf5
+selection-foreground = #c0caf5
+selection-background = #364a82
 
-# カラーパレット
 palette = 0=#1a1b26
 palette = 1=#f7768e
 palette = 2=#9ece6a
@@ -148,12 +159,3 @@ palette = 12=#7aa2f7
 palette = 13=#bb9af7
 palette = 14=#7dcfff
 palette = 15=#c0caf5
-
-# クイックターミナル設定
-quick-terminal-position = top
-quick-terminal-animation-duration = 0.2
-
-# macOS特有の追加設定
-macos-non-native-fullscreen = visible-menu
-window-save-state = always
-fullscreen = true
