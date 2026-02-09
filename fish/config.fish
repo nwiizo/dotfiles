@@ -68,8 +68,8 @@ set -gx VISUAL nvim
 set -gx KUBE_EDITOR nvim
 
 set -gx GOPATH $HOME/gopath
-set -gx GOROOT $HOME/go
-set -gx GO111MODULE on
+# GOROOT: not set - Go knows its own root via Homebrew/mise
+# GO111MODULE: not set - default 'on' since Go 1.16
 set -gx GOPROXY direct
 set -gx GOSUMDB off
 
@@ -100,7 +100,12 @@ if type -q fzf
         --preview-window=right:50%:wrap \
         --bind='ctrl-/:toggle-preview' \
         --bind='ctrl-u:preview-page-up' \
-        --bind='ctrl-d:preview-page-down'"
+        --bind='ctrl-d:preview-page-down' \
+        --color=fg:#c0caf5,bg:#24283b,hl:#ff9e64 \
+        --color=fg+:#c0caf5,bg+:#292e42,hl+:#ff9e64 \
+        --color=info:#7aa2f7,prompt:#7dcfff,pointer:#bb9af7 \
+        --color=marker:#9ece6a,spinner:#bb9af7,header:#7aa2f7 \
+        --color=border:#414868,gutter:#24283b"
 
     if type -q fd
         set -gx FZF_DEFAULT_COMMAND "fd --type f --hidden --follow --exclude .git --exclude node_modules"
@@ -129,6 +134,12 @@ set -g fish_pager_color_completion normal
 set -g fish_pager_color_description yellow
 set -g fish_pager_color_prefix cyan
 set -g fish_pager_color_progress cyan
+
+# done プラグイン設定（長時間コマンド完了時に通知）
+# Ghosttyネイティブ通知を使用（コマンド名・所要時間が表示される）
+set -g __done_min_cmd_duration 10000  # 10秒以上で通知
+set -g __done_notification_urgency_level normal
+set -g __done_notify_sound 1
 
 # TMUX optimizations
 if test -n "$TMUX"
@@ -212,9 +223,10 @@ function update_all -d "Update all tools"
     echo "Updating all tools..."
 
     type -q brew; and echo "Homebrew..." && brew update && brew upgrade && brew cleanup
-    type -q mise; and echo "mise..." && mise self-update 2>/dev/null; mise upgrade
+    type -q mise; and echo "mise..." && mise self-update 2>/dev/null && mise upgrade
     type -q claude; and echo "Claude CLI..." && claude update
     type -q rustup; and echo "Rust..." && rustup update
+    type -q uv; and echo "uv..." && uv self update
     type -q fisher; and echo "Fisher..." && fisher update 2>/dev/null
     type -q nvim; and echo "Neovim plugins..." && nvim --headless "+Lazy! sync" +qa 2>/dev/null
 
@@ -295,7 +307,11 @@ function __history_tab_complete
 end
 
 function fish_user_key_bindings
-    # These work in iTerm2, Ghostty, etc. but NOT in Warp
+    # fzf.fish plugin: only Ctrl+F for directory search
+    # History → atuin (Ctrl+R), git/processes/variables → abbreviations (fgl, fgs, fp, fv)
+    fzf_configure_bindings --directory=\cf --history= --git_log= --git_status= --processes= --variables=
+
+    # Custom bindings (work in Ghostty, iTerm2, etc. but NOT in Warp)
     bind ctrl-g ghq_fzf_repo
     bind ctrl-b git_fzf_branch
     bind ctrl-l 'clear; commandline -f repaint'
@@ -308,11 +324,8 @@ end
 # 11. ABBREVIATIONS (Interactive shell only)
 # ═══════════════════════════════════════════════════════════════════════════
 if status is-interactive
-    # Navigation
+    # Navigation (.. ... .... are provided by fastdir plugin)
     abbr -a -- - 'cd -'
-    abbr -a .. 'cd ..'
-    abbr -a ... 'cd ../..'
-    abbr -a .... 'cd ../../..'
 
     # Git
     abbr -a g git
@@ -346,6 +359,7 @@ if status is-interactive
 
     # Tools
     abbr -a c claude --dangerously-skip-permissions
+    abbr -a claude claude --dangerously-skip-permissions
     abbr -a v nvim
     abbr -a vi nvim
     abbr -a vim nvim

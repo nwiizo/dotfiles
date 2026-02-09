@@ -31,7 +31,7 @@ return {
     branch = "main",
     dependencies = { "zbirenbaum/copilot.lua", "nvim-lua/plenary.nvim" },
     opts = {
-      model = "claude-opus-4.5",
+      model = "claude-opus-4.6",
       debug = false,
       window = { layout = "vertical", width = 0.35 },
       mappings = { close = { normal = "q", insert = "<C-c>" } },
@@ -60,7 +60,7 @@ return {
       providers = {
         copilot = {
           endpoint = "https://api.githubcopilot.com",
-          model = "claude-opus-4.5",
+          model = "claude-opus-4.6",
           timeout = 30000,
         },
       },
@@ -113,9 +113,9 @@ return {
         desc = "Add file",
         ft = { "NvimTree", "neo-tree", "oil", "minifiles", "netrw" },
       },
-      -- Diff management
-      { "<leader>aa", "<cmd>ClaudeCodeDiffAccept<cr>", desc = "Accept diff" },
-      { "<leader>ad", "<cmd>ClaudeCodeDiffDeny<cr>", desc = "Deny diff" },
+      -- Diff management (using <leader>c prefix to avoid conflicts with Avante/CopilotChat)
+      { "<leader>ca", "<cmd>ClaudeCodeDiffAccept<cr>", desc = "Accept diff" },
+      { "<leader>cD", "<cmd>ClaudeCodeDiffDeny<cr>", desc = "Deny diff" },
     },
   },
 }

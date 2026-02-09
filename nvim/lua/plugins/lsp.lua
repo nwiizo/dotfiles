@@ -7,9 +7,9 @@ return {
     cmd = "ConformInfo",
     keys = {
       {
-        "<leader>cf",
+        "<leader>bf",
         function()
-          require("conform").format { async = true, lsp_fallback = true }
+          require("conform").format { async = true, lsp_format = "fallback" }
         end,
         desc = "Format Buffer",
       },
@@ -25,7 +25,7 @@ return {
           terraform = { "terraform_fmt" },
           bash = { "shfmt" },
           sh = { "shfmt" },
-          python = { "black", "isort" },
+          python = { "ruff_format", "ruff_organize_imports" },
           rust = { "rustfmt", lsp_format = "fallback" },
           zig = { "zigfmt" },
           go = { "gofmt", "goimports", "gofumpt" },
@@ -33,7 +33,7 @@ return {
           json = { "prettier" },
           markdown = { "prettier" },
         },
-        format_on_save = { timeout_ms = 500, lsp_fallback = true },
+        format_on_save = { timeout_ms = 500, lsp_format = "fallback" },
       }
     end,
   },
@@ -67,8 +67,7 @@ return {
         "gopls",
         "gofumpt",
         "terraform-ls",
-        "black",
-        "isort",
+        "ruff",
         "rust-analyzer",
         "yaml-language-server",
         "bash-language-server",

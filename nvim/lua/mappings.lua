@@ -98,7 +98,7 @@ map("n", "<leader>j", "<cmd>cnext<cr>zz", { desc = "Next quickfix" })
 map("n", "<leader>k", "<cmd>cprev<cr>zz", { desc = "Prev quickfix" })
 
 -- Search and replace word under cursor
-map("n", "<leader>rr", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]], { desc = "Replace word under cursor" })
+map("n", "<leader>sr", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]], { desc = "Replace word under cursor" })
 
 -- Make file executable
 map("n", "<leader>cx", "<cmd>!chmod +x %<cr>", { silent = true, desc = "Make file executable" })

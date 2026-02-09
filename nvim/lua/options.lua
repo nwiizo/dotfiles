@@ -1,7 +1,6 @@
 require "nvchad.options"
 
 local o = vim.o
-local opt = vim.opt
 
 -- 2026 Minimal UI Settings
 -- statusline-less workflow for maximum editing space
@@ -9,14 +8,10 @@ o.cmdheight = 0 -- No command line (noice.nvim handles it)
 o.laststatus = 0 -- No statusline (incline.nvim handles it)
 o.showmode = false -- No mode text (modes.nvim shows via cursorline color)
 
--- Line numbers (explicit settings to ensure they always appear)
-o.number = true -- Show absolute line number on current line
-o.relativenumber = true -- Show relative line numbers
-opt.number = true -- Redundant but explicit
-opt.relativenumber = true -- Redundant but explicit
-vim.cmd "set nu" -- Force enable line numbers
-vim.cmd "set rnu" -- Force enable relative line numbers
-o.numberwidth = 4 -- Width of number column
+-- Line numbers
+o.number = true
+o.relativenumber = true
+o.numberwidth = 4
 
 -- Scrolling
 o.scrolloff = 8 -- Keep 8 lines visible above/below cursor

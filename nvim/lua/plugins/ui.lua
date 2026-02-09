@@ -212,6 +212,8 @@ return {
         { "<leader>g", group = "Git", icon = "" },
         { "<leader>l", group = "LSP", icon = "" },
         { "<leader>p", group = "Peek", icon = "" },
+        { "<leader>r", group = "Rust", icon = "🦀" },
+        { "<leader>T", group = "Test", icon = "" },
         { "<leader>s", group = "Search (Snacks)", icon = "" },
         { "<leader>t", group = "Terminal", icon = "" },
         { "<leader>u", group = "Toggle", icon = "" },
@@ -235,6 +237,66 @@ return {
     main = "ibl",
     config = function()
       require("ibl").setup()
+    end,
+  },
+
+  -- nvim-surround: Add/change/delete surrounding characters
+  {
+    "kylechui/nvim-surround",
+    version = "*",
+    event = "VeryLazy",
+    opts = {},
+  },
+
+  -- mini.ai: Enhanced text objects (around/inside)
+  {
+    "echasnovski/mini.ai",
+    event = "VeryLazy",
+    dependencies = { "nvim-treesitter/nvim-treesitter-textobjects" },
+    config = function()
+      local ai = require "mini.ai"
+      ai.setup {
+        n_lines = 500,
+        custom_textobjects = {
+          o = ai.gen_spec.treesitter {
+            a = { "@block.outer", "@conditional.outer", "@loop.outer" },
+            i = { "@block.inner", "@conditional.inner", "@loop.inner" },
+          },
+          f = ai.gen_spec.treesitter { a = "@function.outer", i = "@function.inner" },
+          c = ai.gen_spec.treesitter { a = "@class.outer", i = "@class.inner" },
+          a = ai.gen_spec.treesitter { a = "@parameter.outer", i = "@parameter.inner" },
+        },
+      }
+    end,
+  },
+
+  -- nvim-autopairs: Auto bracket/quote pairing
+  {
+    "windwp/nvim-autopairs",
+    event = "InsertEnter",
+    config = function()
+      local autopairs = require "nvim-autopairs"
+      autopairs.setup {
+        check_ts = true,
+        ts_config = {
+          lua = { "string" },
+          rust = { "string", "raw_string_literal" },
+        },
+        fast_wrap = {
+          map = "<M-e>",
+          chars = { "{", "[", "(", '"', "'" },
+          pattern = [=[[%'%"%>%]%)%}%,]]=],
+          end_key = "$",
+          before_key = "h",
+          after_key = "l",
+          keys = "qwertyuiopzxcvbnmasdfghjkl",
+          highlight = "PmenuSel",
+          highlight_grey = "LineNr",
+        },
+      }
+      -- Integrate with nvim-cmp
+      local cmp_autopairs = require "nvim-autopairs.completion.cmp"
+      require("cmp").event:on("confirm_done", cmp_autopairs.on_confirm_done())
     end,
   },
 }
