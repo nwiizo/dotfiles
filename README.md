@@ -135,16 +135,18 @@ z <substring>         # zoxide jump
 | `Cmd+N` | New window |
 | `Cmd+Shift+]` / `[` | Switch tabs |
 
-### 📜 Scrolling (Vim-style)
+### 📜 Scrolling
 
 | Key | Action |
 |-----|--------|
 | `Ctrl+U` | Half page up |
-| `Ctrl+B` | Full page up |
+| `Alt+B` | Full page up |
+| `Alt+G` | Scroll to top |
+| `Alt+Shift+G` | Scroll to bottom |
 | `Ctrl+Shift+Up/Down` | Jump between prompts |
 | `Cmd+Shift+Space` | Quick terminal |
 
-Config: Hack Nerd Font 24pt / Tokyo Night / Bar cursor 🎨
+Config: Hack Nerd Font Mono 24pt / Tokyo Night / Bar cursor 🎨
 
 ---
 
@@ -171,13 +173,31 @@ NvChad v3.0 base. Minimal UI with no statusline (cmdheight=0, incline.nvim for f
 | `<leader><leader>` | Smart picker (files/buffers/recent) |
 | `<leader>sf` | Find files |
 | `<leader>sg` | Grep search |
+| `<leader>sw` | Grep word under cursor |
 | `<leader>sb` | Buffer list |
 | `<leader>sc` | Command search |
 | `<leader>ss` | LSP symbols |
+| `<leader>sr` | Recent files |
+| `<leader>sh` | Help pages |
+| `<leader>sk` | Keymaps |
+| `<leader>sd` | Diagnostics |
+| `<leader>sR` | Resume last picker |
+| `<leader>tt` | Toggle terminal |
 | `<C-p>` / `<leader>ff` | Telescope find files |
 | `<leader>fg` | Telescope grep |
 | `-` / `<leader>e` | Oil.nvim (file manager) |
 | `s` | Flash.nvim (jump) |
+
+### 🔭 Code Peek (overlook.nvim)
+
+| Key | Action |
+|-----|--------|
+| `<leader>pd` | Peek definition |
+| `<leader>pc` | Close all popups |
+| `<leader>pu` / `<leader>pU` | Restore last / all popups |
+| `<leader>pf` | Toggle focus |
+| `<leader>ps` / `<leader>pv` | Open in split / vsplit |
+| `<leader>po` | Open in original |
 
 ### 🧠 LSP
 
@@ -189,10 +209,13 @@ NvChad v3.0 base. Minimal UI with no statusline (cmdheight=0, incline.nvim for f
 | `<leader>rn` | Rename |
 | `<leader>ca` | Code action |
 | `<leader>fm` / `<leader>bf` | Format |
+| `<leader>lk` | Signature help |
+| `<leader>lD` | Type definition |
+| `<leader>lwa/lwr/lwl` | Workspace folder add/remove/list |
 | `[d` / `]d` | Navigate diagnostics |
 | `<leader>ld` | Show diagnostic (float) |
 
-Languages: Rust, Go, TypeScript, Python, Lua, Terraform, Bash, Zig, HTML/CSS, JSON, YAML
+Languages: Rust (rustaceanvim), Go (gopls, golangci-lint), Python (pylsp), Lua (lua_ls), Terraform (terraformls), Bash (bashls), Zig (zls), HTML/CSS
 
 ### 🌿 Git
 
@@ -200,12 +223,16 @@ Languages: Rust, Go, TypeScript, Python, Lua, Terraform, Bash, Zig, HTML/CSS, JS
 |-----|--------|
 | `<leader>gg` | LazyGit |
 | `<leader>gl` | Git log |
+| `<leader>gf` | LazyGit file log |
 | `<leader>gd` | Diffview (working tree) |
 | `<leader>gD` | Diffview (vs previous commit) |
-| `<leader>gm` | Diffview (vs main) |
+| `<leader>gm` / `<leader>gM` | Diffview vs main / master |
+| `<leader>gs` | Diffview (staged changes) |
 | `<leader>gh` / `<leader>gH` | File / Branch history |
+| `<leader>gt` | Toggle file panel |
 | `<leader>gp` | Hunk preview |
-| `<leader>gb` | Blame |
+| `<leader>gb` / `<leader>gB` | Blame / Toggle blame |
+| `<leader>hs` / `<leader>hr` / `<leader>hu` | Stage / Reset / Undo stage hunk |
 | `]c` / `[c` | Hunk navigation |
 
 ### 🚨 Diagnostics (Trouble.nvim)
@@ -215,27 +242,60 @@ Languages: Rust, Go, TypeScript, Python, Lua, Terraform, Bash, Zig, HTML/CSS, JS
 | `<leader>xx` | All diagnostics |
 | `<leader>xX` | Buffer diagnostics |
 | `<leader>xs` | Document symbols |
+| `<leader>xl` | LSP definitions |
+| `<leader>xq` | Quickfix (Trouble) |
 | `<leader>xt` | TODO list |
+| `<leader>sT` | Search TODOs (Telescope) |
 | `]t` / `[t` | TODO navigation |
 
-### 🦀 Rust
+### 🦀 Rust (rustaceanvim)
 
 | Key | Action |
 |-----|--------|
-| `<leader>ra` | Code action (rustaceanvim) |
+| `<leader>ra` | Code action |
 | `<leader>rr` / `<leader>rR` | Run / Re-run |
 | `<leader>rt` / `<leader>rT` | Test / Re-test |
-| `<leader>rd` | Debug |
+| `<leader>rd` | Debuggables |
 | `<leader>rm` | Expand macro |
-| `<leader>cr/cv/cu/cU` | crates.nvim (info/versions/update/upgrade) |
+| `<leader>rc` | Open Cargo.toml |
+| `<leader>rp` | Parent module |
+| `<leader>rj` | Join lines |
+| `<leader>rs` | Structural search replace |
+| `<leader>re` | Explain error |
+| `<leader>rD` | Render diagnostic |
+| `<leader>rv` / `<leader>rV` | View HIR / MIR |
+| `K` | Rust hover actions (override) |
+| `J` | Rust join lines (override) |
+
+### 📦 Crates (crates.nvim, in Cargo.toml)
+
+| Key | Action |
+|-----|--------|
+| `<leader>ct` | Toggle crates |
+| `<leader>cr` | Reload |
+| `<leader>cv` | Show versions |
+| `<leader>cf` | Show features |
+| `<leader>cd` | Show dependencies |
+| `<leader>cu` / `<leader>cU` | Update / Upgrade crate |
+| `<leader>cA` | Upgrade all crates |
+| `<leader>cH` / `<leader>cR` | Open homepage / repository |
+| `<leader>cD` / `<leader>cC` | Open docs.rs / crates.io |
 
 ### 🐛 Debug (DAP)
 
 | Key | Action |
 |-----|--------|
 | `<leader>db` | Toggle breakpoint |
+| `<leader>dB` | Conditional breakpoint |
 | `<leader>dc` | Continue |
-| `<leader>di/do/dO` | Step in/out/over |
+| `<leader>dC` | Run to cursor |
+| `<leader>di` / `<leader>do` / `<leader>dO` | Step in / out / over |
+| `<leader>dp` | Pause |
+| `<leader>dt` | Terminate |
+| `<leader>dr` | Toggle REPL |
+| `<leader>ds` | Session |
+| `<leader>du` | Toggle DAP UI |
+| `<leader>de` | Eval expression |
 
 ### 🧪 Test (neotest)
 
@@ -243,20 +303,45 @@ Languages: Rust, Go, TypeScript, Python, Lua, Terraform, Bash, Zig, HTML/CSS, JS
 |-----|--------|
 | `<leader>Tr` | Run nearest test |
 | `<leader>Tf` | Run file tests |
-| `<leader>Td` | Debug test |
+| `<leader>Td` | Debug nearest test |
+| `<leader>Ts` | Toggle test summary |
+| `<leader>To` | Show test output |
+| `<leader>Tp` | Toggle output panel |
+| `[T` / `]T` | Navigate failed tests |
 
 ### 🤖 AI
 
+**CopilotChat:**
+
 | Key | Action |
 |-----|--------|
-| `<leader>ao` | CopilotChat open |
+| `<leader>ao` | Open chat |
+| `<leader>aq` | Close chat |
+| `<leader>ar` | Reset chat |
 | `<leader>ae` / `<leader>af` | Explain / Fix |
 | `<leader>at` / `<leader>ad` | Generate tests / Docs |
 | `<leader>aR` | Code review |
-| `<leader>aa` | Avante: Ask |
-| `<leader>ax` | Avante: Edit |
-| `<leader>cc` | Claude Code toggle |
-| `<leader>cf` | Claude Code focus |
+
+**Avante:**
+
+| Key | Action |
+|-----|--------|
+| `<leader>aa` | Ask |
+| `<leader>ax` | Edit |
+| `<leader>aS` | Refresh response |
+
+**Claude Code:**
+
+| Key | Action |
+|-----|--------|
+| `<leader>cc` | Toggle |
+| `<leader>cf` | Focus |
+| `<leader>cr` | Resume session |
+| `<leader>cC` | Continue conversation |
+| `<leader>cm` | Select model |
+| `<leader>cb` | Add current buffer |
+| `<leader>cs` | Send to Claude (visual) |
+| `<leader>ca` / `<leader>cD` | Accept / Deny diff |
 
 ### 💬 Completion (nvim-cmp)
 
