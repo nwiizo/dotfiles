@@ -25,16 +25,20 @@ cursor-style-blink = false
 macos-titlebar-style = tabs
 macos-option-as-alt = true
 macos-window-shadow = true
-macos-non-native-fullscreen = visible-menu
+# 1.3.0 で non-native fullscreen はタブ非対応になったため無効化
+macos-non-native-fullscreen = false
 window-padding-x = 12
 window-padding-y = 12
 window-padding-balance = true
 window-padding-color = extend
 window-theme = auto
+# native fullscreen ならタブ・フルスクリーン状態を正しく保存・復元できる
 window-save-state = always
 window-new-tab-position = current
 fullscreen = true
 resize-overlay = after-first
+# 1.3.0: スクロールバー非表示（キーボードナビゲーション主体のため）
+scrollbar = never
 
 # 透明度と背景
 background-opacity = 1.0
@@ -79,6 +83,8 @@ keybind = performable:ctrl+k=goto_split:top
 keybind = performable:ctrl+l=goto_split:right
 
 keybind = cmd+shift+enter=toggle_split_zoom
+# 1.3.0: ズーム中のスプリット移動でズーム状態を維持
+split-preserve-zoom = navigation
 
 # =============================================================================
 # Tab Management
@@ -102,6 +108,9 @@ shell-integration = fish
 shell-integration-features = no-cursor,sudo,title,path
 term = xterm-256color
 window-inherit-working-directory = true
+# 1.3.0: タブ・スプリットも作業ディレクトリを継承
+tab-inherit-working-directory = true
+split-inherit-working-directory = true
 
 # プロンプト間ジャンプ
 keybind = ctrl+shift+up=jump_to_prompt:-1
@@ -111,7 +120,7 @@ cursor-click-to-move = true
 # =============================================================================
 # Scrollback & Vim-style Navigation
 # =============================================================================
-scrollback-limit = 5000
+scrollback-limit = 100000
 
 keybind = ctrl+u=scroll_page_fractional:-0.5
 keybind = alt+b=scroll_page_up
@@ -131,6 +140,10 @@ title-report = false
 enquiry-response =
 image-storage-limit = 320000000
 
+# 1.3.0: コマンド完了通知（非フォーカス時、5秒以上のコマンド）
+notify-on-command-finish = unfocused
+notify-on-command-finish-after = 5s
+
 # Quick Terminal
 quick-terminal-position = top
 quick-terminal-animation-duration = 0.2
@@ -142,6 +155,13 @@ background = #24283b
 foreground = #c0caf5
 selection-foreground = #c0caf5
 selection-background = #364a82
+# 1.3.0: 検索ハイライト（Tokyo Night に合わせた配色）
+search-foreground = #1a1b26
+search-background = #e0af68
+search-selected-foreground = #1a1b26
+search-selected-background = #ff9e64
+# 1.3.0: カスタムパレット指定時の自動生成を無効化（正確な色を維持）
+palette-generate = false
 
 palette = 0=#1a1b26
 palette = 1=#f7768e
