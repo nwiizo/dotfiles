@@ -49,6 +49,26 @@ o.cursorlineopt = "both" -- Enable cursorline for modes.nvim
 -- Files
 o.swapfile = false -- No swap files
 o.backup = false -- No backup files
+o.autoread = true -- Auto-reload files changed outside of nvim
+
+-- Auto-reload: check for external changes on focus/buffer switch
+vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold" }, {
+  command = "silent! checktime",
+  desc = "Auto-reload files changed outside of nvim",
+})
+
+-- Auto-reload: use v:fcs_choice to control reload behavior
+vim.api.nvim_create_autocmd("FileChangedShell", {
+  callback = function()
+    if vim.bo.modified then
+      vim.v.fcs_choice = "ask"
+      vim.notify("File changed externally (buffer has unsaved edits)", vim.log.levels.WARN)
+    else
+      vim.v.fcs_choice = "reload"
+    end
+  end,
+  desc = "Auto-reload unmodified buffers, ask if buffer has unsaved changes",
+})
 
 -- Splits
 o.splitright = true -- Vertical splits to the right
