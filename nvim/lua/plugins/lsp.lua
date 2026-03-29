@@ -158,6 +158,5 @@ return {
     },
   },
 
-  -- schemastore.nvim
-  { "b0o/schemastore.nvim", lazy = true },
+  -- schemastore.nvim: managed by lazyvim.plugins.extras.lang.json / lang.yaml
 }
