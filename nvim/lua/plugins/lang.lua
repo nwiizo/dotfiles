@@ -202,6 +202,7 @@ return {
   {
     "nwiizo/cargo.nvim",
     dir = vim.fn.expand("~/ghq/github.com/nwiizo/cargo.nvim"),
+    build = "cargo build --release",
     ft = { "rust", "toml" },
     cmd = { "CargoBuild", "CargoRun", "CargoTest", "CargoCheck", "CargoClippy" },
     opts = { float_window = true, window_width = 0.8, window_height = 0.8 },
