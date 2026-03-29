@@ -1,9 +1,34 @@
--- AI Integration plugins
--- LazyVim manages: copilot, copilot-chat (via extras)
+-- AI Integration plugins: Copilot, CopilotChat, Avante, CodeCompanion, ClaudeCode
 return {
-  -- CopilotChat: Override model and layout
+  -- Copilot: Inline completions (lazy-loaded for faster startup)
+  {
+    "zbirenbaum/copilot.lua",
+    event = "InsertEnter",
+    config = function()
+      require("copilot").setup {
+        suggestion = { enabled = false }, -- Use copilot-cmp instead
+        panel = { enabled = false },
+        filetypes = { yaml = true, markdown = true, gitcommit = true, ["*"] = true },
+      }
+    end,
+  },
+
+  -- Copilot-cmp: Copilot as completion source
+  {
+    "zbirenbaum/copilot-cmp",
+    event = { "BufRead" },
+    dependencies = { "copilot.lua", "nvim-cmp" },
+    config = function()
+      require("copilot_cmp").setup()
+    end,
+  },
+
+  -- CopilotChat: AI chat with Claude model
   {
     "CopilotC-Nvim/CopilotChat.nvim",
+    event = "VeryLazy",
+    branch = "main",
+    dependencies = { "zbirenbaum/copilot.lua", "nvim-lua/plenary.nvim" },
     opts = {
       model = "claude-opus-4.6",
       debug = false,
@@ -22,7 +47,7 @@ return {
     },
   },
 
-  -- Avante: Cursor-like IDE experience
+  -- Avante: Cursor-like IDE experience with AI
   {
     "yetone/avante.nvim",
     event = "VeryLazy",
@@ -66,7 +91,7 @@ return {
     },
   },
 
-  -- CodeCompanion: Vim-native AI chat & editing
+  -- CodeCompanion: Vim-native AI chat & editing with native Claude support
   {
     "olimorris/codecompanion.nvim",
     event = "VeryLazy",
@@ -98,7 +123,8 @@ return {
     },
   },
 
-  -- Claude Code: Terminal integration
+  -- Claude Code: Primary AI integration (terminal)
+  -- Loads on VeryLazy so WebSocket connection is ready when Claude Code is running
   {
     "coder/claudecode.nvim",
     event = "VeryLazy",
@@ -110,9 +136,10 @@ return {
       },
     },
     keys = {
+      { "<leader>c", nil, desc = "Claude Code" },
       { "<leader>cc", "<cmd>ClaudeCode<cr>", desc = "Toggle Claude" },
-      { "<leader>cF", "<cmd>ClaudeCodeFocus<cr>", desc = "Focus Claude" },
-      { "<leader>cR", "<cmd>ClaudeCode --resume<cr>", desc = "Resume Claude" },
+      { "<leader>cf", "<cmd>ClaudeCodeFocus<cr>", desc = "Focus Claude" },
+      { "<leader>cr", "<cmd>ClaudeCode --resume<cr>", desc = "Resume Claude" },
       { "<leader>cC", "<cmd>ClaudeCode --continue<cr>", desc = "Continue Claude" },
       { "<leader>cm", "<cmd>ClaudeCodeSelectModel<cr>", desc = "Select Claude model" },
       { "<leader>cb", "<cmd>ClaudeCodeAdd %<cr>", desc = "Add current buffer" },
@@ -123,7 +150,7 @@ return {
         desc = "Add file from tree",
         ft = { "NvimTree", "neo-tree", "oil", "minifiles", "netrw" },
       },
-      { "<leader>cA", "<cmd>ClaudeCodeDiffAccept<cr>", desc = "Accept diff" },
+      { "<leader>ca", "<cmd>ClaudeCodeDiffAccept<cr>", desc = "Accept diff" },
       { "<leader>cD", "<cmd>ClaudeCodeDiffDeny<cr>", desc = "Deny diff" },
     },
   },

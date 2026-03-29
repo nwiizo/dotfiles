@@ -45,6 +45,7 @@ o.termguicolors = true
 o.signcolumn = "yes" -- Always show sign column
 o.cursorline = true -- Highlight current line (for modes.nvim)
 o.cursorlineopt = "both" -- Enable cursorline for modes.nvim
+o.winborder = "rounded" -- Default border for all floating windows (Neovim 0.11+)
 
 -- Files
 o.swapfile = false -- No swap files

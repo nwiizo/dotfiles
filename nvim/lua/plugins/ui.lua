@@ -1,14 +1,15 @@
--- UI plugins: statusline, modes, notifications, dimming
+-- UI plugins: Custom UI components for minimal UI workflow
+-- LazyVim manages: noice, which-key, mini.ai, nvim-notify (via Snacks)
 return {
-  -- incline.nvim: Floating statusline for current file info
+  -- incline.nvim: Floating statusline (replaces lualine)
   {
     "b0o/incline.nvim",
     event = "BufReadPre",
     dependencies = { "nvim-tree/nvim-web-devicons" },
     config = function()
-      local devicons = require "nvim-web-devicons"
+      local devicons = require("nvim-web-devicons")
 
-      require("incline").setup {
+      require("incline").setup({
         window = {
           padding = 0,
           margin = { horizontal = 0, vertical = 0 },
@@ -48,12 +49,12 @@ return {
             or (props.focused and "Normal" or "Comment")
 
           if diag_counts.error > 0 then
-            table.insert(diagnostics, { "  ", guifg = "#ff6c6b" })
-            table.insert(diagnostics, { tostring(diag_counts.error), guifg = "#ff6c6b" })
+            table.insert(diagnostics, { "  ", guifg = "#f38ba8" })
+            table.insert(diagnostics, { tostring(diag_counts.error), guifg = "#f38ba8" })
           end
           if diag_counts.warn > 0 then
-            table.insert(diagnostics, { "  ", guifg = "#ECBE7B" })
-            table.insert(diagnostics, { tostring(diag_counts.warn), guifg = "#ECBE7B" })
+            table.insert(diagnostics, { "  ", guifg = "#f9e2af" })
+            table.insert(diagnostics, { tostring(diag_counts.warn), guifg = "#f9e2af" })
           end
 
           local res = { guibg = props.focused and "#1e1e2e" or "#11111b", { " " } }
@@ -76,16 +77,16 @@ return {
           table.insert(res, { " " })
           return res
         end,
-      }
+      })
     end,
   },
 
-  -- modes.nvim: Show mode via cursorline color
+  -- modes.nvim: Cursorline color indicates mode
   {
     "mvllow/modes.nvim",
     event = "VeryLazy",
     config = function()
-      require("modes").setup {
+      require("modes").setup({
         colors = {
           bg = "",
           copy = "#f5c359",
@@ -97,85 +98,65 @@ return {
         set_cursor = true,
         set_cursorline = true,
         set_number = true,
-        ignore_filetypes = { "NvimTree", "TelescopePrompt", "oil", "lazy", "Avante", "AvanteInput" },
-      }
+        ignore_filetypes = { "NvimTree", "TelescopePrompt", "oil", "lazy", "Avante", "AvanteInput", "snacks_dashboard" },
+      })
     end,
   },
 
-  -- noice.nvim: Floating cmdline, messages, notifications
+  -- noice.nvim: Override LazyVim defaults for centered cmdline
   {
     "folke/noice.nvim",
-    event = "VeryLazy",
-    dependencies = { "MunifTanjim/nui.nvim", "rcarriga/nvim-notify" },
-    config = function()
-      require("noice").setup {
-        cmdline = {
-          enabled = true,
-          view = "cmdline_popup",
-          format = {
-            cmdline = { pattern = "^:", icon = "", lang = "vim" },
-            search_down = { kind = "search", pattern = "^/", icon = " ", lang = "regex" },
-            search_up = { kind = "search", pattern = "^%?", icon = " ", lang = "regex" },
-            filter = { pattern = "^:%s*!", icon = "$", lang = "bash" },
-            lua = { pattern = { "^:%s*lua%s+", "^:%s*lua%s*=%s*", "^:%s*=%s*" }, icon = "", lang = "lua" },
-            help = { pattern = "^:%s*he?l?p?%s+", icon = "󰋖" },
-          },
+    opts = {
+      cmdline = {
+        view = "cmdline_popup",
+        format = {
+          cmdline = { pattern = "^:", icon = "", lang = "vim" },
+          search_down = { kind = "search", pattern = "^/", icon = " ", lang = "regex" },
+          search_up = { kind = "search", pattern = "^%?", icon = " ", lang = "regex" },
+          filter = { pattern = "^:%s*!", icon = "$", lang = "bash" },
+          lua = { pattern = { "^:%s*lua%s+", "^:%s*lua%s*=%s*", "^:%s*=%s*" }, icon = "", lang = "lua" },
+          help = { pattern = "^:%s*he?l?p?%s+", icon = "󰋖" },
         },
-        messages = { enabled = true, view = "notify", view_error = "notify", view_warn = "notify" },
-        popupmenu = { enabled = true, backend = "nui" },
-        lsp = {
-          progress = { enabled = true },
-          override = {
-            ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
-            ["vim.lsp.util.stylize_markdown"] = true,
-            ["cmp.entry.get_documentation"] = true,
-          },
-          hover = { enabled = true },
-          signature = { enabled = true },
+      },
+      views = {
+        cmdline_popup = {
+          position = { row = "50%", col = "50%" },
+          size = { width = 60, height = "auto" },
+          border = { style = "rounded", padding = { 0, 1 } },
         },
-        presets = {
-          bottom_search = false,
-          command_palette = true,
-          long_message_to_split = true,
-          lsp_doc_border = true,
-        },
-        views = {
-          cmdline_popup = {
-            position = { row = "50%", col = "50%" },
-            size = { width = 60, height = "auto" },
-            border = { style = "rounded", padding = { 0, 1 } },
-          },
-        },
-      }
-    end,
+      },
+      presets = {
+        bottom_search = false,
+        command_palette = true,
+        long_message_to_split = true,
+        lsp_doc_border = true,
+      },
+    },
   },
 
-  -- nvim-notify: Better notification UI
+  -- nvim-notify: Override for compact style
   {
     "rcarriga/nvim-notify",
-    lazy = true,
-    config = function()
-      require("notify").setup {
-        background_colour = "#000000",
-        fps = 60,
-        render = "compact",
-        stages = "fade",
-        timeout = 3000,
-        top_down = false,
-      }
-    end,
+    opts = {
+      background_colour = "#000000",
+      fps = 60,
+      render = "compact",
+      stages = "fade",
+      timeout = 3000,
+      top_down = false,
+    },
   },
 
-  -- Vimade: Dim inactive buffers
+  -- vimade: Dim inactive buffers
   {
     "TaDaa/vimade",
     event = "VeryLazy",
     config = function()
-      require("vimade").setup {
+      require("vimade").setup({
         fadelevel = 0.5,
         basebg = "#11111b",
         blocklist = { default = { buf_opts = { buftype = { "terminal" } } } },
-      }
+      })
     end,
   },
 
@@ -196,51 +177,24 @@ return {
     },
   },
 
-  -- which-key.nvim: Key binding hints
+  -- which-key.nvim: Override for custom group names
   {
     "folke/which-key.nvim",
-    event = "VeryLazy",
     opts = {
       preset = "helix",
       delay = 300,
-      icons = { mappings = true, keys = {} },
       spec = {
         { "<leader>a", group = "AI", icon = "" },
-        { "<leader>b", group = "Buffer", icon = "" },
-        { "<leader>c", group = "Code/Claude", icon = "" },
-        { "<leader>f", group = "Find (Telescope)", icon = "" },
-        { "<leader>g", group = "Git", icon = "" },
-        { "<leader>l", group = "LSP", icon = "" },
+        { "<leader>c", group = "Claude", icon = "" },
+        { "<leader>l", group = "LSP Extra", icon = "" },
         { "<leader>p", group = "Peek", icon = "" },
-        { "<leader>r", group = "Rust", icon = "🦀" },
+        { "<leader>r", group = "Rust", icon = "" },
         { "<leader>T", group = "Test", icon = "" },
-        { "<leader>s", group = "Search (Snacks)", icon = "" },
-        { "<leader>t", group = "Terminal", icon = "" },
-        { "<leader>u", group = "Toggle", icon = "" },
-        { "<leader>x", group = "Diagnostics", icon = "" },
-      },
-    },
-    keys = {
-      {
-        "<leader>?",
-        function()
-          require("which-key").show { global = false }
-        end,
-        desc = "Buffer Keymaps",
       },
     },
   },
 
-  -- indent-blankline.nvim: Indent guides
-  {
-    "lukas-reineke/indent-blankline.nvim",
-    main = "ibl",
-    config = function()
-      require("ibl").setup()
-    end,
-  },
-
-  -- nvim-surround: Add/change/delete surrounding characters
+  -- nvim-surround (replaces mini.surround)
   {
     "kylechui/nvim-surround",
     version = "*",
@@ -248,55 +202,45 @@ return {
     opts = {},
   },
 
-  -- mini.ai: Enhanced text objects (around/inside)
+  -- mini.ai: Override for custom text objects
   {
     "echasnovski/mini.ai",
-    event = "VeryLazy",
-    dependencies = { "nvim-treesitter/nvim-treesitter-textobjects" },
-    config = function()
-      local ai = require "mini.ai"
-      ai.setup {
-        n_lines = 500,
-        custom_textobjects = {
-          o = ai.gen_spec.treesitter {
-            a = { "@block.outer", "@conditional.outer", "@loop.outer" },
-            i = { "@block.inner", "@conditional.inner", "@loop.inner" },
-          },
-          f = ai.gen_spec.treesitter { a = "@function.outer", i = "@function.inner" },
-          c = ai.gen_spec.treesitter { a = "@class.outer", i = "@class.inner" },
-          a = ai.gen_spec.treesitter { a = "@parameter.outer", i = "@parameter.inner" },
-        },
+    opts = function(_, opts)
+      local ai = require("mini.ai")
+      opts.n_lines = 500
+      opts.custom_textobjects = {
+        o = ai.gen_spec.treesitter({
+          a = { "@block.outer", "@conditional.outer", "@loop.outer" },
+          i = { "@block.inner", "@conditional.inner", "@loop.inner" },
+        }),
+        f = ai.gen_spec.treesitter({ a = "@function.outer", i = "@function.inner" }),
+        c = ai.gen_spec.treesitter({ a = "@class.outer", i = "@class.inner" }),
+        a = ai.gen_spec.treesitter({ a = "@parameter.outer", i = "@parameter.inner" }),
       }
     end,
   },
 
-  -- nvim-autopairs: Auto bracket/quote pairing
+  -- nvim-autopairs
   {
     "windwp/nvim-autopairs",
     event = "InsertEnter",
-    config = function()
-      local autopairs = require "nvim-autopairs"
-      autopairs.setup {
-        check_ts = true,
-        ts_config = {
-          lua = { "string" },
-          rust = { "string", "raw_string_literal" },
-        },
-        fast_wrap = {
-          map = "<M-e>",
-          chars = { "{", "[", "(", '"', "'" },
-          pattern = [=[[%'%"%>%]%)%}%,]]=],
-          end_key = "$",
-          before_key = "h",
-          after_key = "l",
-          keys = "qwertyuiopzxcvbnmasdfghjkl",
-          highlight = "PmenuSel",
-          highlight_grey = "LineNr",
-        },
-      }
-      -- Integrate with nvim-cmp
-      local cmp_autopairs = require "nvim-autopairs.completion.cmp"
-      require("cmp").event:on("confirm_done", cmp_autopairs.on_confirm_done())
-    end,
+    opts = {
+      check_ts = true,
+      ts_config = {
+        lua = { "string" },
+        rust = { "string", "raw_string_literal" },
+      },
+      fast_wrap = {
+        map = "<M-e>",
+        chars = { "{", "[", "(", '"', "'" },
+        pattern = [=[[%'%"%>%]%)%}%,]]=],
+        end_key = "$",
+        before_key = "h",
+        after_key = "l",
+        keys = "qwertyuiopzxcvbnmasdfghjkl",
+        highlight = "PmenuSel",
+        highlight_grey = "LineNr",
+      },
+    },
   },
 }

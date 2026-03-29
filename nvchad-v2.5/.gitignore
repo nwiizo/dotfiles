@@ -20,6 +20,9 @@ undo/
 # ShaDa (shared data)
 shada/
 
+# NvChad cache
+nvchad/
+
 # Copilot (contains auth tokens)
 copilot/
 
@@ -37,3 +40,12 @@ Thumbs.db
 
 # Spell files
 spell/
+
+# Old config patterns (no longer used)
+/.vault.vim
+/.local.vimrc
+/.stignore
+/.stfolder
+/.stversions
+/config/
+/benchmarks/

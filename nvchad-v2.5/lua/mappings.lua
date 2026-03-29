@@ -76,6 +76,12 @@ map("n", "<leader>ld", vim.diagnostic.open_float, { desc = "Line diagnostics" })
 map("n", "<leader>lq", vim.diagnostic.setloclist, { desc = "Diagnostics to loclist" })
 
 -- ═══════════════════════════════════════════════════════════════════════════
+-- Neovim 0.11+ native features
+-- ═══════════════════════════════════════════════════════════════════════════
+
+-- gO: document symbols (Neovim 0.11 default, explicit for clarity)
+
+-- ═══════════════════════════════════════════════════════════════════════════
 -- Terminal
 -- ═══════════════════════════════════════════════════════════════════════════
 
