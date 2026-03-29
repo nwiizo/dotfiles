@@ -1,31 +1,15 @@
--- Diagnostics & Code Quality plugins: trouble, todo-comments
+-- Diagnostics & Code Quality plugins
+-- LazyVim manages: trouble.nvim, todo-comments.nvim
 return {
-  -- trouble.nvim: Diagnostics panel
+  -- trouble.nvim: Override
   {
     "folke/trouble.nvim",
-    dependencies = { "nvim-tree/nvim-web-devicons" },
-    cmd = "Trouble",
-    keys = {
-      { "<leader>xx", "<cmd>Trouble diagnostics toggle<cr>", desc = "Diagnostics (Trouble)" },
-      { "<leader>xX", "<cmd>Trouble diagnostics toggle filter.buf=0<cr>", desc = "Buffer Diagnostics" },
-      { "<leader>xs", "<cmd>Trouble symbols toggle focus=false<cr>", desc = "Symbols (Trouble)" },
-      { "<leader>xl", "<cmd>Trouble lsp toggle focus=false win.position=right<cr>", desc = "LSP Definitions" },
-      { "<leader>xq", "<cmd>Trouble qflist toggle<cr>", desc = "Quickfix (Trouble)" },
-    },
     opts = { auto_close = true, auto_preview = true, focus = true, use_diagnostic_signs = true },
   },
 
-  -- todo-comments.nvim
+  -- todo-comments.nvim: Override
   {
     "folke/todo-comments.nvim",
-    dependencies = { "nvim-lua/plenary.nvim" },
-    event = { "BufReadPost", "BufNewFile" },
-    keys = {
-      { "<leader>xt", "<cmd>Trouble todo toggle<cr>", desc = "Todo (Trouble)" },
-      { "<leader>sT", "<cmd>TodoTelescope<cr>", desc = "Search TODOs" },
-      { "]t", function() require("todo-comments").jump_next() end, desc = "Next Todo" },
-      { "[t", function() require("todo-comments").jump_prev() end, desc = "Prev Todo" },
-    },
     opts = {
       signs = true,
       keywords = {
@@ -36,6 +20,9 @@ return {
         NOTE = { icon = " ", color = "hint", alt = { "INFO" } },
         PERF = { icon = " ", color = "default", alt = { "OPTIM", "PERFORMANCE" } },
       },
+    },
+    keys = {
+      { "<leader>sT", "<cmd>TodoTelescope<cr>", desc = "Search TODOs" },
     },
   },
 }

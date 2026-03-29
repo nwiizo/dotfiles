@@ -119,18 +119,32 @@ for _, lsp in ipairs(servers) do
   end
 end
 
--- Additional keymaps and settings can be added here
-vim.diagnostic.config {
-  virtual_text = true,
-  signs = true,
+-- Diagnostic configuration
+-- NvChad sets virtual_text in diagnostic_config(), we override it here
+-- and re-apply on LspAttach to ensure our settings survive plugin load order
+local diag_opts = {
+  virtual_text = false, -- Replaced by virtual_lines
+  virtual_lines = { current_line = true }, -- Neovim 0.11+: detailed diagnostics on cursor line
+  signs = {
+    text = {
+      [vim.diagnostic.severity.ERROR] = " ",
+      [vim.diagnostic.severity.WARN] = " ",
+      [vim.diagnostic.severity.HINT] = " ",
+      [vim.diagnostic.severity.INFO] = " ",
+    },
+  },
   underline = true,
   update_in_insert = false,
   severity_sort = true,
+  float = { border = "rounded" },
 }
+vim.diagnostic.config(diag_opts)
 
--- Set diagnostic signs
-local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
-for type, icon in pairs(signs) do
-  local hl = "DiagnosticSign" .. type
-  vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
-end
+vim.api.nvim_create_autocmd("LspAttach", {
+  once = true,
+  callback = function()
+    vim.diagnostic.config(diag_opts)
+  end,
+})
+
+-- Diagnostic signs are now defined via vim.diagnostic.config signs.text above

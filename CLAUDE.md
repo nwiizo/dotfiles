@@ -7,19 +7,19 @@
 | ディレクトリ | 役割 | 状態 |
 |---|---|---|
 | `fish/` | Fish shell (config.fish, plugins) | Active |
-| `nvim/` | Neovim NvChad v3.0 (lua/) | Active |
+| `nvim/` | Neovim LazyVim (lua/) | Active |
 | `ghostty/` | Ghostty terminal (config) | Active |
 | `starship/` | Starship prompt (starship.toml) | Active |
 | `git/` | Git scripts | Active |
-| `warp/`, `bash/`, `zsh/`, `vim/`, `tmux/`, `lvim/`, `nvchad/` | Archive | 参照のみ |
+| `archive/` | 旧設定（bash, zsh, vim, tmux, lvim, warp, nvchad, nvchad-v2.5, dockerfile, ssh） | 参照のみ |
 
 ## 変更時の制約
 
 - **fish/config.fish**: セクション構造（13セクション）を維持。新しいabbreviationは既存カテゴリに追加
-- **nvim/lua/plugins/**: モジュール分割（ui, navigation, git, diagnostics, lsp, ai, completion, lang）を維持。新プラグインは適切なモジュールに配置
-- **nvim/lua/mappings.lua**: leader keyは `<Space>`。既存キーマップとの衝突を確認してから追加
+- **nvim/lua/plugins/**: モジュール分割（ui, navigation, git, diagnostics, lsp, ai, completion, coding, lang）を維持。新プラグインは適切なモジュールに配置
+- **nvim/lua/config/keymaps.lua**: leader keyは `<Space>`。LazyVimデフォルトキーマップとの衝突を確認してから追加
 - **ghostty/config**: セクションコメント付き。Vim式キーバインドのパターンを維持
-- Archiveディレクトリは変更しない
+- `archive/` ディレクトリは変更しない
 
 ## テスト
 

@@ -1,38 +1,61 @@
--- Git integration plugins
--- LazyVim manages: gitsigns.nvim
+-- Git integration plugins: gitsigns, diffview
 return {
-  -- gitsigns: Override signs, preserve LazyVim on_attach
+  -- gitsigns.nvim: Inline Git info
   {
     "lewis6991/gitsigns.nvim",
-    opts = function(_, opts)
-      local prev_on_attach = opts.on_attach
-      opts.signs = {
+    event = { "BufReadPre", "BufNewFile" },
+    opts = {
+      signs = {
         add = { text = "│" },
         change = { text = "│" },
         delete = { text = "_" },
         topdelete = { text = "‾" },
         changedelete = { text = "~" },
         untracked = { text = "┆" },
-      }
-      opts.current_line_blame = false
-      opts.current_line_blame_opts = { delay = 500, virtual_text_pos = "eol" }
-      opts.on_attach = function(bufnr)
-        if prev_on_attach then prev_on_attach(bufnr) end
+      },
+      current_line_blame = false,
+      current_line_blame_opts = { delay = 500, virtual_text_pos = "eol" },
+      on_attach = function(bufnr)
         local gs = package.loaded.gitsigns
-        local function map(mode, l, r, mopts)
-          mopts = mopts or {}
-          mopts.buffer = bufnr
-          vim.keymap.set(mode, l, r, mopts)
+
+        local function map(mode, l, r, opts)
+          opts = opts or {}
+          opts.buffer = bufnr
+          vim.keymap.set(mode, l, r, opts)
         end
+
+        -- Navigation
+        map("n", "]c", function()
+          if vim.wo.diff then
+            return "]c"
+          end
+          vim.schedule(function()
+            gs.next_hunk()
+          end)
+          return "<Ignore>"
+        end, { expr = true, desc = "Next Hunk" })
+
+        map("n", "[c", function()
+          if vim.wo.diff then
+            return "[c"
+          end
+          vim.schedule(function()
+            gs.prev_hunk()
+          end)
+          return "<Ignore>"
+        end, { expr = true, desc = "Prev Hunk" })
+
+        -- Actions
         map("n", "<leader>gp", gs.preview_hunk, { desc = "Preview Hunk" })
-        map("n", "<leader>gb", function() gs.blame_line({ full = true }) end, { desc = "Blame Line" })
+        map("n", "<leader>gb", function()
+          gs.blame_line { full = true }
+        end, { desc = "Blame Line" })
         map("n", "<leader>gB", gs.toggle_current_line_blame, { desc = "Toggle Blame" })
         map("n", "<leader>hr", gs.reset_hunk, { desc = "Reset Hunk" })
         map("n", "<leader>hs", gs.stage_hunk, { desc = "Stage Hunk" })
         map("n", "<leader>hu", gs.undo_stage_hunk, { desc = "Undo Stage Hunk" })
-      end
-      return opts
-    end,
+      end,
+    },
   },
 
   -- diffview.nvim: Git diff visualization
@@ -52,8 +75,8 @@ return {
       { "<leader>gt", "<cmd>DiffviewToggleFiles<cr>", desc = "Toggle file panel" },
     },
     config = function()
-      local actions = require("diffview.actions")
-      require("diffview").setup({
+      local actions = require "diffview.actions"
+      require("diffview").setup {
         enhanced_diff_hl = true,
         use_icons = true,
         view = {
@@ -73,10 +96,11 @@ return {
             { "n", "gf", actions.goto_file_edit, { desc = "Open file" } },
             { "n", "[x", actions.prev_conflict, { desc = "Prev conflict" } },
             { "n", "]x", actions.next_conflict, { desc = "Next conflict" } },
-            { "n", "<leader>co", actions.conflict_choose("ours"), { desc = "Choose ours" } },
-            { "n", "<leader>ct", actions.conflict_choose("theirs"), { desc = "Choose theirs" } },
-            { "n", "<leader>cb", actions.conflict_choose("base"), { desc = "Choose base" } },
-            { "n", "dx", actions.conflict_choose("none"), { desc = "Delete conflict" } },
+            { "n", "<leader>co", actions.conflict_choose "ours", { desc = "Choose ours" } },
+            { "n", "<leader>ct", actions.conflict_choose "theirs", { desc = "Choose theirs" } },
+            { "n", "<leader>cb", actions.conflict_choose "base", { desc = "Choose base" } },
+            { "n", "<leader>ca", actions.conflict_choose "all", { desc = "Choose all" } },
+            { "n", "dx", actions.conflict_choose "none", { desc = "Delete conflict" } },
           },
           file_panel = {
             { "n", "j", actions.next_entry, { desc = "Next entry" } },
@@ -88,10 +112,10 @@ return {
             { "n", "U", actions.unstage_all, { desc = "Unstage all" } },
             { "n", "X", actions.restore_entry, { desc = "Restore entry" } },
             { "n", "L", actions.open_commit_log, { desc = "Open commit log" } },
-            { "n", "g?", actions.help("file_panel"), { desc = "Help" } },
+            { "n", "g?", actions.help "file_panel", { desc = "Help" } },
           },
         },
-      })
+      }
     end,
   },
 }
