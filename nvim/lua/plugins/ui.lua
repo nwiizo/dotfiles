@@ -204,7 +204,7 @@ return {
 
   -- mini.ai: Override for custom text objects
   {
-    "echasnovski/mini.ai",
+    "nvim-mini/mini.ai",
     opts = function(_, opts)
       local ai = require("mini.ai")
       opts.n_lines = 500

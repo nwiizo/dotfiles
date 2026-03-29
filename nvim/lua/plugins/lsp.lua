@@ -100,7 +100,7 @@ return {
 
   -- mason.nvim: Override ensure_installed
   {
-    "williamboman/mason.nvim",
+    "mason-org/mason.nvim",
     opts = {
       ensure_installed = {
         "lua-language-server",
