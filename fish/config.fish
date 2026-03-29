@@ -22,8 +22,11 @@ set -gx XDG_CACHE_HOME $HOME/.cache
 # ═══════════════════════════════════════════════════════════════════════════
 # 2. HOMEBREW
 # ═══════════════════════════════════════════════════════════════════════════
-if test -x /opt/homebrew/bin/brew
-    eval (/opt/homebrew/bin/brew shellenv 2>/dev/null)
+if test -d /opt/homebrew
+    set -gx HOMEBREW_PREFIX /opt/homebrew
+    set -gx HOMEBREW_CELLAR /opt/homebrew/Cellar
+    set -gx HOMEBREW_REPOSITORY /opt/homebrew
+    fish_add_path /opt/homebrew/bin /opt/homebrew/sbin
 end
 
 set -gx HOMEBREW_NO_ANALYTICS 1
@@ -46,13 +49,13 @@ end
 # 3. PATH CONFIGURATION (using fish_add_path - Fish 3.2+)
 # ═══════════════════════════════════════════════════════════════════════════
 # fish_add_path automatically prevents duplicates and is idempotent
-fish_add_path --path $HOME/.local/bin
-fish_add_path --path $HOME/.cargo/bin
-fish_add_path --path $HOME/.krew/bin
-fish_add_path --path $HOME/go/bin
-fish_add_path --path $HOME/gopath/bin
-fish_add_path --path /usr/local/kubebuilder/bin
-fish_add_path --path $HOME/.istioctl/bin
+fish_add_path $HOME/.local/bin
+fish_add_path $HOME/.cargo/bin
+fish_add_path $HOME/.krew/bin
+fish_add_path $HOME/go/bin
+fish_add_path $HOME/gopath/bin
+fish_add_path /usr/local/kubebuilder/bin
+fish_add_path $HOME/.istioctl/bin
 
 set -q MANPATH; or set MANPATH ''
 set -gx MANPATH "/opt/homebrew/share/man" $MANPATH
@@ -161,6 +164,12 @@ function fish_should_add_to_history
     # Skip sensitive commands
     string match -qr '^(export|set).*(TOKEN|SECRET|PASSWORD|KEY|PASS)' -- $cmd; and return 1
     string match -qr '(password|secret|token|api.?key)=' -- $cmd; and return 1
+    string match -qr '^(curl|wget|http).+(-H|--header).*(auth|bearer|token)' -i -- $cmd; and return 1
+    string match -qr '(AWS_SECRET|GITHUB_TOKEN|OPENAI_API_KEY|ANTHROPIC_API_KEY)' -- $cmd; and return 1
+    string match -qr '^vault ' -- $cmd; and return 1
+
+    # Skip bare interactive AI sessions (noisy single entries)
+    string match -qr '^(claude|aider|gemini)\s*$' -- $cmd; and return 1
 
     # Skip very short commands that are just noise
     test (string length -- $cmd) -le 2; and return 1
@@ -269,6 +278,139 @@ function kubectl_fzf_ctx -d "Switch kubectl context with fzf"
     test -n "$ctx"; and kubectl config use-context $ctx; and commandline -f repaint
 end
 
+function extract -d "Extract any archive"
+    if test (count $argv) -eq 0
+        echo "Usage: extract <file>"
+        return 1
+    end
+
+    for file in $argv
+        if not test -f $file
+            echo "'$file' is not a valid file"
+            continue
+        end
+
+        switch $file
+            case '*.tar.bz2' '*.tbz2'
+                tar xjf $file
+            case '*.tar.gz' '*.tgz'
+                tar xzf $file
+            case '*.tar.xz' '*.txz'
+                tar xJf $file
+            case '*.tar.zst'
+                tar --zstd -xf $file
+            case '*.bz2'
+                bunzip2 $file
+            case '*.gz'
+                gunzip $file
+            case '*.rar'
+                unrar x $file
+            case '*.tar'
+                tar xf $file
+            case '*.zip'
+                unzip $file
+            case '*.7z'
+                7z x $file
+            case '*.xz'
+                unxz $file
+            case '*.zst'
+                zstd -d $file
+            case '*'
+                echo "'$file' cannot be extracted"
+        end
+    end
+end
+
+function bak -d "Create timestamped backup of file"
+    test (count $argv) -eq 0; and echo "Usage: bak <file>"; and return 1
+    cp -a $argv[1] $argv[1].bak.(date +%Y%m%d_%H%M%S)
+end
+
+function serve -d "Serve current directory via HTTP"
+    set -l port (test (count $argv) -gt 0; and echo $argv[1]; or echo 8000)
+    echo "Serving on http://localhost:$port"
+    python3 -m http.server $port
+end
+
+function ai_context -d "Generate codebase context summary for AI tools"
+    set -l target (pwd)
+    test (count $argv) -gt 0; and set target $argv[1]
+
+    echo "# Project: "(basename $target)
+    echo "# Path: $target"
+    echo ""
+
+    if type -q eza
+        echo "## File Structure"
+        echo '```'
+        eza --tree --level=3 --icons=never --git-ignore $target 2>/dev/null
+        echo '```'
+    end
+
+    echo ""
+
+    if git -C $target rev-parse --is-inside-work-tree >/dev/null 2>&1
+        echo "## Recent Changes"
+        echo '```'
+        git -C $target log --oneline -10
+        echo '```'
+        echo ""
+        echo "## Uncommitted Changes"
+        echo '```'
+        git -C $target diff --stat
+        echo '```'
+    end
+
+    for f in README.md CLAUDE.md Cargo.toml go.mod package.json pyproject.toml
+        if test -f "$target/$f"
+            echo ""
+            echo "## $f"
+            echo '```'
+            head -30 "$target/$f"
+            echo '```'
+        end
+    end
+end
+
+function explain -d "Pipe output to AI for explanation"
+    if isatty stdin
+        claude -p "Explain concisely: $argv"
+    else
+        claude -p "Explain the following output concisely: $argv"
+    end
+end
+
+function aifix -d "Pipe error output to AI for fix suggestions"
+    claude -p "Analyze this error output. Suggest a concise fix. Be specific about file and line numbers."
+end
+
+function claude_multi -d "Start Claude Code with multiple project directories"
+    set -l dirs
+    for dir in $argv
+        if test -d "$dir"
+            set -a dirs --add-dir (realpath "$dir")
+        else
+            echo "Warning: $dir is not a directory, skipping"
+        end
+    end
+    claude $dirs
+end
+
+function claude_repo -d "Jump to repo and start Claude Code"
+    type -q ghq; and type -q fzf; or return 1
+
+    set -l selected (ghq list -p | fzf \
+        --prompt="Claude Repo: " \
+        --preview='eza -la --icons --git {} 2>/dev/null; echo ""; test -f {}/CLAUDE.md && echo "✓ CLAUDE.md" || echo "✗ No CLAUDE.md"' \
+        --preview-window=right:50%:wrap)
+
+    if test -n "$selected"
+        cd $selected
+        commandline -f repaint
+        claude
+    end
+end
+
 function docker_fzf_exec -d "Exec into docker container with fzf"
     type -q docker; or return 1
 
@@ -357,13 +499,54 @@ if status is-interactive
     abbr -a kctx 'kubectl config use-context'
     abbr -a kns 'kubectl config set-context --current --namespace'
 
+    # Git (extended)
+    abbr -a gs 'git stash'
+    abbr -a gsp 'git stash pop'
+    abbr -a gsl 'git stash list'
+    abbr -a grb 'git rebase'
+    abbr -a gcp 'git cherry-pick'
+    abbr -a gbl 'git blame'
+    abbr -a gcl 'git clone'
+    abbr -a grv 'git remote -v'
+
+    # Docker (extended)
+    abbr -a dcl 'docker compose logs -f'
+    abbr -a dcr 'docker compose restart'
+    abbr -a dcb 'docker compose build'
+    abbr -a dsp 'docker system prune -af'
+
+    # Kubernetes (extended)
+    abbr -a kl 'kubectl logs -f'
+    abbr -a ke 'kubectl exec -it'
+    abbr -a kd 'kubectl describe'
+    abbr -a ka 'kubectl apply -f'
+    abbr -a kdel 'kubectl delete'
+    abbr -a kgn 'kubectl get nodes'
+    abbr -a kpf 'kubectl port-forward'
+    abbr -a ktp 'kubectl top pods'
+    abbr -a ktn 'kubectl top nodes'
+
+    # Claude Code (primary AI tool)
+    abbr -a c 'claude --dangerously-skip-permissions'
+    abbr -a cc 'claude -c'
+    abbr -a cr 'claude --resume'
+    abbr -a cp 'claude -p'
+    abbr -a cplan 'claude --permission-mode plan'
+
+    # OpenAI Codex
+    abbr -a cx codex
+    abbr -a cxq 'codex -q'
+
     # Tools
-    abbr -a c claude --dangerously-skip-permissions
-    abbr -a claude claude --dangerously-skip-permissions
     abbr -a v nvim
     abbr -a vi nvim
     abbr -a vim nvim
     abbr -a lg lazygit
+
+    # General productivity
+    abbr -a reload 'exec fish'
+    abbr -a myip 'curl -s ifconfig.me'
+    abbr -a listening 'lsof -iTCP -sTCP:LISTEN -n -P'
 
     # fzf shortcuts (Warp doesn't support custom keybindings)
     abbr -a ff _fzf_search_directory
@@ -393,11 +576,9 @@ type -q zoxide; and zoxide init fish --cmd z | source
 # Rust
 test -f "$HOME/.cargo/env.fish"; and source "$HOME/.cargo/env.fish"
 
-# GitHub CLI completion
-type -q gh; and gh completion -s fish 2>/dev/null | source
-
-# kubectl completion
-type -q kubectl; and kubectl completion fish 2>/dev/null | source
+# GitHub CLI / kubectl completions: pre-generated to completions/ for lazy loading
+# Regenerate with: gh completion -s fish > ~/.config/fish/completions/gh.fish
+#                  kubectl completion fish > ~/.config/fish/completions/kubectl.fish
 
 # delta for git diff
 type -q delta; and set -gx GIT_PAGER delta
@@ -416,4 +597,12 @@ test -f $XDG_CONFIG_HOME/fish/local.fish; and source $XDG_CONFIG_HOME/fish/local
 # ═══════════════════════════════════════════════════════════════════════════
 # 14. STARSHIP PROMPT (must be last)
 # ═══════════════════════════════════════════════════════════════════════════
-type -q starship; and starship init fish | source
+if type -q starship
+    starship init fish | source
+
+    # Transient prompt: show minimal prompt for previous commands in scrollback
+    function starship_transient_prompt_func
+        starship module character
+    end
+    enable_transience
+end

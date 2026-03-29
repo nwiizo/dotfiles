@@ -11,7 +11,7 @@
 | `ghostty/` | Ghostty terminal (config) | Active |
 | `starship/` | Starship prompt (starship.toml) | Active |
 | `git/` | Git scripts | Active |
-| `warp/`, `bash/`, `zsh/`, `vim/`, `tmux/`, `lvim/`, `nvchad/`, `nvchad-v2.5/` | Archive | 参照のみ |
+| `archive/` | 旧設定（bash, zsh, vim, tmux, lvim, warp, nvchad, nvchad-v2.5, dockerfile, ssh） | 参照のみ |
 
 ## 変更時の制約
 
@@ -19,7 +19,7 @@
 - **nvim/lua/plugins/**: モジュール分割（ui, navigation, git, diagnostics, lsp, ai, completion, coding, lang）を維持。新プラグインは適切なモジュールに配置
 - **nvim/lua/config/keymaps.lua**: leader keyは `<Space>`。LazyVimデフォルトキーマップとの衝突を確認してから追加
 - **ghostty/config**: セクションコメント付き。Vim式キーバインドのパターンを維持
-- Archiveディレクトリは変更しない
+- `archive/` ディレクトリは変更しない
 
 ## テスト
 
