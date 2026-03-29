@@ -19,6 +19,10 @@ vim.api.nvim_create_autocmd("FileChangedShell", {
   desc = "Auto-reload unmodified buffers, ask if buffer has unsaved changes",
 })
 
+-- Disable spell check for markdown (Japanese text causes false positives)
+-- LazyVim enables spell via lazyvim_wrap_spell autocmd group
+vim.api.nvim_del_augroup_by_name("lazyvim_wrap_spell")
+
 -- Ensure line numbers are always enabled
 vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter", "WinEnter" }, {
   callback = function()
