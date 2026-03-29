@@ -1,8 +1,8 @@
 -- Autocmds are automatically loaded on the VeryLazy event
 -- Default autocmds: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/autocmds.lua
 
--- Auto-reload files changed externally
-vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold" }, {
+-- Auto-reload files changed externally (including Claude Code edits)
+vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHoldI", "CursorMoved" }, {
   command = "silent! checktime",
   desc = "Auto-reload files changed outside of nvim",
 })

@@ -98,7 +98,7 @@ return {
         set_cursor = true,
         set_cursorline = true,
         set_number = true,
-        ignore_filetypes = { "NvimTree", "TelescopePrompt", "oil", "lazy", "Avante", "AvanteInput", "snacks_dashboard" },
+        ignore = { "NvimTree", "TelescopePrompt", "oil", "lazy", "Avante", "AvanteInput", "snacks_dashboard" },
       })
     end,
   },
