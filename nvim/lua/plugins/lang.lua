@@ -33,7 +33,7 @@ return {
         map("n", "<leader>rV", function() vim.cmd.RustLsp({ "view", "mir" }) end, vim.tbl_extend("force", kopts, { desc = "View MIR" }))
         map("n", "K", function() vim.cmd.RustLsp({ "hover", "actions" }) end, vim.tbl_extend("force", kopts, { desc = "Rust hover actions" }))
       end
-      opts.server.default_settings = {
+      opts.server.default_settings = vim.tbl_deep_extend("force", opts.server.default_settings or {}, {
         ["rust-analyzer"] = {
           checkOnSave = {
             command = "clippy",
@@ -100,7 +100,7 @@ return {
           workspace = { symbol = { search = { kind = "all_symbols" } } },
           files = { excludeDirs = { ".git", "node_modules", ".direnv", "target/debug/build" } },
         },
-      }
+      })
       opts.dap = { autoload_configurations = true }
       return opts
     end,
