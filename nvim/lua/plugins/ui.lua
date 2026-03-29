@@ -134,19 +134,6 @@ return {
     },
   },
 
-  -- nvim-notify: Override for compact style
-  {
-    "rcarriga/nvim-notify",
-    opts = {
-      background_colour = "#000000",
-      fps = 60,
-      render = "compact",
-      stages = "fade",
-      timeout = 3000,
-      top_down = false,
-    },
-  },
-
   -- vimade: Dim inactive buffers
   {
     "TaDaa/vimade",
@@ -185,7 +172,7 @@ return {
       delay = 300,
       spec = {
         { "<leader>a", group = "AI", icon = "" },
-        { "<leader>c", group = "Claude", icon = "" },
+        { "<leader>C", group = "Claude Code", icon = "" },
         { "<leader>l", group = "LSP Extra", icon = "" },
         { "<leader>p", group = "Peek", icon = "" },
         { "<leader>r", group = "Rust", icon = "" },
@@ -217,6 +204,7 @@ return {
         c = ai.gen_spec.treesitter({ a = "@class.outer", i = "@class.inner" }),
         a = ai.gen_spec.treesitter({ a = "@parameter.outer", i = "@parameter.inner" }),
       }
+      return opts
     end,
   },
 

@@ -8,6 +8,4 @@ return {
   { "nvim-mini/mini.surround", enabled = false },
   -- Use nvim-autopairs instead of mini.pairs
   { "nvim-mini/mini.pairs", enabled = false },
-  -- Disable dashboard (start instantly)
-  { "folke/snacks.nvim", opts = { dashboard = { enabled = false } } },
 }

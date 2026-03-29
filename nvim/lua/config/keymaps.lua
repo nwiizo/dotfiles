@@ -56,13 +56,14 @@ map("v", "K", ":m '<-2<cr>gv=gv", { desc = "Move lines up" })
 
 -- Better paste/delete (preserve register)
 map("x", "<leader>p", [["_dP]], { desc = "Paste without overwrite" })
-map({ "n", "v" }, "<leader>d", [["_d]], { desc = "Delete without yank" })
+map({ "n", "v" }, "<leader>D", [["_d]], { desc = "Delete without yank" })
 
 -- ═══════════════════════════════════════════════════════════════
 -- LSP Extras (not in LazyVim defaults)
 -- ═══════════════════════════════════════════════════════════════
 
-map("n", "<leader>fm", function() require("conform").format({ async = true }) end, { desc = "Format buffer (legacy)" })
+-- <leader>cf is LazyVim's format key; keep <leader>fm as alias
+map("n", "<leader>fm", function() require("conform").format({ async = true }) end, { desc = "Format buffer" })
 map("n", "<leader>lk", vim.lsp.buf.signature_help, { desc = "Signature help" })
 map("n", "<leader>lD", vim.lsp.buf.type_definition, { desc = "Type definition" })
 map("n", "<leader>lwa", vim.lsp.buf.add_workspace_folder, { desc = "Add workspace folder" })

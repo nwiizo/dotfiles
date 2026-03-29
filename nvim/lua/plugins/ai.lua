@@ -58,12 +58,14 @@ return {
       "nvim-tree/nvim-web-devicons",
       "zbirenbaum/copilot.lua",
       { "HakonHarnes/img-clip.nvim", event = "VeryLazy", opts = {} },
-      {
-        "MeanderingProgrammer/render-markdown.nvim",
-        opts = { file_types = { "markdown", "Avante" } },
-        ft = { "markdown", "Avante" },
-      },
     },
+  },
+
+  -- render-markdown: Add Avante filetype support (standalone override, not as dependency)
+  {
+    "MeanderingProgrammer/render-markdown.nvim",
+    opts = { file_types = { "markdown", "Avante" } },
+    ft = { "markdown", "Avante" },
   },
 
   -- CodeCompanion: Vim-native AI chat & editing
@@ -98,7 +100,7 @@ return {
     },
   },
 
-  -- Claude Code: Terminal integration
+  -- Claude Code: Terminal integration (<leader>C prefix to avoid LazyVim <leader>c = code)
   {
     "coder/claudecode.nvim",
     event = "VeryLazy",
@@ -110,21 +112,21 @@ return {
       },
     },
     keys = {
-      { "<leader>cc", "<cmd>ClaudeCode<cr>", desc = "Toggle Claude" },
-      { "<leader>cF", "<cmd>ClaudeCodeFocus<cr>", desc = "Focus Claude" },
-      { "<leader>cR", "<cmd>ClaudeCode --resume<cr>", desc = "Resume Claude" },
-      { "<leader>cC", "<cmd>ClaudeCode --continue<cr>", desc = "Continue Claude" },
-      { "<leader>cm", "<cmd>ClaudeCodeSelectModel<cr>", desc = "Select Claude model" },
-      { "<leader>cb", "<cmd>ClaudeCodeAdd %<cr>", desc = "Add current buffer" },
-      { "<leader>cs", "<cmd>ClaudeCodeSend<cr>", mode = "v", desc = "Send to Claude" },
+      { "<leader>Cc", "<cmd>ClaudeCode<cr>", desc = "Toggle Claude" },
+      { "<leader>Cf", "<cmd>ClaudeCodeFocus<cr>", desc = "Focus Claude" },
+      { "<leader>Cr", "<cmd>ClaudeCode --resume<cr>", desc = "Resume Claude" },
+      { "<leader>CC", "<cmd>ClaudeCode --continue<cr>", desc = "Continue Claude" },
+      { "<leader>Cm", "<cmd>ClaudeCodeSelectModel<cr>", desc = "Select Claude model" },
+      { "<leader>Cb", "<cmd>ClaudeCodeAdd %<cr>", desc = "Add current buffer" },
+      { "<leader>Cs", "<cmd>ClaudeCodeSend<cr>", mode = "v", desc = "Send to Claude" },
       {
-        "<leader>cs",
+        "<leader>Cs",
         "<cmd>ClaudeCodeTreeAdd<cr>",
         desc = "Add file from tree",
         ft = { "NvimTree", "neo-tree", "oil", "minifiles", "netrw" },
       },
-      { "<leader>cA", "<cmd>ClaudeCodeDiffAccept<cr>", desc = "Accept diff" },
-      { "<leader>cD", "<cmd>ClaudeCodeDiffDeny<cr>", desc = "Deny diff" },
+      { "<leader>Ca", "<cmd>ClaudeCodeDiffAccept<cr>", desc = "Accept diff" },
+      { "<leader>Cd", "<cmd>ClaudeCodeDiffDeny<cr>", desc = "Deny diff" },
     },
   },
 }

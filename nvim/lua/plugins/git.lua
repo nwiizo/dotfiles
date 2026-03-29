@@ -1,49 +1,38 @@
 -- Git integration plugins
 -- LazyVim manages: gitsigns.nvim
 return {
-  -- gitsigns: Override for custom signs and keymaps
+  -- gitsigns: Override signs, preserve LazyVim on_attach
   {
     "lewis6991/gitsigns.nvim",
-    opts = {
-      signs = {
+    opts = function(_, opts)
+      local prev_on_attach = opts.on_attach
+      opts.signs = {
         add = { text = "│" },
         change = { text = "│" },
         delete = { text = "_" },
         topdelete = { text = "‾" },
         changedelete = { text = "~" },
         untracked = { text = "┆" },
-      },
-      current_line_blame = false,
-      current_line_blame_opts = { delay = 500, virtual_text_pos = "eol" },
-      on_attach = function(bufnr)
+      }
+      opts.current_line_blame = false
+      opts.current_line_blame_opts = { delay = 500, virtual_text_pos = "eol" }
+      opts.on_attach = function(bufnr)
+        if prev_on_attach then prev_on_attach(bufnr) end
         local gs = package.loaded.gitsigns
-
-        local function map(mode, l, r, opts)
-          opts = opts or {}
-          opts.buffer = bufnr
-          vim.keymap.set(mode, l, r, opts)
+        local function map(mode, l, r, mopts)
+          mopts = mopts or {}
+          mopts.buffer = bufnr
+          vim.keymap.set(mode, l, r, mopts)
         end
-
-        map("n", "]c", function()
-          if vim.wo.diff then return "]c" end
-          vim.schedule(function() gs.next_hunk() end)
-          return "<Ignore>"
-        end, { expr = true, desc = "Next Hunk" })
-
-        map("n", "[c", function()
-          if vim.wo.diff then return "[c" end
-          vim.schedule(function() gs.prev_hunk() end)
-          return "<Ignore>"
-        end, { expr = true, desc = "Prev Hunk" })
-
         map("n", "<leader>gp", gs.preview_hunk, { desc = "Preview Hunk" })
         map("n", "<leader>gb", function() gs.blame_line({ full = true }) end, { desc = "Blame Line" })
         map("n", "<leader>gB", gs.toggle_current_line_blame, { desc = "Toggle Blame" })
         map("n", "<leader>hr", gs.reset_hunk, { desc = "Reset Hunk" })
         map("n", "<leader>hs", gs.stage_hunk, { desc = "Stage Hunk" })
         map("n", "<leader>hu", gs.undo_stage_hunk, { desc = "Undo Stage Hunk" })
-      end,
-    },
+      end
+      return opts
+    end,
   },
 
   -- diffview.nvim: Git diff visualization
@@ -87,7 +76,6 @@ return {
             { "n", "<leader>co", actions.conflict_choose("ours"), { desc = "Choose ours" } },
             { "n", "<leader>ct", actions.conflict_choose("theirs"), { desc = "Choose theirs" } },
             { "n", "<leader>cb", actions.conflict_choose("base"), { desc = "Choose base" } },
-            { "n", "<leader>ca", actions.conflict_choose("all"), { desc = "Choose all" } },
             { "n", "dx", actions.conflict_choose("none"), { desc = "Delete conflict" } },
           },
           file_panel = {

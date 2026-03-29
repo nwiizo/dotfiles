@@ -5,6 +5,7 @@ return {
   {
     "folke/snacks.nvim",
     opts = {
+      dashboard = { enabled = false },
       bigfile = { enabled = true },
       notifier = { enabled = true },
       quickfile = { enabled = true },

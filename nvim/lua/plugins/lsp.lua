@@ -61,12 +61,11 @@ return {
             },
           },
         },
-        -- html, cssls, bashls, pylsp, terraformls: use LazyVim defaults from extras
       },
     },
   },
 
-  -- conform.nvim: Override formatters
+  -- conform.nvim: Override formatters (let LazyVim manage format-on-save via <leader>uf)
   {
     "stevearc/conform.nvim",
     opts = {
@@ -80,20 +79,12 @@ return {
         bash = { "shfmt" },
         sh = { "shfmt" },
         python = { "ruff_format", "ruff_organize_imports" },
-        rust = { "rustfmt", lsp_format = "fallback" },
+        rust = { "rustfmt" },
         zig = { "zigfmt" },
         go = { "gofmt", "goimports", "gofumpt" },
         yaml = { "prettier" },
         json = { "prettier" },
         markdown = { "prettier" },
-      },
-      format_on_save = { timeout_ms = 500, lsp_format = "fallback" },
-    },
-    keys = {
-      {
-        "<leader>bf",
-        function() require("conform").format({ async = true, lsp_format = "fallback" }) end,
-        desc = "Format Buffer",
       },
     },
   },
@@ -157,6 +148,4 @@ return {
       },
     },
   },
-
-  -- schemastore.nvim: managed by lazyvim.plugins.extras.lang.json / lang.yaml
 }
