@@ -120,6 +120,12 @@ return {
     },
   },
 
+  -- nvim-lint: Disable markdownlint (too noisy for READMEs, CLAUDE.md, Marp slides)
+  {
+    "mfussenegger/nvim-lint",
+    opts = { linters_by_ft = { markdown = {} } },
+  },
+
   -- treesitter: Override ensure_installed
   {
     "nvim-treesitter/nvim-treesitter",
