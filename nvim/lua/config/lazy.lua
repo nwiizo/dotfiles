@@ -37,7 +37,6 @@ require("lazy").setup({
   { import = "lazyvim.plugins.extras.lang.zig" },
 
   -- LazyVim Extras: Editor
-  { import = "lazyvim.plugins.extras.editor.oil" },
   { import = "lazyvim.plugins.extras.editor.telescope" },
 
   -- LazyVim Extras: DAP & Test

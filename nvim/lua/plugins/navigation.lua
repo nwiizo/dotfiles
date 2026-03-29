@@ -93,10 +93,13 @@ return {
     },
   },
 
-  -- oil.nvim: Override for custom layout
+  -- oil.nvim: File explorer (custom plugin, not a LazyVim extra)
   {
     "stevearc/oil.nvim",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    lazy = false,
     opts = {
+      default_file_explorer = true,
       columns = { "icon", "permissions", "size", "mtime" },
       delete_to_trash = true,
       skip_confirm_for_simple_edits = true,
