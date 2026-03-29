@@ -365,7 +365,7 @@ nvim/
 | `J` / `K` | v | 行を下/上に移動 | C |
 | `<A-j>` / `<A-k>` | n,i,v | 行を下/上に移動 | L |
 | `<leader>p` | x | ペースト（レジスタ保持） | C |
-| `<leader>d` | n,v | 削除（レジスタなし） | C |
+| `<leader>D` | n,v | 削除（レジスタなし） | C |
 
 ### クリップボード・生産性
 
@@ -414,19 +414,19 @@ nvim/
 | `<leader>ai` | n,v | CodeCompanion Actions | P codecompanion |
 | `<leader>ap` | n,v | CodeCompanion Inline | P codecompanion |
 
-### Claude Code (`<leader>c` prefix)
+### Claude Code (`<leader>C` prefix)
 
 | キー | モード | 説明 | 出典 |
 |---|---|---|---|
-| `<leader>cc` | n | トグル | P claudecode |
-| `<leader>cF` | n | フォーカス | P claudecode |
-| `<leader>cR` | n | Resume | P claudecode |
-| `<leader>cC` | n | Continue | P claudecode |
-| `<leader>cm` | n | モデル選択 | P claudecode |
-| `<leader>cb` | n | バッファ追加 | P claudecode |
-| `<leader>cs` | v | 選択範囲送信 | P claudecode |
-| `<leader>cA` | n | Diff Accept | P claudecode |
-| `<leader>cD` | n | Diff Deny | P claudecode |
+| `<leader>Cc` | n | トグル | P claudecode |
+| `<leader>Cf` | n | フォーカス | P claudecode |
+| `<leader>Cr` | n | Resume | P claudecode |
+| `<leader>CC` | n | Continue | P claudecode |
+| `<leader>Cm` | n | モデル選択 | P claudecode |
+| `<leader>Cb` | n | バッファ追加 | P claudecode |
+| `<leader>Cs` | v | 選択範囲送信 | P claudecode |
+| `<leader>Ca` | n | Diff Accept | P claudecode |
+| `<leader>Cd` | n | Diff Deny | P claudecode |
 
 ### Rust (`<leader>r` prefix, Rustファイルのみ)
 
@@ -441,6 +441,23 @@ nvim/
 | `<leader>rm` | n | マクロ展開 | P rustaceanvim |
 | `<leader>rc` | n | Cargo.tomlを開く | P rustaceanvim |
 | `<leader>rp` | n | 親モジュール | P rustaceanvim |
+
+### Crates (`<leader>rc` prefix, Cargo.tomlのみ)
+
+| キー | モード | 説明 | 出典 |
+|---|---|---|---|
+| `<leader>rct` | n | Cratesトグル | P crates |
+| `<leader>rcr` | n | Cratesリロード | P crates |
+| `<leader>rcv` | n | バージョン一覧 | P crates |
+| `<leader>rcf` | n | Feature一覧 | P crates |
+| `<leader>rcd` | n | 依存関係一覧 | P crates |
+| `<leader>rcu` | n,v | クレート更新 | P crates |
+| `<leader>rcU` | n,v | クレートアップグレード | P crates |
+| `<leader>rcA` | n | 全クレートアップグレード | P crates |
+| `<leader>rcH` | n | ホームページを開く | P crates |
+| `<leader>rcR` | n | リポジトリを開く | P crates |
+| `<leader>rcD` | n | docs.rsを開く | P crates |
+| `<leader>rcC` | n | crates.ioを開く | P crates |
 | `<leader>rj` | n | 行結合 | P rustaceanvim |
 | `<leader>rs` | n | 構造的検索置換 | P rustaceanvim |
 | `<leader>re` | n | エラー説明 | P rustaceanvim |
@@ -448,7 +465,6 @@ nvim/
 | `<leader>rv` | n | HIR表示 | P rustaceanvim |
 | `<leader>rV` | n | MIR表示 | P rustaceanvim |
 | `K` | n | Rustホバーアクション | P rustaceanvim |
-| `J` | n | Rust行結合 | P rustaceanvim |
 
 ### テスト (`<leader>T` prefix)
 

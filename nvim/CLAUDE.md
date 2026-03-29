@@ -37,7 +37,7 @@ nvim/lua/
 LazyVim管理プラグインは `opts` テーブルのみ返す（LazyVimデフォルトにマージされる）。
 カスタムプラグインは通常のlazy.nvimスペックを返す。
 
-## Claude Code Keymaps (`<leader>c` prefix)
+## Claude Code Keymaps (`<leader>C` prefix)
 
-`<leader>cf` → `<leader>cF`, `<leader>cr` → `<leader>cR`, `<leader>ca` → `<leader>cA`
-（LazyVimの `<leader>cf` format, `<leader>cr` rename, `<leader>ca` code action との衝突回避）
+`<leader>Cc` toggle, `<leader>Cf` focus, `<leader>Cr` resume, `<leader>CC` continue
+（LazyVimの `<leader>c` = code group との衝突回避のため大文字 `C` prefix）
