@@ -132,14 +132,15 @@ return {
   },
 
   -- treewalker.nvim: Syntax-tree-aware movement and node swapping
+  -- Note: <A-j>/<A-k> is LazyVim's line-move, so use [w/]w for tree walk
   {
     "aaronik/treewalker.nvim",
     opts = { highlight = true, highlight_duration = 250 },
     keys = {
-      { "<A-k>", "<cmd>Treewalker Up<cr>", desc = "Treewalker Up", mode = { "n", "x" } },
-      { "<A-j>", "<cmd>Treewalker Down<cr>", desc = "Treewalker Down", mode = { "n", "x" } },
-      { "<A-h>", "<cmd>Treewalker Left<cr>", desc = "Treewalker Left", mode = { "n", "x" } },
-      { "<A-l>", "<cmd>Treewalker Right<cr>", desc = "Treewalker Right", mode = { "n", "x" } },
+      { "[w", "<cmd>Treewalker Up<cr>", desc = "Treewalker Up (prev sibling)", mode = { "n", "x" } },
+      { "]w", "<cmd>Treewalker Down<cr>", desc = "Treewalker Down (next sibling)", mode = { "n", "x" } },
+      { "<A-h>", "<cmd>Treewalker Left<cr>", desc = "Treewalker Left (parent)", mode = { "n", "x" } },
+      { "<A-l>", "<cmd>Treewalker Right<cr>", desc = "Treewalker Right (child)", mode = { "n", "x" } },
       { "<A-S-k>", "<cmd>Treewalker SwapUp<cr>", desc = "Swap Node Up" },
       { "<A-S-j>", "<cmd>Treewalker SwapDown<cr>", desc = "Swap Node Down" },
       { "<A-S-h>", "<cmd>Treewalker SwapLeft<cr>", desc = "Swap Node Left" },

@@ -221,7 +221,7 @@ nvim/
 | `S` | n,x,o | Flash Treesitter選択 | P flash |
 | `r` | o | Remote Flash | P flash |
 | `%` | n | 対応するキーワードへジャンプ (if↔else, タグ等) | P matchup |
-| `<A-j>` / `<A-k>` | n,x | 構文木: 兄弟ノード間移動 | P treewalker |
+| `[w` / `]w` | n,x | 構文木: 前/次の兄弟ノード | P treewalker |
 | `<A-h>` / `<A-l>` | n,x | 構文木: 親/子ノードへ移動 | P treewalker |
 | `<A-S-j>` / `<A-S-k>` | n | 構文木: ノードを上下にスワップ | P treewalker |
 | `<A-S-h>` / `<A-S-l>` | n | 構文木: ノードを左右にスワップ | P treewalker |
