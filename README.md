@@ -26,21 +26,23 @@ If all you want is efficiency, off-the-shelf is fine. But if you want to leave t
 dotfiles/
 # 🟢 Active (2026)
 ├── fish/           # 🐟 Fish shell
-├── nvim/           # ✏️  Neovim (NvChad v3.0)
+├── nvim/           # ✏️  Neovim (LazyVim)
 ├── ghostty/        # 👻 Ghostty terminal
 ├── starship/       # 🚀 Prompt
 ├── git/            # 📝 Git scripts
 │
-# 📦 Archive (kept for reference)
-├── warp/           # Warp terminal → migrated to Ghostty
-├── bash/           # Bash → migrated to Fish
-├── zsh/            # Zsh → migrated to Fish
-├── vim/            # Vim → migrated to Neovim
-├── tmux/           # tmux → migrated to Ghostty splits
-├── lvim/           # LunarVim → migrated to NvChad
-├── nvchad/         # Old NvChad config
-├── dockerfile/     # Dockerfile examples
-├── ssh/            # SSH config examples
+# 📦 Archive (kept for reference, all under archive/)
+├── archive/
+│   ├── warp/       # Warp terminal → migrated to Ghostty
+│   ├── bash/       # Bash → migrated to Fish
+│   ├── zsh/        # Zsh → migrated to Fish
+│   ├── vim/        # Vim → migrated to Neovim
+│   ├── tmux/       # tmux → migrated to Ghostty splits
+│   ├── lvim/       # LunarVim → migrated to LazyVim
+│   ├── nvchad/     # NvChad → migrated to LazyVim
+│   ├── nvchad-v2.5/# NvChad v2.5 (2026-03まで使用)
+│   ├── dockerfile/ # Dockerfile examples
+│   └── ssh/        # SSH config examples
 ```
 
 ## ⚡ Setup
@@ -152,7 +154,7 @@ Config: Hack Nerd Font Mono 24pt / Tokyo Night / Bar cursor 🎨
 
 ## ✏️ Neovim
 
-NvChad v3.0 base. Minimal UI with no statusline (cmdheight=0, incline.nvim for floating buffer names).
+LazyVim base. Minimal UI with no statusline (cmdheight=0, incline.nvim for floating buffer names). catppuccin mocha + blink.cmp.
 
 ### 🔧 Basics
 
