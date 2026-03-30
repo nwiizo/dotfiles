@@ -66,6 +66,9 @@ require("lazy").setup({
   { import = "lazyvim.plugins.extras.editor.inc-rename" },
   { import = "lazyvim.plugins.extras.editor.dial" },
 
+  -- LazyVim Extras: Util
+  { import = "lazyvim.plugins.extras.util.startuptime" },
+
   -- LazyVim Extras: AI
   { import = "lazyvim.plugins.extras.ai.copilot" },
   { import = "lazyvim.plugins.extras.ai.copilot-chat" },

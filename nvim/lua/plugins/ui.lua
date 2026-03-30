@@ -176,6 +176,7 @@ return {
         { "<leader>l", group = "LSP Extra", icon = "" },
         { "<leader>p", group = "Peek", icon = "" },
         { "<leader>r", group = "Rust", icon = "" },
+        { "<leader>R", group = "Refactoring", icon = "" },
         { "<leader>T", group = "Test", icon = "" },
       },
     },
