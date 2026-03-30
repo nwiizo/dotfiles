@@ -213,15 +213,13 @@ return {
   {
     "andymass/vim-matchup",
     event = "BufReadPost",
-    dependencies = { "nvim-treesitter/nvim-treesitter" },
     init = function()
       vim.g.matchup_matchparen_offscreen = { method = "popup" }
     end,
-    config = function()
-      require("nvim-treesitter.configs").setup({
-        matchup = { enable = true },
-      })
-    end,
+  },
+  {
+    "nvim-treesitter/nvim-treesitter",
+    opts = { matchup = { enable = true } },
   },
 
   -- nvim-autopairs
