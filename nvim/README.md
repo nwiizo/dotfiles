@@ -220,6 +220,11 @@ nvim/
 | `s` | n,x,o | Flash jump | P flash |
 | `S` | n,x,o | Flash Treesitter選択 | P flash |
 | `r` | o | Remote Flash | P flash |
+| `%` | n | 対応するキーワードへジャンプ (if↔else, タグ等) | P matchup |
+| `<A-j>` / `<A-k>` | n,x | 構文木: 兄弟ノード間移動 | P treewalker |
+| `<A-h>` / `<A-l>` | n,x | 構文木: 親/子ノードへ移動 | P treewalker |
+| `<A-S-j>` / `<A-S-k>` | n | 構文木: ノードを上下にスワップ | P treewalker |
+| `<A-S-h>` / `<A-S-l>` | n | 構文木: ノードを左右にスワップ | P treewalker |
 
 ### ファイル・プロジェクト
 
@@ -494,6 +499,20 @@ nvim/
 | `<leader>dt` | n | Terminate | P dap |
 | `<leader>du` | n | DAP UI切替 | P dap |
 | `<leader>de` | n,v | Eval | P dap |
+
+### リファクタリング (`<leader>R` prefix)
+
+| キー | モード | 説明 | 出典 |
+|---|---|---|---|
+| `<leader>Rf` | x | Extract Function | P refactoring |
+| `<leader>RF` | x | Extract Function to File | P refactoring |
+| `<leader>Rv` | x | Extract Variable | P refactoring |
+| `<leader>Ri` | n,x | Inline Variable | P refactoring |
+| `<leader>Rb` | n | Extract Block | P refactoring |
+| `<leader>Rp` | n | Debug Print 挿入 | P refactoring |
+| `<leader>RP` | n,x | Debug Print Variable | P refactoring |
+| `<leader>Rc` | n | Debug Print 全削除 | P refactoring |
+| `<leader>Rs` | n,x | Refactoring Picker | P refactoring |
 
 ## インストール
 
