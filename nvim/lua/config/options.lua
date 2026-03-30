@@ -52,6 +52,11 @@ o.swapfile = false
 o.backup = false
 o.autoread = true
 
+-- Word wrap
+o.wrap = true
+o.linebreak = true
+o.breakindent = true
+
 -- Splits
 o.splitright = true
 o.splitbelow = true
