@@ -18,12 +18,12 @@ font-feature = -liga
 font-feature = -dlig
 font-synthetic-style = false
 
-# ─── Cursor ───────────────────────────────────────────────────────────────────
+# ─── Cursor (vibrant pink from catppuccin) ────────────────────────────────────
 
-cursor-color = #f5e0dc
+cursor-color = #f5c2e7
 cursor-text = #11111b
-cursor-opacity = 0.8
-cursor-style = bar
+cursor-opacity = 1.0
+cursor-style = block
 cursor-style-blink = false
 
 # ─── Window & Appearance ──────────────────────────────────────────────────────
@@ -45,8 +45,9 @@ fullscreen = true
 resize-overlay = after-first
 scrollbar = never
 
-background-opacity = 1.0
-background-blur = false
+# Translucent glass effect (titlebar inherits this look)
+background-opacity = 0.90
+background-blur = true
 
 # Split appearance (catppuccin mocha colors)
 unfocused-split-opacity = 0.65
@@ -161,7 +162,7 @@ bold-is-bright = true
 confirm-close-surface = true
 desktop-notifications = true
 bell-features = title,attention
-minimum-contrast = 1.1
+minimum-contrast = 1.2
 title-report = false
 enquiry-response =
 image-storage-limit = 320000000
@@ -184,8 +185,8 @@ env = GHOSTTY=1
 
 background = #1e1e2e
 foreground = #cdd6f4
-selection-foreground = #cdd6f4
-selection-background = #353749
+selection-foreground = #1e1e2e
+selection-background = #cba6f7
 
 search-foreground = #11111b
 search-background = #f9e2af
