@@ -1,9 +1,10 @@
 -- Coding enhancements
 return {
-  -- yanky.nvim: Override picker key to avoid conflict with <leader>p (Peek)
+  -- yanky.nvim: Disable <leader>p (conflicts with Peek group), use <leader>sy for yank history
   {
     "gbprod/yanky.nvim",
     keys = {
+      { "<leader>p", false },
       { "<leader>sy", function() require("telescope").extensions.yank_history.yank_history({}) end, desc = "Yank History" },
     },
   },

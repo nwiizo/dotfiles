@@ -1,10 +1,10 @@
 -- UI plugins: Custom UI components for minimal UI workflow
--- LazyVim manages: noice, which-key, mini.ai, nvim-notify (via Snacks)
+-- LazyVim manages: noice, which-key, mini.ai
 return {
   -- incline.nvim: Floating statusline (replaces lualine)
   {
     "b0o/incline.nvim",
-    event = "BufReadPre",
+    event = "VeryLazy",
     dependencies = { "nvim-tree/nvim-web-devicons" },
     config = function()
       local devicons = require("nvim-web-devicons")
@@ -172,12 +172,12 @@ return {
       delay = 300,
       spec = {
         { "<leader>a", group = "AI", icon = "" },
-        { "<leader>C", group = "Claude Code", icon = "" },
+        { "<leader>C", group = "Codelens", icon = "" },
         { "<leader>l", group = "LSP Extra", icon = "" },
         { "<leader>p", group = "Peek", icon = "" },
         { "<leader>r", group = "Rust", icon = "" },
         { "<leader>R", group = "Refactoring", icon = "" },
-        { "<leader>T", group = "Test", icon = "" },
+        { "<leader>T", group = "Test (custom)", icon = "" },
       },
     },
   },
@@ -215,11 +215,8 @@ return {
     event = "BufReadPost",
     init = function()
       vim.g.matchup_matchparen_offscreen = { method = "popup" }
+      vim.g.matchup_treesitter_enabled = 1
     end,
-  },
-  {
-    "nvim-treesitter/nvim-treesitter",
-    opts = { matchup = { enable = true } },
   },
 
   -- nvim-autopairs

@@ -4,7 +4,7 @@ return {
   -- trouble.nvim: Override
   {
     "folke/trouble.nvim",
-    opts = { auto_close = true, auto_preview = true, focus = true, use_diagnostic_signs = true },
+    opts = { auto_close = true, auto_preview = true, focus = true },
   },
 
   -- todo-comments.nvim: Override
