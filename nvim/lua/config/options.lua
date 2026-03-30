@@ -1,62 +1,34 @@
 -- Options are automatically loaded before lazy.nvim startup
 -- Default options: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/options.lua
+-- Only settings that DIFFER from LazyVim defaults are listed here.
 
 local o = vim.o
 
 -- 2026 Minimal UI: statusline-less workflow for maximum editing space
-o.cmdheight = 0
-o.laststatus = 0
-o.showmode = false
-
--- Line numbers
-o.number = true
-o.relativenumber = true
+o.cmdheight = 0        -- LazyVim: 1
+o.laststatus = 0       -- LazyVim: 3
 o.numberwidth = 4
 
--- Scrolling
+-- Scrolling (LazyVim: scrolloff=4)
 o.scrolloff = 8
-o.sidescrolloff = 8
 
--- Indentation
-o.tabstop = 2
-o.shiftwidth = 2
-o.expandtab = true
-o.smartindent = true
-
--- Search
-o.ignorecase = true
-o.smartcase = true
+-- Search (not in LazyVim defaults)
 o.hlsearch = true
 o.incsearch = true
 
--- Clipboard
-o.clipboard = "unnamedplus"
-
--- Undo
-o.undofile = true
+-- Undo (not in LazyVim defaults)
 o.undolevels = 10000
 
--- Performance
-o.updatetime = 200
-o.timeoutlen = 300
-
--- UI
-o.termguicolors = true
-o.signcolumn = "yes"
-o.cursorline = true
+-- UI (not in LazyVim defaults)
 o.cursorlineopt = "both"
 o.winborder = "rounded"
 
--- Files
+-- Files (not in LazyVim defaults)
 o.swapfile = false
 o.backup = false
 o.autoread = true
 
--- Word wrap
+-- Word wrap (LazyVim: wrap=false)
 o.wrap = true
 o.linebreak = true
 o.breakindent = true
-
--- Splits
-o.splitright = true
-o.splitbelow = true

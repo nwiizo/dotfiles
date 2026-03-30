@@ -232,12 +232,9 @@ nvim/
 |---|---|---|---|
 | `<leader><leader>` | n | Smart Picker（ファイル+バッファ+最近使用） | P Snacks |
 | `<leader>/` | n | Grep（ルートディレクトリ） | L |
-| `<leader>ff` | n | ファイル検索 (Telescope) | P |
-| `<leader>fg` | n | Live Grep (Telescope) | P |
-| `<leader>fb` | n | バッファ一覧 (Telescope) | P |
-| `<leader>fr` | n | 最近使用したファイル (Telescope) | P |
+| `<leader>ff` | n | ファイル検索 | L |
 | `<leader>fn` | n | 新規ファイル | L |
-| `<C-p>` | n | ファイル検索 | P |
+| `<C-p>` | n | ファイル検索 (Telescope) | C |
 | `-` | n | Oil ファイルエクスプローラ | P oil |
 | `<leader>e` | n | Oil ファイルエクスプローラ | P oil |
 
@@ -257,7 +254,6 @@ nvim/
 | `<leader>ss` | n | LSPシンボル | P Snacks |
 | `<leader>sR` | n | 最後のPickerを再開 | P Snacks |
 | `<leader>sT` | n | TODO検索 | P todo-comments |
-| `<leader>sW` | n | カーソル下の単語を置換（インライン） | C |
 | `<leader>sy` | n | ヤンク履歴 | P yanky |
 
 ### バッファ管理
@@ -267,7 +263,6 @@ nvim/
 | `<leader>bd` | n | バッファ削除 | L Snacks |
 | `<leader>bo` | n | 他のバッファを削除 | L Snacks |
 | `<leader>bb` | n | バッファ切替 | L |
-| `<leader>bf` | n | フォーマット | P conform |
 
 ### LSP
 
@@ -282,9 +277,7 @@ nvim/
 | `<leader>ca` | n,x | コードアクション | L |
 | `<leader>cr` | n | リネーム（inc-rename ライブプレビュー） | L + Extra |
 | `<leader>cf` | n,x | フォーマット | L |
-| `<leader>fm` | n | フォーマット（レガシーキー） | C |
 | `<leader>lk` | n | シグネチャヘルプ | C |
-| `<leader>lD` | n | 型定義 | C |
 | `<leader>ld` | n | 行の診断詳細 | C |
 | `<leader>lq` | n | 診断をloclistへ | C |
 | `<leader>lwa` | n | ワークスペースフォルダ追加 | C |
@@ -336,7 +329,7 @@ nvim/
 | `<leader>gp` | n | Hunkプレビュー | P gitsigns |
 | `<leader>gb` | n | Blame表示 | P gitsigns |
 | `<leader>gB` | n | Blame切替 | P gitsigns |
-| `]c` / `[c` | n | 次/前のhunk | P gitsigns |
+| `]h` / `[h` | n | 次/前のhunk | L gitsigns |
 
 ### トグル (`<leader>u` prefix)
 
@@ -369,17 +362,14 @@ nvim/
 |---|---|---|---|
 | `J` / `K` | v | 行を下/上に移動 | C |
 | `<A-j>` / `<A-k>` | n,i,v | 行を下/上に移動 | L |
-| `<leader>p` | x | ペースト（レジスタ保持） | C |
+| `<leader>P` | x | ペースト（レジスタ保持） | C |
 | `<leader>D` | n,v | 削除（レジスタなし） | C |
 
 ### クリップボード・生産性
 
 | キー | モード | 説明 | 出典 |
 |---|---|---|---|
-| `<leader>y` | n,v | クリップボードにヤンク | C |
-| `<leader>Y` | n | 行をクリップボードにヤンク | C |
 | `<leader>j` / `<leader>k` | n | 次/前のquickfix | C |
-| `<leader>cx` | n | ファイルを実行可能にする | C |
 | `<C-a>` / `<C-x>` | n | インクリメント/デクリメント (dial拡張) | P dial |
 | `[y` / `]y` | n | ペースト後にヤンク履歴サイクル | P yanky |
 
@@ -389,7 +379,6 @@ nvim/
 |---|---|---|---|
 | `<c-/>` | n,t | ターミナルトグル | L |
 | `<C-x>` | t | ターミナルモード終了 | C |
-| `<leader>tt` | n | ターミナルトグル (Snacks) | P Snacks |
 
 ### セッション (`<leader>q` prefix)
 
@@ -419,19 +408,26 @@ nvim/
 | `<leader>ai` | n,v | CodeCompanion Actions | P codecompanion |
 | `<leader>ap` | n,v | CodeCompanion Inline | P codecompanion |
 
-### Claude Code (`<leader>C` prefix)
+### Claude Code (`<leader>c` prefix)
 
 | キー | モード | 説明 | 出典 |
 |---|---|---|---|
-| `<leader>Cc` | n | トグル | P claudecode |
-| `<leader>Cf` | n | フォーカス | P claudecode |
-| `<leader>Cr` | n | Resume | P claudecode |
-| `<leader>CC` | n | Continue | P claudecode |
-| `<leader>Cm` | n | モデル選択 | P claudecode |
-| `<leader>Cb` | n | バッファ追加 | P claudecode |
-| `<leader>Cs` | v | 選択範囲送信 | P claudecode |
-| `<leader>Ca` | n | Diff Accept | P claudecode |
-| `<leader>Cd` | n | Diff Deny | P claudecode |
+| `<leader>cc` | n | トグル | P claudecode |
+| `<leader>cf` | n | フォーカス | P claudecode |
+| `<leader>cr` | n | Resume | P claudecode |
+| `<leader>cC` | n | Continue | P claudecode |
+| `<leader>cm` | n | モデル選択 | P claudecode |
+| `<leader>cb` | n | バッファ追加 | P claudecode |
+| `<leader>cs` | v | 選択範囲送信 | P claudecode |
+| `<leader>ct` | n | ツリーからファイル追加 | P claudecode |
+| `<leader>ca` | n | Diff Accept | P claudecode |
+| `<leader>cd` | n | Diff Deny | P claudecode |
+
+### Codelens (`<leader>C` prefix)
+
+| キー | モード | 説明 | 出典 |
+|---|---|---|---|
+| `<leader>Cl` | n | Run Codelens | L (remapped) |
 
 ### Rust (`<leader>r` prefix, Rustファイルのみ)
 
@@ -509,6 +505,7 @@ nvim/
 | `<leader>Rv` | x | Extract Variable | P refactoring |
 | `<leader>Ri` | n,x | Inline Variable | P refactoring |
 | `<leader>Rb` | n | Extract Block | P refactoring |
+| `<leader>RB` | n | Extract Block to File | P refactoring |
 | `<leader>Rp` | n | Debug Print 挿入 | P refactoring |
 | `<leader>RP` | n,x | Debug Print Variable | P refactoring |
 | `<leader>Rc` | n | Debug Print 全削除 | P refactoring |
@@ -543,7 +540,7 @@ nvim
 
 ## 要件
 
-- Neovim 0.11+
+- Neovim 0.12+
 - Node.js (Copilot, Mason)
 - Rust toolchain (rust-analyzer)
 - Go toolchain (gopls)

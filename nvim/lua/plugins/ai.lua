@@ -61,7 +61,7 @@ return {
     },
   },
 
-  -- render-markdown: Add Avante filetype support (standalone override, not as dependency)
+  -- render-markdown: Add Avante filetype support
   {
     "MeanderingProgrammer/render-markdown.nvim",
     opts = { file_types = { "markdown", "Avante" } },
@@ -100,7 +100,8 @@ return {
     },
   },
 
-  -- Claude Code: Terminal integration (<leader>C prefix to avoid LazyVim <leader>c = code)
+  -- Claude Code: Primary AI integration (terminal)
+  -- <leader>cc takes priority over LazyVim's codelens (intentional)
   {
     "coder/claudecode.nvim",
     event = "VeryLazy",
@@ -112,21 +113,16 @@ return {
       },
     },
     keys = {
-      { "<leader>Cc", "<cmd>ClaudeCode<cr>", desc = "Toggle Claude" },
-      { "<leader>Cf", "<cmd>ClaudeCodeFocus<cr>", desc = "Focus Claude" },
-      { "<leader>Cr", "<cmd>ClaudeCode --resume<cr>", desc = "Resume Claude" },
-      { "<leader>CC", "<cmd>ClaudeCode --continue<cr>", desc = "Continue Claude" },
-      { "<leader>Cm", "<cmd>ClaudeCodeSelectModel<cr>", desc = "Select Claude model" },
-      { "<leader>Cb", "<cmd>ClaudeCodeAdd %<cr>", desc = "Add current buffer" },
-      { "<leader>Cs", "<cmd>ClaudeCodeSend<cr>", mode = "v", desc = "Send to Claude" },
-      {
-        "<leader>Cs",
-        "<cmd>ClaudeCodeTreeAdd<cr>",
-        desc = "Add file from tree",
-        ft = { "NvimTree", "neo-tree", "oil", "minifiles", "netrw" },
-      },
-      { "<leader>Ca", "<cmd>ClaudeCodeDiffAccept<cr>", desc = "Accept diff" },
-      { "<leader>Cd", "<cmd>ClaudeCodeDiffDeny<cr>", desc = "Deny diff" },
+      { "<leader>cc", "<cmd>ClaudeCode<cr>", desc = "Toggle Claude Code" },
+      { "<leader>cf", "<cmd>ClaudeCodeFocus<cr>", desc = "Focus Claude" },
+      { "<leader>cr", "<cmd>ClaudeCode --resume<cr>", desc = "Resume Claude" },
+      { "<leader>cC", "<cmd>ClaudeCode --continue<cr>", desc = "Continue Claude" },
+      { "<leader>cm", "<cmd>ClaudeCodeSelectModel<cr>", desc = "Select Claude model" },
+      { "<leader>cb", "<cmd>ClaudeCodeAdd %<cr>", desc = "Add current buffer" },
+      { "<leader>cs", "<cmd>ClaudeCodeSend<cr>", mode = "v", desc = "Send to Claude" },
+      { "<leader>ct", "<cmd>ClaudeCodeTreeAdd<cr>", desc = "Add file from tree", ft = { "NvimTree", "neo-tree", "oil" } },
+      { "<leader>ca", "<cmd>ClaudeCodeDiffAccept<cr>", desc = "Accept diff" },
+      { "<leader>cd", "<cmd>ClaudeCodeDiffDeny<cr>", desc = "Deny diff" },
     },
   },
 }

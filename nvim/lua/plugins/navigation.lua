@@ -1,5 +1,5 @@
 -- Navigation & Search plugins
--- LazyVim manages: Snacks.nvim, flash.nvim, persistence.nvim, telescope, oil
+-- LazyVim manages: Snacks.nvim, flash.nvim, persistence.nvim, telescope
 return {
   -- Snacks.nvim: Override LazyVim defaults
   {
@@ -47,7 +47,6 @@ return {
       { "<leader>gg", function() Snacks.lazygit.open() end, desc = "LazyGit" },
       { "<leader>gl", function() Snacks.lazygit.log() end, desc = "LazyGit Log" },
       { "<leader>gf", function() Snacks.lazygit.log_file() end, desc = "LazyGit File Log" },
-      { "<leader>tt", function() Snacks.terminal() end, desc = "Toggle Terminal" },
       { "<leader>uz", function() Snacks.zen() end, desc = "Toggle Zen Mode" },
       { "<leader>uZ", function() Snacks.zen.zoom() end, desc = "Toggle Zen Zoom" },
     },
@@ -60,7 +59,7 @@ return {
     opts = { autoclose = true, threshold = 10, close_buffers_with_windows = false },
   },
 
-  -- telescope: Override for custom layout
+  -- telescope: Override for custom layout (keys only for additions, not LazyVim-provided ones)
   {
     "nvim-telescope/telescope.nvim",
     opts = {
@@ -81,14 +80,6 @@ return {
       },
     },
     keys = {
-      { "<leader>ff", "<cmd>Telescope find_files<cr>", desc = "Find Files" },
-      { "<leader>fg", "<cmd>Telescope live_grep<cr>", desc = "Live Grep" },
-      { "<leader>fb", "<cmd>Telescope buffers<cr>", desc = "Buffers" },
-      { "<leader>fh", "<cmd>Telescope help_tags<cr>", desc = "Help Tags" },
-      { "<leader>fr", "<cmd>Telescope oldfiles<cr>", desc = "Recent Files" },
-      { "<leader>fc", "<cmd>Telescope git_commits<cr>", desc = "Git Commits" },
-      { "<leader>fs", "<cmd>Telescope git_status<cr>", desc = "Git Status" },
-      { "<leader>fd", "<cmd>Telescope diagnostics<cr>", desc = "Diagnostics" },
       { "<C-p>", "<cmd>Telescope find_files<cr>", desc = "Find Files" },
     },
   },
@@ -132,7 +123,6 @@ return {
   },
 
   -- treewalker.nvim: Syntax-tree-aware movement and node swapping
-  -- Note: <A-j>/<A-k> is LazyVim's line-move, so use [w/]w for tree walk
   {
     "aaronik/treewalker.nvim",
     opts = { highlight = true, highlight_duration = 250 },

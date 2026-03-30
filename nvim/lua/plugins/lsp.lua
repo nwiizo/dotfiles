@@ -21,6 +21,8 @@ return {
         severity_sort = true,
         float = { border = "rounded" },
       },
+      -- Codelens: move to <leader>C prefix (Claude Code uses <leader>cc)
+      codelens = { enabled = true },
       servers = {
         lua_ls = {
           settings = {
@@ -63,6 +65,11 @@ return {
         },
       },
     },
+    -- Override codelens keymap: <leader>cc → <leader>Cl (Claude Code owns <leader>cc)
+    keys = {
+      { "<leader>cc", false },
+      { "<leader>Cl", vim.lsp.codelens.run, desc = "Run Codelens" },
+    },
   },
 
   -- conform.nvim: Override formatters (let LazyVim manage format-on-save via <leader>uf)
@@ -70,7 +77,7 @@ return {
     "stevearc/conform.nvim",
     opts = {
       formatters_by_ft = {
-        typescript = { "prettier", "deno_fmt" },
+        typescript = { "prettier", "deno_fmt", stop_after_first = true },
         javascript = { "prettier" },
         typescriptreact = { "prettier" },
         javascriptreact = { "prettier" },
@@ -81,7 +88,7 @@ return {
         python = { "ruff_format", "ruff_organize_imports" },
         rust = { "rustfmt" },
         zig = { "zigfmt" },
-        go = { "gofmt", "goimports", "gofumpt" },
+        go = { "goimports", "gofumpt" },
         yaml = { "prettier" },
         json = { "prettier" },
         markdown = { "prettier" },
