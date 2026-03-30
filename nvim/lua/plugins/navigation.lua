@@ -131,6 +131,22 @@ return {
     },
   },
 
+  -- treewalker.nvim: Syntax-tree-aware movement and node swapping
+  {
+    "aaronik/treewalker.nvim",
+    opts = { highlight = true, highlight_duration = 250 },
+    keys = {
+      { "<A-k>", "<cmd>Treewalker Up<cr>", desc = "Treewalker Up", mode = { "n", "x" } },
+      { "<A-j>", "<cmd>Treewalker Down<cr>", desc = "Treewalker Down", mode = { "n", "x" } },
+      { "<A-h>", "<cmd>Treewalker Left<cr>", desc = "Treewalker Left", mode = { "n", "x" } },
+      { "<A-l>", "<cmd>Treewalker Right<cr>", desc = "Treewalker Right", mode = { "n", "x" } },
+      { "<A-S-k>", "<cmd>Treewalker SwapUp<cr>", desc = "Swap Node Up" },
+      { "<A-S-j>", "<cmd>Treewalker SwapDown<cr>", desc = "Swap Node Down" },
+      { "<A-S-h>", "<cmd>Treewalker SwapLeft<cr>", desc = "Swap Node Left" },
+      { "<A-S-l>", "<cmd>Treewalker SwapRight<cr>", desc = "Swap Node Right" },
+    },
+  },
+
   -- overlook.nvim: Code peek in floating popups
   {
     "WilliamHsieh/overlook.nvim",

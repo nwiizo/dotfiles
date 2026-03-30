@@ -209,6 +209,21 @@ return {
     end,
   },
 
+  -- vim-matchup: Enhanced % matching with treesitter (replaces disabled matchit/matchparen)
+  {
+    "andymass/vim-matchup",
+    event = "BufReadPost",
+    dependencies = { "nvim-treesitter/nvim-treesitter" },
+    init = function()
+      vim.g.matchup_matchparen_offscreen = { method = "popup" }
+    end,
+    config = function()
+      require("nvim-treesitter.configs").setup({
+        matchup = { enable = true },
+      })
+    end,
+  },
+
   -- nvim-autopairs
   {
     "windwp/nvim-autopairs",
