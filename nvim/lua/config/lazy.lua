@@ -1,3 +1,7 @@
+-- Set leader keys before lazy.nvim loads (required)
+vim.g.mapleader = " "
+vim.g.maplocalleader = "\\"
+
 -- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
@@ -16,9 +20,14 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
+  -- Use development versions (recommended by LazyVim docs:
+  -- "a lot of plugins that support versioning have outdated releases")
+  { "folke/lazy.nvim", version = false },
+
   -- LazyVim core
   {
     "LazyVim/LazyVim",
+    version = false,
     import = "lazyvim.plugins",
     opts = {
       colorscheme = "catppuccin-mocha",
@@ -71,6 +80,9 @@ require("lazy").setup({
     rtp = {
       disabled_plugins = {
         "gzip",
+        "matchit",
+        "matchparen",
+        "netrwPlugin",
         "tarPlugin",
         "tohtml",
         "tutor",
