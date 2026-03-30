@@ -1,5 +1,5 @@
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# Fish Shell Configuration - 2026 Best Practices (Fish 4.3+)
+# Fish Shell Configuration - 2026 AI Era (Fish 4.6+)
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -127,7 +127,7 @@ if type -q fzf
 end
 
 # ═══════════════════════════════════════════════════════════════════════════
-# 6. FISH SHELL BEHAVIOR (Fish 4.3+ settings)
+# 6. FISH SHELL BEHAVIOR (Fish 4.6+ settings)
 # ═══════════════════════════════════════════════════════════════════════════
 set -g fish_prompt_pwd_dir_length 3
 
@@ -169,7 +169,7 @@ function fish_should_add_to_history
     string match -qr '^vault ' -- $cmd; and return 1
 
     # Skip bare interactive AI sessions (noisy single entries)
-    string match -qr '^(claude|aider|gemini)\s*$' -- $cmd; and return 1
+    string match -qr '^(claude|aider|gemini|codex|llm|goose|opencode)\s*$' -- $cmd; and return 1
 
     # Skip very short commands that are just noise
     test (string length -- $cmd) -le 2; and return 1
@@ -411,6 +411,28 @@ function claude_repo -d "Jump to repo and start Claude Code"
     end
 end
 
+function ai_review -d "AI code review of current changes"
+    set -l diff (git diff --staged 2>/dev/null)
+    test -z "$diff"; and set diff (git diff)
+    test -z "$diff"; and echo "No changes to review"; and return 1
+    echo "$diff" | claude -p "Review this diff. Focus on bugs, security issues, and logic errors. Be terse."
+end
+
+function ai_commit_msg -d "Generate commit message from staged changes"
+    set -l diff (git diff --staged)
+    test -z "$diff"; and echo "No staged changes"; and return 1
+    echo "$diff" | claude -p "Generate a conventional commit message (<type>(<scope>): <subject>) for this diff. Output ONLY the message, no explanation."
+end
+
+function ai_pr -d "Generate PR description from branch diff"
+    set -l base (git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | string replace 'refs/remotes/origin/' '')
+    test -z "$base"; and set base main
+    set -l diff (git diff $base...HEAD)
+    set -l log (git log --oneline $base..HEAD)
+    test -z "$diff"; and echo "No changes vs $base"; and return 1
+    printf "%s\n\n%s" "$log" "$diff" | claude -p "Generate a concise PR description with ## Summary and ## Changes sections."
+end
+
 function docker_fzf_exec -d "Exec into docker container with fzf"
     type -q docker; or return 1
 
@@ -530,12 +552,22 @@ if status is-interactive
     abbr -a c 'claude --dangerously-skip-permissions'
     abbr -a cc 'claude -c'
     abbr -a cr 'claude --resume'
-    abbr -a cp 'claude -p'
+    abbr -a clp 'claude -p'
     abbr -a cplan 'claude --permission-mode plan'
 
     # OpenAI Codex
     abbr -a cx codex
     abbr -a cxq 'codex -q'
+
+    # Aider (AI pair programming)
+    abbr -a ai aider
+    abbr -a aiw 'aider --watch-files'
+    abbr -a aia 'aider --architect'
+
+    # AI workflow shortcuts
+    abbr -a arv ai_review
+    abbr -a acm ai_commit_msg
+    abbr -a apr ai_pr
 
     # Tools
     abbr -a v nvim
@@ -588,6 +620,9 @@ if type -q atuin
     atuin init fish --disable-up-arrow | source
     # fzf.fish history is disabled via fzf_configure_bindings in conf.d
 end
+
+# carapace - universal completion engine for 1000+ modern CLI tools
+type -q carapace; and carapace _carapace fish | source
 
 # ═══════════════════════════════════════════════════════════════════════════
 # 13. LOCAL CONFIG (machine-specific, gitignored)

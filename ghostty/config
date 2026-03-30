@@ -1,9 +1,16 @@
-# 自動更新チャンネル（tip = nightly でメモリリーク修正版）
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Ghostty Configuration - 2026 AI Era
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#
+# Theme: Catppuccin Mocha (consistent with Neovim + Starship)
+# Font:  Hack Nerd Font Mono
+# Shell: Fish 4.6+ with Starship prompt
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
 auto-update-channel = tip
 
-# =============================================================================
-# Font
-# =============================================================================
+# ─── Font ─────────────────────────────────────────────────────────────────────
+
 font-family = "Hack Nerd Font Mono"
 font-size = 24
 font-feature = -calt
@@ -11,169 +18,78 @@ font-feature = -liga
 font-feature = -dlig
 font-synthetic-style = false
 
-# =============================================================================
-# Cursor
-# =============================================================================
-cursor-color = #9d44b5
+# ─── Cursor ───────────────────────────────────────────────────────────────────
+
+cursor-color = #f5e0dc
+cursor-text = #11111b
 cursor-opacity = 0.8
 cursor-style = bar
 cursor-style-blink = false
 
-# =============================================================================
-# Window & Appearance
-# =============================================================================
+# ─── Window & Appearance ──────────────────────────────────────────────────────
+
 macos-titlebar-style = tabs
 macos-option-as-alt = true
 macos-window-shadow = true
-# 1.3.0 で non-native fullscreen はタブ非対応になったため無効化
 macos-non-native-fullscreen = false
+window-colorspace = display-p3
 window-padding-x = 12
 window-padding-y = 12
 window-padding-balance = true
 window-padding-color = extend
 window-theme = auto
-# native fullscreen ならタブ・フルスクリーン状態を正しく保存・復元できる
 window-save-state = always
 window-new-tab-position = current
+window-inherit-font-size = true
 fullscreen = true
 resize-overlay = after-first
-# 1.3.0: スクロールバー非表示（キーボードナビゲーション主体のため）
 scrollbar = never
 
-# 透明度と背景
 background-opacity = 1.0
-# blur は opacity 1.0 では不可視のため無効化（GPU節約）
-background-blur-radius = 0
+background-blur = false
 
-# 非フォーカスペインの視認性（0.65: AI出力を読みやすく維持）
+# Split appearance (catppuccin mocha colors)
 unfocused-split-opacity = 0.65
-unfocused-split-fill = #0d0d0d
+unfocused-split-fill = #11111b
+split-divider-color = #313244
 focus-follows-mouse = false
 
-# =============================================================================
-# Keyboard
-# =============================================================================
+# ─── Keyboard ─────────────────────────────────────────────────────────────────
+
 mouse-hide-while-typing = true
 keybind = shift+enter=text:\n
 keybind = ctrl+enter=text:\n
 keybind = cmd+enter=text:\n
 keybind = global:cmd+shift+space=toggle_quick_terminal
 
-# macOS標準キーバインド
+# macOS standard
 keybind = cmd+n=new_window
 keybind = cmd+t=new_tab
 keybind = cmd+w=close_surface
 
-# フォントサイズ変更
+# Font size
 keybind = cmd+plus=increase_font_size:1
 keybind = cmd+minus=decrease_font_size:1
 keybind = cmd+zero=reset_font_size
 
-# =============================================================================
-# Pane Management (vim-style)
-# =============================================================================
+# ─── Pane Management (vim-style) ─────────────────────────────────────────────
+
 keybind = cmd+d=new_split:right
 keybind = cmd+shift+d=new_split:down
 keybind = cmd+|=new_split:right
 keybind = cmd+shift+minus=new_split:down
 
-# performable: スプリットがなければアプリ(Neovim)にキーを渡す
+# performable: pass to app (Neovim) when no splits exist
 keybind = performable:ctrl+h=goto_split:left
 keybind = performable:ctrl+j=goto_split:bottom
 keybind = performable:ctrl+k=goto_split:top
 keybind = performable:ctrl+l=goto_split:right
 
 keybind = cmd+shift+enter=toggle_split_zoom
-# 1.3.0: ズーム中のスプリット移動でズーム状態を維持
+keybind = cmd+ctrl+=equalize_splits
 split-preserve-zoom = navigation
 
-# =============================================================================
-# Tab Management
-# =============================================================================
-keybind = cmd+shift+]=next_tab
-keybind = cmd+shift+[=previous_tab
-
-# =============================================================================
-# Clipboard
-# =============================================================================
-clipboard-read = allow
-clipboard-write = allow
-clipboard-trim-trailing-spaces = true
-copy-on-select = true
-clipboard-paste-protection = true
-
-# =============================================================================
-# Shell Integration
-# =============================================================================
-shell-integration = fish
-shell-integration-features = no-cursor,sudo,title
-# term: Ghosttyネイティブterminfo（xterm-ghostty）を使用。true color・styled underline対応
-# SSH先では shell-integration の ssh 機能がフォールバック処理
-window-inherit-working-directory = true
-# 1.3.0: タブ・スプリットも作業ディレクトリを継承
-tab-inherit-working-directory = true
-split-inherit-working-directory = true
-
-# プロンプト間ジャンプ
-keybind = ctrl+shift+up=jump_to_prompt:-1
-keybind = ctrl+shift+down=jump_to_prompt:1
-cursor-click-to-move = true
-
-# =============================================================================
-# Scrollback & Vim-style Navigation
-# =============================================================================
-scrollback-limit = 100000
-
-keybind = ctrl+u=scroll_page_fractional:-0.5
-keybind = alt+b=scroll_page_up
-keybind = alt+g=scroll_to_top
-keybind = alt+shift+g=scroll_to_bottom
-
-# =============================================================================
-# Misc
-# =============================================================================
-link-url = true
-bold-is-bright = true
-confirm-close-surface = true
-desktop-notifications = true
-bell-features = title,attention,system
-minimum-contrast = 1.1
-title-report = false
-enquiry-response =
-image-storage-limit = 320000000
-
-# 1.3.0: コマンド完了通知（非フォーカス時、5秒以上のコマンド）
-notify-on-command-finish = unfocused
-notify-on-command-finish-after = 5s
-notify-on-command-finish-action = notify
-
-# Quick Terminal
-quick-terminal-position = top
-quick-terminal-animation-duration = 0.2
-quick-terminal-autohide = true
-
-# =============================================================================
-# AI Workflow (Claude Code / Codex)
-# =============================================================================
-
-# AI出力ストリーミング時に自動スクロール
-scroll-to-bottom = keystroke,output
-
-# 選択状態の自動クリア（AI出力レビュー時のノイズ低減）
-selection-clear-on-typing = true
-selection-clear-on-copy = true
-
-# URLプレビュー
-link-previews = true
-
-# フォントサイズを新ウィンドウに引き継ぎ
-window-inherit-font-size = true
-
-# 環境変数（config.fishと重複しない項目のみ）
-env = GHOSTTY=1
-
-# Key Tables (1.3.0: vim-style modal keybindings)
-# Ctrl+W → R でリサイズモード、h/j/k/l で分割サイズ調整、Esc で終了
+# Key table: Ctrl+W → R for resize mode, h/j/k/l to adjust, Esc to exit
 keybind = ctrl+w>r=activate_key_table:resize
 keybind = resize/h=resize_split:left,10
 keybind = resize/j=resize_split:down,10
@@ -181,44 +97,115 @@ keybind = resize/k=resize_split:up,10
 keybind = resize/l=resize_split:right,10
 keybind = resize/escape=deactivate_key_table
 
-# ウィンドウ間ナビゲーション
+# ─── Tab Management ──────────────────────────────────────────────────────────
+
+keybind = cmd+shift+]=next_tab
+keybind = cmd+shift+[=previous_tab
+
+# ─── Window Navigation ───────────────────────────────────────────────────────
+
 keybind = cmd+shift+right=goto_window:next
 keybind = cmd+shift+left=goto_window:previous
 
-# TUIモードでマウス操作を取り戻す
-keybind = cmd+shift+m=toggle_mouse_reporting
+# ─── Clipboard ────────────────────────────────────────────────────────────────
 
-# リッチコピー（シンタックスハイライト付き）
+clipboard-read = allow
+clipboard-write = allow
+clipboard-trim-trailing-spaces = true
+copy-on-select = true
+clipboard-paste-protection = true
 keybind = cmd+shift+c=copy_to_clipboard:html
 
-# =============================================================================
-# Tokyo Night Theme
-# =============================================================================
-background = #24283b
-foreground = #c0caf5
-selection-foreground = #c0caf5
-selection-background = #364a82
-# 1.3.0: 検索ハイライト（Tokyo Night に合わせた配色）
-search-foreground = #1a1b26
-search-background = #e0af68
-search-selected-foreground = #1a1b26
-search-selected-background = #ff9e64
-# 1.3.0: カスタムパレット指定時の自動生成を無効化（正確な色を維持）
-palette-generate = false
+# ─── Shell Integration ────────────────────────────────────────────────────────
 
-palette = 0=#1a1b26
-palette = 1=#f7768e
-palette = 2=#9ece6a
-palette = 3=#e0af68
-palette = 4=#7aa2f7
-palette = 5=#bb9af7
-palette = 6=#7dcfff
-palette = 7=#a9b1d6
-palette = 8=#414868
-palette = 9=#f7768e
-palette = 10=#9ece6a
-palette = 11=#e0af68
-palette = 12=#7aa2f7
-palette = 13=#bb9af7
-palette = 14=#7dcfff
-palette = 15=#c0caf5
+shell-integration = fish
+shell-integration-features = no-cursor,sudo,title
+window-inherit-working-directory = true
+tab-inherit-working-directory = true
+split-inherit-working-directory = true
+
+# Prompt-to-prompt jump
+keybind = ctrl+shift+up=jump_to_prompt:-1
+keybind = ctrl+shift+down=jump_to_prompt:1
+cursor-click-to-move = true
+
+# ─── Scrollback & Navigation ─────────────────────────────────────────────────
+
+scrollback-limit = 100000
+
+keybind = ctrl+u=scroll_page_fractional:-0.5
+keybind = alt+b=scroll_page_up
+keybind = alt+g=scroll_to_top
+keybind = alt+shift+g=scroll_to_bottom
+
+# ─── AI Workflow ──────────────────────────────────────────────────────────────
+
+# Auto-scroll on AI streaming output
+scroll-to-bottom = keystroke,output
+
+# Clear selection on typing (reduce noise during AI output review)
+selection-clear-on-typing = true
+selection-clear-on-copy = true
+
+# Save terminal screen to file (useful for long Claude Code output)
+keybind = cmd+shift+s=write_screen_file:open,plain
+
+# Toggle mouse reporting for TUI apps
+keybind = cmd+shift+m=toggle_mouse_reporting
+
+# ─── Notifications & Misc ────────────────────────────────────────────────────
+
+link-url = true
+link-previews = true
+bold-is-bright = true
+confirm-close-surface = true
+desktop-notifications = true
+bell-features = title,attention
+minimum-contrast = 1.1
+title-report = false
+enquiry-response =
+image-storage-limit = 320000000
+
+# Notify on long command completion (when terminal unfocused)
+notify-on-command-finish = unfocused
+notify-on-command-finish-after = 5s
+notify-on-command-finish-action = bell,notify
+
+# Quick Terminal (drop-down)
+quick-terminal-position = top
+quick-terminal-animation-duration = 0.2
+quick-terminal-autohide = true
+
+# Environment
+env = GHOSTTY=1
+
+# ─── Catppuccin Mocha Theme ──────────────────────────────────────────────────
+# https://github.com/catppuccin/ghostty
+
+background = #1e1e2e
+foreground = #cdd6f4
+selection-foreground = #cdd6f4
+selection-background = #353749
+
+search-foreground = #11111b
+search-background = #f9e2af
+search-selected-foreground = #11111b
+search-selected-background = #fab387
+
+palette-generate = false
+palette = 0=#45475a
+palette = 1=#f38ba8
+palette = 2=#a6e3a1
+palette = 3=#f9e2af
+palette = 4=#89b4fa
+palette = 5=#f5c2e7
+palette = 6=#94e2d5
+palette = 7=#a6adc8
+palette = 8=#585b70
+palette = 9=#f38ba8
+palette = 10=#a6e3a1
+palette = 11=#f9e2af
+palette = 12=#89b4fa
+palette = 13=#f5c2e7
+palette = 14=#94e2d5
+palette = 15=#bac2de
