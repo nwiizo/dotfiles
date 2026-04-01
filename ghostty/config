@@ -61,7 +61,7 @@ mouse-hide-while-typing = true
 keybind = shift+enter=text:\n
 keybind = ctrl+enter=text:\n
 keybind = cmd+enter=text:\n
-keybind = global:cmd+shift+space=toggle_quick_terminal
+keybind = global:cmd+shift+space=unbind
 
 # macOS standard
 keybind = cmd+n=new_window
