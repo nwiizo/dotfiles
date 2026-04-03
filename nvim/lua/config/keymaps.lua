@@ -48,3 +48,7 @@ map("n", "<leader>k", "<cmd>cprev<cr>zz", { desc = "Prev quickfix" })
 -- Window management
 map("n", "<leader>w=", "<C-w>=", { desc = "Equal split sizes" })
 map("n", "<leader>wm", "<cmd>only<cr>", { desc = "Maximize window" })
+
+-- Utility
+map("n", "<leader>cx", "<cmd>!chmod +x %<cr>", { silent = true, desc = "Make file executable" })
+map("n", "<leader>sR", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]], { desc = "Replace word under cursor" })

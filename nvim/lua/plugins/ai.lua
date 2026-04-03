@@ -94,14 +94,13 @@ return {
       },
     },
     keys = {
-      { "<leader>ac", "<cmd>CodeCompanionChat Toggle<cr>", desc = "CodeCompanion Chat", mode = { "n", "v" } },
+      { "<leader>aC", "<cmd>CodeCompanionChat Toggle<cr>", desc = "CodeCompanion Chat", mode = { "n", "v" } },
       { "<leader>ai", "<cmd>CodeCompanionActions<cr>", desc = "CodeCompanion Actions", mode = { "n", "v" } },
       { "<leader>ap", "<cmd>CodeCompanion<cr>", desc = "CodeCompanion Inline", mode = { "n", "v" } },
     },
   },
 
   -- Claude Code: Primary AI integration (terminal)
-  -- <leader>cc takes priority over LazyVim's codelens (intentional)
   {
     "coder/claudecode.nvim",
     event = "VeryLazy",
@@ -113,16 +112,16 @@ return {
       },
     },
     keys = {
-      { "<leader>cc", "<cmd>ClaudeCode<cr>", desc = "Toggle Claude Code" },
-      { "<leader>cf", "<cmd>ClaudeCodeFocus<cr>", desc = "Focus Claude" },
-      { "<leader>cr", "<cmd>ClaudeCode --resume<cr>", desc = "Resume Claude" },
-      { "<leader>cC", "<cmd>ClaudeCode --continue<cr>", desc = "Continue Claude" },
-      { "<leader>cm", "<cmd>ClaudeCodeSelectModel<cr>", desc = "Select Claude model" },
-      { "<leader>cb", "<cmd>ClaudeCodeAdd %<cr>", desc = "Add current buffer" },
-      { "<leader>cs", "<cmd>ClaudeCodeSend<cr>", mode = "v", desc = "Send to Claude" },
-      { "<leader>ct", "<cmd>ClaudeCodeTreeAdd<cr>", desc = "Add file from tree", ft = { "NvimTree", "neo-tree", "oil" } },
-      { "<leader>ca", "<cmd>ClaudeCodeDiffAccept<cr>", desc = "Accept diff" },
-      { "<leader>cd", "<cmd>ClaudeCodeDiffDeny<cr>", desc = "Deny diff" },
+      { "<leader>ac", "<cmd>ClaudeCode<cr>", desc = "Toggle Claude Code" },
+      { "<leader>aF", "<cmd>ClaudeCodeFocus<cr>", desc = "Focus Claude" },
+      { "<leader>au", "<cmd>ClaudeCode --resume<cr>", desc = "Resume Claude" },
+      { "<leader>aK", "<cmd>ClaudeCode --continue<cr>", desc = "Continue Claude" },
+      { "<leader>aM", "<cmd>ClaudeCodeSelectModel<cr>", desc = "Select Claude model" },
+      { "<leader>ab", "<cmd>ClaudeCodeAdd %<cr>", desc = "Add current buffer" },
+      { "<leader>as", "<cmd>ClaudeCodeSend<cr>", mode = "v", desc = "Send to Claude" },
+      { "<leader>aT", "<cmd>ClaudeCodeTreeAdd<cr>", desc = "Add file from tree", ft = { "NvimTree", "neo-tree", "oil" } },
+      { "<leader>ay", "<cmd>ClaudeCodeDiffAccept<cr>", desc = "Accept diff" },
+      { "<leader>an", "<cmd>ClaudeCodeDiffDeny<cr>", desc = "Deny diff" },
     },
   },
 }

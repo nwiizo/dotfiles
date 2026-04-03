@@ -59,26 +59,36 @@ return {
     opts = { autoclose = true, threshold = 10, close_buffers_with_windows = false },
   },
 
-  -- telescope: Override for custom layout (keys only for additions, not LazyVim-provided ones)
+  -- telescope: Override for custom layout and insert-mode navigation
   {
     "nvim-telescope/telescope.nvim",
-    opts = {
-      defaults = {
-        prompt_prefix = "   ",
-        selection_caret = " ",
-        sorting_strategy = "ascending",
-        layout_config = { horizontal = { prompt_position = "top", preview_width = 0.55 } },
-        file_ignore_patterns = { "node_modules", ".git/", "target/", "dist/", "build/" },
-      },
-      pickers = {
-        find_files = { hidden = true },
-        live_grep = {
-          additional_args = function()
-            return { "--hidden" }
-          end,
+    opts = function()
+      local actions = require("telescope.actions")
+      return {
+        defaults = {
+          prompt_prefix = "   ",
+          selection_caret = " ",
+          sorting_strategy = "ascending",
+          layout_config = { horizontal = { prompt_position = "top", preview_width = 0.55 } },
+          file_ignore_patterns = { "node_modules", ".git/", "target/", "dist/", "build/" },
+          mappings = {
+            i = {
+              ["<C-j>"] = actions.move_selection_next,
+              ["<C-k>"] = actions.move_selection_previous,
+              ["<Esc>"] = actions.close,
+            },
+          },
         },
-      },
-    },
+        pickers = {
+          find_files = { hidden = true },
+          live_grep = {
+            additional_args = function()
+              return { "--hidden" }
+            end,
+          },
+        },
+      }
+    end,
     keys = {
       { "<C-p>", "<cmd>Telescope find_files<cr>", desc = "Find Files" },
     },

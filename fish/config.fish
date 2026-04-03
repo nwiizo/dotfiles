@@ -84,7 +84,7 @@ set -gx KUBECONFIG $HOME/.kube/config
 
 if type -q bat
     set -gx MANPAGER "sh -c 'col -bx | bat -l man -p'"
-    set -gx BAT_THEME Dracula
+    set -gx BAT_THEME "Catppuccin Mocha"
     set -gx BAT_STYLE "changes,header"
 end
 
@@ -104,11 +104,11 @@ if type -q fzf
         --bind='ctrl-/:toggle-preview' \
         --bind='ctrl-u:preview-page-up' \
         --bind='ctrl-d:preview-page-down' \
-        --color=fg:#c0caf5,bg:#24283b,hl:#ff9e64 \
-        --color=fg+:#c0caf5,bg+:#292e42,hl+:#ff9e64 \
-        --color=info:#7aa2f7,prompt:#7dcfff,pointer:#bb9af7 \
-        --color=marker:#9ece6a,spinner:#bb9af7,header:#7aa2f7 \
-        --color=border:#414868,gutter:#24283b"
+        --color=fg:#cdd6f4,bg:#1e1e2e,hl:#f38ba8 \
+        --color=fg+:#cdd6f4,bg+:#313244,hl+:#f38ba8 \
+        --color=info:#89b4fa,prompt:#89dceb,pointer:#cba6f7 \
+        --color=marker:#a6e3a1,spinner:#cba6f7,header:#89b4fa \
+        --color=border:#6c7086,gutter:#1e1e2e"
 
     if type -q fd
         set -gx FZF_DEFAULT_COMMAND "fd --type f --hidden --follow --exclude .git --exclude node_modules"
@@ -143,11 +143,6 @@ set -g fish_pager_color_progress cyan
 set -g __done_min_cmd_duration 10000  # 10秒以上で通知
 set -g __done_notification_urgency_level normal
 set -g __done_notify_sound 1
-
-# TMUX optimizations
-if test -n "$TMUX"
-    set -g fish_escape_delay_ms 10
-end
 
 # ═══════════════════════════════════════════════════════════════════════════
 # 7. HISTORY CONTROL (Fish 4.0+ feature)
@@ -215,239 +210,7 @@ if type -q rg
 end
 
 # ═══════════════════════════════════════════════════════════════════════════
-# 9. UTILITY FUNCTIONS
-# ═══════════════════════════════════════════════════════════════════════════
-function ghq_fzf_repo -d "Select repository with fzf"
-    type -q ghq; and type -q fzf; or return 1
-
-    set -l selected (ghq list -p | fzf \
-        --prompt="Repository: " \
-        --preview='eza -la --icons --git {}' \
-        --preview-window=right:50%:wrap)
-
-    test -n "$selected"; and cd $selected; and commandline -f repaint
-end
-
-function update_all -d "Update all tools"
-    echo "Updating all tools..."
-
-    type -q brew; and echo "Homebrew..." && brew update && brew upgrade && brew cleanup
-    type -q mise; and echo "mise..." && mise self-update 2>/dev/null && mise upgrade
-    type -q claude; and echo "Claude CLI..." && claude update
-    type -q rustup; and echo "Rust..." && rustup update
-    type -q uv; and echo "uv..." && uv self update
-    type -q fisher; and echo "Fisher..." && fisher update 2>/dev/null
-    type -q nvim; and echo "Neovim plugins..." && nvim --headless "+Lazy! sync" +qa 2>/dev/null
-
-    echo "Done!"
-end
-
-function mkcd -d "Create and enter directory"
-    test (count $argv) -eq 0; and echo "Usage: mkcd <directory>"; and return 1
-    mkdir -p $argv[1]; and cd $argv[1]
-end
-
-function port -d "Check process using port"
-    test (count $argv) -eq 0; and echo "Usage: port <number>"; and return 1
-    lsof -i :$argv[1]
-end
-
-function git_fzf_branch -d "Switch git branch with fzf"
-    git rev-parse --is-inside-work-tree >/dev/null 2>&1; or return 1
-
-    set -l branch (git branch -a --sort=-committerdate | \
-        string trim | \
-        string replace -r '^\* ' '' | \
-        string replace -r '^remotes/origin/' '' | \
-        sort -u | \
-        fzf --prompt="Branch: " \
-            --preview='git log --oneline --graph --color=always -20 {}' \
-            --preview-window=right:50%:wrap)
-
-    test -n "$branch"; and git checkout $branch; and commandline -f repaint
-end
-
-function kubectl_fzf_ctx -d "Switch kubectl context with fzf"
-    type -q kubectl; or return 1
-
-    set -l ctx (kubectl config get-contexts -o name | \
-        fzf --prompt="Context: " \
-            --preview='kubectl config view --context={} --minify' \
-            --preview-window=right:50%:wrap)
-
-    test -n "$ctx"; and kubectl config use-context $ctx; and commandline -f repaint
-end
-
-function extract -d "Extract any archive"
-    if test (count $argv) -eq 0
-        echo "Usage: extract <file>"
-        return 1
-    end
-
-    for file in $argv
-        if not test -f $file
-            echo "'$file' is not a valid file"
-            continue
-        end
-
-        switch $file
-            case '*.tar.bz2' '*.tbz2'
-                tar xjf $file
-            case '*.tar.gz' '*.tgz'
-                tar xzf $file
-            case '*.tar.xz' '*.txz'
-                tar xJf $file
-            case '*.tar.zst'
-                tar --zstd -xf $file
-            case '*.bz2'
-                bunzip2 $file
-            case '*.gz'
-                gunzip $file
-            case '*.rar'
-                unrar x $file
-            case '*.tar'
-                tar xf $file
-            case '*.zip'
-                unzip $file
-            case '*.7z'
-                7z x $file
-            case '*.xz'
-                unxz $file
-            case '*.zst'
-                zstd -d $file
-            case '*'
-                echo "'$file' cannot be extracted"
-        end
-    end
-end
-
-function bak -d "Create timestamped backup of file"
-    test (count $argv) -eq 0; and echo "Usage: bak <file>"; and return 1
-    cp -a $argv[1] $argv[1].bak.(date +%Y%m%d_%H%M%S)
-end
-
-function serve -d "Serve current directory via HTTP"
-    set -l port (test (count $argv) -gt 0; and echo $argv[1]; or echo 8000)
-    echo "Serving on http://localhost:$port"
-    python3 -m http.server $port
-end
-
-function ai_context -d "Generate codebase context summary for AI tools"
-    set -l target (pwd)
-    test (count $argv) -gt 0; and set target $argv[1]
-
-    echo "# Project: "(basename $target)
-    echo "# Path: $target"
-    echo ""
-
-    if type -q eza
-        echo "## File Structure"
-        echo '```'
-        eza --tree --level=3 --icons=never --git-ignore $target 2>/dev/null
-        echo '```'
-    end
-
-    echo ""
-
-    if git -C $target rev-parse --is-inside-work-tree >/dev/null 2>&1
-        echo "## Recent Changes"
-        echo '```'
-        git -C $target log --oneline -10
-        echo '```'
-        echo ""
-        echo "## Uncommitted Changes"
-        echo '```'
-        git -C $target diff --stat
-        echo '```'
-    end
-
-    for f in README.md CLAUDE.md Cargo.toml go.mod package.json pyproject.toml
-        if test -f "$target/$f"
-            echo ""
-            echo "## $f"
-            echo '```'
-            head -30 "$target/$f"
-            echo '```'
-        end
-    end
-end
-
-function explain -d "Pipe output to AI for explanation"
-    if isatty stdin
-        claude -p "Explain concisely: $argv"
-    else
-        claude -p "Explain the following output concisely: $argv"
-    end
-end
-
-function aifix -d "Pipe error output to AI for fix suggestions"
-    claude -p "Analyze this error output. Suggest a concise fix. Be specific about file and line numbers."
-end
-
-function claude_multi -d "Start Claude Code with multiple project directories"
-    set -l dirs
-    for dir in $argv
-        if test -d "$dir"
-            set -a dirs --add-dir (realpath "$dir")
-        else
-            echo "Warning: $dir is not a directory, skipping"
-        end
-    end
-    claude $dirs
-end
-
-function claude_repo -d "Jump to repo and start Claude Code"
-    type -q ghq; and type -q fzf; or return 1
-
-    set -l selected (ghq list -p | fzf \
-        --prompt="Claude Repo: " \
-        --preview='eza -la --icons --git {} 2>/dev/null; echo ""; test -f {}/CLAUDE.md && echo "✓ CLAUDE.md" || echo "✗ No CLAUDE.md"' \
-        --preview-window=right:50%:wrap)
-
-    if test -n "$selected"
-        cd $selected
-        commandline -f repaint
-        claude
-    end
-end
-
-function ai_review -d "AI code review of current changes"
-    set -l diff (git diff --staged 2>/dev/null)
-    test -z "$diff"; and set diff (git diff)
-    test -z "$diff"; and echo "No changes to review"; and return 1
-    echo "$diff" | claude -p "Review this diff. Focus on bugs, security issues, and logic errors. Be terse."
-end
-
-function ai_commit_msg -d "Generate commit message from staged changes"
-    set -l diff (git diff --staged)
-    test -z "$diff"; and echo "No staged changes"; and return 1
-    echo "$diff" | claude -p "Generate a conventional commit message (<type>(<scope>): <subject>) for this diff. Output ONLY the message, no explanation."
-end
-
-function ai_pr -d "Generate PR description from branch diff"
-    set -l base (git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | string replace 'refs/remotes/origin/' '')
-    test -z "$base"; and set base main
-    set -l diff (git diff $base...HEAD)
-    set -l log (git log --oneline $base..HEAD)
-    test -z "$diff"; and echo "No changes vs $base"; and return 1
-    printf "%s\n\n%s" "$log" "$diff" | claude -p "Generate a concise PR description with ## Summary and ## Changes sections."
-end
-
-function docker_fzf_exec -d "Exec into docker container with fzf"
-    type -q docker; or return 1
-
-    set -l container (docker ps --format "table {{.Names}}\t{{.Image}}\t{{.Status}}" | \
-        tail -n +2 | \
-        fzf --prompt="Container: " \
-            --preview='docker logs --tail 20 {1}' \
-            --preview-window=right:50%:wrap | \
-        awk '{print $1}')
-
-    test -n "$container"; and docker exec -it $container /bin/sh -c "command -v bash >/dev/null && exec bash || exec sh"
-end
-
-# ═══════════════════════════════════════════════════════════════════════════
-# 10. KEY BINDINGS (Fish 4.0+ notation)
+# 9. KEY BINDINGS (Fish 4.0+ notation)
 # ═══════════════════════════════════════════════════════════════════════════
 # Note: Warp terminal ignores custom keybindings. Use abbreviations instead:
 #   ff=files, fgl=git log, fgs=git status, fp=processes, fh=history
@@ -485,7 +248,7 @@ function fish_user_key_bindings
 end
 
 # ═══════════════════════════════════════════════════════════════════════════
-# 11. ABBREVIATIONS (Interactive shell only)
+# 10. ABBREVIATIONS (Interactive shell only)
 # ═══════════════════════════════════════════════════════════════════════════
 if status is-interactive
     # Navigation (.. ... .... are provided by fastdir plugin)
@@ -594,53 +357,64 @@ if status is-interactive
 end
 
 # ═══════════════════════════════════════════════════════════════════════════
-# 12. TOOL INTEGRATIONS
+# 11. TOOL INTEGRATIONS
 # ═══════════════════════════════════════════════════════════════════════════
 # mise (asdf successor) - always activate for version management
 type -q mise; and mise activate fish 2>/dev/null | source
 
-# direnv - for per-directory environments
-type -q direnv; and direnv hook fish | source
-
-# zoxide - smarter cd
-type -q zoxide; and zoxide init fish --cmd z | source
+# atuin, direnv, zoxide: pre-generated to conf.d/ for fast startup
+# Regenerate with: update_all (or manually)
+#   atuin init fish --disable-up-arrow > ~/.config/fish/conf.d/atuin.fish
+#   direnv hook fish > ~/.config/fish/conf.d/direnv.fish
+#   zoxide init fish --cmd z > ~/.config/fish/conf.d/zoxide.fish
 
 # Rust
 test -f "$HOME/.cargo/env.fish"; and source "$HOME/.cargo/env.fish"
 
-# GitHub CLI / kubectl completions: pre-generated to completions/ for lazy loading
-# Regenerate with: gh completion -s fish > ~/.config/fish/completions/gh.fish
-#                  kubectl completion fish > ~/.config/fish/completions/kubectl.fish
-
 # delta for git diff
 type -q delta; and set -gx GIT_PAGER delta
 
-# atuin - magical shell history (replaces Ctrl+R from fzf.fish)
-if type -q atuin
-    atuin init fish --disable-up-arrow | source
-    # fzf.fish history is disabled via fzf_configure_bindings in conf.d
-end
-
-# carapace - universal completion engine for 1000+ modern CLI tools
+# carapace - universal completion engine
+# Pre-generate completions for speed: carapace --list | while read cmd; carapace $cmd fish > completions/$cmd.fish; end
 type -q carapace; and carapace _carapace fish | source
 
 # ═══════════════════════════════════════════════════════════════════════════
-# 13. LOCAL CONFIG (machine-specific, gitignored)
+# 12. LOCAL CONFIG (machine-specific, gitignored)
 # ═══════════════════════════════════════════════════════════════════════════
 test -f $XDG_CONFIG_HOME/fish/local.fish; and source $XDG_CONFIG_HOME/fish/local.fish
 
 # ═══════════════════════════════════════════════════════════════════════════
-# 14. STARSHIP PROMPT (must be last)
+# 13. PROMPT CONFIGURATION (native fish_prompt, see functions/fish_prompt.fish)
 # ═══════════════════════════════════════════════════════════════════════════
-if type -q starship
-    starship init fish | source
 
-    # Transient prompt: show minimal prompt for previous commands in scrollback
-    function starship_transient_prompt_func
-        starship module character
-    end
-    function starship_transient_rprompt_func
-        # Hide time on previous command lines for cleaner scrollback
-    end
-    enable_transience
-end
+# Transient prompt (Fish 4.1+): previous commands show only ❯
+set -g fish_transient_prompt 1
+
+# __fish_git_prompt configuration
+set -g __fish_git_prompt_show_informative_status 0
+set -g __fish_git_prompt_showdirtystate yes
+set -g __fish_git_prompt_showuntrackedfiles yes
+set -g __fish_git_prompt_showstashstate yes
+set -g __fish_git_prompt_showupstream informative
+
+# Git prompt characters (match previous Starship config)
+set -g __fish_git_prompt_char_dirtystate '!'
+set -g __fish_git_prompt_char_stagedstate '+'
+set -g __fish_git_prompt_char_untrackedfiles '?'
+set -g __fish_git_prompt_char_stashstate '≡'
+set -g __fish_git_prompt_char_upstream_ahead '⇡'
+set -g __fish_git_prompt_char_upstream_behind '⇣'
+set -g __fish_git_prompt_char_upstream_diverged '⇕'
+set -g __fish_git_prompt_char_upstream_equal ''
+set -g __fish_git_prompt_char_stateseparator ''
+
+# Git prompt colors (Catppuccin Mocha)
+set -g __fish_git_prompt_showcolorhints yes
+set -g __fish_git_prompt_color_branch cba6f7 --bold
+set -g __fish_git_prompt_color_upstream eba0ac
+set -g __fish_git_prompt_color_dirtystate eba0ac
+set -g __fish_git_prompt_color_stagedstate a6e3a1
+set -g __fish_git_prompt_color_untrackedfiles eba0ac
+set -g __fish_git_prompt_color_stashstate 74c7ec
+set -g __fish_git_prompt_color_merging f9e2af
+set -g __fish_git_prompt_color_cleanstate a6e3a1

@@ -21,7 +21,6 @@ return {
         severity_sort = true,
         float = { border = "rounded" },
       },
-      -- Codelens: move to <leader>C prefix (Claude Code uses <leader>cc)
       codelens = { enabled = true },
       servers = {
         lua_ls = {
@@ -39,12 +38,19 @@ return {
             gopls = {
               analyses = { unusedparams = true },
               staticcheck = true,
-              gofumpt = true,
               usePlaceholders = true,
               experimentalPostfixCompletions = true,
             },
           },
         },
+        -- Web
+        html = {},
+        cssls = {},
+        emmet_ls = {},
+        -- Shell
+        bashls = {},
+        -- Go: golangci-lint LSP
+        golangci_lint_ls = {},
         zls = {
           settings = {
             zls = {
@@ -64,11 +70,6 @@ return {
           },
         },
       },
-    },
-    -- Override codelens keymap: <leader>cc → <leader>Cl (Claude Code owns <leader>cc)
-    keys = {
-      { "<leader>cc", false },
-      { "<leader>Cl", vim.lsp.codelens.run, desc = "Run Codelens" },
     },
   },
 
@@ -101,28 +102,39 @@ return {
     "mason-org/mason.nvim",
     opts = {
       ensure_installed = {
+        -- Lua
         "lua-language-server",
         "stylua",
+        -- Web
         "html-lsp",
         "css-lsp",
-        "prettier",
-        "typescript-language-server",
-        "deno",
         "emmet-ls",
+        "prettier",
+        "deno",
+        -- JSON/YAML
         "json-lsp",
+        "yaml-language-server",
+        -- Shell
+        "bash-language-server",
         "shfmt",
         "shellcheck",
-        "goimports",
+        -- Go
         "gopls",
+        "goimports",
         "gofumpt",
-        "terraform-ls",
-        "ruff",
-        "rust-analyzer",
-        "yaml-language-server",
-        "bash-language-server",
+        "golangci-lint-langserver",
+        "golangci-lint",
+        -- Python
         "pyright",
-        "zls",
+        "ruff",
+        -- Rust
+        "rust-analyzer",
         "codelldb",
+        -- Zig
+        "zls",
+        -- Terraform
+        "terraform-ls",
+        "tflint",
       },
     },
   },

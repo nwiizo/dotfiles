@@ -8,4 +8,6 @@ return {
   { "nvim-mini/mini.surround", enabled = false },
   -- Use nvim-autopairs instead of mini.pairs
   { "nvim-mini/mini.pairs", enabled = false },
+  -- Use oil.nvim instead of neo-tree
+  { "nvim-neo-tree/neo-tree.nvim", enabled = false },
 }

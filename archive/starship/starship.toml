@@ -3,9 +3,8 @@
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 #
 # Layout:
-#   [left]  user@host dir  branch status  lang  infra  jobs duration  exit
-#   [right] HH:MM
-#   ❯ _
+#   [line1] user@host dir  branch state status  jobs duration  exit
+#   [line2] ❯
 #
 # Design:
 #   - Catppuccin Mocha palette (consistent with Neovim theme)
@@ -23,25 +22,19 @@ $username\
 $hostname\
 $directory\
 $git_branch\
+$git_commit\
 $git_status\
-$golang\
-$rust\
-$python\
-$nodejs\
-$terraform\
-$docker_context\
-$aws\
-$kubernetes\
+$git_state\
 $jobs\
 $cmd_duration\
 $status\
 $line_break\
 $character"""
 
-right_format = "$time"
+right_format = ""
 continuation_prompt = "[  ](overlay0)"
 
-add_newline = false
+add_newline = true
 scan_timeout = 30
 command_timeout = 500
 follow_symlinks = true
@@ -71,7 +64,10 @@ style = "bold teal"
 [directory]
 truncation_length = 3
 truncate_to_repo = true
+fish_style_pwd_dir_length = 1
 style = "bold lavender"
+repo_root_style = "bold blue"
+repo_root_format = "[$before_root_path]($before_repo_root_style)[$repo_root]($repo_root_style)[$path]($style)[$read_only]($read_only_style) "
 read_only = " "
 home_symbol = "~"
 
@@ -80,8 +76,18 @@ home_symbol = "~"
 [git_branch]
 symbol = " "
 style = "bold mauve"
-truncation_length = 20
+truncation_length = 30
 truncation_symbol = "…"
+
+[git_commit]
+tag_disabled = false
+tag_symbol = "  "
+only_detached = true
+style = "bold yellow"
+
+[git_state]
+format = '[\($state( $progress_current/$progress_total)\)]($style) '
+style = "bold yellow"
 
 [git_status]
 format = "([$all_status$ahead_behind]($style) )"
@@ -100,48 +106,30 @@ conflicted = "="
 # ─── Languages ────────────────────────────────────────────────────────────────
 
 [golang]
-symbol = " "
-format = "via [$symbol($version )]($style)"
-style = "bold sapphire"
+disabled = true
 
 [rust]
-symbol = " "
-format = "via [$symbol($version )]($style)"
-style = "bold peach"
+disabled = true
 
 [python]
-symbol = " "
-format = "via [$symbol($version )(\\($virtualenv\\) )]($style)"
-style = "bold yellow"
+disabled = true
 
 [nodejs]
-symbol = " "
-format = "via [$symbol($version )]($style)"
-style = "bold green"
+disabled = true
 
 # ─── Infrastructure ───────────────────────────────────────────────────────────
 
 [aws]
-symbol = " "
-format = "on [$symbol$profile(\\($region\\))]($style) "
-style = "bold yellow"
+disabled = true
 
 [kubernetes]
-symbol = "󱃾 "
-format = "on [$symbol$context( \\($namespace\\))]($style) "
-style = "bold blue"
-disabled = false
+disabled = true
 
 [terraform]
-symbol = "󱁢 "
-format = "via [$symbol$workspace]($style) "
-style = "bold mauve"
+disabled = true
 
 [docker_context]
-symbol = " "
-format = "via [$symbol$context]($style) "
-style = "bold sky"
-only_with_files = true
+disabled = true
 
 # ─── Status & Timing ─────────────────────────────────────────────────────────
 
@@ -165,10 +153,7 @@ min_time = 2_000
 format = "took [$duration](bold yellow) "
 
 [time]
-disabled = false
-format = "[$time]($style)"
-style = "overlay1"
-time_format = "%H:%M"
+disabled = true
 
 # ─── Disabled (performance) ───────────────────────────────────────────────────
 

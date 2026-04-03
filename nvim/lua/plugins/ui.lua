@@ -103,6 +103,19 @@ return {
     end,
   },
 
+  -- nvim-notify: Custom notification style
+  {
+    "rcarriga/nvim-notify",
+    opts = {
+      background_colour = "#000000",
+      fps = 60,
+      render = "compact",
+      stages = "fade",
+      timeout = 3000,
+      top_down = false,
+    },
+  },
+
   -- noice.nvim: Override LazyVim defaults for centered cmdline
   {
     "folke/noice.nvim",
@@ -172,7 +185,6 @@ return {
       delay = 300,
       spec = {
         { "<leader>a", group = "AI", icon = "" },
-        { "<leader>C", group = "Codelens", icon = "" },
         { "<leader>l", group = "LSP Extra", icon = "" },
         { "<leader>p", group = "Peek", icon = "" },
         { "<leader>r", group = "Rust", icon = "" },
