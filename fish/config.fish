@@ -236,10 +236,16 @@ end
 function fish_user_key_bindings
     # fzf.fish plugin: only Ctrl+F for directory search
     # History → atuin (Ctrl+R), git/processes/variables → abbreviations (fgl, fgs, fp, fv)
-    fzf_configure_bindings --directory=\cf --history= --git_log= --git_status= --processes= --variables=
+    # Guard: プラグイン未インストールでもシェル起動が壊れないようにする
+    if functions -q fzf_configure_bindings
+        fzf_configure_bindings --directory=\cf --history= --git_log= --git_status= --processes= --variables=
+    end
 
     # Custom bindings (work in Ghostty, iTerm2, etc. but NOT in Warp)
     bind ctrl-g ghq_fzf_repo
+    # Alt-J: ghq repos with jj-aware preview. Offers to colocate jj on
+    # cd when the repo is git-only. Sibling to Ctrl-G, not a replacement.
+    bind \ej jj_fzf_ghq
     bind ctrl-b git_fzf_branch
     bind ctrl-l 'clear; commandline -f repaint'
 
