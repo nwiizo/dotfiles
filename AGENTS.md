@@ -1,7 +1,6 @@
 # dotfiles Agent Guide
 
-This file is for Claude Code. The canonical cross-agent guide is `AGENTS.md`;
-keep both files aligned when changing repository workflow rules.
+This guide applies to the whole repository.
 
 ## Repository Scope
 
