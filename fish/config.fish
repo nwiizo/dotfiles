@@ -339,6 +339,8 @@ if status is-interactive
     abbr -a aia 'aider --architect'
 
     # AI workflow shortcuts
+    abbr -a actx ai_context
+    abbr -a actxc 'ai_context | pbcopy'
     abbr -a arv ai_review
     abbr -a acm ai_commit_msg
     abbr -a apr ai_pr

@@ -399,29 +399,30 @@ nvim/
 | `<leader>ao` | n | CopilotChat開く | P copilot-chat |
 | `<leader>aq` | n | CopilotChat閉じる | P copilot-chat |
 | `<leader>ar` | n | CopilotChatリセット | P copilot-chat |
+| `<leader>am` | n | CopilotChatモデル選択 | P copilot-chat |
+| `<leader>aP` | n | CopilotChatプロンプト一覧 | P copilot-chat |
 | `<leader>ae` | n,v | コード説明 | P copilot-chat |
 | `<leader>af` | n,v | コード修正 | P copilot-chat |
+| `<leader>aO` | n,v | コード最適化 | P copilot-chat |
 | `<leader>at` | n,v | テスト生成 | P copilot-chat |
 | `<leader>ad` | n,v | ドキュメント生成 | P copilot-chat |
 | `<leader>aR` | n,v | コードレビュー | P copilot-chat |
-| `<leader>ac` | n,v | CodeCompanion Chat | P codecompanion |
+| `<leader>ag` | n | staged diffレビュー | P copilot-chat |
+| `<leader>aG` | n | unstaged diffレビュー | P copilot-chat |
+| `<leader>aW` | n | workspace tool chat | P copilot-chat |
+| `<leader>aC` | n,v | CodeCompanion Chat | P codecompanion |
 | `<leader>ai` | n,v | CodeCompanion Actions | P codecompanion |
 | `<leader>ap` | n,v | CodeCompanion Inline | P codecompanion |
-
-### Claude Code (`<leader>c` prefix)
-
-| キー | モード | 説明 | 出典 |
-|---|---|---|---|
-| `<leader>cc` | n | トグル | P claudecode |
-| `<leader>cf` | n | フォーカス | P claudecode |
-| `<leader>cr` | n | Resume | P claudecode |
-| `<leader>cC` | n | Continue | P claudecode |
-| `<leader>cm` | n | モデル選択 | P claudecode |
-| `<leader>cb` | n | バッファ追加 | P claudecode |
-| `<leader>cs` | v | 選択範囲送信 | P claudecode |
-| `<leader>ct` | n | ツリーからファイル追加 | P claudecode |
-| `<leader>ca` | n | Diff Accept | P claudecode |
-| `<leader>cd` | n | Diff Deny | P claudecode |
+| `<leader>ac` | n | Claude Codeトグル | P claudecode |
+| `<leader>aF` | n | Claude Codeフォーカス | P claudecode |
+| `<leader>au` | n | Claude Code Resume | P claudecode |
+| `<leader>aK` | n | Claude Code Continue | P claudecode |
+| `<leader>aM` | n | Claudeモデル選択 | P claudecode |
+| `<leader>ab` | n | 現在バッファをClaudeへ追加 | P claudecode |
+| `<leader>as` | v | 選択範囲をClaudeへ送信 | P claudecode |
+| `<leader>aT` | n | ツリーからファイル追加 | P claudecode |
+| `<leader>ay` | n | Claude diff accept | P claudecode |
+| `<leader>an` | n | Claude diff deny | P claudecode |
 
 ### Codelens (`<leader>C` prefix)
 

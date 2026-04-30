@@ -126,6 +126,10 @@ fv=nvim (fzf)  fh=history (fzf)  gb=git branch (fzf)
 
 # Tools
 v=nvim  lg=lazygit  c=claude
+
+# AI workflow
+actx=ai_context  actxc=ai_context|pbcopy  arv=ai_review
+acm=ai_commit_msg  apr=ai_pr
 ```
 
 ### 🧰 Utility Commands
@@ -354,9 +358,13 @@ Languages: Rust (rustaceanvim), Go (gopls, golangci-lint), Python (pylsp), Lua (
 | `<leader>ao` | Open chat |
 | `<leader>aq` | Close chat |
 | `<leader>ar` | Reset chat |
+| `<leader>am` / `<leader>aP` | Select model / Prompt library |
 | `<leader>ae` / `<leader>af` | Explain / Fix |
+| `<leader>aO` | Optimize |
 | `<leader>at` / `<leader>ad` | Generate tests / Docs |
 | `<leader>aR` | Code review |
+| `<leader>ag` / `<leader>aG` | Review staged / unstaged diff |
+| `<leader>aW` | Workspace tool chat |
 
 **Avante:**
 
@@ -370,14 +378,14 @@ Languages: Rust (rustaceanvim), Go (gopls, golangci-lint), Python (pylsp), Lua (
 
 | Key | Action |
 |-----|--------|
-| `<leader>cc` | Toggle |
-| `<leader>cf` | Focus |
-| `<leader>cr` | Resume session |
-| `<leader>cC` | Continue conversation |
-| `<leader>cm` | Select model |
-| `<leader>cb` | Add current buffer |
-| `<leader>cs` | Send to Claude (visual) |
-| `<leader>ca` / `<leader>cD` | Accept / Deny diff |
+| `<leader>ac` | Toggle |
+| `<leader>aF` | Focus |
+| `<leader>au` | Resume session |
+| `<leader>aK` | Continue conversation |
+| `<leader>aM` | Select model |
+| `<leader>ab` | Add current buffer |
+| `<leader>as` | Send to Claude (visual) |
+| `<leader>ay` / `<leader>an` | Accept / Deny diff |
 
 ### 💬 Completion (nvim-cmp)
 
