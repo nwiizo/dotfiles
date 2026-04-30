@@ -145,7 +145,7 @@ return {
     opts = { linters_by_ft = { markdown = {} } },
   },
 
-  -- treesitter: Override ensure_installed
+  -- treesitter: Override ensure_installed (LazyVim handles main branch + install internally)
   {
     "nvim-treesitter/nvim-treesitter",
     opts = {
