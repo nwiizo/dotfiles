@@ -5,6 +5,12 @@
 
   programs.home-manager.enable = true;
 
+  home.packages = with pkgs; [
+    nil
+    nixfmt
+    statix
+  ];
+
   nix = {
     package = pkgs.nix;
     settings.experimental-features = [

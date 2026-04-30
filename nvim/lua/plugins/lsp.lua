@@ -49,6 +49,8 @@ return {
         emmet_ls = {},
         -- Shell
         bashls = {},
+        -- Nix (LazyVim's Nix extra also defaults to nil_ls)
+        nil_ls = {},
         -- Go: golangci-lint LSP
         golangci_lint_ls = {},
         zls = {
@@ -89,6 +91,7 @@ return {
         python = { "ruff_format", "ruff_organize_imports" },
         rust = { "rustfmt" },
         zig = { "zigfmt" },
+        nix = { "nixfmt" },
         go = { "goimports", "gofumpt" },
         yaml = { "prettier" },
         json = { "prettier" },
@@ -142,7 +145,7 @@ return {
   -- nvim-lint: Disable markdownlint (too noisy for READMEs, CLAUDE.md, Marp slides)
   {
     "mfussenegger/nvim-lint",
-    opts = { linters_by_ft = { markdown = {} } },
+    opts = { linters_by_ft = { markdown = {}, nix = { "statix" } } },
   },
 
   -- treesitter: Override ensure_installed (LazyVim handles main branch + install internally)
@@ -169,6 +172,7 @@ return {
         "json",
         "yaml",
         "toml",
+        "nix",
         "zig",
       },
     },
