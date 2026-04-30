@@ -131,7 +131,7 @@ v=nvim  lg=lazygit  c=claude
 ### 🧰 Utility Commands
 
 ```bash
-update_all            # Update everything: brew + mise + rustup + uv + Fisher + nvim plugins
+update_all            # Update everything: brew + mise + Home Manager + rustup + uv + Fisher + nvim plugins
 mkcd <dir>            # mkdir + cd
 port 8080             # Check process using port
 z <substring>         # zoxide jump
