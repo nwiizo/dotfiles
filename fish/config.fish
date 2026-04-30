@@ -42,6 +42,11 @@ else if test -e $HOME/.nix-profile/etc/profile.d/nix.fish
 end
 
 if test -d /nix
+    fish_add_path $HOME/.nix-profile/bin
+    if test -e $HOME/.nix-profile/etc/profile.d/hm-session-vars.fish
+        source $HOME/.nix-profile/etc/profile.d/hm-session-vars.fish
+    end
+
     set -gx NIX_PATH nixpkgs=channel:nixpkgs-unstable $NIX_PATH
 end
 

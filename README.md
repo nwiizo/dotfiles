@@ -30,6 +30,8 @@ dotfiles/
 ├── ghostty/        # 👻 Ghostty terminal
 ├── starship/       # 🚀 Prompt
 ├── git/            # 📝 Git scripts
+├── flake.nix       # ❄️  Home Manager flake
+├── home.nix        # 🏠 Home Manager user config
 │
 # 📦 Archive (kept for reference, all under archive/)
 ├── archive/
@@ -57,6 +59,38 @@ ln -sf ~/ghq/github.com/nwiizo/dotfiles/fish/config.fish ~/.config/fish/config.f
 ln -sf ~/ghq/github.com/nwiizo/dotfiles/nvim ~/.config/nvim
 ln -sf ~/ghq/github.com/nwiizo/dotfiles/starship/starship.toml ~/.config/starship.toml
 mkdir -p ~/.config/ghostty && ln -sf ~/ghq/github.com/nwiizo/dotfiles/ghostty/config ~/.config/ghostty/config
+```
+
+## ❄️ Nix / Home Manager
+
+Home Manager is installed as a standalone flake configuration for macOS
+`aarch64-darwin`.
+
+Current scope:
+
+- Installs and enables the `home-manager` command
+- Enables Nix flakes and `nix-command` for the user profile
+- Keeps existing Fish / Neovim / Ghostty dotfile links manual for now
+
+First activation:
+
+```bash
+NIX_CONFIG='experimental-features = nix-command flakes' \
+  nix run github:nix-community/home-manager -- switch \
+  --flake ~/ghq/github.com/nwiizo/dotfiles#nwiizo
+```
+
+Apply later changes:
+
+```bash
+home-manager switch --flake ~/ghq/github.com/nwiizo/dotfiles#nwiizo
+```
+
+Update inputs:
+
+```bash
+nix flake update
+home-manager switch --flake ~/ghq/github.com/nwiizo/dotfiles#nwiizo
 ```
 
 ---
