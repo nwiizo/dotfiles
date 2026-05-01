@@ -66,6 +66,18 @@
 "workspace:toggle_command_palette": cmd-shift-p
 
 # =============================================================================
+# Scrollback Navigation (vim/less-style, migrated from Ghostty)
+# =============================================================================
+"terminal:scroll_page_up": alt-b
+"terminal:scroll_page_down": alt-f
+"terminal:scroll_to_top": alt-g
+"terminal:scroll_to_bottom": alt-shift-g
+
+# Prompt-to-prompt jump is `cmd-up` / `cmd-down` (block navigation above);
+# Warp's keybinding format is one-binding-per-action, so the Ghostty
+# `ctrl+shift+up/down` aliases can't coexist — cmd-based wins.
+
+# =============================================================================
 # Tab Management
 # =============================================================================
 "workspace:new_tab": cmd-t
@@ -92,8 +104,10 @@
 # =============================================================================
 # Defaults worth remembering (Warp built-ins, no override needed)
 # =============================================================================
-# cmd-i        : Agent Mode (Warp AI assistant)
 # cmd-,        : Settings
 # cmd-shift-n  : New notebook
 # cmd-shift-/  : Help / cheatsheet
 # cmd-f        : Search transcript
+#
+# Agent Mode is intentionally disabled in Warp settings — keep cmd-i
+# unbound here so accidental activation doesn't happen.

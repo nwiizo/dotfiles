@@ -15,8 +15,9 @@ Warp's strengths complement Ghostty:
 
 | Path | Role |
 |---|---|
-| `keybindings.yaml` | Pane / block / tab keybindings (tmux-like + vim navigation) |
-| `themes/custom.yaml` | Theme overrides (currently just hides tab bar) |
+| `keybindings.yaml` | Pane / block / tab keybindings (tmux-like + vim navigation + Ghostty-style scroll) |
+| `themes/custom.yaml` | Theme overrides (hides the tab bar) |
+| `themes/catppuccin-mocha.yaml` | Custom theme matching `ghostty/config`'s palette |
 
 Both are live symlinks via Home Manager (`home/warp.nix`); edits land at
 `~/.warp/...` immediately on save. Warp restart picks them up.
@@ -59,6 +60,28 @@ Both are live symlinks via Home Manager (`home/warp.nix`); edits land at
 Auto-managed by the Warp app — not tracked in this repo. Adjust via
 `Cmd+,` (Preferences). Personal preferences (font, theme, cursor) live
 there.
+
+### Recommended UI settings (migrated from `ghostty/config`)
+
+Set these in **Settings → ...** to mirror the Ghostty experience:
+
+| Setting | Value | Where |
+|---|---|---|
+| Theme | `catppuccin-mocha` | Appearance → Themes |
+| Font | Hack Nerd Font Mono, size 14 | Appearance → Text |
+| Cursor | Bar, blink | Appearance → Cursor |
+| Tab bar | Hidden | Appearance → Tab Bar (or via `themes/custom.yaml`) |
+| Confirm before closing tabs | On | Settings → Tabs |
+| Inherit working directory (new tab/pane) | On | Settings → Subshells (Warp default) |
+| Scrollback limit | ~100k lines | Settings → Terminal |
+| Notify on long-running command (≥5s) | On | Settings → Notifications |
+| Bell behavior | Title flash + attention | Settings → Notifications |
+| Copy on select | On | Settings → Editor |
+| Agent Mode | **Off** | AI → Agent Mode |
+| Block-based output | On (default) | Settings → Editor |
+
+These are settings the Warp app stores in `settings.toml`; they aren't
+declarative in this repo. Apply once and Warp persists them.
 
 ## Install via Home Manager
 

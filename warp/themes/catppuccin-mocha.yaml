@@ -1,0 +1,26 @@
+# Catppuccin Mocha — palette matched to ghostty/config so both terminals
+# render the same colors. Place in ~/.warp/themes/ (HM symlinks it),
+# then select "catppuccin-mocha" from Warp Settings → Appearance.
+accent: '#cba6f7'
+background: '#1e1e2e'
+foreground: '#cdd6f4'
+details: 'darker'
+terminal_colors:
+  normal:
+    black:   '#45475a'
+    red:     '#f38ba8'
+    green:   '#a6e3a1'
+    yellow:  '#f9e2af'
+    blue:    '#89b4fa'
+    magenta: '#f5c2e7'
+    cyan:    '#94e2d5'
+    white:   '#a6adc8'
+  bright:
+    black:   '#585b70'
+    red:     '#f38ba8'
+    green:   '#a6e3a1'
+    yellow:  '#f9e2af'
+    blue:    '#89b4fa'
+    magenta: '#f5c2e7'
+    cyan:    '#94e2d5'
+    white:   '#bac2de'

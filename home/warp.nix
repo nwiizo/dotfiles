@@ -9,4 +9,6 @@ in
   # ~/.warp/settings.toml is left alone — Warp writes back to it.
   home.file.".warp/keybindings.yaml".source = liveLink "warp/keybindings.yaml";
   home.file.".warp/themes/custom.yaml".source = liveLink "warp/themes/custom.yaml";
+  home.file.".warp/themes/catppuccin-mocha.yaml".source =
+    liveLink "warp/themes/catppuccin-mocha.yaml";
 }
