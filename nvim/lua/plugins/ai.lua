@@ -61,6 +61,9 @@ return {
       },
     },
     keys = {
+      -- LazyVim copilot-chat extra binds <leader>ax to Reset; we want it
+      -- on codex instead. CopilotChatReset is reachable via <leader>ar.
+      { "<leader>ax", false },
       { "<leader>ao", "<cmd>CopilotChatOpen<cr>", desc = "Open Chat" },
       { "<leader>aq", "<cmd>CopilotChatClose<cr>", desc = "Close Chat" },
       { "<leader>ar", "<cmd>CopilotChatReset<cr>", desc = "Reset Chat" },
