@@ -5,7 +5,6 @@ function update_all -d "Update all tools (Home Manager handles fish plugins and 
     type -q mise; and echo "mise..." && mise self-update 2>/dev/null && mise upgrade
     type -q claude; and echo "Claude CLI..." && claude update
     type -q rustup; and echo "Rust..." && rustup update
-    type -q uv; and echo "uv..." && uv self update 2>/dev/null
 
     set -l dotfiles_dir $HOME/ghq/github.com/nwiizo/dotfiles
     if type -q nix; and type -q home-manager; and test -f $dotfiles_dir/flake.nix
