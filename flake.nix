@@ -40,5 +40,7 @@
           }
         ];
       };
+
+      formatter.${system} = nixpkgs.legacyPackages.${system}.nixfmt;
     };
 }

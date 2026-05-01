@@ -1,4 +1,9 @@
-{ pkgs, lib, inputs, ... }:
+{
+  pkgs,
+  lib,
+  inputs,
+  ...
+}:
 
 {
   programs.atuin = {
@@ -10,12 +15,16 @@
   programs.direnv = {
     enable = true;
     enableFishIntegration = true;
+    nix-direnv.enable = true;
   };
 
   programs.zoxide = {
     enable = true;
     enableFishIntegration = true;
-    options = [ "--cmd" "z" ];
+    options = [
+      "--cmd"
+      "z"
+    ];
   };
 
   programs.mise = {
@@ -32,15 +41,42 @@
     enable = true;
 
     plugins = [
-      { name = "fzf-fish"; src = pkgs.fishPlugins.fzf-fish.src; }
-      { name = "autopair"; src = pkgs.fishPlugins.autopair.src; }
-      { name = "done"; src = pkgs.fishPlugins.done.src; }
-      { name = "sponge"; src = pkgs.fishPlugins.sponge.src; }
-      { name = "bass"; src = pkgs.fishPlugins.bass.src; }
-      { name = "puffer"; src = pkgs.fishPlugins.puffer.src; }
-      { name = "fish-ssh-agent"; src = inputs.fish-ssh-agent; }
-      { name = "fish-fastdir"; src = inputs.fish-fastdir; }
-      { name = "fish-abbreviation-tips"; src = inputs.fish-abbreviation-tips; }
+      {
+        name = "fzf-fish";
+        src = pkgs.fishPlugins.fzf-fish.src;
+      }
+      {
+        name = "autopair";
+        src = pkgs.fishPlugins.autopair.src;
+      }
+      {
+        name = "done";
+        src = pkgs.fishPlugins.done.src;
+      }
+      {
+        name = "sponge";
+        src = pkgs.fishPlugins.sponge.src;
+      }
+      {
+        name = "bass";
+        src = pkgs.fishPlugins.bass.src;
+      }
+      {
+        name = "puffer";
+        src = pkgs.fishPlugins.puffer.src;
+      }
+      {
+        name = "fish-ssh-agent";
+        src = inputs.fish-ssh-agent;
+      }
+      {
+        name = "fish-fastdir";
+        src = inputs.fish-fastdir;
+      }
+      {
+        name = "fish-abbreviation-tips";
+        src = inputs.fish-abbreviation-tips;
+      }
     ];
 
     shellAbbrs = {

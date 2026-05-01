@@ -47,11 +47,16 @@
 
   xdg.configFile."nvim".source = ../nvim;
 
+  nixpkgs.config.allowUnfree = true;
+
   nix = {
     package = pkgs.nix;
-    settings.experimental-features = [
-      "nix-command"
-      "flakes"
-    ];
+    settings = {
+      experimental-features = [
+        "nix-command"
+        "flakes"
+      ];
+      warn-dirty = false;
+    };
   };
 }
