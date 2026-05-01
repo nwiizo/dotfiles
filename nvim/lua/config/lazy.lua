@@ -77,6 +77,10 @@ require("lazy").setup({
   { import = "plugins" },
 }, {
   defaults = { lazy = false, version = false },
+  -- ~/.config/nvim is a read-only Home Manager symlink into /nix/store,
+  -- so the default lockfile path stdpath("config")/lazy-lock.json is not
+  -- writable. Move it to stdpath("data") (~/.local/share/nvim).
+  lockfile = vim.fn.stdpath("data") .. "/lazy-lock.json",
   install = { colorscheme = { "catppuccin-mocha", "habamax" } },
   checker = { enabled = true, notify = false },
   rocks = { enabled = false },
