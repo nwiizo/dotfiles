@@ -395,16 +395,16 @@ in
   };
 
   xdg.configFile = {
-    "fish/functions/fish_prompt.fish".source = ./fish/functions/fish_prompt.fish;
-    "fish/functions/ghq_fzf_repo.fish".source = ./fish/functions/ghq_fzf_repo.fish;
-    "fish/functions/jj_fzf_ghq.fish".source = ./fish/functions/jj_fzf_ghq.fish;
-    "fish/functions/jj_get.fish".source = ./fish/functions/jj_get.fish;
-    "fish/functions/jj_ghq_adopt.fish".source = ./fish/functions/jj_ghq_adopt.fish;
-    "fish/functions/ai_commit_msg.fish".source = ./fish/functions/ai_commit_msg.fish;
-    "fish/functions/ai_context.fish".source = ./fish/functions/ai_context.fish;
-    "fish/functions/ai_pr.fish".source = ./fish/functions/ai_pr.fish;
-    "fish/functions/ai_review.fish".source = ./fish/functions/ai_review.fish;
-    "fish/functions/update_all.fish".source = ./fish/functions/update_all.fish;
-    "fish/conf.d/zz_sponge_compat.fish".source = ./fish/conf.d/zz_sponge_compat.fish;
+    "fish/functions/fish_prompt.fish".source = ../fish/functions/fish_prompt.fish;
+    "fish/functions/ghq_fzf_repo.fish".source = ../fish/functions/ghq_fzf_repo.fish;
+    "fish/functions/jj_fzf_ghq.fish".source = ../fish/functions/jj_fzf_ghq.fish;
+    "fish/functions/jj_get.fish".source = ../fish/functions/jj_get.fish;
+    "fish/functions/jj_ghq_adopt.fish".source = ../fish/functions/jj_ghq_adopt.fish;
+    "fish/functions/ai_commit_msg.fish".source = ../fish/functions/ai_commit_msg.fish;
+    "fish/functions/ai_context.fish".source = ../fish/functions/ai_context.fish;
+    "fish/functions/ai_pr.fish".source = ../fish/functions/ai_pr.fish;
+    "fish/functions/ai_review.fish".source = ../fish/functions/ai_review.fish;
+    "fish/functions/update_all.fish".source = ../fish/functions/update_all.fish;
+    "fish/conf.d/zz_sponge_compat.fish".source = ../fish/conf.d/zz_sponge_compat.fish;
   };
 }

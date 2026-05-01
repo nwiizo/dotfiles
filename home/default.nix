@@ -43,7 +43,7 @@
     yq-go
   ];
 
-  xdg.configFile."nvim".source = ./nvim;
+  xdg.configFile."nvim".source = ../nvim;
 
   nix = {
     package = pkgs.nix;
