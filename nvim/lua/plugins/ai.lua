@@ -98,7 +98,7 @@ return {
       },
       mappings = {
         ask = "<leader>aa",
-        edit = "<leader>ax",
+        edit = "<leader>aE",
         refresh = "<leader>aS",
       },
       behaviour = {
@@ -167,11 +167,10 @@ return {
     },
   },
 
-  -- Codex (OpenAI Codex CLI): floating-terminal wrapper
+  -- Codex (OpenAI Codex CLI): side-panel terminal wrapper.
   -- The plugin can't pass `--dangerously-bypass-approvals-and-sandbox`
   -- via opts; configure approval mode in `~/.codex/config.toml`
-  -- (e.g. `approval_policy = "on-failure"`) if you want fish abbr `cx`
-  -- parity inside nvim.
+  -- (e.g. `approval_policy = "on-failure"`) for fish abbr `cx` parity.
   {
     "johnseth97/codex.nvim",
     cmd = { "Codex", "CodexToggle" },
@@ -180,13 +179,13 @@ return {
         toggle = nil,
         quit = "<C-q>",
       },
-      border = "rounded",
-      width = 0.85,
+      panel = true,
+      width = 0.4,
       height = 0.85,
       autoinstall = false,
     },
     keys = {
-      { "<leader>aX", "<cmd>CodexToggle<cr>", desc = "Toggle Codex" },
+      { "<leader>ax", "<cmd>CodexToggle<cr>", desc = "Toggle Codex (sidebar)" },
     },
   },
 
