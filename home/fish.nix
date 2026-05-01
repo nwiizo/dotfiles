@@ -11,6 +11,19 @@ let
 in
 
 {
+  imports = [ inputs.nix-index-database.homeModules.nix-index ];
+
+  # nix-index: command-not-found that suggests `nix-shell -p <pkg>` for
+  # binaries available in nixpkgs but not on PATH. Pre-built database
+  # comes from the nix-index-database flake input.
+  programs.nix-index = {
+    enable = true;
+    enableFishIntegration = true;
+  };
+  # Skip the `,` runner; `nix-shell -p <pkg> --run <cmd>` works without
+  # another tool to remember.
+  programs.nix-index-database.comma.enable = false;
+
   programs.atuin = {
     enable = true;
     enableFishIntegration = true;
@@ -363,6 +376,26 @@ in
       set -g __done_min_cmd_duration 10000
       set -g __done_notification_urgency_level normal
       set -g __done_notify_sound 1
+
+      # Chain command-not-found: mise (auto-install) → nix-index (suggest)
+      # → default. Set up via a one-shot fish_prompt event because both
+      # mise and nix-index install their own handlers in config.fish
+      # *after* interactiveShellInit, and we need to win.
+      function __nwiizo_setup_cnf --on-event fish_prompt
+          functions --erase __nwiizo_setup_cnf
+          function fish_command_not_found
+              if string match -qrv -- '^(?:mise$|mise-)' -- $argv[1]
+                  and command mise hook-not-found -s fish -- $argv[1]
+                  command mise hook-env -s fish | source
+                  return
+              end
+              if functions -q __fish_command_not_found_handler
+                  __fish_command_not_found_handler $argv
+                  return
+              end
+              __fish_default_command_not_found_handler $argv
+          end
+      end
 
       # fish-abbreviation-tips: replicate the plugin's `abbr_tips_install`
       # event since Home Manager doesn't fire Fisher install hooks. Setting

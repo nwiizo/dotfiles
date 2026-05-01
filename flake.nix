@@ -8,6 +8,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Pre-built nix-index database. Populates command-not-found in O(seconds)
+    # instead of running `nix-index` for ~1 hour to build it locally.
+    nix-index-database = {
+      url = "github:nix-community/nix-index-database";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # Fish plugins not packaged in nixpkgs. If/when any of these land in
     # `pkgs.fishPlugins.*`, drop the input here and switch the plugin entry
     # in home/fish.nix from `inputs.<x>` to `pkgs.fishPlugins.<x>.src`.

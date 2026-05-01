@@ -121,11 +121,18 @@ return {
     },
   },
 
-  -- render-markdown: Add Avante filetype support
+  -- render-markdown: pretty-print markdown output from AI plugins
   {
     "MeanderingProgrammer/render-markdown.nvim",
-    opts = { file_types = { "markdown", "Avante" } },
-    ft = { "markdown", "Avante" },
+    opts = {
+      file_types = {
+        "markdown",
+        "Avante",
+        "codecompanion",
+        "copilot-chat",
+      },
+    },
+    ft = { "markdown", "Avante", "codecompanion", "copilot-chat" },
   },
 
   -- CodeCompanion: Vim-native AI chat & editing
