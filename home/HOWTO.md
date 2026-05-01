@@ -134,6 +134,21 @@ state), don't symlink the whole directory — list each file individually,
 or move the writable bits to a different path (cf. neovim's
 `lazy-lock.json` redirect to `stdpath("data")`).
 
+**Live symlink variant** — if you iterate often and don't want to run
+`home-manager switch` after every edit, point at the repo path directly
+instead of going through `/nix/store`:
+
+```nix
+xdg.configFile."nvim".source =
+  config.lib.file.mkOutOfStoreSymlink
+    "${config.home.homeDirectory}/ghq/github.com/nwiizo/dotfiles/nvim";
+```
+
+Edits in the repo are immediately visible at `~/.config/nvim/`. Trade-off:
+the live config depends on the repo path being intact (so the path is
+hard-coded), and there's no atomicity guarantee mid-edit. Used for
+`nvim/` because plugin spec edits + `:Lazy sync` is a tight loop.
+
 ## Pattern 8 — Executable script
 
 ```nix

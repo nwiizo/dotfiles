@@ -1,8 +1,14 @@
 {
   pkgs,
+  config,
   inputs,
   ...
 }:
+
+let
+  repo = "${config.home.homeDirectory}/ghq/github.com/nwiizo/dotfiles";
+  liveLink = path: config.lib.file.mkOutOfStoreSymlink "${repo}/${path}";
+in
 
 {
   programs.atuin = {
@@ -392,17 +398,20 @@
     '';
   };
 
+  # Live symlinks to the repo so edits are visible without
+  # `home-manager switch`. (Whole-dir symlinks would clobber HM-generated
+  # plugin files in fish/conf.d/, so we list each file individually.)
   xdg.configFile = {
-    "fish/functions/fish_prompt.fish".source = ../fish/functions/fish_prompt.fish;
-    "fish/functions/ghq_fzf_repo.fish".source = ../fish/functions/ghq_fzf_repo.fish;
-    "fish/functions/jj_fzf_ghq.fish".source = ../fish/functions/jj_fzf_ghq.fish;
-    "fish/functions/jj_get.fish".source = ../fish/functions/jj_get.fish;
-    "fish/functions/jj_ghq_adopt.fish".source = ../fish/functions/jj_ghq_adopt.fish;
-    "fish/functions/ai_commit_msg.fish".source = ../fish/functions/ai_commit_msg.fish;
-    "fish/functions/ai_context.fish".source = ../fish/functions/ai_context.fish;
-    "fish/functions/ai_pr.fish".source = ../fish/functions/ai_pr.fish;
-    "fish/functions/ai_review.fish".source = ../fish/functions/ai_review.fish;
-    "fish/functions/update_all.fish".source = ../fish/functions/update_all.fish;
-    "fish/conf.d/zz_sponge_compat.fish".source = ../fish/conf.d/zz_sponge_compat.fish;
+    "fish/functions/fish_prompt.fish".source = liveLink "fish/functions/fish_prompt.fish";
+    "fish/functions/ghq_fzf_repo.fish".source = liveLink "fish/functions/ghq_fzf_repo.fish";
+    "fish/functions/jj_fzf_ghq.fish".source = liveLink "fish/functions/jj_fzf_ghq.fish";
+    "fish/functions/jj_get.fish".source = liveLink "fish/functions/jj_get.fish";
+    "fish/functions/jj_ghq_adopt.fish".source = liveLink "fish/functions/jj_ghq_adopt.fish";
+    "fish/functions/ai_commit_msg.fish".source = liveLink "fish/functions/ai_commit_msg.fish";
+    "fish/functions/ai_context.fish".source = liveLink "fish/functions/ai_context.fish";
+    "fish/functions/ai_pr.fish".source = liveLink "fish/functions/ai_pr.fish";
+    "fish/functions/ai_review.fish".source = liveLink "fish/functions/ai_review.fish";
+    "fish/functions/update_all.fish".source = liveLink "fish/functions/update_all.fish";
+    "fish/conf.d/zz_sponge_compat.fish".source = liveLink "fish/conf.d/zz_sponge_compat.fish";
   };
 }
