@@ -38,9 +38,9 @@ overwritten on the next `home-manager switch`. Edit the repo source instead:
 | Fish plugin list | `home/fish.nix` (`plugins`) and `flake.nix` for non-nixpkgs sources |
 | Neovim plugins / options | `nvim/lua/...` |
 | Ghostty | `ghostty/config` |
-| Git config | `home/default.nix` (`programs.git.settings`) |
+| Git / GitHub config | `home/git.nix` (`programs.git.settings`, `programs.gh.settings`) |
 | Env vars (EDITOR / GOPATH / ...) | `home/default.nix` (`home.sessionVariables`) |
-| Packages | `home/default.nix` (`home.packages`) |
+| Packages (general CLI) | `home/packages.nix` (`home.packages`) |
 
 Apply edits with `home-manager switch --flake .#nwiizo` (or `update_all`).
 
@@ -58,7 +58,7 @@ Apply edits with `home-manager switch --flake .#nwiizo` (or `update_all`).
 For Nix / Home Manager changes:
 
 ```bash
-nix fmt -- --check ./flake.nix ./home/default.nix ./home/fish.nix
+nixfmt --check ./flake.nix ./home/*.nix
 home-manager build --flake .#nwiizo
 home-manager switch --flake .#nwiizo
 ```

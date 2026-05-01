@@ -25,13 +25,12 @@ If all you want is efficiency, off-the-shelf is fine. But if you want to leave t
 ```
 dotfiles/
 # 🟢 Active (2026)
-├── fish/           # 🐟 Fish shell
-├── nvim/           # ✏️  Neovim (LazyVim)
-├── ghostty/        # 👻 Ghostty terminal
-├── starship/       # 🚀 Prompt
-├── git/            # 📝 Git scripts
-├── flake.nix       # ❄️  Home Manager flake
-├── home.nix        # 🏠 Home Manager user config
+├── fish/           # 🐟 Fish source files (HM symlinks them into ~/.config/fish/)
+├── nvim/           # ✏️  Neovim (LazyVim) config, symlinked by HM
+├── ghostty/        # 👻 Ghostty terminal config, symlinked by HM
+├── git/            # 📝 Git helper scripts (installed via home.file)
+├── home/           # 🏠 Home Manager modules (default, fish, git, neovim, packages)
+├── flake.nix       # ❄️  Home Manager flake entry point
 │
 # 📦 Archive (kept for reference, all under archive/)
 ├── archive/
@@ -49,28 +48,34 @@ dotfiles/
 
 ## ⚡ Setup
 
-```bash
-# Tools
-brew install fish neovim starship ghostty
-brew install eza bat ripgrep fd fzf zoxide ghq direnv delta lazygit mise atuin
+Home Manager owns all the symlinks. Bootstrap once:
 
-# Symlinks
-ln -sf ~/ghq/github.com/nwiizo/dotfiles/fish/config.fish ~/.config/fish/config.fish
-ln -sf ~/ghq/github.com/nwiizo/dotfiles/nvim ~/.config/nvim
-ln -sf ~/ghq/github.com/nwiizo/dotfiles/starship/starship.toml ~/.config/starship.toml
-mkdir -p ~/.config/ghostty && ln -sf ~/ghq/github.com/nwiizo/dotfiles/ghostty/config ~/.config/ghostty/config
+```bash
+# Brew is still used for the GUI side (Ghostty, fonts, Docker Desktop, etc.)
+brew install fish ghostty
+
+# First HM activation pulls everything else (CLI tools, plugins, configs).
+NIX_CONFIG='experimental-features = nix-command flakes' \
+  nix run github:nix-community/home-manager -- switch \
+  --flake ~/ghq/github.com/nwiizo/dotfiles#nwiizo
 ```
+
+After that, the `update_all` fish function takes care of brew + mise +
+Claude CLI + rustup + Home Manager + nvim plugins in one shot.
 
 ## ❄️ Nix / Home Manager
 
-Home Manager is installed as a standalone flake configuration for macOS
-`aarch64-darwin`.
+Standalone Home Manager (no nix-darwin) on `aarch64-darwin`. Manages:
 
-Current scope:
+- Fish (config + plugins + abbreviations + integrations)
+- Neovim (LazyVim config symlinked from `nvim/`)
+- Ghostty (config symlinked from `ghostty/`)
+- Git / GitHub CLI / delta / lazygit / ghq
+- atuin / direnv / zoxide / mise / carapace (with fish integration)
+- bat / nh / `home.sessionVariables` for env vars
+- CLI tools in `home/packages.nix`
 
-- Installs and enables the `home-manager` command
-- Enables Nix flakes and `nix-command` for the user profile
-- Keeps existing Fish / Neovim / Ghostty dotfile links manual for now
+Brew is kept for casks, GUI apps, and tools not yet in nixpkgs.
 
 First activation:
 
@@ -135,9 +140,7 @@ acm=ai_commit_msg  apr=ai_pr
 ### 🧰 Utility Commands
 
 ```bash
-update_all            # Update everything: brew + mise + Home Manager + rustup + uv + Fisher + nvim plugins
-mkcd <dir>            # mkdir + cd
-port 8080             # Check process using port
+update_all            # Update everything: brew + mise + Claude + Home Manager (incl. fish plugins) + nvim plugins
 z <substring>         # zoxide jump
 ```
 
