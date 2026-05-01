@@ -295,34 +295,7 @@
       set -q INFOPATH; or set INFOPATH '''
       set -gx INFOPATH "/opt/homebrew/share/info" $INFOPATH
 
-      # ─── Environment variables ───────────────────────────────────
-      set -gx EDITOR nvim
-      set -gx VISUAL nvim
-      set -gx KUBE_EDITOR nvim
-
-      set -gx GOPATH $HOME/gopath
-      set -gx GOPROXY direct
-      set -gx GOSUMDB off
-
-      set -gx DOCKER_BUILDKIT 1
-      set -gx COMPOSE_DOCKER_CLI_BUILD 1
-
-      set -gx USE_GKE_GCLOUD_AUTH_PLUGIN True
-      set -gx KUBECONFIG $HOME/.kube/config
-
-      if type -q bat
-          set -gx MANPAGER "sh -c 'col -bx | bat -l man -p'"
-          set -gx BAT_THEME "Catppuccin Mocha"
-          set -gx BAT_STYLE "changes,header"
-      end
-
-      set -gx LANG en_US.UTF-8
-      set -gx LC_ALL en_US.UTF-8
-
-      # ─── Tools that only need env vars ───────────────────────────
-      type -q delta; and set -gx GIT_PAGER delta
-
-      # ─── Rust env ────────────────────────────────────────────────
+      # ─── Rust env (env vars: see home.sessionVariables) ─────────
       test -f "$HOME/.cargo/env.fish"; and source "$HOME/.cargo/env.fish"
     '';
 
