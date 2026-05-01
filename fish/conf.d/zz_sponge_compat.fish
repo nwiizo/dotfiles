@@ -1,6 +1,6 @@
 # Local compatibility fixes for sponge 1.1.0 on fish 4.x.
-# Fisher may rewrite the plugin files during updates, so keep the defensive
-# definitions in conf.d and source this file again after `fisher update`.
+# Symlinked into ~/.config/fish/conf.d/ by Home Manager. The `zz_` prefix
+# ensures it loads after the sponge plugin so these definitions win.
 
 function sponge_filter_failed \
   --argument-names command exit_code previously_in_history

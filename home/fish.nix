@@ -1,6 +1,5 @@
 {
   pkgs,
-  lib,
   inputs,
   ...
 }:
@@ -84,8 +83,10 @@
     ];
 
     shellAbbrs = {
+      # ─── Navigation ──────────────────────────────────────────────
       "-" = "cd -";
 
+      # ─── Git ─────────────────────────────────────────────────────
       g = "git";
       ga = "git add";
       gaa = "git add --all";
@@ -108,6 +109,7 @@
       gcl = "git clone";
       grv = "git remote -v";
 
+      # ─── Docker ──────────────────────────────────────────────────
       d = "docker";
       dc = "docker compose";
       dcu = "docker compose up";
@@ -118,6 +120,7 @@
       dcb = "docker compose build";
       dsp = "docker system prune -af";
 
+      # ─── Kubernetes ──────────────────────────────────────────────
       k = "kubectl";
       kgp = "kubectl get pods";
       kgs = "kubectl get svc";
@@ -134,6 +137,7 @@
       ktp = "kubectl top pods";
       ktn = "kubectl top nodes";
 
+      # ─── AI tools ────────────────────────────────────────────────
       c = "claude --dangerously-skip-permissions";
       cc = "claude -c";
       cr = "claude --resume";
@@ -153,15 +157,18 @@
       acm = "ai_commit_msg";
       apr = "ai_pr";
 
+      # ─── Editor / TUI ────────────────────────────────────────────
       v = "nvim";
       vi = "nvim";
       vim = "nvim";
       lg = "lazygit";
 
+      # ─── Misc productivity ───────────────────────────────────────
       reload = "exec fish";
       myip = "curl -s ifconfig.me";
       listening = "lsof -iTCP -sTCP:LISTEN -n -P";
 
+      # ─── fzf shortcuts ───────────────────────────────────────────
       ff = "_fzf_search_directory";
       fgl = "_fzf_search_git_log";
       fgs = "_fzf_search_git_status";

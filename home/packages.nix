@@ -21,6 +21,9 @@
     fzf
     ripgrep
 
+    # Git ecosystem (programs.git/gh/delta/lazygit live in home/git.nix)
+    ghq
+
     # General utilities
     hyperfine
     jq

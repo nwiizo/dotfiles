@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ ... }:
 
 {
   programs.git = {
@@ -10,11 +10,14 @@
       };
 
       alias = {
+        # Depends on `aicommits` (npm-installed, not in nixpkgs).
         ac = "!git add -A && aicommits -a";
       };
 
       push.autoSetupRemote = true;
-      credential.helper = "store";
+
+      # macOS keychain over plaintext ~/.git-credentials.
+      credential.helper = "osxkeychain";
 
       diff.sopsdiffer.textconv = "sops -d";
     };
@@ -43,6 +46,4 @@
     source = ../git/power_pull.sh;
     executable = true;
   };
-
-  home.packages = with pkgs; [ ghq ];
 }

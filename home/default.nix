@@ -23,6 +23,8 @@
     KUBE_EDITOR = "nvim";
 
     GOPATH = "${config.home.homeDirectory}/gopath";
+    # GOPROXY=direct + GOSUMDB=off skips proxy and checksum DB; needed for
+    # private modules. Drop both if all dependencies are public.
     GOPROXY = "direct";
     GOSUMDB = "off";
 
