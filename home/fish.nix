@@ -150,7 +150,7 @@ in
       clp = "claude -p";
       cplan = "claude --permission-mode plan";
 
-      cx = "codex";
+      cx = "codex --dangerously-bypass-approvals-and-sandbox";
       cxq = "codex -q";
 
       ai = "aider";
