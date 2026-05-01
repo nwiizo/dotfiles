@@ -1,27 +1,5 @@
-{ pkgs, lib, ... }:
+{ pkgs, lib, inputs, ... }:
 
-let
-  fish-ssh-agent = pkgs.fetchFromGitHub {
-    owner = "danhper";
-    repo = "fish-ssh-agent";
-    rev = "f10d95775352931796fd17f54e6bf2f910163d1b";
-    sha256 = "10c0sg5nyh36mk2xlnxw9fw00w8yraj11nbwhm0rw1fjnd1yhnkh";
-  };
-
-  fish-fastdir = pkgs.fetchFromGitHub {
-    owner = "danhper";
-    repo = "fish-fastdir";
-    rev = "dddc6c13b4afe271dd91ec004fdd199d3bbb1602";
-    sha256 = "1zks9zy8jq6k46nsvqlyl46ylw982hz9c20jdsv54agjxqsg7vla";
-  };
-
-  fish-abbreviation-tips = pkgs.fetchFromGitHub {
-    owner = "gazorby";
-    repo = "fish-abbreviation-tips";
-    rev = "8ed76a62bb044ba4ad8e3e6832640178880df485";
-    sha256 = "05b5qp7yly7mwsqykjlb79gl24bs6mbqzaj5b3xfn3v2b7apqnqp";
-  };
-in
 {
   programs.atuin = {
     enable = true;
@@ -60,9 +38,9 @@ in
       { name = "sponge"; src = pkgs.fishPlugins.sponge.src; }
       { name = "bass"; src = pkgs.fishPlugins.bass.src; }
       { name = "puffer"; src = pkgs.fishPlugins.puffer.src; }
-      { name = "fish-ssh-agent"; src = fish-ssh-agent; }
-      { name = "fish-fastdir"; src = fish-fastdir; }
-      { name = "fish-abbreviation-tips"; src = fish-abbreviation-tips; }
+      { name = "fish-ssh-agent"; src = inputs.fish-ssh-agent; }
+      { name = "fish-fastdir"; src = inputs.fish-fastdir; }
+      { name = "fish-abbreviation-tips"; src = inputs.fish-abbreviation-tips; }
     ];
 
     shellAbbrs = {

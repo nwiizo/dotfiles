@@ -1,5 +1,53 @@
 {
   "nodes": {
+    "fish-abbreviation-tips": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1674487577,
+        "narHash": "sha256-F1t81VliD+v6WEWqj1c1ehFBXzqLyumx5vV46s/FZRU=",
+        "owner": "gazorby",
+        "repo": "fish-abbreviation-tips",
+        "rev": "8ed76a62bb044ba4ad8e3e6832640178880df485",
+        "type": "github"
+      },
+      "original": {
+        "owner": "gazorby",
+        "repo": "fish-abbreviation-tips",
+        "type": "github"
+      }
+    },
+    "fish-fastdir": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1641490690,
+        "narHash": "sha256-iu7zNO7yKVK2bhIIlj4UKHHqDaGe4q2tIdNgifxPev4=",
+        "owner": "danhper",
+        "repo": "fish-fastdir",
+        "rev": "dddc6c13b4afe271dd91ec004fdd199d3bbb1602",
+        "type": "github"
+      },
+      "original": {
+        "owner": "danhper",
+        "repo": "fish-fastdir",
+        "type": "github"
+      }
+    },
+    "fish-ssh-agent": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1729455809,
+        "narHash": "sha256-cFroQ7PSBZ5BhXzZEKTKHnEAuEu8W9rFrGZAb8vTgIE=",
+        "owner": "danhper",
+        "repo": "fish-ssh-agent",
+        "rev": "f10d95775352931796fd17f54e6bf2f910163d1b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "danhper",
+        "repo": "fish-ssh-agent",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -38,6 +86,9 @@
     },
     "root": {
       "inputs": {
+        "fish-abbreviation-tips": "fish-abbreviation-tips",
+        "fish-fastdir": "fish-fastdir",
+        "fish-ssh-agent": "fish-ssh-agent",
         "home-manager": "home-manager",
         "nixpkgs": "nixpkgs"
       }
