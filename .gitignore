@@ -1,2 +1,26 @@
+# Nix build symlinks
 result
 result-*
+
+# direnv (nix-direnv)
+.direnv/
+.envrc.local
+
+# macOS
+.DS_Store
+
+# Editor swap / backup
+*.swp
+*.swo
+*~
+*.bak
+*.backup
+
+# Fish runtime state (not config)
+fish_variables
+fishd.*
+fish/local.fish
+
+# Nvim local overrides
+nvim/lua/custom/
+nvim/local.lua
