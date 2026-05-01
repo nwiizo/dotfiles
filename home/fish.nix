@@ -359,10 +359,25 @@ in
       set -g fish_pager_color_prefix cyan
       set -g fish_pager_color_progress cyan
 
-      # done plugin (Ghostty native notifications)
+      # done plugin (Ghostty/Warp native notifications)
       set -g __done_min_cmd_duration 10000
       set -g __done_notification_urgency_level normal
       set -g __done_notify_sound 1
+
+      # fish-abbreviation-tips: replicate the plugin's `abbr_tips_install`
+      # event since Home Manager doesn't fire Fisher install hooks. Setting
+      # in -g scope each session keeps the config reproducible without
+      # depending on universal-var (fish_variables) persistence.
+      if functions -q __abbr_tips_init
+          set -g ABBR_TIPS_REGEXES \
+              '(^(\w+\s+)+(-{1,2})\w+)(\s\S+)' \
+              '(^(\s?(\w-?)+){3}).*' \
+              '(^(\s?(\w-?)+){2}).*' \
+              '(^(\s?(\w-?)+){1}).*'
+          set -g ABBR_TIPS_PROMPT '\n💡 \e[1m{{ .abbr }}\e[0m => {{ .cmd }}'
+          set -g ABBR_TIPS_AUTO_UPDATE background
+          __abbr_tips_init
+      end
 
       # ─── Local config (machine-specific, gitignored) ────────────
       test -f $XDG_CONFIG_HOME/fish/local.fish; and source $XDG_CONFIG_HOME/fish/local.fish
