@@ -6,6 +6,10 @@ Package-only flow: [`add-package`](../.agents/skills/add-package/SKILL.md).
 
 ## Common workflow
 
+For edits that touch Nix structure (`home/*.nix`, `flake.nix`, or any
+`xdg.configFile` / `home.file` source other than the live-symlinked
+ones):
+
 ```
 1. Edit the right module under home/
 2. nixfmt ./home/*.nix ./flake.nix
@@ -16,6 +20,21 @@ Package-only flow: [`add-package`](../.agents/skills/add-package/SKILL.md).
 ```
 
 If `build` fails, fix and re-run; **never run `switch` on a failed build.**
+
+For edits inside `nvim/` or `fish/functions/*.fish` (live symlinks via
+`mkOutOfStoreSymlink`):
+
+```
+1. Edit the file in the repo
+2. Reload (nvim restart, new fish shell, or `functions -e <name>`)
+3. git add → commit (→ push)
+```
+
+- `nvim/` is symlinked at the **directory** level, so creating new files
+  inside (e.g. a new `nvim/lua/plugins/foo.lua`) is also live — no switch.
+- `fish/functions/` is symlinked **per file** in `home/fish.nix`'s
+  `xdg.configFile` block, so adding a new function requires a new entry
+  there + `switch`. Editing existing entries' contents is live.
 
 ---
 

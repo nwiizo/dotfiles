@@ -98,6 +98,26 @@ nix flake update
 home-manager switch --flake ~/ghq/github.com/nwiizo/dotfiles#nwiizo
 ```
 
+### Edit-then-reflect cheatsheet
+
+`nvim/` and `fish/functions/*.fish` are live symlinks (via
+`mkOutOfStoreSymlink`), so most day-to-day edits show up without
+rebuilding. Run `switch` when the **shape** of the config changes.
+
+| Edit | `switch` needed? |
+|---|---|
+| Existing `nvim/lua/**.lua` | No — restart nvim |
+| Existing `fish/functions/*.fish` | No — open a new shell |
+| Add/remove a file under `nvim/` or `fish/functions/` | Yes |
+| `home/*.nix`, `flake.nix`, `flake.lock` | Yes |
+| `ghostty/config`, `git/power_pull.sh`, other `xdg.configFile` / `home.file` paths | Yes |
+
+Detailed patterns and validation flow live in
+[`home/HOWTO.md`](./home/HOWTO.md). Two skills automate the common
+cases: `.agents/skills/add-package` (package-only) and
+`.agents/skills/add-nix-config` (env vars, abbreviations, functions,
+file symlinks, flake inputs).
+
 ---
 
 ## 🐟 Fish Shell

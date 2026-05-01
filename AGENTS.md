@@ -25,15 +25,14 @@ Reference-only:
 ## Live Config Reality
 
 `~/.config/fish`, `~/.config/nvim`, `~/.config/ghostty`, `~/.config/git`,
-`~/.config/gh`, `~/.config/bat` are all populated by Home Manager (mostly
-symlinks into `/nix/store`). **Do not edit them directly** — edits get
-overwritten on the next `home-manager switch`. Edit the repo source instead:
+`~/.config/gh`, `~/.config/bat` are all populated by Home Manager. **Do
+not edit them directly** — edit the repo source.
 
 | You want to change ... | Edit ... |
 |---|---|
 | Fish shell init / behavior | `home/fish.nix` (`shellInit` / `interactiveShellInit`) |
 | Fish abbreviations | `home/fish.nix` (`shellAbbrs`) |
-| Fish wrapper functions | `home/fish.nix` (`functions`) |
+| Fish wrapper functions (inline) | `home/fish.nix` (`functions`) |
 | Fish prompt / AI helpers / jj wrappers | `fish/functions/*.fish` |
 | Fish plugin list | `home/fish.nix` (`plugins`) and `flake.nix` for non-nixpkgs sources |
 | Neovim plugins / options | `nvim/lua/...` |
@@ -42,7 +41,25 @@ overwritten on the next `home-manager switch`. Edit the repo source instead:
 | Env vars (EDITOR / GOPATH / ...) | `home/default.nix` (`home.sessionVariables`) |
 | Packages (general CLI) | `home/packages.nix` (`home.packages`) |
 
-Apply edits with `home-manager switch --flake .#nwiizo` (or `update_all`).
+### When `home-manager switch` is required
+
+`nvim/`, `fish/functions/*.fish`, and `fish/conf.d/zz_sponge_compat.fish`
+go through `mkOutOfStoreSymlink` — edits are visible **immediately** at
+`~/.config/...` without rebuilding. Run `switch` only when the **structure**
+changes (new file added/removed, anything in `home/*.nix` or `flake.nix`):
+
+| Change | Switch needed? | Why |
+|---|---|---|
+| Edit existing `nvim/lua/**.lua` | No | Live dir symlink |
+| **Add or remove** any file under `nvim/` | No | Live dir symlink (nvim picks it up via lazy.nvim spec discovery) |
+| Edit existing `fish/functions/*.fish` | No (`functions -e <name>` to refresh in current shell) | Live per-file symlink |
+| **Add** a new `fish/functions/<x>.fish` | Yes | Needs a new `xdg.configFile` entry in `home/fish.nix` |
+| Edit `fish/conf.d/zz_sponge_compat.fish` | No (open new shell) | Live per-file symlink |
+| Edit `home/*.nix` (abbr / package / programs.X / sessionVar) | Yes | HM regenerates `config.fish`, env, etc. |
+| Edit `flake.nix` / `flake.lock` | Yes | Re-evaluate inputs |
+| Edit `ghostty/config`, `git/power_pull.sh`, anything else passed via `xdg.configFile` / `home.file` | Yes | Frozen-store copy (not a live link) |
+
+Apply with `home-manager switch --flake .#nwiizo` (or `update_all`).
 
 For concrete recipes (env vars, abbreviations, fish functions, file
 symlinks, flake inputs, ...) see [`home/HOWTO.md`](./home/HOWTO.md).
