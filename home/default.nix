@@ -14,6 +14,8 @@
     defaultEditor = false;
     viAlias = false;
     vimAlias = false;
+    withRuby = false;
+    withPython3 = false;
   };
 
   home.packages = with pkgs; [
