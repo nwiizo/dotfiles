@@ -1,0 +1,11 @@
+name: ghq fzf cd
+command: |
+  cd (ghq list -p | fzf --prompt="repo: " --preview='eza -la --icons --git {}')
+description: |
+  Pick a repository from `ghq list` with fzf preview, then cd. Same as
+  the Ctrl-G binding in fish; useful when reaching for the mouse first.
+tags:
+  - ghq
+  - navigation
+shells:
+  - fish

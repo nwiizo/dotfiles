@@ -1,0 +1,10 @@
+name: Kubernetes context switch
+command: |
+  kubectl config use-context {{context}}
+description: |
+  Switch the current kubectl context.
+arguments:
+  - name: context
+    description: Context name (see `kubectl config get-contexts`).
+tags:
+  - kubernetes

@@ -1,0 +1,12 @@
+name: AI context (clipboard)
+command: |
+  ai_context | pbcopy
+description: |
+  Generate the bounded project context (git status, recent commits, diff
+  stat, file structure, key files) and copy to clipboard. Paste into
+  Claude / Codex / Aider for project-aware prompting.
+tags:
+  - ai
+  - context
+shells:
+  - fish

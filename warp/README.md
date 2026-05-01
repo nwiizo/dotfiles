@@ -18,6 +18,7 @@ Warp's strengths complement Ghostty:
 | `keybindings.yaml` | Pane / block / tab keybindings (tmux-like + vim navigation + Ghostty-style scroll) |
 | `themes/custom.yaml` | Theme overrides (hides the tab bar) |
 | `themes/catppuccin-mocha.yaml` | Custom theme matching `ghostty/config`'s palette |
+| `workflows/*.yaml` | Reusable command templates (open via `Cmd+\` Warp Drive, or search by name) |
 
 Both are live symlinks via Home Manager (`home/warp.nix`); edits land at
 `~/.warp/...` immediately on save. Warp restart picks them up.
@@ -83,10 +84,33 @@ Set these in **Settings → ...** to mirror the Ghostty experience:
 These are settings the Warp app stores in `settings.toml`; they aren't
 declarative in this repo. Apply once and Warp persists them.
 
+## Workflows
+
+Bundled command templates accessible via `Cmd+\` (Warp Drive → Workflows)
+or by typing the name into the command input:
+
+| Workflow | Action |
+|---|---|
+| Update everything | Run `update_all` |
+| Home Manager switch | `home-manager switch --flake .#nwiizo` |
+| Home Manager build (dry validate) | `nixfmt --check` + `home-manager build` |
+| Neovim Lazy sync | `nvim --headless +Lazy! sync +qa` |
+| ghq fzf cd | Pick a repo with fzf and cd into it |
+| AI context (clipboard) | `ai_context | pbcopy` |
+| jj colocate here | `jj git init --colocate` |
+| Git cleanup merged branches | Delete merged-into-current local branches |
+| Kubernetes context switch | `kubectl config use-context {{context}}` (templated) |
+
+Add new workflows by dropping a YAML file in `warp/workflows/` and
+re-running `home-manager switch`. Workflows created from Warp's UI
+land in `~/.warp/workflows/` directly and coexist with the symlinked
+ones.
+
 ## Install via Home Manager
 
-`home/warp.nix` declares both files as live symlinks. After
-`home-manager switch`, restart Warp to pick up the new keybindings.
+`home/warp.nix` declares the keybindings, themes, and workflows as
+live symlinks. After `home-manager switch`, restart Warp to pick up
+the new keybindings.
 
 ## Removing
 

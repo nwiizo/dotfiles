@@ -1,0 +1,10 @@
+name: Home Manager build (dry validate)
+command: |
+  cd ~/ghq/github.com/nwiizo/dotfiles && nixfmt --check ./flake.nix ./home/*.nix && home-manager build --flake .#nwiizo
+description: |
+  Pre-flight check: formatter + evaluation. Run before `Home Manager
+  switch` to catch typos without activating a broken generation.
+tags:
+  - dotfiles
+  - nix
+  - home-manager

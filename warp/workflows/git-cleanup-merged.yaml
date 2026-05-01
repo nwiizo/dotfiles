@@ -1,0 +1,9 @@
+name: Git cleanup merged branches
+command: |
+  git branch --merged | grep -vE '^\*|^\s*(main|master|develop)\s*$' | xargs -r git branch -d
+description: |
+  Delete local branches whose commits are already in the current branch
+  (excluding main / master / develop). Safe — uses `-d`, not `-D`.
+tags:
+  - git
+  - cleanup

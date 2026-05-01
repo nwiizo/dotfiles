@@ -1,0 +1,9 @@
+name: Neovim Lazy sync
+command: |
+  nvim --headless "+Lazy! sync" +qa
+description: |
+  Update lazy.nvim plugins headlessly. Useful before a long focused
+  session so plugin updates don't interrupt later.
+tags:
+  - neovim
+  - update

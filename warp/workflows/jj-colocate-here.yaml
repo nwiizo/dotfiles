@@ -1,0 +1,9 @@
+name: jj colocate here
+command: |
+  jj git init --colocate
+description: |
+  Add jj to the current git repository in place (colocated mode). Run
+  in the working tree root.
+tags:
+  - jj
+  - git

@@ -1,0 +1,9 @@
+name: Home Manager switch
+command: |
+  cd ~/ghq/github.com/nwiizo/dotfiles && home-manager switch --flake .#nwiizo
+description: |
+  Apply pending Home Manager changes from the dotfiles repo.
+tags:
+  - dotfiles
+  - nix
+  - home-manager

@@ -1,0 +1,12 @@
+name: Update everything
+command: |
+  update_all
+description: |
+  Run the dotfiles `update_all` fish function — refreshes brew, mise,
+  Claude CLI, rustup, Home Manager (incl. fish plugins via flake update),
+  and nvim plugins in one shot.
+tags:
+  - dotfiles
+  - update
+shells:
+  - fish
