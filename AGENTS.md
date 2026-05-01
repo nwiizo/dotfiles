@@ -44,6 +44,11 @@ overwritten on the next `home-manager switch`. Edit the repo source instead:
 
 Apply edits with `home-manager switch --flake .#nwiizo` (or `update_all`).
 
+For concrete recipes (env vars, abbreviations, fish functions, file
+symlinks, flake inputs, ...) see [`home/HOWTO.md`](./home/HOWTO.md).
+The matching skills are `.agents/skills/add-package` (package only)
+and `.agents/skills/add-nix-config` (general settings).
+
 ## Change Rules
 
 - Preserve existing structure and style. Keep edits scoped.
