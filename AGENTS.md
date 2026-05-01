@@ -14,6 +14,7 @@ Home Manager** (no nix-darwin; sudo not required).
 | `fish/functions/`, `fish/conf.d/` | Source files referenced from `home/fish.nix` |
 | `nvim/` | Neovim (LazyVim) config, symlinked by HM |
 | `ghostty/` | Ghostty terminal config, symlinked by HM |
+| `warp/` | Warp terminal config (keybindings + themes), symlinked by HM |
 | `git/` | Helper scripts (e.g. `power_pull.sh`) installed via `home.file` |
 
 Reference-only:
@@ -37,6 +38,7 @@ not edit them directly** — edit the repo source.
 | Fish plugin list | `home/fish.nix` (`plugins`) and `flake.nix` for non-nixpkgs sources |
 | Neovim plugins / options | `nvim/lua/...` |
 | Ghostty | `ghostty/config` |
+| Warp | `warp/keybindings.yaml`, `warp/themes/custom.yaml` |
 | Git / GitHub config | `home/git.nix` (`programs.git.settings`, `programs.gh.settings`) |
 | Env vars (EDITOR / GOPATH / ...) | `home/default.nix` (`home.sessionVariables`) |
 | Packages (general CLI) | `home/packages.nix` (`home.packages`) |
@@ -55,6 +57,7 @@ changes (new file added/removed, anything in `home/*.nix` or `flake.nix`):
 | Edit existing `fish/functions/*.fish` | No (`functions -e <name>` to refresh in current shell) | Live per-file symlink |
 | **Add** a new `fish/functions/<x>.fish` | Yes | Needs a new `xdg.configFile` entry in `home/fish.nix` |
 | Edit `fish/conf.d/zz_sponge_compat.fish` | No (open new shell) | Live per-file symlink |
+| Edit `warp/keybindings.yaml` or `warp/themes/custom.yaml` | No (Warp restart picks them up) | Live per-file symlink |
 | Edit `home/*.nix` (abbr / package / programs.X / sessionVar) | Yes | HM regenerates `config.fish`, env, etc. |
 | Edit `flake.nix` / `flake.lock` | Yes | Re-evaluate inputs |
 | Edit `ghostty/config`, `git/power_pull.sh`, anything else passed via `xdg.configFile` / `home.file` | Yes | Frozen-store copy (not a live link) |

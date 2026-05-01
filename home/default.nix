@@ -6,6 +6,7 @@
     ./git.nix
     ./neovim.nix
     ./packages.nix
+    ./warp.nix
   ];
 
   home.stateVersion = "25.11";

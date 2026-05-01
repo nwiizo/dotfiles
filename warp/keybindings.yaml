@@ -1,6 +1,10 @@
-# Warp Keybindings - Developer Productivity Setup
-# Last updated: 2024-12
+# Warp Keybindings — Developer Productivity Setup
 # Reference: https://docs.warp.dev/getting-started/keyboard-shortcuts
+# Action names: https://docs.warp.dev/features/key-bindings/configure-key-bindings
+#
+# Note: This file is a live symlink to the repo via Home Manager
+# (mkOutOfStoreSymlink). Edits here take effect on Warp restart — no
+# `home-manager switch` needed.
 ---
 
 # =============================================================================
@@ -17,6 +21,12 @@
 "pane_group:navigate_down": ctrl-j
 "pane_group:navigate_up": ctrl-k
 "pane_group:navigate_right": ctrl-l
+
+# Resize panes (vim-style with shift+ctrl)
+"pane_group:resize_left": shift-ctrl-h
+"pane_group:resize_down": shift-ctrl-j
+"pane_group:resize_up": shift-ctrl-k
+"pane_group:resize_right": shift-ctrl-l
 
 # Close pane
 "pane_group:close_pane": cmd-w
@@ -43,7 +53,7 @@
 # =============================================================================
 # Terminal Navigation
 # =============================================================================
-# Quick access to AI
+# Quick access to AI command suggestions
 "terminal:open_natural_language_command": ctrl-`
 
 # Command search (history)
@@ -78,3 +88,12 @@
 
 # Accept autosuggestion
 "editor:accept_autosuggestion": ctrl-f
+
+# =============================================================================
+# Defaults worth remembering (Warp built-ins, no override needed)
+# =============================================================================
+# cmd-i        : Agent Mode (Warp AI assistant)
+# cmd-,        : Settings
+# cmd-shift-n  : New notebook
+# cmd-shift-/  : Help / cheatsheet
+# cmd-f        : Search transcript

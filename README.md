@@ -28,13 +28,13 @@ dotfiles/
 ├── fish/           # 🐟 Fish source files (HM symlinks them into ~/.config/fish/)
 ├── nvim/           # ✏️  Neovim (LazyVim) config, symlinked by HM
 ├── ghostty/        # 👻 Ghostty terminal config, symlinked by HM
+├── warp/           # ⚡ Warp terminal config (keybindings + themes), symlinked by HM
 ├── git/            # 📝 Git helper scripts (installed via home.file)
-├── home/           # 🏠 Home Manager modules (default, fish, git, neovim, packages)
+├── home/           # 🏠 Home Manager modules (default, fish, git, neovim, packages, warp)
 ├── flake.nix       # ❄️  Home Manager flake entry point
 │
 # 📦 Archive (kept for reference, all under archive/)
 ├── archive/
-│   ├── warp/       # Warp terminal → migrated to Ghostty
 │   ├── bash/       # Bash → migrated to Fish
 │   ├── zsh/        # Zsh → migrated to Fish
 │   ├── vim/        # Vim → migrated to Neovim
@@ -70,6 +70,7 @@ Standalone Home Manager (no nix-darwin) on `aarch64-darwin`. Manages:
 - Fish (config + plugins + abbreviations + integrations)
 - Neovim (LazyVim config symlinked from `nvim/`)
 - Ghostty (config symlinked from `ghostty/`)
+- Warp (keybindings + themes symlinked from `warp/`)
 - Git / GitHub CLI / delta / lazygit / ghq
 - atuin / direnv / zoxide / mise / carapace (with fish integration)
 - bat / nh / `home.sessionVariables` for env vars
