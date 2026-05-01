@@ -62,6 +62,7 @@ keybind = shift+enter=text:\n
 keybind = ctrl+enter=text:\n
 keybind = cmd+enter=text:\n
 keybind = global:cmd+shift+space=unbind
+keybind = ctrl+shift+equal=equalize_splits
 
 # macOS standard
 keybind = cmd+n=new_window
