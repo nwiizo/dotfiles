@@ -167,6 +167,29 @@ return {
     },
   },
 
+  -- Codex (OpenAI Codex CLI): floating-terminal wrapper
+  -- The plugin can't pass `--dangerously-bypass-approvals-and-sandbox`
+  -- via opts; configure approval mode in `~/.codex/config.toml`
+  -- (e.g. `approval_policy = "on-failure"`) if you want fish abbr `cx`
+  -- parity inside nvim.
+  {
+    "johnseth97/codex.nvim",
+    cmd = { "Codex", "CodexToggle" },
+    opts = {
+      keymaps = {
+        toggle = nil,
+        quit = "<C-q>",
+      },
+      border = "rounded",
+      width = 0.85,
+      height = 0.85,
+      autoinstall = false,
+    },
+    keys = {
+      { "<leader>aX", "<cmd>CodexToggle<cr>", desc = "Toggle Codex" },
+    },
+  },
+
   -- Claude Code: Primary AI integration (terminal)
   {
     "coder/claudecode.nvim",
