@@ -9,6 +9,14 @@
     };
   };
 
+  programs.tealdeer = {
+    enable = true;
+    settings = {
+      display.compact = true;
+      updates.auto_update = true;
+    };
+  };
+
   home.packages = with pkgs; [
     # Nix language tooling
     nil
@@ -25,6 +33,7 @@
     ghq
 
     # General utilities
+    dust
     hyperfine
     jq
     tokei
