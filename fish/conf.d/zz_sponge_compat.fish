@@ -1,6 +1,6 @@
 # Local compatibility fixes for sponge 1.1.0 on fish 4.x.
-# Symlinked into ~/.config/fish/conf.d/ by Home Manager. The `zz_` prefix
-# ensures it loads after the sponge plugin so these definitions win.
+# Symlinked into ~/.config/fish/conf.d/ by scripts/link.sh. The `zz_`
+# prefix ensures it loads after the sponge plugin so these definitions win.
 
 function sponge_filter_failed \
   --argument-names command exit_code previously_in_history

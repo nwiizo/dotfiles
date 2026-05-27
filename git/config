@@ -1,0 +1,32 @@
+[user]
+	name = nwiizo
+	email = syu.m.5151@gmail.com
+
+[alias]
+	ac = "!git add -A && aicommits -a"
+
+[push]
+	autoSetupRemote = true
+
+[credential]
+	helper = osxkeychain
+
+[credential "https://github.com"]
+	helper =
+	helper = !gh auth git-credential
+
+[credential "https://gist.github.com"]
+	helper =
+	helper = !gh auth git-credential
+
+[diff "sopsdiffer"]
+	textconv = sops -d
+
+[interactive]
+	diffFilter = delta --color-only
+
+[pager]
+	blame = delta
+	diff = delta
+	log = delta
+	show = delta

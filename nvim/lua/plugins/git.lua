@@ -17,7 +17,9 @@ return {
       opts.current_line_blame = false
       opts.current_line_blame_opts = { delay = 500, virtual_text_pos = "eol" }
       opts.on_attach = function(bufnr)
-        if prev_on_attach then prev_on_attach(bufnr) end
+        if prev_on_attach then
+          prev_on_attach(bufnr)
+        end
         local gs = package.loaded.gitsigns
         local function map(mode, l, r, mopts)
           mopts = mopts or {}
@@ -25,7 +27,9 @@ return {
           vim.keymap.set(mode, l, r, mopts)
         end
         map("n", "<leader>gp", gs.preview_hunk, { desc = "Preview Hunk" })
-        map("n", "<leader>gb", function() gs.blame_line({ full = true }) end, { desc = "Blame Line" })
+        map("n", "<leader>gb", function()
+          gs.blame_line({ full = true })
+        end, { desc = "Blame Line" })
         map("n", "<leader>gB", gs.toggle_current_line_blame, { desc = "Toggle Blame" })
         map("n", "<leader>hr", gs.reset_hunk, { desc = "Reset Hunk" })
         map("n", "<leader>hs", gs.stage_hunk, { desc = "Stage Hunk" })
@@ -33,6 +37,31 @@ return {
       end
       return opts
     end,
+  },
+
+  -- gitlinker.nvim: Copy/open Git host permalinks for the current line or visual range
+  {
+    "linrongbin16/gitlinker.nvim",
+    cmd = "GitLink",
+    keys = {
+      {
+        "<leader>gy",
+        function()
+          require("gitlinker").link()
+        end,
+        mode = { "n", "v" },
+        desc = "Copy Git Permalink",
+      },
+      {
+        "<leader>gY",
+        function()
+          require("gitlinker").link({ action = require("gitlinker.actions").system })
+        end,
+        mode = { "n", "v" },
+        desc = "Open Git Permalink",
+      },
+    },
+    opts = {},
   },
 
   -- diffview.nvim: Git diff visualization

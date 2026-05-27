@@ -1,6 +1,7 @@
 # Warp Terminal Configuration
 
-Active alongside [Ghostty](../ghostty/). Both are managed by Home Manager.
+Active alongside [Ghostty](../ghostty/). Config files are symlinked by
+[`../scripts/link.sh`](../scripts/link.sh).
 
 Warp's strengths complement Ghostty:
 
@@ -20,8 +21,8 @@ Warp's strengths complement Ghostty:
 | `themes/catppuccin-mocha.yaml` | Custom theme matching `ghostty/config`'s palette |
 | `workflows/*.yaml` | Reusable command templates (open via `Cmd+\` Warp Drive, or search by name) |
 
-Both are live symlinks via Home Manager (`home/warp.nix`); edits land at
-`~/.warp/...` immediately on save. Warp restart picks them up.
+These files are symlinked into `~/.warp/...`; edits land immediately on
+save. Warp restart picks them up.
 
 ## Notable bindings
 
@@ -92,8 +93,7 @@ or by typing the name into the command input:
 | Workflow | Action |
 |---|---|
 | Update everything | Run `update_all` |
-| Home Manager switch | `home-manager switch --flake .#nwiizo` |
-| Home Manager build (dry validate) | `nixfmt --check` + `home-manager build` |
+| Link dotfiles | Re-link repo-managed config files |
 | Neovim Lazy sync | `nvim --headless +Lazy! sync +qa` |
 | ghq fzf cd | Pick a repo with fzf and cd into it |
 | AI context (clipboard) | `ai_context | pbcopy` |
@@ -102,18 +102,10 @@ or by typing the name into the command input:
 | Kubernetes context switch | `kubectl config use-context {{context}}` (templated) |
 
 Add new workflows by dropping a YAML file in `warp/workflows/` and
-re-running `home-manager switch`. Workflows created from Warp's UI
-land in `~/.warp/workflows/` directly and coexist with the symlinked
-ones.
+running `../scripts/link.sh`. Workflows created from Warp's UI land in
+`~/.warp/workflows/` directly and coexist with the symlinked ones.
 
-## Install via Home Manager
+## Install
 
-`home/warp.nix` declares the keybindings, themes, and workflows as
-live symlinks. After `home-manager switch`, restart Warp to pick up
-the new keybindings.
-
-## Removing
-
-If you want to retire Warp again, drop `home/warp.nix` from
-`home/default.nix` imports, run `home-manager switch`, and `mv
-warp/ archive/warp/`.
+Run `../scripts/link.sh`, then restart Warp to pick up the new
+keybindings and workflows.

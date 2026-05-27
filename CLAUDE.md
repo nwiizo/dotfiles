@@ -9,12 +9,8 @@ to Claude Code; nothing is Claude-specific.
 
 ## Quick reminders
 
-- **`home-manager switch` is not always required.** `nvim/` and
-  `fish/functions/*.fish` are live symlinks via `mkOutOfStoreSymlink`,
-  so editing those files takes effect immediately. Run `switch` only
-  when the structure changes (add/remove a file, edit `home/*.nix` or
-  `flake.nix`, edit other `xdg.configFile` / `home.file` paths). The
-  full table is in `AGENTS.md` → "When `home-manager switch` is required".
-- For concrete recipes when adding new things, read
-  [`home/HOWTO.md`](./home/HOWTO.md) and use the `add-package` /
-  `add-nix-config` skills.
+- Nix/Home Manager is no longer active in this repo. Do not add new
+  `flake.nix`, `home/*.nix`, Home Manager modules, or nix-darwin config.
+- Config files are symlinked by `./scripts/link.sh`; re-run it when adding
+  or removing linked files.
+- Packages live in `Brewfile`; Fish plugins live in `fish/fish_plugins`.

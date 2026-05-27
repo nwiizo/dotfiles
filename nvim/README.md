@@ -52,7 +52,7 @@ return {
 
 ```lua
 return {
-  { "nvim-lualine/lualine.nvim", enabled = false },
+  { "owner/plugin.nvim", enabled = false },
 }
 ```
 
@@ -148,8 +148,8 @@ nvim/
         ├── colorscheme.lua     # catppuccin mocha
         ├── ui.lua              # incline, modes, vimade, better-escape, noice override
         ├── navigation.lua      # Snacks override, telescope override, oil, overlook, hbac
-        ├── git.lua             # gitsigns override, diffview
-        ├── diagnostics.lua     # trouble override, todo-comments override
+        ├── git.lua             # gitsigns override, diffview, gitlinker
+        ├── diagnostics.lua     # trouble override, todo-comments override, nvim-bqf
         ├── lsp.lua             # lspconfig, conform, mason, treesitter override
         ├── completion.lua      # blink.cmp override
         ├── coding.lua          # yanky override
@@ -192,6 +192,15 @@ nvim/
 |---|---|
 | `ai.copilot` | GitHub Copilot |
 | `ai.copilot-chat` | CopilotChat |
+
+## プラグイン選定メモ
+
+既存の LazyVim / Snacks / Oil / Blink / Noice 構成と重複しないものだけを追加する。
+
+| 追加 | 理由 |
+|---|---|
+| `kevinhwang91/nvim-bqf` | quickfix の preview / filter / split open を補強する。既存の Trouble や Snacks picker とは用途が違う |
+| `linrongbin16/gitlinker.nvim` | 現在行や選択範囲の GitHub/GitLab permalink をコピー/ブラウザ表示できる。gitsigns/diffview にはない共有用途 |
 
 ## キーマップ
 
@@ -329,6 +338,8 @@ nvim/
 | `<leader>gp` | n | Hunkプレビュー | P gitsigns |
 | `<leader>gb` | n | Blame表示 | P gitsigns |
 | `<leader>gB` | n | Blame切替 | P gitsigns |
+| `<leader>gy` | n,v | 現在行/選択範囲のGit permalinkをコピー | P gitlinker |
+| `<leader>gY` | n,v | 現在行/選択範囲のGit permalinkをブラウザで開く | P gitlinker |
 | `]h` / `[h` | n | 次/前のhunk | L gitsigns |
 
 ### トグル (`<leader>u` prefix)
@@ -370,6 +381,8 @@ nvim/
 | キー | モード | 説明 | 出典 |
 |---|---|---|---|
 | `<leader>j` / `<leader>k` | n | 次/前のquickfix | C |
+| `zf` | qf | quickfix内をfzf風に絞り込み | P nvim-bqf |
+| `<C-x>` / `<C-v>` | qf | quickfix項目を水平/垂直分割で開く | P nvim-bqf |
 | `<C-a>` / `<C-x>` | n | インクリメント/デクリメント (dial拡張) | P dial |
 | `[y` / `]y` | n | ペースト後にヤンク履歴サイクル | P yanky |
 

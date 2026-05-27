@@ -43,12 +43,48 @@ return {
       },
     },
     keys = {
-      { "<leader><leader>", function() Snacks.picker.smart() end, desc = "Smart Picker" },
-      { "<leader>gg", function() Snacks.lazygit.open() end, desc = "LazyGit" },
-      { "<leader>gl", function() Snacks.lazygit.log() end, desc = "LazyGit Log" },
-      { "<leader>gf", function() Snacks.lazygit.log_file() end, desc = "LazyGit File Log" },
-      { "<leader>uz", function() Snacks.zen() end, desc = "Toggle Zen Mode" },
-      { "<leader>uZ", function() Snacks.zen.zoom() end, desc = "Toggle Zen Zoom" },
+      {
+        "<leader><leader>",
+        function()
+          Snacks.picker.smart()
+        end,
+        desc = "Smart Picker",
+      },
+      {
+        "<leader>gg",
+        function()
+          Snacks.lazygit.open()
+        end,
+        desc = "LazyGit",
+      },
+      {
+        "<leader>gl",
+        function()
+          Snacks.lazygit.log()
+        end,
+        desc = "LazyGit Log",
+      },
+      {
+        "<leader>gf",
+        function()
+          Snacks.lazygit.log_file()
+        end,
+        desc = "LazyGit File Log",
+      },
+      {
+        "<leader>uz",
+        function()
+          Snacks.zen()
+        end,
+        desc = "Toggle Zen Mode",
+      },
+      {
+        "<leader>uZ",
+        function()
+          Snacks.zen.zoom()
+        end,
+        desc = "Toggle Zen Zoom",
+      },
     },
   },
 
@@ -153,14 +189,62 @@ return {
     "WilliamHsieh/overlook.nvim",
     event = "LspAttach",
     keys = {
-      { "<leader>pd", function() require("overlook").open_definition() end, desc = "Peek Definition" },
-      { "<leader>pc", function() require("overlook").close_all() end, desc = "Close All Popups" },
-      { "<leader>pu", function() require("overlook").restore_one() end, desc = "Restore Last Popup" },
-      { "<leader>pU", function() require("overlook").restore_all() end, desc = "Restore All Popups" },
-      { "<leader>pf", function() require("overlook").toggle_focus() end, desc = "Toggle Focus" },
-      { "<leader>ps", function() require("overlook").open_in_split() end, desc = "Open in Split" },
-      { "<leader>pv", function() require("overlook").open_in_vsplit() end, desc = "Open in VSplit" },
-      { "<leader>po", function() require("overlook").open_in_original() end, desc = "Open in Original" },
+      {
+        "<leader>pd",
+        function()
+          require("overlook").open_definition()
+        end,
+        desc = "Peek Definition",
+      },
+      {
+        "<leader>pc",
+        function()
+          require("overlook").close_all()
+        end,
+        desc = "Close All Popups",
+      },
+      {
+        "<leader>pu",
+        function()
+          require("overlook").restore_one()
+        end,
+        desc = "Restore Last Popup",
+      },
+      {
+        "<leader>pU",
+        function()
+          require("overlook").restore_all()
+        end,
+        desc = "Restore All Popups",
+      },
+      {
+        "<leader>pf",
+        function()
+          require("overlook").toggle_focus()
+        end,
+        desc = "Toggle Focus",
+      },
+      {
+        "<leader>ps",
+        function()
+          require("overlook").open_in_split()
+        end,
+        desc = "Open in Split",
+      },
+      {
+        "<leader>pv",
+        function()
+          require("overlook").open_in_vsplit()
+        end,
+        desc = "Open in VSplit",
+      },
+      {
+        "<leader>po",
+        function()
+          require("overlook").open_in_original()
+        end,
+        desc = "Open in Original",
+      },
     },
     opts = { border = "rounded", max_width = 100, max_height = 20 },
   },

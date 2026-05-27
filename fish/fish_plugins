@@ -1,0 +1,28 @@
+# Plugin manager
+jorgebucaran/fisher
+
+# Fuzzy search / navigation
+patrickf1/fzf.fish
+
+# Editing ergonomics
+jorgebucaran/autopair.fish
+nickeb96/puffer-fish
+
+# History and feedback
+franciscolourenco/done
+meaningful-ooo/sponge
+gazorby/fish-abbreviation-tips
+
+# Display polish
+patrickf1/colored_man_pages.fish
+
+# Shell interoperability
+edc/bass
+jorgebucaran/replay.fish
+
+# Environment helpers
+danhper/fish-ssh-agent
+danhper/fish-fastdir
+
+# Development
+jorgebucaran/fishtape

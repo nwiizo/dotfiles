@@ -2,9 +2,8 @@
 # Reference: https://docs.warp.dev/getting-started/keyboard-shortcuts
 # Action names: https://docs.warp.dev/features/key-bindings/configure-key-bindings
 #
-# Note: This file is a live symlink to the repo via Home Manager
-# (mkOutOfStoreSymlink). Edits here take effect on Warp restart — no
-# `home-manager switch` needed.
+# Note: This file is symlinked to ~/.warp by scripts/link.sh. Edits here
+# take effect on Warp restart.
 ---
 
 # =============================================================================

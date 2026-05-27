@@ -1,0 +1,10 @@
+name: Link dotfiles
+command: |
+  cd ~/ghq/github.com/nwiizo/dotfiles && ./scripts/link.sh
+description: |
+  Re-link repo-managed config files into ~/.config, ~/.warp, and ~/.local/bin.
+tags:
+  - dotfiles
+  - config
+shells:
+  - fish

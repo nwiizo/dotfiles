@@ -56,7 +56,7 @@ function ai_context -d "Generate bounded project context for AI tools"
     set -l important_files \
         AGENTS.md CLAUDE.md CLAUDE.local.md README.md \
         .github/copilot-instructions.md \
-        flake.nix home.nix package.json pyproject.toml Cargo.toml go.mod deno.json \
+        package.json pyproject.toml Cargo.toml go.mod deno.json \
         Makefile Justfile
 
     for f in $important_files

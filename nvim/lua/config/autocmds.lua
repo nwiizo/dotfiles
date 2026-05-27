@@ -26,7 +26,8 @@ vim.api.nvim_del_augroup_by_name("lazyvim_wrap_spell")
 -- Ensure line numbers are always enabled
 vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter", "WinEnter" }, {
   callback = function()
-    local exclude_ft = { "NvimTree", "lazy", "mason", "help", "TelescopePrompt", "Avante", "AvanteInput", "snacks_dashboard" }
+    local exclude_ft =
+      { "NvimTree", "lazy", "mason", "help", "TelescopePrompt", "Avante", "AvanteInput", "snacks_dashboard" }
     if not vim.tbl_contains(exclude_ft, vim.bo.filetype) then
       vim.wo.number = true
       vim.wo.relativenumber = true

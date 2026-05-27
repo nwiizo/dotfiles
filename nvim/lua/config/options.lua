@@ -4,12 +4,6 @@
 
 local o = vim.o
 
-local nix_profile_bin = vim.fn.expand("~/.nix-profile/bin")
-local path = vim.env.PATH or ""
-if vim.fn.isdirectory(nix_profile_bin) == 1 and not path:find(nix_profile_bin, 1, true) then
-  vim.env.PATH = nix_profile_bin .. ":" .. path
-end
-
 -- 2026 Minimal UI: statusline-less workflow for maximum editing space
 o.cmdheight = 0 -- LazyVim: 1
 o.laststatus = 0 -- LazyVim: 3

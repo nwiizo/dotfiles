@@ -4,96 +4,76 @@ This guide applies to the whole repository.
 
 ## Repository Scope
 
-Personal macOS development environment, managed end-to-end by **standalone
-Home Manager** (no nix-darwin; sudo not required).
+Personal macOS development environment. Nix/Home Manager is no longer part
+of the active setup; Homebrew owns binaries and this repo owns config files
+via direct symlinks.
 
 | Path | Purpose |
 |---|---|
-| `flake.nix`, `flake.lock` | Flake entry point and pinned inputs |
-| `home/` | Home Manager modules (`default.nix`, `fish.nix`, ...) |
-| `fish/functions/`, `fish/conf.d/` | Source files referenced from `home/fish.nix` |
-| `nvim/` | Neovim (LazyVim) config, symlinked by HM |
-| `ghostty/` | Ghostty terminal config, symlinked by HM |
-| `warp/` | Warp terminal config (keybindings + themes), symlinked by HM |
-| `git/` | Helper scripts (e.g. `power_pull.sh`) installed via `home.file` |
+| `Brewfile` | Homebrew packages that replace the old Nix profile |
+| `scripts/` | Bootstrap, symlink, and plugin install helpers |
+| `fish/` | Fish `config.fish`, Fisher plugin list, functions, and `conf.d` patches |
+| `nvim/` | Neovim (LazyVim) config |
+| `ghostty/` | Ghostty terminal config |
+| `warp/` | Warp keybindings, themes, and workflows |
+| `git/` | Git config and helper scripts |
+| `bat/`, `atuin/`, `tealdeer/`, `gh/` | Tool config files |
 
 Reference-only:
 
 - `archive/` — old configs. Do not edit unless explicitly requested.
-- Starship and Fisher are no longer used; the prompt is native Fish, plugins
-  live in `programs.fish.plugins`.
 
 ## Live Config Reality
 
-`~/.config/fish`, `~/.config/nvim`, `~/.config/ghostty`, `~/.config/git`,
-`~/.config/gh`, `~/.config/bat` are all populated by Home Manager. **Do
-not edit them directly** — edit the repo source.
+`scripts/link.sh` symlinks repo files into `~/.config`, `~/.warp`, and
+`~/.local/bin`. Do not edit generated/live files directly; edit the repo
+source, then re-run `./scripts/link.sh` when adding/removing linked files.
 
 | You want to change ... | Edit ... |
 |---|---|
-| Fish shell init / behavior | `home/fish.nix` (`shellInit` / `interactiveShellInit`) |
-| Fish abbreviations | `home/fish.nix` (`shellAbbrs`) |
-| Fish wrapper functions (inline) | `home/fish.nix` (`functions`) |
+| Fish shell init / env / abbreviations / integrations | `fish/config.fish` |
+| Fish plugins | `fish/fish_plugins`, then `fish scripts/install-fish-plugins.fish` |
 | Fish prompt / AI helpers / jj wrappers | `fish/functions/*.fish` |
-| Fish plugin list | `home/fish.nix` (`plugins`) and `flake.nix` for non-nixpkgs sources |
+| Fish conf.d patch | `fish/conf.d/zz_sponge_compat.fish` |
 | Neovim plugins / options | `nvim/lua/...` |
 | Ghostty | `ghostty/config` |
-| Warp | `warp/keybindings.yaml`, `warp/themes/custom.yaml` |
-| Git / GitHub config | `home/git.nix` (`programs.git.settings`, `programs.gh.settings`) |
-| Env vars (EDITOR / GOPATH / ...) | `home/default.nix` (`home.sessionVariables`) |
-| Packages (general CLI) | `home/packages.nix` (`home.packages`) |
+| Warp | `warp/keybindings.yaml`, `warp/themes/*.yaml`, `warp/workflows/*.yaml` |
+| Git / GitHub config | `git/config`, `gh/config.yml` |
+| Bat / Atuin / tealdeer | `bat/config`, `atuin/config.toml`, `tealdeer/config.toml` |
+| Packages | `Brewfile` |
 
-### When `home-manager switch` is required
+## Apply Changes
 
-`nvim/`, `fish/functions/*.fish`, and `fish/conf.d/zz_sponge_compat.fish`
-go through `mkOutOfStoreSymlink` — edits are visible **immediately** at
-`~/.config/...` without rebuilding. Run `switch` only when the **structure**
-changes (new file added/removed, anything in `home/*.nix` or `flake.nix`):
-
-| Change | Switch needed? | Why |
-|---|---|---|
-| Edit existing `nvim/lua/**.lua` | No | Live dir symlink |
-| **Add or remove** any file under `nvim/` | No | Live dir symlink (nvim picks it up via lazy.nvim spec discovery) |
-| Edit existing `fish/functions/*.fish` | No (`functions -e <name>` to refresh in current shell) | Live per-file symlink |
-| **Add** a new `fish/functions/<x>.fish` | Yes | Needs a new `xdg.configFile` entry in `home/fish.nix` |
-| Edit `fish/conf.d/zz_sponge_compat.fish` | No (open new shell) | Live per-file symlink |
-| Edit `warp/keybindings.yaml` or `warp/themes/custom.yaml` | No (Warp restart picks them up) | Live per-file symlink |
-| Edit `home/*.nix` (abbr / package / programs.X / sessionVar) | Yes | HM regenerates `config.fish`, env, etc. |
-| Edit `flake.nix` / `flake.lock` | Yes | Re-evaluate inputs |
-| Edit `ghostty/config`, `git/power_pull.sh`, anything else passed via `xdg.configFile` / `home.file` | Yes | Frozen-store copy (not a live link) |
-
-Apply with `home-manager switch --flake .#nwiizo` (or `update_all`).
-
-For concrete recipes (env vars, abbreviations, fish functions, file
-symlinks, flake inputs, ...) see [`home/HOWTO.md`](./home/HOWTO.md).
-The matching skills are `.agents/skills/add-package` (package only)
-and `.agents/skills/add-nix-config` (general settings).
+| Change | Apply |
+|---|---|
+| Edit existing symlinked config file | Restart the owning app or open a new shell |
+| Add/remove `fish/functions/*.fish` or Warp workflows | `./scripts/link.sh` |
+| Change Fish plugins | `fish scripts/install-fish-plugins.fish` |
+| Change Homebrew packages | `brew bundle --file Brewfile` |
+| Full bootstrap | `./scripts/bootstrap.sh` |
 
 ## Change Rules
 
 - Preserve existing structure and style. Keep edits scoped.
 - Do not revert unrelated user changes.
-- Keep `archive/` untouched.
+- Keep `archive/` untouched unless the user explicitly asks for archive work.
 - Neovim plugin specs go under `nvim/lua/plugins/`.
-- Do **not** introduce nix-darwin (sudo-free standalone HM is the constraint).
-- Brewfile remains imperative (Homebrew is *not* declaratively managed).
+- Do not reintroduce Nix, Home Manager, or nix-darwin into active config.
 
 ## Validation
 
-For Nix / Home Manager changes:
+For symlink/bootstrap changes:
 
 ```bash
-nixfmt --check ./flake.nix ./home/*.nix
-home-manager build --flake .#nwiizo
-home-manager switch --flake .#nwiizo
+./scripts/link.sh
+fish scripts/install-fish-plugins.fish
+brew bundle check --file Brewfile
 ```
 
-`home-manager build` covers fish syntax (it generates `config.fish`) and
-ensures `nvim/`/`ghostty/` references resolve. Direct `fish -n` checks on
-`fish/functions/*.fish` are still useful for files referenced from
-`xdg.configFile`:
+For Fish changes:
 
 ```bash
+fish -n fish/config.fish
 for f in fish/functions/*.fish; do fish -n "$f" || exit 1; done
 ```
 
@@ -114,4 +94,5 @@ nvim --headless '+lua require("lazy").load({ plugins = { "CopilotChat.nvim", "av
 
 - Commit only related files.
 - After successful commit, push `main` to `origin` when requested.
-- Repo root is intentionally minimal — keep new files in subdirectories.
+- Repo root is intentionally minimal; keep new files in subdirectories unless
+  the file is a top-level entry point like `Brewfile` or `README.md`.

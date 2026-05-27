@@ -47,7 +47,6 @@ require("lazy").setup({
   { import = "lazyvim.plugins.extras.lang.docker" },
   { import = "lazyvim.plugins.extras.lang.toml" },
   { import = "lazyvim.plugins.extras.lang.git" },
-  { import = "lazyvim.plugins.extras.lang.nix" },
 
   -- LazyVim Extras: Editor
   { import = "lazyvim.plugins.extras.editor.telescope" },
@@ -77,9 +76,7 @@ require("lazy").setup({
   { import = "plugins" },
 }, {
   defaults = { lazy = false, version = false },
-  -- ~/.config/nvim is a read-only Home Manager symlink into /nix/store,
-  -- so the default lockfile path stdpath("config")/lazy-lock.json is not
-  -- writable. Move it to stdpath("data") (~/.local/share/nvim).
+  -- Keep Lazy's lockfile outside the repo config tree.
   lockfile = vim.fn.stdpath("data") .. "/lazy-lock.json",
   install = { colorscheme = { "catppuccin-mocha", "habamax" } },
   checker = { enabled = true, notify = false },

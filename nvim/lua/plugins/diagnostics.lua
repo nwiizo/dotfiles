@@ -1,6 +1,18 @@
 -- Diagnostics & Code Quality plugins
 -- LazyVim manages: trouble.nvim, todo-comments.nvim
 return {
+  -- nvim-bqf: Better quickfix preview and filtering
+  {
+    "kevinhwang91/nvim-bqf",
+    ft = "qf",
+    opts = {
+      auto_enable = true,
+      preview = {
+        border = "rounded",
+      },
+    },
+  },
+
   -- trouble.nvim: Override
   {
     "folke/trouble.nvim",

@@ -1,8 +1,8 @@
-# Nix build symlinks
+# Build symlinks
 result
 result-*
 
-# direnv (nix-direnv)
+# direnv
 .direnv/
 .envrc.local
 

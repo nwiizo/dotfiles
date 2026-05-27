@@ -25,13 +25,13 @@ If all you want is efficiency, off-the-shelf is fine. But if you want to leave t
 ```
 dotfiles/
 # 🟢 Active (2026)
-├── fish/           # 🐟 Fish source files (HM symlinks them into ~/.config/fish/)
-├── nvim/           # ✏️  Neovim (LazyVim) config, symlinked by HM
-├── ghostty/        # 👻 Ghostty terminal config, symlinked by HM
-├── warp/           # ⚡ Warp terminal config (keybindings + themes), symlinked by HM
-├── git/            # 📝 Git helper scripts (installed via home.file)
-├── home/           # 🏠 Home Manager modules (default, fish, git, neovim, packages, warp)
-├── flake.nix       # ❄️  Home Manager flake entry point
+├── fish/           # 🐟 Fish config, functions, and Fisher plugin list
+├── nvim/           # ✏️  Neovim (LazyVim) config
+├── ghostty/        # 👻 Ghostty terminal config
+├── warp/           # ⚡ Warp terminal config (keybindings + themes + workflows)
+├── git/            # 📝 Git config and helper scripts
+├── scripts/        # 🔗 Bootstrap/link scripts
+├── Brewfile        # 🍺 Homebrew packages that replace the old Nix profile
 │
 # 📦 Archive (kept for reference, all under archive/)
 ├── archive/
@@ -48,76 +48,62 @@ dotfiles/
 
 ## ⚡ Setup
 
-Home Manager owns all the symlinks. Bootstrap once:
+Homebrew owns binaries; the repo owns config files via symlinks.
+Bootstrap once:
 
 ```bash
-# Brew is still used for the GUI side (Ghostty, fonts, Docker Desktop, etc.)
-brew install fish ghostty
-
-# First HM activation pulls everything else (CLI tools, plugins, configs).
-NIX_CONFIG='experimental-features = nix-command flakes' \
-  nix run github:nix-community/home-manager -- switch \
-  --flake ~/ghq/github.com/nwiizo/dotfiles#nwiizo
+cd ~/ghq/github.com/nwiizo/dotfiles
+./scripts/bootstrap.sh
 ```
 
-After that, the `update_all` fish function takes care of brew + mise +
-Claude CLI + rustup + Home Manager + nvim plugins in one shot.
+After that, the `update_all` fish function takes care of brew + mise
+tools + Claude CLI + rustup + nvim plugins in one shot. Use flags like
+`--no-brew`, `--no-rust`, or `--no-nvim` to skip slower parts.
 
-## ❄️ Nix / Home Manager
+## 🍺 Package And Config Management
 
-Standalone Home Manager (no nix-darwin) on `aarch64-darwin`. Manages:
+Nix/Home Manager is no longer required. Management is split by the tool
+that naturally owns each layer:
 
-- Fish (config + plugins + abbreviations + integrations)
-- Neovim (LazyVim config symlinked from `nvim/`)
-- Ghostty (config symlinked from `ghostty/`)
-- Warp (keybindings + themes symlinked from `warp/`)
-- Git / GitHub CLI / delta / lazygit / ghq
-- atuin / direnv / zoxide / mise / carapace (with fish integration)
-- bat / nh / `home.sessionVariables` for env vars
-- CLI tools in `home/packages.nix`
+- Homebrew: CLI tools, terminal apps, GUI casks, fonts
+- Fisher: Fish plugins from `fish/fish_plugins`
+- mise / rustup / language-native managers: language toolchains
+- Lazy.nvim / Mason: Neovim plugins and editor tooling
+- `scripts/link.sh`: symlinks repo config into `~/.config`, `~/.warp`,
+  and `~/.local/bin`
 
-Brew is kept for casks, GUI apps, and tools not yet in nixpkgs.
-
-First activation:
+Apply config links again:
 
 ```bash
-NIX_CONFIG='experimental-features = nix-command flakes' \
-  nix run github:nix-community/home-manager -- switch \
-  --flake ~/ghq/github.com/nwiizo/dotfiles#nwiizo
+./scripts/link.sh
 ```
 
-Apply later changes:
+Install/update Fish plugins:
 
 ```bash
-home-manager switch --flake ~/ghq/github.com/nwiizo/dotfiles#nwiizo
+fish scripts/install-fish-plugins.fish
 ```
 
-Update inputs:
+Install Homebrew dependencies:
 
 ```bash
-nix flake update
-home-manager switch --flake ~/ghq/github.com/nwiizo/dotfiles#nwiizo
+brew bundle --file Brewfile
 ```
 
 ### Edit-then-reflect cheatsheet
 
-`nvim/` and `fish/functions/*.fish` are live symlinks (via
-`mkOutOfStoreSymlink`), so most day-to-day edits show up without
-rebuilding. Run `switch` when the **shape** of the config changes.
+Most config paths are symlinks to this repo. Editing the repo is enough;
+restart the owning app or open a new shell.
 
 | Edit | `switch` needed? |
 |---|---|
 | Existing `nvim/lua/**.lua` | No — restart nvim |
 | Existing `fish/functions/*.fish` | No — open a new shell |
-| Add/remove a file under `nvim/` or `fish/functions/` | Yes |
-| `home/*.nix`, `flake.nix`, `flake.lock` | Yes |
-| `ghostty/config`, `git/power_pull.sh`, other `xdg.configFile` / `home.file` paths | Yes |
-
-Detailed patterns and validation flow live in
-[`home/HOWTO.md`](./home/HOWTO.md). Two skills automate the common
-cases: `.agents/skills/add-package` (package-only) and
-`.agents/skills/add-nix-config` (env vars, abbreviations, functions,
-file symlinks, flake inputs).
+| Add/remove a file under `nvim/` | No — restart nvim |
+| Add/remove a file under `fish/functions/` | Run `./scripts/link.sh` |
+| Fish plugins | Edit `fish/fish_plugins`, then `fish scripts/install-fish-plugins.fish` |
+| Homebrew packages | Edit `Brewfile`, then `brew bundle --file Brewfile` |
+| Ghostty / Warp / Git / Bat / Atuin configs | No — app restart or new shell |
 
 ---
 
@@ -161,7 +147,8 @@ acm=ai_commit_msg  apr=ai_pr
 ### 🧰 Utility Commands
 
 ```bash
-update_all            # Update everything: brew + mise + Claude + Home Manager (incl. fish plugins) + nvim plugins
+update_all            # Update brew + mise tools + Claude + rustup + nvim plugins
+update_all --no-nvim  # Skip Lazy.nvim plugin sync
 z <substring>         # zoxide jump
 ```
 
@@ -296,6 +283,7 @@ Languages: Rust (rustaceanvim), Go (gopls, golangci-lint), Python (pylsp), Lua (
 | `<leader>gt` | Toggle file panel |
 | `<leader>gp` | Hunk preview |
 | `<leader>gb` / `<leader>gB` | Blame / Toggle blame |
+| `<leader>gy` / `<leader>gY` | Copy / Open Git permalink |
 | `<leader>hs` / `<leader>hr` / `<leader>hu` | Stage / Reset / Undo stage hunk |
 | `]c` / `[c` | Hunk navigation |
 
@@ -411,7 +399,7 @@ Languages: Rust (rustaceanvim), Go (gopls, golangci-lint), Python (pylsp), Lua (
 | `<leader>as` | Send to Claude (visual) |
 | `<leader>ay` / `<leader>an` | Accept / Deny diff |
 
-### 💬 Completion (nvim-cmp)
+### 💬 Completion (blink.cmp)
 
 Priority: Copilot (1000) > LSP (900) > Snippet (800) > Buffer (500) > Path (400)
 
