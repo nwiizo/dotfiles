@@ -21,6 +21,10 @@ function update_all -d "Update tools with their native managers"
 
     echo "Updating tools..."
 
+    # Each updater runs independently: a failure is recorded but does not abort
+    # the rest, so later tools (notably nvim, which is last) always run.
+    set -l failed
+
     if set -q _flag_no_brew
         echo "Homebrew skipped (--no-brew)."
     else if type -q brew
@@ -28,7 +32,7 @@ function update_all -d "Update tools with their native managers"
         brew update
         and brew upgrade
         and brew cleanup
-        or return $status
+        or set -a failed Homebrew
     else
         echo "Homebrew skipped (brew not found)."
     end
@@ -38,7 +42,7 @@ function update_all -d "Update tools with their native managers"
     else if type -q mise
         echo "mise tools..."
         mise upgrade
-        or return $status
+        or set -a failed mise
     else
         echo "mise skipped (mise not found)."
     end
@@ -48,7 +52,7 @@ function update_all -d "Update tools with their native managers"
     else if type -q claude
         echo "Claude CLI..."
         claude update
-        or return $status
+        or set -a failed "Claude CLI"
     else
         echo "Claude CLI skipped (claude not found)."
     end
@@ -58,7 +62,7 @@ function update_all -d "Update tools with their native managers"
     else if type -q rustup
         echo "Rust..."
         rustup update
-        or return $status
+        or set -a failed Rust
     else
         echo "Rust skipped (rustup not found)."
     end
@@ -67,10 +71,15 @@ function update_all -d "Update tools with their native managers"
         echo "Neovim plugins skipped (--no-nvim)."
     else if type -q nvim
         echo "Neovim plugins..."
-        nvim --headless "+Lazy! sync" +qa 2>/dev/null
-        or return $status
+        nvim --headless "+Lazy! sync" +qa
+        or set -a failed "Neovim plugins"
     else
         echo "Neovim plugins skipped (nvim not found)."
+    end
+
+    if set -q failed[1]
+        echo "Done with errors: "(string join ", " $failed)" failed." >&2
+        return 1
     end
 
     echo "Done!"
