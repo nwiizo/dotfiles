@@ -88,7 +88,7 @@ return {
     version = false,
     opts = {
       instructions_file = "CLAUDE.md",
-      provider = "copilot",
+      provider = "codex",
       mode = "agentic",
       input = { provider = "snacks" },
       selector = { provider = "snacks" },
@@ -97,6 +97,26 @@ return {
           endpoint = "https://api.githubcopilot.com",
           model = "claude-opus-4.6",
           timeout = 30000,
+        },
+      },
+      acp_providers = {
+        ["codex"] = {
+          command = "codex-acp",
+          args = { "-c", 'forced_login_method="chatgpt"' },
+          env = {
+            NODE_NO_WARNINGS = "1",
+            HOME = os.getenv("HOME"),
+            PATH = os.getenv("PATH"),
+          },
+        },
+        ["claude-code"] = {
+          command = "claude-agent-acp",
+          args = {},
+          env = {
+            NODE_NO_WARNINGS = "1",
+            ACP_PATH_TO_CLAUDE_CODE_EXECUTABLE = vim.fn.exepath("claude"),
+            ACP_PERMISSION_MODE = "bypassPermissions",
+          },
         },
       },
       mappings = {
@@ -111,6 +131,11 @@ return {
         auto_approve_tool_permissions = false,
       },
       windows = { position = "right", width = 35 },
+    },
+    keys = {
+      { "<leader>aVc", "<cmd>AvanteSwitchProvider codex<cr>", desc = "Avante: Codex ACP" },
+      { "<leader>aVl", "<cmd>AvanteSwitchProvider claude-code<cr>", desc = "Avante: Claude Code ACP" },
+      { "<leader>aVp", "<cmd>AvanteSwitchProvider copilot<cr>", desc = "Avante: Copilot" },
     },
     build = "make",
     dependencies = {
