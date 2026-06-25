@@ -57,6 +57,39 @@ function update_all -d "Update tools with their native managers"
     set -lx PATH $sudo_dir $PATH
     set -lx SUDO_ASKPASS /usr/bin/false
 
+    function __update_all_suggest --argument-names label
+        switch $label
+            case Homebrew
+                echo "Suggestion: run `sudo -v`, then `brew upgrade --cask --greedy` when cask cleanup needs privileges." >&2
+            case "cargo-installed binaries"
+                echo "Suggestion: rerun the failing package directly, for example `cargo install-update dioxus-cli --locked`, or run `cargo install-update -a --locked` after reading the log." >&2
+            case "Mason tools"
+                echo "Suggestion: rerun Mason by itself with `update_all --no-brew --no-mise --no-claude --no-rust --no-nvim --no-fisher --no-npm --no-cargo --no-go --no-uv --no-pipx --no-gem`." >&2
+            case "Neovim plugins"
+                echo "Suggestion: rerun Neovim plugins by itself with `nvim --headless \"+Lazy! sync\" +qa`." >&2
+            case "Go-installed binaries"
+                echo "Suggestion: inspect the log for the failing binary, then rerun its `go install <module>@latest` command directly." >&2
+            case npm
+                echo "Suggestion: rerun npm globals by itself with `npm update -g`." >&2
+            case "uv tools"
+                echo "Suggestion: rerun uv tools by itself with `uv tool upgrade --all`." >&2
+            case "pipx tools"
+                echo "Suggestion: rerun pipx tools by itself with `pipx upgrade-all`." >&2
+            case RubyGems
+                echo "Suggestion: rerun RubyGems by itself with `gem update --system && gem update`." >&2
+            case Fisher
+                echo "Suggestion: rerun Fisher by itself with `fisher update`." >&2
+            case Rust
+                echo "Suggestion: rerun Rust by itself with `rustup update`." >&2
+            case mise
+                echo "Suggestion: rerun mise by itself with `mise upgrade`." >&2
+            case "Claude CLI"
+                echo "Suggestion: rerun Claude CLI by itself with `claude update`." >&2
+            case "Mac App Store"
+                echo "Suggestion: rerun Mac App Store updates by itself with `mas upgrade`." >&2
+        end
+    end
+
     if not set -q _flag_parallel
         function __update_all_run_job --no-scope-shadowing --argument-names label script log status_file
             echo
@@ -104,6 +137,7 @@ function update_all -d "Update tools with their native managers"
             else
                 echo "Cause: no explicit error line found in the updater log." >&2
             end
+            __update_all_suggest $label
 
             if test -s $log
                 echo "Last 40 log lines:" >&2
@@ -134,6 +168,7 @@ function update_all -d "Update tools with their native managers"
                         set -l outdated_casks (brew outdated --cask --greedy -q 2>/dev/null)
                         if test (count $outdated_casks) -gt 0
                             echo "Homebrew casks skipped (sudo credentials unavailable): "(string join ", " $outdated_casks)
+                            echo "Suggestion: run `sudo -v`, then `brew upgrade --cask --greedy` to update casks that need privileged cleanup."
                         else
                             echo "Homebrew casks are up to date."
                         end
@@ -470,11 +505,13 @@ function update_all -d "Update tools with their native managers"
             echo "Done with errors: "(string join ", " $failed)" failed." >&2
             echo "Logs kept at $log_dir" >&2
             functions -e __update_all_run_job
+            functions -e __update_all_suggest
             return 1
         end
 
         rm -rf $log_dir
         functions -e __update_all_run_job
+        functions -e __update_all_suggest
         echo "Done!"
         return 0
     end
@@ -497,6 +534,7 @@ function update_all -d "Update tools with their native managers"
                     set -l outdated_casks (brew outdated --cask --greedy -q 2>/dev/null)
                     if test (count $outdated_casks) -gt 0
                         echo "Homebrew casks skipped (sudo credentials unavailable): "(string join ", " $outdated_casks)
+                        echo "Suggestion: run `sudo -v`, then `brew upgrade --cask --greedy` to update casks that need privileged cleanup."
                     else
                         echo "Homebrew casks are up to date."
                     end
@@ -981,6 +1019,7 @@ function update_all -d "Update tools with their native managers"
                 else
                     echo "Cause: no explicit error line found in the updater log." >&2
                 end
+                __update_all_suggest $label
 
                 if test -s $log
                     echo "Last 40 log lines:" >&2
@@ -1023,10 +1062,12 @@ function update_all -d "Update tools with their native managers"
     if set -q failed[1]
         echo "Done with errors: "(string join ", " $failed)" failed." >&2
         echo "Logs kept at $log_dir" >&2
+        functions -e __update_all_suggest
         return 1
     end
 
     rm -rf $log_dir
+    functions -e __update_all_suggest
 
     echo "Done!"
 end
