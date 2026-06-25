@@ -7,6 +7,7 @@
 # Shell: Fish 4.6+ with Starship prompt
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
+auto-update = check
 auto-update-channel = tip
 
 # ─── Font ─────────────────────────────────────────────────────────────────────
@@ -43,7 +44,9 @@ window-new-tab-position = current
 window-inherit-font-size = true
 fullscreen = true
 resize-overlay = after-first
-scrollbar = never
+
+# Native overlay scrollbars (Ghostty 1.3+)
+scrollbar = system
 
 # Translucent glass effect (titlebar inherits this look)
 background-opacity = 0.90
@@ -61,7 +64,6 @@ mouse-hide-while-typing = true
 keybind = shift+enter=text:\n
 keybind = ctrl+enter=text:\n
 keybind = cmd+enter=text:\n
-keybind = global:cmd+shift+space=unbind
 keybind = ctrl+shift+equal=equalize_splits
 
 # macOS standard
@@ -98,6 +100,7 @@ keybind = resize/j=resize_split:down,10
 keybind = resize/k=resize_split:up,10
 keybind = resize/l=resize_split:right,10
 keybind = resize/escape=deactivate_key_table
+keybind = resize/catch_all=ignore
 
 # ─── Tab Management ──────────────────────────────────────────────────────────
 
@@ -152,6 +155,9 @@ selection-clear-on-copy = true
 # Save terminal screen to file (useful for long Claude Code output)
 keybind = cmd+shift+s=write_screen_file:open,plain
 
+# Freeze noisy panes/log output without killing the process
+keybind = cmd+shift+r=toggle_readonly
+
 # Toggle mouse reporting for TUI apps
 keybind = cmd+shift+m=toggle_mouse_reporting
 
@@ -159,7 +165,7 @@ keybind = cmd+shift+m=toggle_mouse_reporting
 
 link-url = true
 link-previews = true
-bold-is-bright = true
+bold-color = bright
 confirm-close-surface = true
 desktop-notifications = true
 bell-features = title,attention
@@ -174,6 +180,7 @@ notify-on-command-finish-after = 5s
 notify-on-command-finish-action = bell,notify
 
 # Quick Terminal (drop-down)
+keybind = global:cmd+shift+space=toggle_quick_terminal
 quick-terminal-position = top
 quick-terminal-animation-duration = 0.2
 quick-terminal-autohide = true
