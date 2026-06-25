@@ -125,8 +125,20 @@ function update_all -d "Update tools with their native managers"
                 echo "Homebrew..."
                 brew update
                 and brew upgrade
-                and brew upgrade --cask --greedy
                 set -l code $status
+                if test $code -eq 0
+                    if sudo -n -v 2>/dev/null
+                        brew upgrade --cask --greedy
+                        set code $status
+                    else
+                        set -l outdated_casks (brew outdated --cask --greedy -q 2>/dev/null)
+                        if test (count $outdated_casks) -gt 0
+                            echo "Homebrew casks skipped (sudo credentials unavailable): "(string join ", " $outdated_casks)
+                        else
+                            echo "Homebrew casks are up to date."
+                        end
+                    end
+                end
                 echo $code > $argv[1]
                 exit $code
             '
@@ -227,7 +239,7 @@ function update_all -d "Update tools with their native managers"
             set -l status_file "$log_dir/cargo.status"
             set -l script '
                 echo "cargo-installed binaries..."
-                cargo install-update -a
+                cargo install-update -a --locked
                 set -l code $status
                 echo $code > $argv[1]
                 exit $code
@@ -476,8 +488,20 @@ function update_all -d "Update tools with their native managers"
             echo "Homebrew..."
             brew update
             and brew upgrade
-            and brew upgrade --cask --greedy
             set -l code $status
+            if test $code -eq 0
+                if sudo -n -v 2>/dev/null
+                    brew upgrade --cask --greedy
+                    set code $status
+                else
+                    set -l outdated_casks (brew outdated --cask --greedy -q 2>/dev/null)
+                    if test (count $outdated_casks) -gt 0
+                        echo "Homebrew casks skipped (sudo credentials unavailable): "(string join ", " $outdated_casks)
+                    else
+                        echo "Homebrew casks are up to date."
+                    end
+                end
+            end
             echo $code > $argv[1]
             exit $code
         ' $status_file >$log 2>&1 &
@@ -602,7 +626,7 @@ function update_all -d "Update tools with their native managers"
         set -l status_file "$log_dir/cargo.status"
         fish -lc '
             echo "cargo-installed binaries..."
-            cargo install-update -a
+            cargo install-update -a --locked
             set -l code $status
             echo $code > $argv[1]
             exit $code
