@@ -1,8 +1,10 @@
 # Fish Configuration Notes
 
 Fish is managed directly from this directory. `scripts/link.sh` symlinks
-`config.fish`, `fish_plugins`, `conf.d/zz_sponge_compat.fish`, and every
-file under `functions/` into `~/.config/fish/`.
+`config.fish`, `conf.d/zz_sponge_compat.fish`, and every file under
+`functions/` into `~/.config/fish/`. `fish/fish_plugins` is the desired
+plugin list; Fisher owns the normalized live `~/.config/fish/fish_plugins`
+file after `scripts/install-fish-plugins.fish` runs.
 
 ## Where to edit what
 

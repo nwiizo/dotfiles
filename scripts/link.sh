@@ -2,7 +2,7 @@
 set -euo pipefail
 
 repo="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-backup_suffix="pre-nix-removal-$(date +%Y%m%d%H%M%S)"
+backup_suffix="pre-dotfiles-link-$(date +%Y%m%d%H%M%S)"
 
 backup_if_needed() {
   local target="$1"

@@ -95,7 +95,7 @@ fish scripts/install-fish-plugins.fish
 ## Linked Paths
 
 `scripts/link.sh` replaces existing symlinks and backs up non-symlink files with
-a `pre-nix-removal-*` suffix before linking.
+a `pre-dotfiles-link-*` suffix before linking.
 
 | Repo path | Live path |
 |---|---|
@@ -193,7 +193,7 @@ Current shape:
 - UI: catppuccin mocha, no statusline, `incline.nvim`, `noice.nvim`,
   `snacks.nvim`, `oil.nvim`, `overlook.nvim`
 - Completion: `blink.cmp`
-- AI: CopilotChat, Avante, CodeCompanion, Claude Code
+- AI: CopilotChat, Avante, CodeCompanion, Codex, Claude Code
 - Git: gitsigns, Diffview, LazyGit, gitlinker
 - Rust: rustaceanvim, crates.nvim, neotest, DAP
 

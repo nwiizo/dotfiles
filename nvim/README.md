@@ -177,7 +177,6 @@ nvim/
 
 | Extra | 内容 |
 |---|---|
-| `editor.oil` | ファイルマネージャ |
 | `editor.telescope` | Fuzzy finder |
 | `editor.inc-rename` | LSPリネームのライブプレビュー |
 | `editor.dial` | `<C-a>`/`<C-x>` でbool/演算子トグル |
@@ -201,6 +200,14 @@ Custom AI integrations live in `lua/plugins/ai.lua`:
 | `johnseth97/codex.nvim` | Codex CLI side-panel terminal |
 | `coder/claudecode.nvim` | Claude Code side-panel terminal |
 | `olimorris/codecompanion.nvim` | Vim-native Copilot-backed chat and inline actions |
+
+Other custom integrations live in feature files under `lua/plugins/`:
+
+| Plugin | Role |
+|---|---|
+| `stevearc/oil.nvim` | file explorer; configured directly because there is no active LazyVim `editor.oil` Extra |
+| `WilliamHsieh/overlook.nvim` | stackable LSP definition popups |
+| `axkirillov/hbac.nvim` | automatic cleanup for unused buffers |
 
 ## プラグイン選定メモ
 
