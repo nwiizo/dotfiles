@@ -128,14 +128,19 @@ Most edits happen in the repo, then the owning app or shell is restarted.
 | Warp workflows/themes | Run `./scripts/link.sh`, then restart Warp if needed |
 | Homebrew packages | Edit `Brewfile`, then run `brew bundle --file Brewfile` |
 
-The `update_all` Fish function updates common tools in parallel without
-password prompts. Mac App Store updates are skipped by default.
+The `update_all` Fish function updates common tools sequentially by default and
+streams updater output so confirmation prompts are visible. Use `--parallel` or
+`--non-interactive` when prompts should be disabled. Mac App Store updates are
+skipped by default.
 
 ```bash
 update_all
+update_all --parallel
+update_all --non-interactive
 update_all --no-brew
 update_all --no-rust
 update_all --no-nvim
+update_all --with-mas
 update_all --help
 ```
 
@@ -164,7 +169,12 @@ gc='git commit -v'                   gcm='git commit -m'
 gp='git push'                        gpl='git pull'
 d=docker     dc='docker compose'     k=kubectl
 c='claude --dangerously-skip-permissions'
+cbare='claude --bare'                csafe='claude --safe-mode'
+cdoc='claude doctor'                 cagents='claude agents'
 cx='codex --dangerously-bypass-approvals-and-sandbox'
+cxs='codex --sandbox workspace-write --ask-for-approval on-request'
+cxro='codex --sandbox read-only'     cxe='codex exec'
+cxr='codex resume'                   cxrev='codex review --uncommitted'
 v=nvim       lg=lazygit              repo=ghq_fzf_repo
 actx=ai_context                      actxc='ai_context | pbcopy'
 ```
@@ -198,7 +208,7 @@ Ghostty is the primary terminal config in `ghostty/config`.
 - Fish shell integration
 - Vim-style pane navigation with `Ctrl+H/J/K/L`
 - AI-friendly scrollback and screen dump bindings
-- Quick terminal settings
+- Split zoom, split equalization, and resize-mode bindings
 
 Warp remains active alongside Ghostty for Agent Mode, block-based output,
 notebooks, Warp Drive, and reusable workflows. See `warp/README.md`.
