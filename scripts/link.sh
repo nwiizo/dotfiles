@@ -3,15 +3,31 @@ set -euo pipefail
 
 repo="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 backup_suffix="pre-dotfiles-link-$(date +%Y%m%d%H%M%S)"
+backup_root="$HOME/.dotfiles-link-backups/$backup_suffix"
 
 backup_if_needed() {
   local target="$1"
 
   if [[ -e "$target" && ! -L "$target" ]]; then
-    mv "$target" "$target.$backup_suffix"
+    local backup="$backup_root$target"
+    mkdir -p "$(dirname "$backup")"
+    mv "$target" "$backup"
   elif [[ -L "$target" ]]; then
     rm -f "$target"
   fi
+}
+
+ensure_dir() {
+  local target="$1"
+
+  if [[ -L "$target" ]]; then
+    rm -f "$target"
+  elif [[ -e "$target" && ! -d "$target" ]]; then
+    local backup="$backup_root$target"
+    mkdir -p "$(dirname "$backup")"
+    mv "$target" "$backup"
+  fi
+  mkdir -p "$target"
 }
 
 link_file() {
@@ -32,29 +48,25 @@ link_dir() {
   ln -s "$source" "$target"
 }
 
-remove_nix_store_symlinks() {
-  local dir="$1"
+link_dir_children() {
+  local source_dir="$1"
+  local target_dir="$2"
 
-  [[ -d "$dir" ]] || return 0
-
-  while IFS= read -r link; do
+  ensure_dir "$target_dir"
+  for target in "$target_dir"/*; do
+    [[ -L "$target" ]] || continue
     local dest
-    dest="$(readlink "$link" || true)"
-    case "$dest" in
-      /nix/store/*) rm -f "$link" ;;
-    esac
-  done < <(find "$dir" -type l -print)
-}
+    dest="$(readlink "$target" || true)"
+    if [[ "$dest" == "$source_dir"/* && ! -e "$dest" ]]; then
+      rm -f "$target"
+    fi
+  done
 
-remove_nix_store_symlinks "$HOME/.config/fish/conf.d"
-remove_nix_store_symlinks "$HOME/.config/fish/functions"
-remove_nix_store_symlinks "$HOME/.config/atuin"
-remove_nix_store_symlinks "$HOME/.config/bat"
-remove_nix_store_symlinks "$HOME/.config/gh"
-remove_nix_store_symlinks "$HOME/.config/git"
-remove_nix_store_symlinks "$HOME/.config/ghostty"
-remove_nix_store_symlinks "$HOME/.config/tealdeer"
-remove_nix_store_symlinks "$HOME/.warp"
+  for source in "$source_dir"/*; do
+    [[ -e "$source" ]] || continue
+    link_dir "$source" "$target_dir/$(basename "$source")"
+  done
+}
 
 link_file "$repo/fish/config.fish" "$HOME/.config/fish/config.fish"
 link_file "$repo/fish/conf.d/zz_sponge_compat.fish" "$HOME/.config/fish/conf.d/zz_sponge_compat.fish"
@@ -80,5 +92,24 @@ link_file "$repo/warp/themes/catppuccin-mocha.yaml" "$HOME/.warp/themes/catppucc
 for workflow_file in "$repo"/warp/workflows/*.yaml; do
   link_file "$workflow_file" "$HOME/.warp/workflows/$(basename "$workflow_file")"
 done
+
+nippo_skill="$HOME/ghq/github.com/nwiizo/nippo/.claude/skills/nippo"
+
+link_file "$repo/.agents/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
+link_file "$repo/.agents/RTK.md" "$HOME/.claude/RTK.md"
+link_file "$repo/.agents/claudeignore" "$HOME/.claude/.claudeignore"
+link_dir "$repo/.agents/agents" "$HOME/.claude/agents"
+link_dir "$repo/.agents/docs" "$HOME/.claude/docs"
+link_dir "$repo/.agents/rules" "$HOME/.claude/rules"
+link_dir_children "$repo/.agents/skills" "$HOME/.claude/skills"
+[[ -d "$nippo_skill" ]] && link_dir "$nippo_skill" "$HOME/.claude/skills/nippo"
+
+link_dir "$repo/.agents/agents" "$HOME/.agents/agents"
+link_dir "$repo/.agents/docs" "$HOME/.agents/docs"
+link_dir "$repo/.agents/rules" "$HOME/.agents/rules"
+link_dir_children "$repo/.agents/skills" "$HOME/.agents/skills"
+[[ -d "$nippo_skill" ]] && link_dir "$nippo_skill" "$HOME/.agents/skills/nippo"
+
+link_dir_children "$repo/.agents/codex/agents" "$HOME/.codex/agents"
 
 echo "Linked dotfiles from $repo"

@@ -4,13 +4,12 @@ This guide applies to the whole repository.
 
 ## Repository Scope
 
-Personal macOS development environment. Nix/Home Manager is no longer part
-of the active setup; Homebrew owns binaries and this repo owns config files
-via direct symlinks.
+Personal macOS development environment. Homebrew owns binaries and this repo
+owns config files via direct symlinks.
 
 | Path | Purpose |
 |---|---|
-| `Brewfile` | Homebrew packages that replace the old Nix profile |
+| `Brewfile` | Homebrew packages |
 | `scripts/` | Bootstrap, symlink, and plugin install helpers |
 | `fish/` | Fish `config.fish`, Fisher plugin list, functions, and `conf.d` patches |
 | `nvim/` | Neovim (LazyVim) config |
@@ -18,16 +17,18 @@ via direct symlinks.
 | `warp/` | Warp keybindings, themes, and workflows |
 | `git/` | Git config and helper scripts |
 | `bat/`, `atuin/`, `tealdeer/`, `gh/` | Tool config files |
+| `.agents/` | Reusable agents, rules, docs, and skills linked into local agent homes |
 
 Reference-only:
 
 - `archive/` — old configs. Do not edit unless explicitly requested.
 
-## Live Config Reality
+## Linked Config
 
-`scripts/link.sh` symlinks repo files into `~/.config`, `~/.warp`, and
-`~/.local/bin`. Do not edit generated/live files directly; edit the repo
-source, then re-run `./scripts/link.sh` when adding/removing linked files.
+`scripts/link.sh` symlinks repo files into `~/.config`, `~/.warp`,
+`~/.local/bin`, `~/.claude`, and `~/.agents`. Do not edit generated target
+files directly; edit the repo source, then re-run `./scripts/link.sh` when
+adding/removing linked files.
 
 | You want to change ... | Edit ... |
 |---|---|
@@ -40,6 +41,7 @@ source, then re-run `./scripts/link.sh` when adding/removing linked files.
 | Warp | `warp/keybindings.yaml`, `warp/themes/*.yaml`, `warp/workflows/*.yaml` |
 | Git / GitHub config | `git/config`, `gh/config.yml` |
 | Bat / Atuin / tealdeer | `bat/config`, `atuin/config.toml`, `tealdeer/config.toml` |
+| Shared agents / rules / docs / skills | `.agents/` |
 | Packages | `Brewfile` |
 
 ## Apply Changes
@@ -58,7 +60,6 @@ source, then re-run `./scripts/link.sh` when adding/removing linked files.
 - Do not revert unrelated user changes.
 - Keep `archive/` untouched unless the user explicitly asks for archive work.
 - Neovim plugin specs go under `nvim/lua/plugins/`.
-- Do not reintroduce Nix, Home Manager, or nix-darwin into active config.
 
 ## Validation
 

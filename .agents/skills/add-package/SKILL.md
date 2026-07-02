@@ -10,8 +10,8 @@ description: |
 
 # add-package
 
-Add packages through Homebrew. Nix, Home Manager, and nix-darwin are not part
-of the active setup.
+Add packages through Homebrew. This repo's package management is the top-level
+`Brewfile`.
 
 ## Decision Flow
 
@@ -29,7 +29,7 @@ brew info <name>
    - CLI tools: `brew "<formula>"`
    - GUI apps: `cask "<cask>"`
    - Keep existing grouping and simple alphabetical order where practical.
-   - Do not add Nix files or Home Manager modules.
+   - Keep package changes in `Brewfile`.
 
 4. Validate before applying:
 
@@ -81,8 +81,8 @@ for f in fish/functions/*.fish; do fish -n "$f" || exit 1; done
 
 ## Don't
 
-- Do not create or edit `home/*.nix`, `flake.nix`, or nix-darwin files.
+- Do not create unrelated package management files.
 - Do not run `brew uninstall` unless the user explicitly asks.
 - Do not add a package twice under different names.
-- Do not edit generated/live files under `~/.config`; edit repo sources.
+- Do not edit generated target files under `~/.config`; edit repo sources.
 - Do not reformat unrelated parts of `Brewfile`.

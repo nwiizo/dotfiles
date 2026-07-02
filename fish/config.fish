@@ -17,24 +17,6 @@ set -gx XDG_DATA_HOME $HOME/.local/share
 set -gx XDG_STATE_HOME $HOME/.local/state
 set -gx XDG_CACHE_HOME $HOME/.cache
 
-# Remove old Nix profile paths from Fish universal paths and this process.
-set -l old_nix_paths $HOME/.nix-profile/bin /nix/var/nix/profiles/default/bin
-if set -q fish_user_paths
-    set -l clean_user_paths
-    for path_entry in $fish_user_paths
-        contains -- $path_entry $old_nix_paths; and continue
-        set -a clean_user_paths $path_entry
-    end
-    set -U fish_user_paths $clean_user_paths
-end
-
-set -l clean_path
-for path_entry in $PATH
-    contains -- $path_entry $old_nix_paths; and continue
-    set -a clean_path $path_entry
-end
-set -gx PATH $clean_path
-
 # Editors
 set -gx EDITOR nvim
 set -gx VISUAL nvim

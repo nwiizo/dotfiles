@@ -3,35 +3,50 @@
 Personal macOS development environment. Homebrew owns binaries; this repo owns
 config files through direct symlinks.
 
-> Warning: breaking changes may occur. This is a working garden, not a product.
+## Start Here
 
-## This Is a Garden
+This repo has three responsibilities:
 
-There are two kinds of development environments: the ones given to you, and the
-ones you grow.
+1. Install binaries with Homebrew via `Brewfile`.
+2. Keep app and CLI config in repo-owned source files.
+3. Link those source files into macOS config locations.
 
-Using someone else's defaults is easy. Everyone installs the same editor with
-the same extensions, pressing the same keybindings. It might be efficient, but
-it is fundamentally different from choosing your own tools, sharpening them, and
-arranging them yourself. Installing something convenient and consuming it is not
-the same as composing your own environment with your own hands.
+For a new machine:
 
-Writing dotfiles means building your own workspace from the ground up.
+```bash
+cd ~/ghq/github.com/nwiizo/dotfiles
+./scripts/bootstrap.sh
+```
 
-A garden never turns out exactly as planned. Neovim keymaps settle into muscle
-memory over years, while AI integration configs get rewritten monthly. Fish
-abbreviations need time before your fingers learn them, and sometimes, like
-migrating to Ghostty, you have to tear up the soil entirely. Multiple timelines
-overlap in one place.
+For an existing machine after editing config:
 
-That is fine.
+```bash
+./scripts/link.sh
+fish scripts/install-fish-plugins.fish
+brew bundle check --file Brewfile
+```
 
-A perfectly managed environment is, by definition, someone else's managed
-environment. It becomes your place precisely because it contains parts you cannot
-fully tame. What you build up over time becomes the foundation of how you write
-code.
+## Documentation Map
 
-## Current Stack
+Read this file for the overall model. Use the subdirectory docs when changing a
+specific tool:
+
+| Area | Start here | Edit mostly |
+|---|---|---|
+| Packages | `Brewfile` | `Brewfile` |
+| Linking/bootstrap | `scripts/link.sh`, `scripts/bootstrap.sh` | `scripts/` |
+| Fish | `fish/README.md` | `fish/config.fish`, `fish/functions/`, `fish/fish_plugins` |
+| Neovim | `nvim/README.md` | `nvim/lua/config/`, `nvim/lua/plugins/` |
+| Ghostty | `ghostty/README.md` | `ghostty/config` |
+| Warp | `warp/README.md` | `warp/keybindings.yaml`, `warp/themes/`, `warp/workflows/` |
+| Git / GitHub CLI | `git/README.md` | `git/config`, `git/power_pull.sh`, `gh/config.yml` |
+| Small CLI configs | this README | `bat/`, `atuin/`, `tealdeer/` |
+| Agent config | `.agents/README.md` | reusable agents, rules, docs, and skills |
+
+Agent-facing repository rules are in `AGENTS.md`; `CLAUDE.md` points Claude
+Code at the same rules.
+
+## Managed Stack
 
 | Layer | Owner | Files |
 |---|---|---|
@@ -42,9 +57,7 @@ code.
 | GitHub / Git | gh, git-delta, lazygit | `gh/config.yml`, `git/config`, `git/power_pull.sh` |
 | CLI config | bat, atuin, tealdeer | `bat/config`, `atuin/config.toml`, `tealdeer/config.toml` |
 | Linking / bootstrap | Shell scripts | `scripts/bootstrap.sh`, `scripts/link.sh` |
-
-Nix, Home Manager, and nix-darwin are no longer active. Old material lives under
-`archive/` for reference only.
+| Agent config | Claude / Agents | `.agents/` |
 
 ## Repository Layout
 
@@ -53,7 +66,7 @@ dotfiles/
 ├── Brewfile                 # Homebrew formulae and casks
 ├── scripts/
 │   ├── bootstrap.sh         # brew bundle + symlink + fish plugin install
-│   ├── link.sh              # symlink repo config into live locations
+│   ├── link.sh              # symlink repo config into target locations
 │   └── install-fish-plugins.fish
 ├── fish/                    # Fish init, functions, plugins, conf.d patch
 ├── nvim/                    # LazyVim based Neovim config
@@ -61,6 +74,7 @@ dotfiles/
 ├── warp/                    # Warp keybindings, themes, workflows
 ├── git/                     # Git config and helper scripts
 ├── gh/                      # GitHub CLI config
+├── .agents/                 # Reusable agent config linked into ~/.claude and ~/.agents
 ├── bat/                     # bat config
 ├── atuin/                   # atuin config
 ├── tealdeer/                # tealdeer config
@@ -94,10 +108,10 @@ fish scripts/install-fish-plugins.fish
 
 ## Linked Paths
 
-`scripts/link.sh` replaces existing symlinks and backs up non-symlink files with
-a `pre-dotfiles-link-*` suffix before linking.
+`scripts/link.sh` replaces existing symlinks and backs up non-symlink targets
+under `~/.dotfiles-link-backups/pre-dotfiles-link-*` before linking.
 
-| Repo path | Live path |
+| Repo path | Target path |
 |---|---|
 | `fish/config.fish` | `~/.config/fish/config.fish` |
 | `fish/conf.d/zz_sponge_compat.fish` | `~/.config/fish/conf.d/zz_sponge_compat.fish` |
@@ -113,6 +127,14 @@ a `pre-dotfiles-link-*` suffix before linking.
 | `warp/keybindings.yaml` | `~/.warp/keybindings.yaml` |
 | `warp/themes/*.yaml` | `~/.warp/themes/*.yaml` |
 | `warp/workflows/*.yaml` | `~/.warp/workflows/*.yaml` |
+| `.agents/CLAUDE.md` | `~/.claude/CLAUDE.md` |
+| `.agents/RTK.md` | `~/.claude/RTK.md` |
+| `.agents/claudeignore` | `~/.claude/.claudeignore` |
+| `.agents/agents/` | `~/.claude/agents`, `~/.agents/agents` |
+| `.agents/docs/` | `~/.claude/docs`, `~/.agents/docs` |
+| `.agents/rules/` | `~/.claude/rules`, `~/.agents/rules` |
+| `.agents/skills/*` | `~/.claude/skills/*`, `~/.agents/skills/*` |
+| `.agents/codex/agents/*.toml` | `~/.codex/agents/*.toml` |
 
 ## Daily Workflow
 
@@ -143,6 +165,20 @@ update_all --no-nvim
 update_all --with-mas
 update_all --help
 ```
+
+## Change Guide
+
+| You want to change ... | Edit | Apply |
+|---|---|---|
+| Shell env, PATH, abbreviations, fzf defaults | `fish/config.fish` | new shell or `exec fish` |
+| Fish helper command | `fish/functions/*.fish` | `./scripts/link.sh` if adding/removing files |
+| Fisher plugins | `fish/fish_plugins` | `fish scripts/install-fish-plugins.fish` |
+| Neovim plugin or keymap | `nvim/lua/...` | restart Neovim |
+| Ghostty | `ghostty/config` | restart Ghostty |
+| Warp keybindings/theme/workflow | `warp/...` | `./scripts/link.sh`, then restart Warp if needed |
+| Git / gh | `git/config`, `gh/config.yml` | new shell or next command invocation |
+| Homebrew package | `Brewfile` | `brew bundle --file Brewfile` |
+| Shared agent config | `.agents/` | `./scripts/link.sh` |
 
 ## Fish
 
@@ -186,7 +222,7 @@ See `fish/README.md` for the directory contract.
 `nvim/` is a LazyVim based configuration for Rust, Go, TypeScript, Python,
 Terraform, Lua, Bash, Zig, HTML/CSS, and AI-assisted coding.
 
-Current shape:
+Configuration layout:
 
 - `nvim/lua/config/`: LazyVim bootstrap, options, keymaps, autocmds
 - `nvim/lua/plugins/`: feature-grouped plugin specs
@@ -210,8 +246,8 @@ Ghostty is the primary terminal config in `ghostty/config`.
 - AI-friendly scrollback and screen dump bindings
 - Split zoom, split equalization, and resize-mode bindings
 
-Warp remains active alongside Ghostty for Agent Mode, block-based output,
-notebooks, Warp Drive, and reusable workflows. See `warp/README.md`.
+Warp config is also managed here for Agent Mode, block-based output, notebooks,
+Warp Drive, and reusable workflows. See `warp/README.md`.
 
 ## Validation
 
