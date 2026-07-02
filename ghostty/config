@@ -180,7 +180,7 @@ notify-on-command-finish-after = 5s
 notify-on-command-finish-action = bell,notify
 
 # Quick Terminal (drop-down)
-keybind = global:cmd+shift+space=toggle_quick_terminal
+keybind = global:cmd+shift+space=unbind
 quick-terminal-position = top
 quick-terminal-animation-duration = 0.2
 quick-terminal-autohide = true
