@@ -17,7 +17,9 @@ owns config files via direct symlinks.
 | `warp/` | Warp keybindings, themes, and workflows |
 | `git/` | Git config and helper scripts |
 | `bat/`, `atuin/`, `tealdeer/`, `gh/` | Tool config files |
-| `.agents/` | Reusable agents, rules, docs, and skills linked into local agent homes |
+| `.agents/` | Source of reusable agents, rules, docs, and skills |
+| `.claude/` | Claude Code project entrypoint symlinks into `.agents/` |
+| `.codex/` | Codex project custom-agent entrypoint symlinks into `.agents/codex/` |
 
 Reference-only:
 
@@ -26,9 +28,9 @@ Reference-only:
 ## Linked Config
 
 `scripts/link.sh` symlinks repo files into `~/.config`, `~/.warp`,
-`~/.local/bin`, `~/.claude`, and `~/.agents`. Do not edit generated target
-files directly; edit the repo source, then re-run `./scripts/link.sh` when
-adding/removing linked files.
+`~/.local/bin`, `~/.claude`, `~/.agents`, and `~/.codex`. Do not edit
+generated target files directly; edit the repo source, then re-run
+`./scripts/link.sh` when adding/removing linked files.
 
 | You want to change ... | Edit ... |
 |---|---|
@@ -42,6 +44,8 @@ adding/removing linked files.
 | Git / GitHub config | `git/config`, `gh/config.yml` |
 | Bat / Atuin / tealdeer | `bat/config`, `atuin/config.toml`, `tealdeer/config.toml` |
 | Shared agents / rules / docs / skills | `.agents/` |
+| Claude Code project entrypoints | `.claude/` symlinks |
+| Codex custom agents | `.agents/codex/agents/` |
 | Packages | `Brewfile` |
 
 ## Apply Changes
@@ -69,6 +73,7 @@ For symlink/bootstrap changes:
 ./scripts/link.sh
 fish scripts/install-fish-plugins.fish
 brew bundle check --file Brewfile
+./scripts/audit-agent-config.sh
 ```
 
 For Fish changes:

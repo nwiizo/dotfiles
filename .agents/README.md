@@ -15,13 +15,15 @@ dotfiles and link into local agent homes.
 | `docs/` | `~/.claude/docs`, `~/.agents/docs` | On-demand technical notes |
 | `skills/` | `~/.claude/skills/*`, `~/.agents/skills/*` | Reusable skills |
 | `codex/agents/` | `~/.codex/agents/*.toml` | Reusable Codex subagents |
+| `.claude/` symlinks | project `.claude/*` | Claude Code project entrypoints |
+| `.codex/agents` symlink | project `.codex/agents` | Codex project custom-agent entrypoint |
 
 `scripts/link.sh` links skill directories one by one. This keeps room for
 external skills such as `nippo`, which belongs to its own repository.
 
-Review judgment belongs in `agents/`. Skills may orchestrate review flows or
+Review judgment belongs in subagents. Skills may orchestrate review flows or
 apply accepted review comments, but reviewer personas and checklists should be
-implemented as subagents.
+implemented as Claude Code agents and Codex custom agents.
 
 ## Excluded
 

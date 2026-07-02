@@ -42,6 +42,8 @@ specific tool:
 | Git / GitHub CLI | `git/README.md` | `git/config`, `git/power_pull.sh`, `gh/config.yml` |
 | Small CLI configs | this README | `bat/`, `atuin/`, `tealdeer/` |
 | Agent config | `.agents/README.md` | reusable agents, rules, docs, and skills |
+| Claude Code entrypoints | `.claude/README.md` | symlinks into `.agents/` |
+| Codex entrypoints | `.codex/README.md` | symlinks into `.agents/codex/` |
 
 Agent-facing repository rules are in `AGENTS.md`; `CLAUDE.md` points Claude
 Code at the same rules.
@@ -75,6 +77,8 @@ dotfiles/
 ├── git/                     # Git config and helper scripts
 ├── gh/                      # GitHub CLI config
 ├── .agents/                 # Reusable agent config linked into ~/.claude and ~/.agents
+├── .claude/                 # Claude Code project symlinks into .agents
+├── .codex/                  # Codex project symlinks into .agents/codex
 ├── bat/                     # bat config
 ├── atuin/                   # atuin config
 ├── tealdeer/                # tealdeer config
@@ -124,6 +128,8 @@ under `~/.dotfiles-link-backups/pre-dotfiles-link-*` before linking.
 | `git/config` | `~/.config/git/config` |
 | `gh/config.yml` | `~/.config/gh/config.yml` |
 | `git/power_pull.sh` | `~/.local/bin/power_pull` |
+| `scripts/audit-agent-config.sh` | local validation helper |
+| `scripts/summarize-ai-history.py` | local AI-history aggregate helper |
 | `warp/keybindings.yaml` | `~/.warp/keybindings.yaml` |
 | `warp/themes/*.yaml` | `~/.warp/themes/*.yaml` |
 | `warp/workflows/*.yaml` | `~/.warp/workflows/*.yaml` |
@@ -135,6 +141,8 @@ under `~/.dotfiles-link-backups/pre-dotfiles-link-*` before linking.
 | `.agents/rules/` | `~/.claude/rules`, `~/.agents/rules` |
 | `.agents/skills/*` | `~/.claude/skills/*`, `~/.agents/skills/*` |
 | `.agents/codex/agents/*.toml` | `~/.codex/agents/*.toml` |
+| `.claude/agents`, `.claude/rules`, `.claude/skills` | project symlinks into `.agents/` |
+| `.codex/agents` | project symlink into `.agents/codex/agents` |
 
 ## Daily Workflow
 
@@ -178,7 +186,7 @@ update_all --help
 | Warp keybindings/theme/workflow | `warp/...` | `./scripts/link.sh`, then restart Warp if needed |
 | Git / gh | `git/config`, `gh/config.yml` | new shell or next command invocation |
 | Homebrew package | `Brewfile` | `brew bundle --file Brewfile` |
-| Shared agent config | `.agents/` | `./scripts/link.sh` |
+| Shared agent config | `.agents/`, `.claude/`, `.codex/` | `./scripts/link.sh` |
 
 ## Fish
 
@@ -257,6 +265,7 @@ Run the checks that match the files you changed.
 ./scripts/link.sh
 fish scripts/install-fish-plugins.fish
 brew bundle check --file Brewfile
+./scripts/audit-agent-config.sh
 ```
 
 ```bash

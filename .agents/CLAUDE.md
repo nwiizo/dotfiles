@@ -13,6 +13,7 @@
 | Review comment quality | home-constructive-reviewer |
 | Final review, independent second opinion, parallel review trio | home-codex-reviewer |
 | jj history / workspace review | home-jj-reviewer |
+| dotfiles-wide environment audit | home-dotfiles-environment-auditor |
 | CLAUDE.md restructuring, memory optimization | home-memory-optimizer |
 
 ## Workflow
@@ -38,13 +39,16 @@ rust: [core](docs/rust-core.md) | [sqlx](docs/rust-sqlx.md) | [advanced](docs/ru
 ### Operations
 [git-workflow](docs/git-workflow.md) | [gcp-security](docs/gcp-security.md)
 
+### Agent Tooling
+[claude-code](docs/claude-code.md) | [codex](docs/codex.md)
+
 ## Skills
 
 ### Code Quality
 home-self-review | home-fix-review-comments | home-karpathy-guidelines
 
 ### Development Workflow
-home-orchestrator | home-iterative-refinement | home-validate-on-oss | home-proactive-suggestions
+home-orchestrator | home-iterative-refinement | home-validate-on-oss | home-proactive-suggestions | home-docs-curator | home-history-distill | home-jj-publish-main
 
 ### Tools
 home-sync-tasks | home-marp-slide-editing | prompt-review | nippo

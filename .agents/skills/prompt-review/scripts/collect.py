@@ -27,7 +27,7 @@ from pathlib import Path
 # クレデンシャル・シークレット検出パターン
 SECRET_PATTERNS = [
     (r'(?i)(api[_-]?key|apikey)\s*[:=]\s*\S+', "API Key"),
-    (r'(?i)(secret|token|password|passwd|pwd)\s*[:=]\s*\S+', "Secret/Token/Password"),
+    (r'(?i)\b(secret|token|password|passwd|pwd|pass)\b\s*[:=]\s*\S+', "Secret/Token/Password"),
     (r'(?i)(access[_-]?key|secret[_-]?key)\s*[:=]\s*\S+', "Access Key"),
     (r'(?i)(bearer\s+)[A-Za-z0-9\-._~+/]+=*', "Bearer Token"),
     (r'sk-[A-Za-z0-9]{20,}', "OpenAI API Key"),

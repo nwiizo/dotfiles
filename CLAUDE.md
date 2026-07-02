@@ -1,14 +1,10 @@
-# dotfiles Agent Guide (Claude)
+@AGENTS.md
 
-This file is for Claude Code. The canonical cross-agent guide is
-[`AGENTS.md`](./AGENTS.md); keep this file aligned when changing repository
-workflow rules.
+## Claude Code
 
-See `AGENTS.md` for the complete repository guide. The same rules apply
-to Claude Code; nothing is Claude-specific.
-
-## Quick reminders
-
-- Config files are symlinked by `./scripts/link.sh`; re-run it when adding
-  or removing linked files.
-- Packages are listed in `Brewfile`; Fish plugins are listed in `fish/fish_plugins`.
+- Claude Code project entrypoints live under `.claude/` and symlink to the
+  reusable sources in `.agents/`.
+- Keep this file small. Put durable repo rules in `AGENTS.md`, path-scoped
+  Claude rules in `.agents/rules/`, repeatable workflows in `.agents/skills/`,
+  and specialized reviewer/delegation personas in `.agents/agents/`.
+- Re-run `./scripts/link.sh` after changing user-level Claude assets.
