@@ -15,6 +15,7 @@
 | jj history / workspace review | home-jj-reviewer |
 | dotfiles-wide environment audit | home-dotfiles-environment-auditor |
 | CLAUDE.md restructuring, memory optimization | home-memory-optimizer |
+| Production incident, outage triage, SRE practices | home-incident-responder |
 
 ## Workflow
 
@@ -45,10 +46,13 @@ rust: [core](docs/rust-core.md) | [sqlx](docs/rust-sqlx.md) | [advanced](docs/ru
 ## Skills
 
 ### Code Quality
-home-self-review | home-fix-review-comments | home-karpathy-guidelines
+home-self-review | home-fix-review-comments | home-karpathy-guidelines | home-systematic-debugging | home-verification-before-completion
 
 ### Development Workflow
-home-orchestrator | home-iterative-refinement | home-validate-on-oss | home-proactive-suggestions | home-docs-curator | home-history-distill | home-jj-publish-main
+home-brainstorming | home-iterative-refinement | home-validate-on-oss | home-docs-curator | home-history-distill | home-jj-publish-main
+
+### SRE
+home-postmortem-writing | home-incident-runbook-templates | home-aws-finops-investigation | home-gcp-finops-investigation
 
 ### Tools
 home-sync-tasks | home-marp-slide-editing | prompt-review | nippo

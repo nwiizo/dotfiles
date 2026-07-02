@@ -1,7 +1,6 @@
 ---
 name: home-fix-review-comments
 description: 直前の会話に含まれるレビュー結果を精査し、妥当な指摘に対してのみ修正を実施する。レビュアーの指摘がすべて正しいとは限らないため、各コメントを批判的に評価する。
-user_invocable: true
 ---
 
 # fix-review-comments

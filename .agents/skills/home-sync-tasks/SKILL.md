@@ -30,11 +30,11 @@ Claude Code TaskList と vibe-ticket の同期。
 
 ### To vibe-ticket
 1. TaskList の各 Task から slug 生成（小文字、スペース→ハイフン）
-2. vibe-ticket に存在しなければ `vibe-ticket_new` で作成
-3. 存在すれば `vibe-ticket_edit` でステータス更新
+2. vibe-ticket に存在しなければ `vibe-ticket new <slug>` で作成
+3. 存在すれば `vibe-ticket edit <slug>` でステータス更新
 
 ### From vibe-ticket
-1. `vibe-ticket_list --open` で pending/in_progress を取得
+1. `vibe-ticket open --json` で pending/in_progress を取得
 2. TaskList に存在しなければ TaskCreate
 3. 存在すれば TaskUpdate でステータス更新
 
