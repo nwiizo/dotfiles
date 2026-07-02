@@ -9,7 +9,7 @@ LazyVimベースのNeovim設定。Rust、Go、TypeScript、Python開発とAI支�
 - **ベース**: [LazyVim](https://github.com/LazyVim/LazyVim)
 - **テーマ**: catppuccin mocha
 - **補完**: blink.cmp
-- **要件**: Neovim 0.11+
+- **要件**: Neovim 0.12+
 - **UI哲学**: 最小限のUI、最大限の編集領域
 
 ## カスタム設定の配置ルール
@@ -135,8 +135,8 @@ statusline/bufferlineを廃止し、必要な情報のみfloating windowで表�
 ```
 nvim/
 ├── init.lua                    # エントリポイント: require("config.lazy")
-├── lazy-lock.json              # プラグインバージョンロック
 ├── .stylua.toml                # Luaフォーマッター設定
+├── lazyvim.json                # LazyVim metadata
 └── lua/
     ├── config/
     │   ├── lazy.lua            # lazy.nvim bootstrap + Extras
@@ -153,7 +153,7 @@ nvim/
         ├── lsp.lua             # lspconfig, conform, mason, treesitter override
         ├── completion.lua      # blink.cmp override
         ├── coding.lua          # yanky override
-        ├── ai.lua              # copilot-chat, avante, codecompanion, claudecode
+        ├── ai.lua              # copilot-chat, avante, codecompanion, codex, claudecode
         └── lang.lua            # rustaceanvim, crates, neotest, dap, cargo, marp
 ```
 
@@ -192,6 +192,15 @@ nvim/
 |---|---|
 | `ai.copilot` | GitHub Copilot |
 | `ai.copilot-chat` | CopilotChat |
+
+Custom AI integrations live in `lua/plugins/ai.lua`:
+
+| Plugin | Role |
+|---|---|
+| `yetone/avante.nvim` | agentic editing through Codex ACP, Claude Code ACP, or Copilot |
+| `johnseth97/codex.nvim` | Codex CLI side-panel terminal |
+| `coder/claudecode.nvim` | Claude Code side-panel terminal |
+| `olimorris/codecompanion.nvim` | Vim-native Copilot-backed chat and inline actions |
 
 ## プラグイン選定メモ
 
@@ -407,8 +416,12 @@ nvim/
 | キー | モード | 説明 | 出典 |
 |---|---|---|---|
 | `<leader>aa` | n | AI質問 (avante) | P avante |
-| `<leader>ax` | n | AIでコード編集 (avante) | P avante |
+| `<leader>aE` | n | AIでコード編集 (avante) | P avante |
 | `<leader>aS` | n | Avante更新 | P avante |
+| `<leader>aVc` | n | Avante provider: Codex ACP | P avante |
+| `<leader>aVl` | n | Avante provider: Claude Code ACP | P avante |
+| `<leader>aVp` | n | Avante provider: Copilot | P avante |
+| `<leader>ax` | n | Codex sidebar toggle | P codex.nvim |
 | `<leader>ao` | n | CopilotChat開く | P copilot-chat |
 | `<leader>aq` | n | CopilotChat閉じる | P copilot-chat |
 | `<leader>ar` | n | CopilotChatリセット | P copilot-chat |
@@ -437,7 +450,7 @@ nvim/
 | `<leader>ay` | n | Claude diff accept | P claudecode |
 | `<leader>an` | n | Claude diff deny | P claudecode |
 
-### Codelens (`<leader>C` prefix)
+### Codelens
 
 | キー | モード | 説明 | 出典 |
 |---|---|---|---|
@@ -532,7 +545,8 @@ nvim/
 mv ~/.config/nvim ~/.config/nvim.bak
 
 # シンボリックリンク作成
-ln -sf ~/ghq/github.com/nwiizo/dotfiles/nvim ~/.config/nvim
+cd ~/ghq/github.com/nwiizo/dotfiles
+./scripts/link.sh
 
 # Neovim起動（プラグイン自動インストール）
 nvim

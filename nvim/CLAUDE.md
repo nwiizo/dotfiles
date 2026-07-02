@@ -2,7 +2,7 @@
 
 LazyVimベースのNeovim設定。Rust/Go/TypeScript/Python開発 + AI支援コーディング + 2026 Minimal UI。
 
-**Base:** LazyVim | **Theme:** catppuccin mocha | **Completion:** blink.cmp | **Requirements:** Neovim 0.11+
+**Base:** LazyVim | **Theme:** catppuccin mocha | **Completion:** blink.cmp | **Requirements:** Neovim 0.12+
 
 ## Directory Structure
 
@@ -19,7 +19,7 @@ nvim/lua/
     ├── lsp.lua          # lspconfig, conform, mason, treesitter
     ├── completion.lua   # blink.cmp
     ├── coding.lua       # yanky
-    ├── ai.lua           # copilot-chat, avante, codecompanion, claudecode
+    ├── ai.lua           # copilot-chat, avante, codecompanion, codex.nvim, claudecode
     └── lang.lua         # rustaceanvim, crates, neotest, dap, cargo.nvim, marp.nvim
 ```
 
@@ -37,10 +37,15 @@ nvim/lua/
 LazyVim管理プラグインは `opts` テーブルのみ返す（LazyVimデフォルトにマージされる）。
 カスタムプラグインは通常のlazy.nvimスペックを返す。
 
-## Claude Code Keymaps (`<leader>C` prefix)
+## AI Keymaps (`<leader>a` prefix)
 
-`<leader>Cc` toggle, `<leader>Cf` focus, `<leader>Cr` resume, `<leader>CC` continue
-（LazyVimの `<leader>c` = code group との衝突回避のため大文字 `C` prefix）
+`<leader>ax` toggles Codex sidebar. Avante uses `<leader>aa` for ask,
+`<leader>aE` for edit, and `<leader>aV{c,l,p}` to switch between Codex ACP,
+Claude Code ACP, and Copilot providers. Claude Code uses `<leader>ac`,
+`<leader>aF`, `<leader>au`, and `<leader>aK`.
+
+LazyVim's `<leader>c` remains the code group. AI integrations stay under
+`<leader>a`; codelens is available through `<leader>Cl`.
 
 ## LazyVim移行で得た知見（2026-03）
 
@@ -71,7 +76,9 @@ opts.server.default_settings = vim.tbl_deep_extend("force", opts.server.default_
 LazyVimが使う主要prefix: `<leader>c` (code), `<leader>f` (find), `<leader>s` (search), `<leader>g` (git), `<leader>d` (debug/DAP), `<leader>x` (diagnostics), `<leader>b` (buffer), `<leader>u` (toggle), `<leader>q` (session)
 
 衝突回避で採用した方式:
-- Claude Code: `<leader>c` → `<leader>C`（大文字prefix）
+- AI integrations: `<leader>a` group
+- Codex sidebar: `<leader>ax`, overriding LazyVim CopilotChat reset there
+- Avante edit: `<leader>aE` to leave `<leader>ax` for Codex
 - Crates.nvim: `<leader>c` → `<leader>rc`（Rust subgroup）
 - Delete without yank: `<leader>d` → `<leader>D`（大文字）
 
