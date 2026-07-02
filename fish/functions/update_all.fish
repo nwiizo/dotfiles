@@ -1,8 +1,8 @@
 function update_all -d "Update tools with their native managers"
-    argparse h/help verbose parallel with-mas no-brew no-mise no-claude no-rust no-nvim no-mason no-fisher no-npm no-cargo no-go no-uv no-pipx no-mas no-gem -- $argv
+    argparse h/help verbose parallel non-interactive with-mas no-brew no-mise no-claude no-rust no-nvim no-mason no-fisher no-npm no-cargo no-go no-uv no-pipx no-mas no-gem -- $argv
     or return 2
 
-    set -l usage "usage: update_all [--verbose] [--parallel] [--with-mas] [--no-brew] [--no-mise] [--no-claude] [--no-rust] [--no-nvim] [--no-mason] [--no-fisher] [--no-npm] [--no-cargo] [--no-go] [--no-uv] [--no-pipx] [--no-gem]"
+    set -l usage "usage: update_all [--verbose] [--parallel] [--non-interactive] [--with-mas] [--no-brew] [--no-mise] [--no-claude] [--no-rust] [--no-nvim] [--no-mason] [--no-fisher] [--no-npm] [--no-cargo] [--no-go] [--no-uv] [--no-pipx] [--no-gem]"
 
     if set -q _flag_help
         echo $usage
@@ -21,10 +21,12 @@ function update_all -d "Update tools with their native managers"
         echo "  --no-pipx    skip pipx tool updates"
         echo "  --with-mas   include Mac App Store updates (may prompt; skipped by default)"
         echo "  --no-gem     skip RubyGems updates"
-        echo "  --verbose    print each updater log when it finishes"
-        echo "  --parallel   run update jobs in parallel (faster, but noisier and more failure-prone)"
+        echo "  --verbose    print each updater log when it finishes (mostly useful with --parallel/--non-interactive)"
+        echo "  --parallel   run update jobs in parallel (faster; disables interactive prompts)"
+        echo "  --non-interactive"
+        echo "               disable prompts in sequential mode; sudo is forced to non-interactive mode"
         echo
-        echo "Password prompts are disabled: sudo is forced to non-interactive mode."
+        echo "Sequential mode streams updater output to the terminal, so confirmation prompts are visible."
         return 0
     end
 
@@ -49,13 +51,24 @@ function update_all -d "Update tools with their native managers"
     set -l brew_cleanup 0
     set -l mason_timeout_seconds 900
     set -l nvim_timeout_seconds 900
-    set -l sudo_dir "$log_dir/no-password-bin"
+    set -l interactive 1
+    if set -q _flag_parallel; or set -q _flag_non_interactive
+        set interactive 0
+    end
+    set -lx UPDATE_ALL_INTERACTIVE $interactive
 
-    mkdir -p $sudo_dir
-    printf '%s\n' '#!/bin/sh' 'exec /usr/bin/sudo -n "$@"' >"$sudo_dir/sudo"
-    chmod +x "$sudo_dir/sudo"
-    set -lx PATH $sudo_dir $PATH
-    set -lx SUDO_ASKPASS /usr/bin/false
+    if test $interactive -eq 1
+        echo "Interactive prompts enabled; updater output is streamed and logged."
+    else
+        echo "Interactive prompts disabled; sudo is forced to non-interactive mode."
+        set -l sudo_dir "$log_dir/no-password-bin"
+
+        mkdir -p $sudo_dir
+        printf '%s\n' '#!/bin/sh' 'exec /usr/bin/sudo -n "$@"' >"$sudo_dir/sudo"
+        chmod +x "$sudo_dir/sudo"
+        set -lx PATH $sudo_dir $PATH
+        set -lx SUDO_ASKPASS /usr/bin/false
+    end
 
     function __update_all_suggest --argument-names label
         switch $label
@@ -95,8 +108,14 @@ function update_all -d "Update tools with their native managers"
             echo
             echo "== $label =="
 
-            fish -lc $script $status_file $argv[5..-1] >$log 2>&1
-            set -l code $status
+            set -l code
+            if test "$UPDATE_ALL_INTERACTIVE" -eq 1
+                fish -lc $script $status_file $argv[5..-1] 2>&1 | tee $log
+                set code $pipestatus[1]
+            else
+                fish -lc $script $status_file $argv[5..-1] >$log 2>&1
+                set code $status
+            end
 
             if test -s $status_file
                 set code (string trim (cat $status_file))
@@ -161,7 +180,10 @@ function update_all -d "Update tools with their native managers"
                 and brew upgrade
                 set -l code $status
                 if test $code -eq 0
-                    if sudo -n -v 2>/dev/null
+                    if test "$UPDATE_ALL_INTERACTIVE" -eq 1
+                        brew upgrade --cask --greedy
+                        set code $status
+                    else if sudo -n -v 2>/dev/null
                         brew upgrade --cask --greedy
                         set code $status
                     else
@@ -527,7 +549,10 @@ function update_all -d "Update tools with their native managers"
             and brew upgrade
             set -l code $status
             if test $code -eq 0
-                if sudo -n -v 2>/dev/null
+                if test "$UPDATE_ALL_INTERACTIVE" -eq 1
+                    brew upgrade --cask --greedy
+                    set code $status
+                else if sudo -n -v 2>/dev/null
                     brew upgrade --cask --greedy
                     set code $status
                 else

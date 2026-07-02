@@ -148,8 +148,22 @@ abbr --add -- cc 'claude -c'
 abbr --add -- cr 'claude --resume'
 abbr --add -- clp 'claude -p'
 abbr --add -- cplan 'claude --permission-mode plan'
+abbr --add -- cbare 'claude --bare'
+abbr --add -- csafe 'claude --safe-mode'
+abbr --add -- cdoc 'claude doctor'
+abbr --add -- cagents 'claude agents'
+abbr --add -- cultra 'claude ultrareview'
 abbr --add -- cx 'codex --dangerously-bypass-approvals-and-sandbox'
 abbr --add -- cxq 'codex -q'
+abbr --add -- cxs 'codex --sandbox workspace-write --ask-for-approval on-request'
+abbr --add -- cxro 'codex --sandbox read-only'
+abbr --add -- cxe 'codex exec'
+abbr --add -- cxel 'codex exec resume --last'
+abbr --add -- cxr 'codex resume'
+abbr --add -- cxrl 'codex resume --last'
+abbr --add -- cxrev 'codex review --uncommitted'
+abbr --add -- cxdoc 'codex doctor'
+abbr --add -- cxm 'codex mcp list'
 abbr --add -- ai aider
 abbr --add -- aiw 'aider --watch-files'
 abbr --add -- aia 'aider --architect'
@@ -251,7 +265,11 @@ if functions -q __abbr_tips_init
         '(^(\s?(\w-?)+){1}).*'
     set -g ABBR_TIPS_PROMPT '\n💡 \e[1m{{ .abbr }}\e[0m => {{ .cmd }}'
     set -g ABBR_TIPS_AUTO_UPDATE background
-    __abbr_tips_init
+
+    function __nwiizo_abbr_tips_lazy_init --on-event fish_postexec
+        functions --erase __nwiizo_abbr_tips_lazy_init
+        __abbr_tips_init
+    end
 end
 
 # Prompt configuration

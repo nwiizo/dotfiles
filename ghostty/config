@@ -17,7 +17,7 @@ font-size = 24
 font-feature = -calt
 font-feature = -liga
 font-feature = -dlig
-font-synthetic-style = false
+font-synthetic-style = no-bold,no-italic,no-bold-italic
 
 # ─── Cursor (vibrant pink from catppuccin) ────────────────────────────────────
 
@@ -90,7 +90,7 @@ keybind = performable:ctrl+k=goto_split:top
 keybind = performable:ctrl+l=goto_split:right
 
 keybind = cmd+shift+enter=toggle_split_zoom
-keybind = cmd+ctrl+=equalize_splits
+keybind = cmd+ctrl+equal=equalize_splits
 split-preserve-zoom = navigation
 
 # Key table: Ctrl+W → R for resize mode, h/j/k/l to adjust, Esc to exit
@@ -124,7 +124,7 @@ keybind = cmd+shift+c=copy_to_clipboard:html
 # ─── Shell Integration ────────────────────────────────────────────────────────
 
 shell-integration = fish
-shell-integration-features = no-cursor,sudo,title
+shell-integration-features = no-cursor,sudo,title,ssh-env,ssh-terminfo,path
 window-inherit-working-directory = true
 tab-inherit-working-directory = true
 split-inherit-working-directory = true
@@ -154,6 +154,7 @@ selection-clear-on-copy = true
 
 # Save terminal screen to file (useful for long Claude Code output)
 keybind = cmd+shift+s=write_screen_file:open,plain
+keybind = cmd+alt+shift+s=write_scrollback_file:open,plain
 
 # Freeze noisy panes/log output without killing the process
 keybind = cmd+shift+r=toggle_readonly

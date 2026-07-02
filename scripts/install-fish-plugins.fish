@@ -43,6 +43,7 @@ for plugin in $installed_plugins
 end
 
 fisher install $plugins
+set -l install_status $status
 
 set -l normalized_plugins
 set -l seen_norm
@@ -53,3 +54,5 @@ for plugin in $_fisher_plugins
     set -a normalized_plugins $norm
 end
 set -U _fisher_plugins $normalized_plugins
+
+exit $install_status

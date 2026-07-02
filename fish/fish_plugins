@@ -22,7 +22,6 @@ jorgebucaran/replay.fish
 
 # Environment helpers
 danhper/fish-ssh-agent
-danhper/fish-fastdir
 
 # Development
 jorgebucaran/fishtape
