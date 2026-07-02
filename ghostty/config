@@ -4,7 +4,7 @@
 #
 # Theme: Catppuccin Mocha (consistent with Neovim + Starship)
 # Font:  Hack Nerd Font Mono
-# Shell: Fish 4.6+ with Starship prompt
+# Shell: Fish 4.8+ with Starship prompt
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 auto-update = check
