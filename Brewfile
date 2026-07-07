@@ -20,6 +20,7 @@ brew "ripgrep"
 brew "tealdeer"
 brew "tokei"
 brew "tree"
+brew "tree-sitter-cli"
 brew "yq"
 brew "zoxide"
 

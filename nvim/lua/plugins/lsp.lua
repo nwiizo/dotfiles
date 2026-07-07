@@ -97,46 +97,30 @@ return {
     },
   },
 
-  -- mason.nvim: Override ensure_installed
+  -- mason.nvim: Add only CLI tools. LSP servers are installed by mason-lspconfig
+  -- from nvim-lspconfig's server names, so listing their Mason package names here
+  -- can race LazyVim's LSP installer.
   {
     "mason-org/mason.nvim",
-    opts = {
-      ensure_installed = {
-        -- Lua
-        "lua-language-server",
-        "stylua",
-        -- Web
-        "html-lsp",
-        "css-lsp",
-        "emmet-ls",
+    opts = function(_, opts)
+      local tools = {
         "prettier",
         "deno",
-        -- JSON/YAML
-        "json-lsp",
-        "yaml-language-server",
-        -- Shell
-        "bash-language-server",
-        "shfmt",
         "shellcheck",
-        -- Go
-        "gopls",
-        "goimports",
-        "gofumpt",
-        "golangci-lint-langserver",
-        "golangci-lint",
-        -- Python
-        "pyright",
-        "ruff",
-        -- Rust
-        "rust-analyzer",
-        "codelldb",
-        -- Zig
-        "zls",
-        -- Terraform
-        "terraform-ls",
-        "tflint",
-      },
-    },
+      }
+
+      opts.ensure_installed = opts.ensure_installed or {}
+      vim.list_extend(opts.ensure_installed, tools)
+
+      local seen = {}
+      opts.ensure_installed = vim.tbl_filter(function(tool)
+        if seen[tool] then
+          return false
+        end
+        seen[tool] = true
+        return true
+      end, opts.ensure_installed)
+    end,
   },
 
   -- nvim-lint: Disable markdownlint (too noisy for READMEs, CLAUDE.md, Marp slides)
