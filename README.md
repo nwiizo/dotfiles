@@ -45,8 +45,8 @@ specific tool:
 | Claude Code entrypoints | `.claude/README.md` | symlinks into `.agents/` |
 | Codex entrypoints | `.codex/README.md` | symlinks into `.agents/codex/` |
 
-Agent-facing repository rules are in `AGENTS.md`; `CLAUDE.md` points Claude
-Code at the same rules.
+Contributor and agent-facing repository rules are in `AGENTS.md`. `CLAUDE.md`
+imports the same guide so Claude Code and Codex share the base rules.
 
 ## Managed Stack
 
@@ -59,7 +59,7 @@ Code at the same rules.
 | GitHub / Git | gh, git-delta, lazygit | `gh/config.yml`, `git/config`, `git/power_pull.sh` |
 | CLI config | bat, atuin, tealdeer | `bat/config`, `atuin/config.toml`, `tealdeer/config.toml` |
 | Linking / bootstrap | Shell scripts | `scripts/bootstrap.sh`, `scripts/link.sh` |
-| Agent config | Claude / Agents | `.agents/` |
+| Agent config | Claude Code, Codex, Agents | `.agents/`, `.claude/`, `.codex/` |
 
 ## Repository Layout
 
@@ -76,9 +76,9 @@ dotfiles/
 ├── warp/                    # Warp keybindings, themes, workflows
 ├── git/                     # Git config and helper scripts
 ├── gh/                      # GitHub CLI config
-├── .agents/                 # Reusable agent config linked into ~/.claude and ~/.agents
-├── .claude/                 # Claude Code project symlinks into .agents
-├── .codex/                  # Codex project symlinks into .agents/codex
+├── .agents/                 # Source for reusable agents, rules, docs, and skills
+├── .claude/                 # Claude Code project entrypoint symlinks
+├── .codex/                  # Codex project custom-agent symlinks
 ├── bat/                     # bat config
 ├── atuin/                   # atuin config
 ├── tealdeer/                # tealdeer config
@@ -128,8 +128,8 @@ under `~/.dotfiles-link-backups/pre-dotfiles-link-*` before linking.
 | `git/config` | `~/.config/git/config` |
 | `gh/config.yml` | `~/.config/gh/config.yml` |
 | `git/power_pull.sh` | `~/.local/bin/power_pull` |
-| `scripts/audit-agent-config.sh` | local validation helper |
-| `scripts/summarize-ai-history.py` | local AI-history aggregate helper |
+| `scripts/audit-agent-config.sh` | Local validation helper |
+| `scripts/summarize-ai-history.py` | Local AI-history aggregate helper |
 | `warp/keybindings.yaml` | `~/.warp/keybindings.yaml` |
 | `warp/themes/*.yaml` | `~/.warp/themes/*.yaml` |
 | `warp/workflows/*.yaml` | `~/.warp/workflows/*.yaml` |
@@ -157,6 +157,7 @@ Most edits happen in the repo, then the owning app or shell is restarted.
 | Ghostty, Warp, Git, gh, bat, atuin, tealdeer config | Restart the app or open a new shell |
 | Warp workflows/themes | Run `./scripts/link.sh`, then restart Warp if needed |
 | Homebrew packages | Edit `Brewfile`, then run `brew bundle --file Brewfile` |
+| Agent assets | Edit `.agents/`, `.claude/`, `.codex/`, then run `./scripts/link.sh` and `./scripts/audit-agent-config.sh` |
 
 The `update_all` Fish function updates common tools sequentially by default and
 streams updater output so confirmation prompts are visible. Use `--parallel` or
@@ -266,6 +267,13 @@ Run the checks that match the files you changed.
 fish scripts/install-fish-plugins.fish
 brew bundle check --file Brewfile
 ./scripts/audit-agent-config.sh
+```
+
+For AI-history-derived changes, aggregate locally and do not commit raw logs:
+
+```bash
+python3 .agents/skills/prompt-review/scripts/collect.py --days 0 > /tmp/dotfiles-prompt-review-data.json
+python3 scripts/summarize-ai-history.py /tmp/dotfiles-prompt-review-data.json
 ```
 
 ```bash

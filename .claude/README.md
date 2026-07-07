@@ -12,4 +12,5 @@ symlinks:
 
 Use `.agents/` for edits. These symlinks make the same assets available as
 project-scoped Claude Code configuration while `scripts/link.sh` also links
-them into `~/.claude`.
+them into `~/.claude`. Keep `CLAUDE.md` thin; durable shared guidance belongs
+in `AGENTS.md`.

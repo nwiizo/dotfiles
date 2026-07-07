@@ -2,9 +2,11 @@
 
 ## Claude Code
 
-- Claude Code project entrypoints live under `.claude/` and symlink to the
-  reusable sources in `.agents/`.
-- Keep this file small. Put durable repo rules in `AGENTS.md`, path-scoped
-  Claude rules in `.agents/rules/`, repeatable workflows in `.agents/skills/`,
-  and specialized reviewer/delegation personas in `.agents/agents/`.
+- This file is intentionally thin. Keep durable repository guidance in
+  `AGENTS.md` so Claude Code and Codex share the same base rules.
+- Claude Code project entrypoints live under `.claude/` and symlink to
+  `.agents/`.
+- Put path-scoped Claude rules in `.agents/rules/`, repeatable workflows in
+  `.agents/skills/`, and specialized reviewer/delegation personas in
+  `.agents/agents/`.
 - Re-run `./scripts/link.sh` after changing user-level Claude assets.

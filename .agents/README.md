@@ -1,7 +1,9 @@
 # Agent Config
 
-This directory contains reusable agent configuration that is safe to keep with
-dotfiles and link into local agent homes.
+This directory is the source of truth for reusable agent configuration that is
+safe to keep with dotfiles. Project entrypoints under `.claude/` and `.codex/`
+symlink back here, and `scripts/link.sh` also links selected assets into user
+agent homes.
 
 ## Managed
 
@@ -24,6 +26,10 @@ external skills such as `nippo`, which belongs to its own repository.
 Review judgment belongs in subagents. Skills may orchestrate review flows or
 apply accepted review comments, but reviewer personas and checklists should be
 implemented as Claude Code agents and Codex custom agents.
+
+Use `scripts/audit-agent-config.sh` after changing this tree. Use
+`scripts/summarize-ai-history.py` only on temporary collector output under
+`/tmp`; never commit raw AI conversation logs.
 
 ## Excluded
 

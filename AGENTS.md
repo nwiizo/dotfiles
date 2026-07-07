@@ -1,104 +1,59 @@
-# dotfiles Agent Guide
+# Repository Guidelines
 
-This guide applies to the whole repository.
+## Project Structure & Module Organization
 
-## Repository Scope
+This repository manages a personal macOS development environment. Homebrew
+packages are listed in `Brewfile`; configuration sources live in tool-specific
+directories such as `fish/`, `nvim/`, `ghostty/`, `warp/`, `git/`, `gh/`,
+`bat/`, `atuin/`, and `tealdeer/`. Helper scripts live in `scripts/`.
 
-Personal macOS development environment. Homebrew owns binaries and this repo
-owns config files via direct symlinks.
+Agent assets are sourced from `.agents/`. Claude Code project entrypoints in
+`.claude/` and Codex project agents in `.codex/` are symlinks into `.agents/`.
+`archive/` is reference-only; do not edit it unless explicitly requested.
 
-| Path | Purpose |
-|---|---|
-| `Brewfile` | Homebrew packages |
-| `scripts/` | Bootstrap, symlink, and plugin install helpers |
-| `fish/` | Fish `config.fish`, Fisher plugin list, functions, and `conf.d` patches |
-| `nvim/` | Neovim (LazyVim) config |
-| `ghostty/` | Ghostty terminal config |
-| `warp/` | Warp keybindings, themes, and workflows |
-| `git/` | Git config and helper scripts |
-| `bat/`, `atuin/`, `tealdeer/`, `gh/` | Tool config files |
-| `.agents/` | Source of reusable agents, rules, docs, and skills |
-| `.claude/` | Claude Code project entrypoint symlinks into `.agents/` |
-| `.codex/` | Codex project custom-agent entrypoint symlinks into `.agents/codex/` |
+## Build, Test, and Development Commands
 
-Reference-only:
+- `./scripts/bootstrap.sh` installs packages, links configs, and installs Fish plugins.
+- `./scripts/link.sh` links repo sources into `~/.config`, `~/.warp`,
+  `~/.local/bin`, `~/.claude`, `~/.agents`, and `~/.codex`.
+- `fish scripts/install-fish-plugins.fish` applies `fish/fish_plugins`.
+- `brew bundle check --file Brewfile` verifies Homebrew dependencies.
+- `./scripts/audit-agent-config.sh` checks agent symlinks, stale references,
+  generated files, Codex agent TOML, and secrets.
 
-- `archive/` — old configs. Do not edit unless explicitly requested.
+## Coding Style & Naming Conventions
 
-## Linked Config
+Keep changes scoped and follow the existing layout. Fish functions use
+`fish/functions/<name>.fish`; Neovim plugin specs go under `nvim/lua/plugins/`.
+Reusable skills use `.agents/skills/<name>/SKILL.md`. Reviewer or planner
+personas belong in `.agents/agents/`; Codex custom agents belong in
+`.agents/codex/agents/*.toml`.
 
-`scripts/link.sh` symlinks repo files into `~/.config`, `~/.warp`,
-`~/.local/bin`, `~/.claude`, `~/.agents`, and `~/.codex`. Do not edit
-generated target files directly; edit the repo source, then re-run
-`./scripts/link.sh` when adding/removing linked files.
+## Testing Guidelines
 
-| You want to change ... | Edit ... |
-|---|---|
-| Fish shell init / env / abbreviations / integrations | `fish/config.fish` |
-| Fish plugins | `fish/fish_plugins`, then `fish scripts/install-fish-plugins.fish` |
-| Fish prompt / AI helpers / jj wrappers | `fish/functions/*.fish` |
-| Fish conf.d patch | `fish/conf.d/zz_sponge_compat.fish` |
-| Neovim plugins / options | `nvim/lua/...` |
-| Ghostty | `ghostty/config` |
-| Warp | `warp/keybindings.yaml`, `warp/themes/*.yaml`, `warp/workflows/*.yaml` |
-| Git / GitHub config | `git/config`, `gh/config.yml` |
-| Bat / Atuin / tealdeer | `bat/config`, `atuin/config.toml`, `tealdeer/config.toml` |
-| Shared agents / rules / docs / skills | `.agents/` |
-| Claude Code project entrypoints | `.claude/` symlinks |
-| Codex custom agents | `.agents/codex/agents/` |
-| Packages | `Brewfile` |
-
-## Apply Changes
-
-| Change | Apply |
-|---|---|
-| Edit existing symlinked config file | Restart the owning app or open a new shell |
-| Add/remove `fish/functions/*.fish` or Warp workflows | `./scripts/link.sh` |
-| Change Fish plugins | `fish scripts/install-fish-plugins.fish` |
-| Change Homebrew packages | `brew bundle --file Brewfile` |
-| Full bootstrap | `./scripts/bootstrap.sh` |
-
-## Change Rules
-
-- Preserve existing structure and style. Keep edits scoped.
-- Do not revert unrelated user changes.
-- Keep `archive/` untouched unless the user explicitly asks for archive work.
-- Neovim plugin specs go under `nvim/lua/plugins/`.
-
-## Validation
-
-For symlink/bootstrap changes:
-
-```bash
-./scripts/link.sh
-fish scripts/install-fish-plugins.fish
-brew bundle check --file Brewfile
-./scripts/audit-agent-config.sh
-```
-
-For Fish changes:
+Run checks matching the changed area:
 
 ```bash
 fish -n fish/config.fish
 for f in fish/functions/*.fish; do fish -n "$f" || exit 1; done
-```
-
-For Neovim changes:
-
-```bash
 stylua --check nvim/lua
 nvim --headless '+lua print("nvim-config-ok")' +qa
+./scripts/link.sh
+./scripts/audit-agent-config.sh
 ```
 
-For AI plugin changes:
+For package changes, also run `brew bundle check --file Brewfile`.
 
-```bash
-nvim --headless '+lua require("lazy").load({ plugins = { "CopilotChat.nvim", "avante.nvim", "codecompanion.nvim", "claudecode.nvim" } }); print("ai-plugins-ok")' +qa
-```
+## Commit & Pull Request Guidelines
 
-## Sync And Commit
+Use concise conventional commits, for example
+`chore(agents): align claude and codex workflows`. In this jj repository,
+finish a change with `jj describe`, open a fresh change with `jj new`, then
+move `main` and push only when requested.
 
-- Commit only related files.
-- After successful commit, push `main` to `origin` when requested.
-- Repo root is intentionally minimal; keep new files in subdirectories unless
-  the file is a top-level entry point like `Brewfile` or `README.md`.
+## Security & Configuration Tips
+
+Do not track sessions, logs, caches, credentials, local settings, or generated
+state. Edit repo sources, not linked targets under `~/.config` or agent home
+directories. Run `git secrets --scan` before publishing agent or history-derived
+assets.

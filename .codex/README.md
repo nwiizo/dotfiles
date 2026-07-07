@@ -11,4 +11,5 @@ exposes them here as symlinks:
 | `agents/` | `../.agents/codex/agents/` |
 
 Use `.agents/codex/agents/` for edits. `scripts/link.sh` also links these
-agents into `~/.codex/agents` for user-level reuse.
+agents into `~/.codex/agents` for user-level reuse. Keep durable repository
+guidance in `AGENTS.md`; keep repeatable workflows in `.agents/skills/`.
