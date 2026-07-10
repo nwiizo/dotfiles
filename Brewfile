@@ -1,3 +1,5 @@
+tap "minorole/tap"
+
 brew "atuin"
 brew "bat"
 brew "carapace"
@@ -11,6 +13,7 @@ brew "gh"
 brew "ghq"
 brew "git"
 brew "git-delta"
+brew "minorole/tap/gpane", link: false, trusted: true
 brew "hyperfine"
 brew "jq"
 brew "lazygit"
@@ -24,5 +27,6 @@ brew "tree-sitter-cli"
 brew "yq"
 brew "zoxide"
 
+cask "codex"
 cask "ghostty@tip"
 cask "warp"

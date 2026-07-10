@@ -30,7 +30,7 @@ return {
   {
     "CopilotC-Nvim/CopilotChat.nvim",
     opts = {
-      model = "claude-opus-4.6",
+      model = "claude-opus-4.8",
       debug = false,
       instruction_files = {
         ".github/copilot-instructions.md",
@@ -95,7 +95,7 @@ return {
       providers = {
         copilot = {
           endpoint = "https://api.githubcopilot.com",
-          model = "claude-opus-4.6",
+          model = "claude-opus-4.8",
           timeout = 30000,
         },
       },

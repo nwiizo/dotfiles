@@ -122,6 +122,7 @@ under `~/.dotfiles-link-backups/pre-dotfiles-link-*` before linking.
 | `fish/functions/*.fish` | `~/.config/fish/functions/*.fish` |
 | `nvim/` | `~/.config/nvim` |
 | `ghostty/config` | `~/.config/ghostty/config` |
+| `ghostty/claude-notification.sh` | `~/.local/bin/ghostty-claude-notification` |
 | `bat/config` | `~/.config/bat/config` |
 | `atuin/config.toml` | `~/.config/atuin/config.toml` |
 | `tealdeer/config.toml` | `~/.config/tealdeer/config.toml` |
@@ -130,19 +131,24 @@ under `~/.dotfiles-link-backups/pre-dotfiles-link-*` before linking.
 | `git/power_pull.sh` | `~/.local/bin/power_pull` |
 | `scripts/audit-agent-config.sh` | Local validation helper |
 | `scripts/summarize-ai-history.py` | Local AI-history aggregate helper |
+| `scripts/apply-ghostty-ai-notifications.sh` | Merge Ghostty notification settings into Claude Code and Codex |
 | `warp/keybindings.yaml` | `~/.warp/keybindings.yaml` |
 | `warp/themes/*.yaml` | `~/.warp/themes/*.yaml` |
 | `warp/workflows/*.yaml` | `~/.warp/workflows/*.yaml` |
 | `.agents/CLAUDE.md` | `~/.claude/CLAUDE.md` |
 | `.agents/RTK.md` | `~/.claude/RTK.md` |
 | `.agents/claudeignore` | `~/.claude/.claudeignore` |
-| `.agents/agents/` | `~/.claude/agents`, `~/.agents/agents` |
-| `.agents/docs/` | `~/.claude/docs`, `~/.agents/docs` |
-| `.agents/rules/` | `~/.claude/rules`, `~/.agents/rules` |
+| `.agents/agents/` | `~/.claude/agents` |
+| `.agents/docs/` | `~/.claude/docs` |
+| `.agents/rules/` | `~/.claude/rules` |
 | `.agents/skills/*` | `~/.claude/skills/*`, `~/.agents/skills/*` |
 | `.agents/codex/agents/*.toml` | `~/.codex/agents/*.toml` |
 | `.claude/agents`, `.claude/rules`, `.claude/skills` | project symlinks into `.agents/` |
 | `.codex/agents` | project symlink into `.agents/codex/agents` |
+
+`~/.agents` is reserved for cross-client assets. This repository currently
+publishes only Agent Skills there; Claude Code and Codex subagents, rules, and
+tool-specific documentation stay in their product-specific home directories.
 
 ## Daily Workflow
 
@@ -183,7 +189,7 @@ update_all --help
 | Fish helper command | `fish/functions/*.fish` | `./scripts/link.sh` if adding/removing files |
 | Fisher plugins | `fish/fish_plugins` | `fish scripts/install-fish-plugins.fish` |
 | Neovim plugin or keymap | `nvim/lua/...` | restart Neovim |
-| Ghostty | `ghostty/config` | restart Ghostty |
+| Ghostty / AI notifications | `ghostty/`, `scripts/apply-ghostty-ai-notifications.sh` | `./scripts/link.sh`, then reload Ghostty |
 | Warp keybindings/theme/workflow | `warp/...` | `./scripts/link.sh`, then restart Warp if needed |
 | Git / gh | `git/config`, `gh/config.yml` | new shell or next command invocation |
 | Homebrew package | `Brewfile` | `brew bundle --file Brewfile` |

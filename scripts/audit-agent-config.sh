@@ -29,10 +29,36 @@ check_link() {
   fi
 }
 
+check_absent() {
+  local path="$1"
+
+  if [[ -e "$path" || -L "$path" ]]; then
+    echo "obsolete agent path: $path" >&2
+    fail=1
+  fi
+}
+
 check_link ".claude/agents" "../.agents/agents"
 check_link ".claude/rules" "../.agents/rules"
 check_link ".claude/skills" "../.agents/skills"
 check_link ".codex/agents" "../.agents/codex/agents"
+
+check_link "$HOME/.claude/agents" "$repo/.agents/agents"
+check_link "$HOME/.claude/docs" "$repo/.agents/docs"
+check_link "$HOME/.claude/rules" "$repo/.agents/rules"
+
+for skill in "$repo"/.agents/skills/*; do
+  check_link "$HOME/.claude/skills/$(basename "$skill")" "$skill"
+  check_link "$HOME/.agents/skills/$(basename "$skill")" "$skill"
+done
+
+for agent in "$repo"/.agents/codex/agents/*.toml; do
+  check_link "$HOME/.codex/agents/$(basename "$agent")" "$agent"
+done
+
+check_absent "$HOME/.agents/agents"
+check_absent "$HOME/.agents/docs"
+check_absent "$HOME/.agents/rules"
 
 if find .agents .claude .codex -name __pycache__ -o -name '*.pyc' -o -name '.DS_Store' | grep -q .; then
   echo "generated files found under agent config" >&2

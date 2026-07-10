@@ -16,6 +16,7 @@
 | dotfiles-wide environment audit | home-dotfiles-environment-auditor |
 | CLAUDE.md restructuring, memory optimization | home-memory-optimizer |
 | Production incident, outage triage, SRE practices | home-incident-responder |
+| Daily report, work summary, or catch-up report through today | home-nippo-reporter |
 
 ## Workflow
 
@@ -49,12 +50,12 @@ rust: [core](docs/rust-core.md) | [sqlx](docs/rust-sqlx.md) | [advanced](docs/ru
 home-self-review | home-fix-review-comments | home-karpathy-guidelines | home-systematic-debugging | home-verification-before-completion
 
 ### Development Workflow
-home-brainstorming | home-iterative-refinement | home-validate-on-oss | home-docs-curator | home-history-distill | home-jj-publish-main
+home-brainstorming | home-grill-me | home-iterative-refinement | home-validate-on-oss | home-docs-curator | home-history-distill | home-jj-publish-main
 
 ### SRE
 home-postmortem-writing | home-incident-runbook-templates | home-aws-finops-investigation | home-gcp-finops-investigation
 
 ### Tools
-home-sync-tasks | home-marp-slide-editing | prompt-review | nippo
+home-marp-slide-editing | prompt-review | nippo
 
 @RTK.md

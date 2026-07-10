@@ -21,8 +21,9 @@ Do not shell out to another Codex process. Do not edit files.
 
 ## Workflow
 - Claude が作業を完了した後に使う
-- 必要に応じて `home-code-reviewer`、`home-simplify-reviewer` と並行して走らせる
+- 他reviewerの起動はオーケストレーターへ任せ、自分から委譲しない
 - 同じ指摘を繰り返すだけなら省略し、重大度を補強する場合だけ重ねて指摘する
+- 完了報告を前提にせず、差分と検証結果を直接確認する。確認できない内容は未検証と書く
 
 ## Output
 

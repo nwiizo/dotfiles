@@ -136,7 +136,8 @@ cursor-click-to-move = true
 
 # ─── Scrollback & Navigation ─────────────────────────────────────────────────
 
-scrollback-limit = 100000
+# 50 MB per terminal surface; allocated lazily by Ghostty
+scrollback-limit = 50000000
 
 keybind = ctrl+u=scroll_page_fractional:-0.5
 keybind = alt+b=scroll_page_up
@@ -169,15 +170,18 @@ link-previews = true
 bold-color = bright
 confirm-close-surface = true
 desktop-notifications = true
+# Prepend 🔔 while an unfocused surface needs attention; focusing or typing
+# clears the marker. Desktop notification sound is handled by OSC 9/777.
 bell-features = title,attention
 minimum-contrast = 1.2
 title-report = false
 enquiry-response =
 image-storage-limit = 320000000
 
-# Notify on long command completion (when terminal unfocused)
+# Fallback for long shell commands. Codex and Claude Code emit their own
+# per-turn notifications, so keep this threshold high enough to avoid noise.
 notify-on-command-finish = unfocused
-notify-on-command-finish-after = 5s
+notify-on-command-finish-after = 15s
 notify-on-command-finish-action = bell,notify
 
 # Quick Terminal (drop-down)

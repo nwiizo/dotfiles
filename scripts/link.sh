@@ -68,6 +68,15 @@ link_dir_children() {
   done
 }
 
+remove_managed_link() {
+  local target="$1"
+  local expected="$2"
+
+  if [[ -L "$target" && "$(readlink "$target")" == "$expected" ]]; then
+    rm -f "$target"
+  fi
+}
+
 link_file "$repo/fish/config.fish" "$HOME/.config/fish/config.fish"
 link_file "$repo/fish/conf.d/zz_sponge_compat.fish" "$HOME/.config/fish/conf.d/zz_sponge_compat.fish"
 
@@ -77,6 +86,7 @@ done
 
 link_dir "$repo/nvim" "$HOME/.config/nvim"
 link_file "$repo/ghostty/config" "$HOME/.config/ghostty/config"
+link_file "$repo/gpane/config.yaml" "$HOME/.config/gpane/config.yaml"
 link_file "$repo/bat/config" "$HOME/.config/bat/config"
 link_file "$repo/atuin/config.toml" "$HOME/.config/atuin/config.toml"
 link_file "$repo/tealdeer/config.toml" "$HOME/.config/tealdeer/config.toml"
@@ -84,6 +94,9 @@ link_file "$repo/git/config" "$HOME/.config/git/config"
 link_file "$repo/gh/config.yml" "$HOME/.config/gh/config.yml"
 link_file "$repo/git/power_pull.sh" "$HOME/.local/bin/power_pull"
 chmod +x "$HOME/.local/bin/power_pull"
+remove_managed_link "$HOME/.local/bin/ghostty-notification-bell" "$repo/ghostty/notification-bell.sh"
+link_file "$repo/ghostty/claude-notification.sh" "$HOME/.local/bin/ghostty-claude-notification"
+chmod +x "$HOME/.local/bin/ghostty-claude-notification"
 
 link_file "$repo/warp/keybindings.yaml" "$HOME/.warp/keybindings.yaml"
 link_file "$repo/warp/themes/custom.yaml" "$HOME/.warp/themes/custom.yaml"
@@ -104,12 +117,16 @@ link_dir "$repo/.agents/rules" "$HOME/.claude/rules"
 link_dir_children "$repo/.agents/skills" "$HOME/.claude/skills"
 [[ -d "$nippo_skill" ]] && link_dir "$nippo_skill" "$HOME/.claude/skills/nippo"
 
-link_dir "$repo/.agents/agents" "$HOME/.agents/agents"
-link_dir "$repo/.agents/docs" "$HOME/.agents/docs"
-link_dir "$repo/.agents/rules" "$HOME/.agents/rules"
+# ~/.agents is the cross-client Agent Skills location. Product-specific
+# agents, rules, and docs stay under ~/.claude or ~/.codex.
+remove_managed_link "$HOME/.agents/agents" "$repo/.agents/agents"
+remove_managed_link "$HOME/.agents/docs" "$repo/.agents/docs"
+remove_managed_link "$HOME/.agents/rules" "$repo/.agents/rules"
 link_dir_children "$repo/.agents/skills" "$HOME/.agents/skills"
 [[ -d "$nippo_skill" ]] && link_dir "$nippo_skill" "$HOME/.agents/skills/nippo"
 
 link_dir_children "$repo/.agents/codex/agents" "$HOME/.codex/agents"
+
+"$repo/scripts/apply-ghostty-ai-notifications.sh"
 
 echo "Linked dotfiles from $repo"

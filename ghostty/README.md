@@ -26,8 +26,9 @@ ghostty +validate-config
 - Font: Hack Nerd Font Mono, 24pt
 - Shell integration: Fish 4.8+
 - Window: fullscreen by default, native tabs, saved state
-- Scrollback: 100,000 lines
+- Scrollback: 50 MB per terminal surface (allocated lazily)
 - Quick terminal: configured but default global hotkey is unbound
+- AI notifications: macOS banner + sound + transient `🔔` tab marker
 
 ## キーバインド
 
@@ -86,6 +87,58 @@ ghostty +validate-config
 
 `scroll-to-bottom = keystroke,output` にしているため、AI ツールの streaming
 output でも最下部へ追従しやすい。
+
+### AI notifications
+
+`./scripts/link.sh` は Ghostty 設定をリンクした後、既存の Claude Code と
+Codex のユーザー設定へ通知項目だけをマージする。権限、MCP、モデルなどの
+既存設定は上書きしない。変更前のファイルは、実際に差分がある場合だけ
+`~/.dotfiles-link-backups/ai-notifications-*` 以下へ保存する。
+
+| 状態 | タブ表示 | macOS通知 |
+|---|---|---|
+| 作業中 | Codex／Claude Code が設定する動的タイトル | なし |
+| 応答・許可待ち | 先頭に `🔔` | バナーと通知音 |
+| タブを選択または操作 | `🔔` が消えて元のタイトルへ戻る | 通知を解除 |
+
+Codex は公式の `OSC 9` 通知を使う。
+
+```toml
+[tui]
+notifications = ["agent-turn-complete", "approval-requested"]
+notification_method = "osc9"
+notification_condition = "unfocused"
+```
+
+Claude Code は公式の `terminal_bell` でGhosttyのタブへ `🔔` を付ける。
+公式Notification Hookは `terminalSequence` として `OSC 777` を返し、macOSの
+バナーと通知音を出す。Hook子プロセスから `/dev/tty` へ直接書き込む方式は、
+制御TTYを継承しない実行環境で動かないため使わない。
+
+```json
+{
+  "preferredNotifChannel": "terminal_bell",
+  "hooks": {
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.local/bin/ghostty-claude-notification"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+集中モード中にも受け取りたい場合は、macOSの各集中モードでGhosttyを
+「通知を許可するアプリ」に追加する。Ghosttyの通知自体は通常優先度なので、
+この許可がない場合はNotification Centerがバナーと音を抑止する。
+
+検証環境 (2026-07-21): macOS 26.5.2、Ghostty 1.3.2 tip、Codex CLI
+0.144.6、Claude Code 2.1.216。
 
 ### Quick Terminal
 

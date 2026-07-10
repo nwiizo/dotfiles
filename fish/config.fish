@@ -50,6 +50,8 @@ end
 
 set -gx HOMEBREW_NO_ANALYTICS 1
 set -gx HOMEBREW_NO_ENV_HINTS 1
+set -gx HOMEBREW_AUTO_UPDATE_SECS 3600
+set -gx HOMEBREW_UPGRADE_GREEDY 1
 
 # PATH
 fish_add_path $HOME/.local/bin

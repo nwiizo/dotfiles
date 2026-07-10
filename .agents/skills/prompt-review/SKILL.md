@@ -6,7 +6,7 @@ description: >
   過去のAIエージェント対話履歴（Claude Code, GitHub Copilot Chat, Cline, Roo Code, Windsurf,
   Antigravity, OpenCode）を読み取り、技術理解度・プロンプティングパターン・AI依存度を推定してレポートを生成する。
 disable-model-invocation: true
-allowed-tools: Read, Write, Glob, Grep, Bash
+allowed-tools: Read Write Glob Grep Bash
 context: fork
 ---
 

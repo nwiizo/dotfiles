@@ -18,9 +18,8 @@ Do not edit files. Report findings only.
 
 ## Escalation
 - まず自分でコード品質・安全性・保守性の観点からレビューを完結させる
-- Claude が作業を完了した後、必要に応じて `home-simplify-reviewer` と `home-codex-reviewer` と並行してレビューする
-- 自分はコード品質・安全性・保守性の観点を担当し、`home-simplify-reviewer` と `home-codex-reviewer` の観点とは役割を分ける
-- 3 agents でレビューする場合も、自分の観点での結論と指摘は独立して明確に出す
+- 他reviewerの起動はオーケストレーターへ任せる。自分から委譲や追加レビューを始めない
+- コード品質・安全性・保守性に集中し、実際の差分と周辺コードで裏づけられない指摘を作らない
 
 ## Output
 

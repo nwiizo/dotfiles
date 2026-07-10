@@ -1,0 +1,11 @@
+# gpane defaults for Ghostty-native project workspaces
+projects_root: /Users/nwiizo/ghq/github.com/nwiizo
+default_layout: duo
+current_window: true
+
+# Resume the latest Codex and Claude Code conversations side by side.
+default_commands:
+  - "codex resume --last"
+  - "claude --continue"
+
+projects:

@@ -1,6 +1,6 @@
 ---
 name: home-jj-commit-cycle
-description: In any jj (Jujutsu) repository, complete the "commit" pattern — describe the current working copy with a message, then open a fresh change for the next unit of work. Use when a coherent edit is finished and should be preserved before moving on. Invoke manually; mutates state.
+description: In any jj (Jujutsu) repository, complete the "commit" pattern — describe the current working copy with a message, then open a fresh change for the next unit of work. Use when a coherent edit is finished and should be preserved before moving on. Teach the user how `@`, `@-`, `jj describe`, `jj new`, and `jj split` replace Git's staging-and-commit model, and show the exact jj commands executed. Invoke manually; mutates state.
 disable-model-invocation: true
 ---
 
@@ -9,6 +9,24 @@ disable-model-invocation: true
 The jj equivalent of finishing one coherent unit of work. It is closest to `git add -A && git commit -m "<msg>"`, but the mental model is different: jj has no staging area, and the working copy is already a commit (`@`). The cycle is therefore: describe the current `@`, inspect it, then open a fresh child change for the next unit of work.
 
 `jj commit -m "<msg>"` does `jj describe` and `jj new` in one command when no paths or `--interactive` are given. This skill keeps the two steps separate so you can inspect with `jj st` / `jj diff` before finalizing.
+
+## Mental model to teach
+
+Explain the state transition, not only the command sequence:
+
+- `@` is already a mutable commit containing the working-copy changes. There is no Git-style staging area to populate with `add`.
+- `jj describe` gives the current `@` a description; it does not freeze or leave that change.
+- `jj new` creates a fresh child and moves the workspace's `@` to it. The preserved change that was `@` is then usually `@-`.
+- Bookmarks do not automatically follow `@`. Finishing a change and publishing a bookmark are separate operations.
+- When unrelated files are mixed in `@`, use `jj split` to create an atomic change instead of pretending to stage selected files.
+
+Use a compact before/after sketch when it helps:
+
+```text
+before jj new:  @  = described finished change
+after jj new:   @- = finished change
+                @  = fresh child for the next task
+```
 
 ## When to use
 
@@ -35,6 +53,14 @@ You (or the user) just finished an atomic edit in a jj working copy and want to 
    jj diff --stat
    ```
    Confirm that the diff is the unit you want to preserve. If unrelated edits are mixed in, split or squash before describing.
+
+   To select whole files into a separate change without an interactive editor:
+
+   ```fish
+   jj split -m "<type>(<scope>): <subject>" path/to/file path/to/directory
+   ```
+
+   Explain that the selected part becomes one commit and the remaining edits stay in a child commit. In this case, `jj split` already creates the boundary that `jj new` would otherwise provide; do not add another `jj new` mechanically.
 
 2. Describe the current change. Follow the repo's commit convention (typically `<type>(<scope>): <subject>`):
    ```fish
@@ -64,6 +90,17 @@ You (or the user) just finished an atomic edit in a jj working copy and want to 
 - **Pushing `@` after `jj new`**: after the cycle, `@` is the fresh child change. The change you just preserved is usually `@-`.
 - **Running mutating Git commands in a colocated repo**: jj can interoperate with Git, but `git commit`, `git rebase`, or Git tooling that moves branches can make the relationship between `@`, bookmarks, Git HEAD, and branch positions confusing. In this workflow, create changes with jj and use Git mainly for inspection unless you intentionally switch workflows.
 - **Treating `.jj/` removal as a perfect undo**: colocated mode keeps Git data, but before abandoning jj, inspect Git branch positions and working-copy state. Do not assume deleting `.jj/` alone restores every workflow-level expectation.
+
+## User-facing handoff
+
+After the cycle, report:
+
+- The exact jj commands executed, including wrappers such as `rtk` when they were actually used.
+- The finished change ID and commit ID, its description, and whether it is now `@` or `@-`.
+- The remaining state of `@`: empty, ready for the next task, or still containing explicitly preserved unrelated work.
+- Whether any bookmark moved or anything was pushed. Say explicitly when neither happened.
+
+Keep the explanation tied to the observed result. For example: “`jj split` selected this file into `@-`; the unrelated files remain in `@`.” Do not describe jj as having staged files.
 
 ## Related
 

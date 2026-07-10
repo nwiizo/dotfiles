@@ -1,6 +1,6 @@
 ---
 name: home-jj-agent-spawn
-description: Spawn a parallel coding-agent session in its own jj workspace. Uses `jj_agent` if the nwiizo/jujutsu.fish plugin is installed, otherwise falls back to raw `jj workspace add`. Use when starting a second (or Nth) agent on a different task without disturbing the current working copy. Invoke manually; creates a workspace directory on disk.
+description: Spawn a parallel coding-agent session in its own jj workspace. Uses `jj_agent` if the nwiizo/jujutsu.fish plugin is installed, otherwise falls back to raw `jj workspace add`. Use when starting a second (or Nth) agent on a different task without disturbing the current working copy. Teach the user the workspace/base-revision model and show the exact jj commands executed. Invoke manually; creates a workspace directory on disk.
 disable-model-invocation: true
 ---
 
@@ -9,6 +9,15 @@ disable-model-invocation: true
 Create a new jj workspace (the equivalent of `git worktree add`) and open it ready for an agent to start work.
 
 The value of this workflow is isolation plus reversibility: each agent gets its own `@`, while all operations still land in the shared jj operation log.
+
+## Mental model to teach
+
+Explain these points briefly when invoking the workflow:
+
+- A jj workspace is a separate working directory with its own working-copy commit (`@`). It is similar to `git worktree`, but it does not require creating or checking out a branch.
+- Revisions and the operation log belong to the repository, not to one workspace. Isolation prevents file-level working-copy interference; it does not make repository operations private.
+- The `-r` argument chooses the new workspace's starting revision. Use `trunk()` for an independent task and `@` only when the new work must include the current in-flight change.
+- A workspace name such as `fix-auth` can be addressed as `fix-auth@` in revsets. Use that form when comparing or integrating work from another workspace.
 
 ## When to use
 
@@ -69,6 +78,21 @@ Plugin-available shortcuts (otherwise run the underlying jj commands):
 - Compare two agents' output: `jj_agent_diff <A> <B>` (or `jj diff --from <A>@ --to <B>@`).
 - Close out a workspace: inspect `jj st` and `jj log -r '@-::@'`, push the intended change (`@` or `@-` depending on whether a commit cycle was run), then `jj_agent_done <name> --push-pr --forget` or summarize + push + `jj workspace forget <name>`.
 - Cleanup of empty abandoned workspaces: `jj_agent_prune --dry-run` then `jj_agent_prune`.
+
+## User-facing handoff
+
+After spawning, report:
+
+- The exact wrapper or raw jj commands executed. Do not replace them with a generic summary.
+- The workspace name, filesystem path, and chosen base revision.
+- What `@` points to in the new workspace and whether it is empty.
+- The next useful inspection commands: `jj workspace list`, `jj st`, and `jj log -r '@-::@'`.
+
+If a wrapper such as `jj_agent` was used, also show the equivalent raw command when it materially helps the user learn the underlying jj operation:
+
+```fish
+jj workspace add --name <name> -r '<base>' ../<name>
+```
 
 ## Notes for the invoking agent
 
