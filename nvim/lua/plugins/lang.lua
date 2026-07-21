@@ -317,11 +317,6 @@ return {
   -- marp.nvim: Markdown presentations
   {
     "nwiizo/marp.nvim",
-    ft = "markdown",
-    config = function()
-      require("marp").setup({
-        marp_command = "/opt/homebrew/opt/node/bin/node /opt/homebrew/bin/marp",
-      })
-    end,
+    dir = vim.fn.expand("~/ghq/github.com/nwiizo/marp.nvim"),
   },
 }
