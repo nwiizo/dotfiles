@@ -407,6 +407,8 @@ Other custom integrations live in feature files under `lua/plugins/`:
 | キー | モード | 説明 | 出典 |
 |---|---|---|---|
 | `<leader>j` / `<leader>k` | n | 次/前のquickfix | C |
+| `<leader>yp` | n | リポジトリ相対のファイルパスをコピー | C |
+| `<leader>yl` | n,x | `path:line` / `path:start-end` をコピー | C |
 | `zf` | qf | quickfix内をfzf風に絞り込み | P nvim-bqf |
 | `<C-x>` / `<C-v>` | qf | quickfix項目を水平/垂直分割で開く | P nvim-bqf |
 | `<C-a>` / `<C-x>` | n | インクリメント/デクリメント (dial拡張) | P dial |
@@ -418,6 +420,17 @@ Other custom integrations live in feature files under `lua/plugins/`:
 |---|---|---|---|
 | `<c-/>` | n,t | ターミナルトグル | L |
 | `<C-x>` | t | ターミナルモード終了 | C |
+
+### AIエージェントによる外部編集
+
+`autoread`と低頻度の`checktime`を利用し、Claude CodeやCodexが保存した
+未変更bufferは自動的に再読込する。focus/buffer/terminalの切り替えと
+normal modeのidle時だけ確認し、カーソル移動ごとのfilesystem確認は行わない。
+
+Neovim側にも未保存の変更がある場合やfileが削除された場合は、内容を
+自動上書きせず選択を求める。
+エージェントへ場所を渡すときは`<leader>yl`で`path:line`形式をclipboardへ
+コピーでき、visual selectionでは行範囲になる。
 
 ### セッション (`<leader>q` prefix)
 

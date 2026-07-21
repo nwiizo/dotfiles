@@ -9,6 +9,37 @@
 
 local map = vim.keymap.set
 
+local function copy_file_reference(include_line, visual)
+  local file = vim.api.nvim_buf_get_name(0)
+  if file == "" then
+    vim.notify("Current buffer has no file path", vim.log.levels.WARN)
+    return
+  end
+
+  local root = vim.fs.root(file, { ".jj", ".git" }) or vim.uv.cwd()
+  local reference = vim.fs.relpath(root, file) or file
+
+  if include_line then
+    local first = vim.fn.line(".")
+    local last = first
+    if visual then
+      first = vim.fn.line("v")
+      last = vim.fn.line(".")
+      if first > last then
+        first, last = last, first
+      end
+    end
+    reference = reference .. ":" .. first
+    if last ~= first then
+      reference = reference .. "-" .. last
+    end
+  end
+
+  vim.fn.setreg("+", reference)
+  vim.fn.setreg('"', reference)
+  vim.notify("Copied " .. reference)
+end
+
 -- Basic
 map("n", ";", ":", { desc = "CMD enter command mode" })
 
@@ -52,3 +83,12 @@ map("n", "<leader>wm", "<cmd>only<cr>", { desc = "Maximize window" })
 -- Utility
 map("n", "<leader>cx", "<cmd>!chmod +x %<cr>", { silent = true, desc = "Make file executable" })
 map("n", "<leader>sR", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]], { desc = "Replace word under cursor" })
+map("n", "<leader>yp", function()
+  copy_file_reference(false, false)
+end, { desc = "Copy repository-relative path" })
+map("n", "<leader>yl", function()
+  copy_file_reference(true, false)
+end, { desc = "Copy path with line" })
+map("x", "<leader>yl", function()
+  copy_file_reference(true, true)
+end, { desc = "Copy path with line range" })
