@@ -70,7 +70,13 @@ set -gx INFOPATH /opt/homebrew/share/info $INFOPATH
 
 test -f "$HOME/.cargo/env.fish"; and source "$HOME/.cargo/env.fish"
 
-status is-interactive; or exit
+# Non-interactive agents and scripts need mise-managed tools without prompt
+# hooks. Interactive shells use full activation below so directory-specific
+# environment variables and hooks continue to work.
+if not status is-interactive
+    type -q mise; and mise activate fish --shims | source
+    exit
+end
 
 # Abbreviations: navigation
 abbr --add -- - 'cd -'
@@ -127,7 +133,8 @@ abbr --add -- ktp 'kubectl top pods'
 abbr --add -- ktn 'kubectl top nodes'
 
 # Abbreviations: AI tools
-abbr --add -- c 'claude --dangerously-skip-permissions'
+abbr --add -- c claude
+abbr --add -- cunsafe 'claude --dangerously-skip-permissions'
 abbr --add -- cc 'claude -c'
 abbr --add -- cr 'claude --resume'
 abbr --add -- clp 'claude -p'
@@ -137,7 +144,8 @@ abbr --add -- csafe 'claude --safe-mode'
 abbr --add -- cdoc 'claude doctor'
 abbr --add -- cagents 'claude agents'
 abbr --add -- cultra 'claude ultrareview'
-abbr --add -- cx 'codex --dangerously-bypass-approvals-and-sandbox'
+abbr --add -- cx codex
+abbr --add -- cxunsafe 'codex --dangerously-bypass-approvals-and-sandbox'
 abbr --add -- cxq 'codex -q'
 abbr --add -- cxs 'codex --sandbox workspace-write --ask-for-approval on-request'
 abbr --add -- cxro 'codex --sandbox read-only'
@@ -157,6 +165,11 @@ abbr --add -- arv ai_review
 abbr --add -- acm ai_commit_msg
 abbr --add -- apr ai_pr
 
+# Abbreviations: agent-assisted development
+abbr --add -- ast ast-grep
+abbr --add -- awatch ai_watch
+abbr --add -- wx watchexec
+
 # Abbreviations: editor / TUI
 abbr --add -- v nvim
 abbr --add -- vi nvim
@@ -165,6 +178,7 @@ abbr --add -- lg lazygit
 
 # Abbreviations: misc productivity
 abbr --add -- reload 'exec fish'
+abbr --add -- private 'fish --private'
 abbr --add -- myip 'curl -s ifconfig.me'
 abbr --add -- listening 'lsof -iTCP -sTCP:LISTEN -n -P'
 
@@ -220,11 +234,6 @@ set -g fish_pager_color_completion normal
 set -g fish_pager_color_description yellow
 set -g fish_pager_color_prefix cyan
 set -g fish_pager_color_progress cyan
-
-# done plugin
-set -g __done_min_cmd_duration 10000
-set -g __done_notification_urgency_level normal
-set -g __done_notify_sound 1
 
 # Command-not-found: let mise auto-install tools, then fall back to fish.
 function __nwiizo_setup_cnf --on-event fish_prompt
@@ -283,11 +292,11 @@ set -g __fish_git_prompt_color_merging f9e2af
 set -g __fish_git_prompt_color_cleanstate a6e3a1
 
 # Tool integrations
-type -q zoxide; and zoxide init fish --cmd z | source
+type -q zoxide; and __nwiizo_cached_init zoxide zoxide init fish --cmd z
 type -q mise; and mise activate fish | source
-type -q carapace; and carapace _carapace fish | source
-type -q atuin; and atuin init fish --disable-up-arrow | source
-type -q direnv; and not functions -q __direnv_export_eval; and direnv hook fish | source
+type -q carapace; and __nwiizo_cached_init carapace carapace _carapace fish
+type -q atuin; and __nwiizo_cached_init atuin atuin init fish --disable-up-arrow
+type -q direnv; and not functions -q __direnv_export_eval; and __nwiizo_cached_init direnv direnv hook fish
 
 # Machine-specific local config.
 test -f $XDG_CONFIG_HOME/fish/local.fish; and source $XDG_CONFIG_HOME/fish/local.fish

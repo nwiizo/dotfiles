@@ -22,6 +22,43 @@ Fisher writes `~/.config/fish/fish_plugins` when
 3. Run `fish ../scripts/install-fish-plugins.fish` when changing plugins.
 4. New shells pick up changes; reload the shell with `exec fish`.
 
+## Agent-assisted workflow
+
+The short aliases are safe by default. `c` starts Claude Code and `cx`
+starts Codex with their normal permission checks. The bypass modes remain
+available as the deliberately explicit `cunsafe` and `cxunsafe` aliases.
+
+| Command | Purpose |
+|---|---|
+| `ast` | `ast-grep` structural search and rewrite |
+| `awatch <command...>` | Re-run verification whenever an agent changes files |
+| `wx` | Direct `watchexec` access |
+| `private` | Start `fish --private` without reading or writing history |
+
+For example, keep a Rust test loop next to Claude Code or Codex:
+
+```fish
+awatch cargo test --all
+```
+
+Watchexec uses native filesystem events, respects project ignore files, and
+restarts an in-flight verification when a newer edit arrives.
+
+## Startup behavior
+
+Interactive shells use full `mise activate` behavior, including directory
+hooks and environment variables. Non-interactive agent commands use mise
+shims so project tools are also available outside a prompt.
+
+Static shell-integration output for carapace, Atuin, zoxide, and direnv is
+cached under `$XDG_CACHE_HOME/fish/generated/`. A changed executable path or
+modification time, or a changed init command line, regenerates its cache
+automatically. The cache is local runtime state and is intentionally not
+tracked.
+
+Long-command notifications are handled by Ghostty's native configuration, so
+the Fisher `done` plugin is intentionally not installed.
+
 ## What's not here
 
 - `fish_variables` — local Fish universal variables/runtime state.

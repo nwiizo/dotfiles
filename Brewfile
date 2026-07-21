@@ -1,5 +1,6 @@
 tap "minorole/tap"
 
+brew "ast-grep"
 brew "atuin"
 brew "bat"
 brew "carapace"
@@ -24,6 +25,7 @@ brew "tealdeer"
 brew "tokei"
 brew "tree"
 brew "tree-sitter-cli"
+brew "watchexec"
 brew "yq"
 brew "zoxide"
 
