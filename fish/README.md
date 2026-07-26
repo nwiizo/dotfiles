@@ -13,11 +13,11 @@ Fisher writes `~/.config/fish/fish_plugins` when
 | `config.fish` | Main shell init, abbreviations, env vars, and tool integrations |
 | `fish_plugins` | Repo-managed Fisher desired plugin list |
 | `functions/` | Custom fish functions (prompt, AI helpers, jj wrappers, `update_all`, etc.) |
-| `conf.d/zz_sponge_compat.fish` | Compatibility patch for sponge plugin on fish 4.x |
+| `conf.d/` | Early PATH setup, cached mise/direnv hooks, and Fish 4.x compatibility snippets |
 
 ## How edits flow
 
-1. Edit `config.fish`, `fish_plugins`, or files under `functions/`.
+1. Edit `config.fish`, `fish_plugins`, or files under `conf.d/` and `functions/`.
 2. Run `../scripts/link.sh` when adding/removing files.
 3. Run `fish ../scripts/install-fish-plugins.fish` when changing plugins.
 4. New shells pick up changes; reload the shell with `exec fish`.
@@ -47,14 +47,20 @@ restarts an in-flight verification when a newer edit arrives.
 ## Startup behavior
 
 Interactive shells use full `mise activate` behavior, including directory
-hooks and environment variables. Non-interactive agent commands use mise
-shims so project tools are also available outside a prompt.
+hooks and environment variables. Non-interactive agent commands add mise's
+shim directory directly, avoiding a startup subprocess while keeping project
+tools available.
 
-Static shell-integration output for carapace, Atuin, zoxide, and direnv is
-cached under `$XDG_CACHE_HOME/fish/generated/`. A changed executable path or
+Repo-managed `conf.d` entries take precedence over Homebrew's generated mise
+and direnv hooks. Their output, along with carapace, Atuin, and zoxide
+integration code, is cached under
+`${XDG_CACHE_HOME:-$HOME/.cache}/fish/generated/`. A changed executable path or
 modification time, or a changed init command line, regenerates its cache
 automatically. The cache is local runtime state and is intentionally not
 tracked.
+
+macOS supplies `SSH_AUTH_SOCK` through the login session, so Fish inherits the
+native agent instead of running `ssh-add` during every shell startup.
 
 Long-command notifications are handled by Ghostty's native configuration, so
 the Fisher `done` plugin is intentionally not installed.

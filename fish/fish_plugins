@@ -19,8 +19,5 @@ patrickf1/colored_man_pages.fish
 edc/bass
 jorgebucaran/replay.fish
 
-# Environment helpers
-danhper/fish-ssh-agent
-
 # Development
 jorgebucaran/fishtape

@@ -40,21 +40,12 @@ set -gx LC_ALL en_US.UTF-8
 # Man pages
 set -gx MANPAGER "sh -c 'col -bx | bat -l man -p'"
 
-# Homebrew
-if test -d /opt/homebrew
-    set -gx HOMEBREW_PREFIX /opt/homebrew
-    set -gx HOMEBREW_CELLAR /opt/homebrew/Cellar
-    set -gx HOMEBREW_REPOSITORY /opt/homebrew
-    fish_add_path /opt/homebrew/bin /opt/homebrew/sbin
-end
-
 set -gx HOMEBREW_NO_ANALYTICS 1
 set -gx HOMEBREW_NO_ENV_HINTS 1
 set -gx HOMEBREW_AUTO_UPDATE_SECS 3600
 set -gx HOMEBREW_UPGRADE_GREEDY 1
 
 # PATH
-fish_add_path $HOME/.local/bin
 fish_add_path $HOME/.cargo/bin
 fish_add_path $HOME/.krew/bin
 fish_add_path $HOME/go/bin
@@ -70,13 +61,8 @@ set -gx INFOPATH /opt/homebrew/share/info $INFOPATH
 
 test -f "$HOME/.cargo/env.fish"; and source "$HOME/.cargo/env.fish"
 
-# Non-interactive agents and scripts need mise-managed tools without prompt
-# hooks. Interactive shells use full activation below so directory-specific
-# environment variables and hooks continue to work.
-if not status is-interactive
-    type -q mise; and mise activate fish --shims | source
-    exit
-end
+# mise and direnv hooks are initialized from conf.d. The remainder is interactive-only.
+status is-interactive; or exit
 
 # Abbreviations: navigation
 abbr --add -- - 'cd -'
@@ -293,10 +279,8 @@ set -g __fish_git_prompt_color_cleanstate a6e3a1
 
 # Tool integrations
 type -q zoxide; and __nwiizo_cached_init zoxide zoxide init fish --cmd z
-type -q mise; and mise activate fish | source
 type -q carapace; and __nwiizo_cached_init carapace carapace _carapace fish
 type -q atuin; and __nwiizo_cached_init atuin atuin init fish --disable-up-arrow
-type -q direnv; and not functions -q __direnv_export_eval; and __nwiizo_cached_init direnv direnv hook fish
 
 # Machine-specific local config.
 test -f $XDG_CONFIG_HOME/fish/local.fish; and source $XDG_CONFIG_HOME/fish/local.fish

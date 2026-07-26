@@ -11,7 +11,9 @@ function __nwiizo_cached_init --description 'Source cached shell integration cod
     set -l executable_path (command -s $executable)
     test -n "$executable_path"; or return 127
 
-    set -l cache_dir "$XDG_CACHE_HOME/fish/generated"
+    set -l cache_home "$HOME/.cache"
+    set -q XDG_CACHE_HOME[1]; and set cache_home "$XDG_CACHE_HOME"
+    set -l cache_dir "$cache_home/fish/generated"
     set -l cache_file "$cache_dir/$cache_key.fish"
     set -l cache_header "# command: "(string join ' ' -- (string escape -- $executable_path $argv))
     set -l cached_header

@@ -62,7 +62,7 @@ function fish_prompt
     end
 
     # ── Git branch + status ──
-    echo -n (__fish_git_prompt)
+    echo -n (fish_git_prompt)
 
     # ── Jobs ──
     set -l job_count (count (jobs -p))

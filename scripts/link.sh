@@ -30,16 +30,7 @@ ensure_dir() {
   mkdir -p "$target"
 }
 
-link_file() {
-  local source="$1"
-  local target="$2"
-
-  mkdir -p "$(dirname "$target")"
-  backup_if_needed "$target"
-  ln -s "$source" "$target"
-}
-
-link_dir() {
+link_path() {
   local source="$1"
   local target="$2"
 
@@ -64,7 +55,7 @@ link_dir_children() {
 
   for source in "$source_dir"/*; do
     [[ -e "$source" ]] || continue
-    link_dir "$source" "$target_dir/$(basename "$source")"
+    link_path "$source" "$target_dir/$(basename "$source")"
   done
 }
 
@@ -77,45 +68,45 @@ remove_managed_link() {
   fi
 }
 
-link_file "$repo/fish/config.fish" "$HOME/.config/fish/config.fish"
-link_file "$repo/fish/conf.d/zz_sponge_compat.fish" "$HOME/.config/fish/conf.d/zz_sponge_compat.fish"
+link_path "$repo/fish/config.fish" "$HOME/.config/fish/config.fish"
+link_dir_children "$repo/fish/conf.d" "$HOME/.config/fish/conf.d"
 
 for function_file in "$repo"/fish/functions/*.fish; do
-  link_file "$function_file" "$HOME/.config/fish/functions/$(basename "$function_file")"
+  link_path "$function_file" "$HOME/.config/fish/functions/$(basename "$function_file")"
 done
 
-link_dir "$repo/nvim" "$HOME/.config/nvim"
-link_file "$repo/ghostty/config" "$HOME/.config/ghostty/config"
-link_file "$repo/gpane/config.yaml" "$HOME/.config/gpane/config.yaml"
-link_file "$repo/bat/config" "$HOME/.config/bat/config"
-link_file "$repo/atuin/config.toml" "$HOME/.config/atuin/config.toml"
-link_file "$repo/tealdeer/config.toml" "$HOME/.config/tealdeer/config.toml"
-link_file "$repo/git/config" "$HOME/.config/git/config"
-link_file "$repo/gh/config.yml" "$HOME/.config/gh/config.yml"
-link_file "$repo/git/power_pull.sh" "$HOME/.local/bin/power_pull"
+link_path "$repo/nvim" "$HOME/.config/nvim"
+link_path "$repo/ghostty/config" "$HOME/.config/ghostty/config"
+link_path "$repo/gpane/config.yaml" "$HOME/.config/gpane/config.yaml"
+link_path "$repo/bat/config" "$HOME/.config/bat/config"
+link_path "$repo/atuin/config.toml" "$HOME/.config/atuin/config.toml"
+link_path "$repo/tealdeer/config.toml" "$HOME/.config/tealdeer/config.toml"
+link_path "$repo/git/config" "$HOME/.config/git/config"
+link_path "$repo/gh/config.yml" "$HOME/.config/gh/config.yml"
+link_path "$repo/git/power_pull.sh" "$HOME/.local/bin/power_pull"
 chmod +x "$HOME/.local/bin/power_pull"
 remove_managed_link "$HOME/.local/bin/ghostty-notification-bell" "$repo/ghostty/notification-bell.sh"
-link_file "$repo/ghostty/claude-notification.sh" "$HOME/.local/bin/ghostty-claude-notification"
+link_path "$repo/ghostty/claude-notification.sh" "$HOME/.local/bin/ghostty-claude-notification"
 chmod +x "$HOME/.local/bin/ghostty-claude-notification"
 
-link_file "$repo/warp/keybindings.yaml" "$HOME/.warp/keybindings.yaml"
-link_file "$repo/warp/themes/custom.yaml" "$HOME/.warp/themes/custom.yaml"
-link_file "$repo/warp/themes/catppuccin-mocha.yaml" "$HOME/.warp/themes/catppuccin-mocha.yaml"
+link_path "$repo/warp/keybindings.yaml" "$HOME/.warp/keybindings.yaml"
+link_path "$repo/warp/themes/custom.yaml" "$HOME/.warp/themes/custom.yaml"
+link_path "$repo/warp/themes/catppuccin-mocha.yaml" "$HOME/.warp/themes/catppuccin-mocha.yaml"
 
 for workflow_file in "$repo"/warp/workflows/*.yaml; do
-  link_file "$workflow_file" "$HOME/.warp/workflows/$(basename "$workflow_file")"
+  link_path "$workflow_file" "$HOME/.warp/workflows/$(basename "$workflow_file")"
 done
 
 nippo_skill="$HOME/ghq/github.com/nwiizo/nippo/.claude/skills/nippo"
 
-link_file "$repo/.agents/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
-link_file "$repo/.agents/RTK.md" "$HOME/.claude/RTK.md"
-link_file "$repo/.agents/claudeignore" "$HOME/.claude/.claudeignore"
-link_dir "$repo/.agents/agents" "$HOME/.claude/agents"
-link_dir "$repo/.agents/docs" "$HOME/.claude/docs"
-link_dir "$repo/.agents/rules" "$HOME/.claude/rules"
+link_path "$repo/.agents/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
+link_path "$repo/.agents/RTK.md" "$HOME/.claude/RTK.md"
+link_path "$repo/.agents/claudeignore" "$HOME/.claude/.claudeignore"
+link_path "$repo/.agents/agents" "$HOME/.claude/agents"
+link_path "$repo/.agents/docs" "$HOME/.claude/docs"
+link_path "$repo/.agents/rules" "$HOME/.claude/rules"
 link_dir_children "$repo/.agents/skills" "$HOME/.claude/skills"
-[[ -d "$nippo_skill" ]] && link_dir "$nippo_skill" "$HOME/.claude/skills/nippo"
+[[ -d "$nippo_skill" ]] && link_path "$nippo_skill" "$HOME/.claude/skills/nippo"
 
 # ~/.agents is the cross-client Agent Skills location. Product-specific
 # agents, rules, and docs stay under ~/.claude or ~/.codex.
@@ -123,7 +114,7 @@ remove_managed_link "$HOME/.agents/agents" "$repo/.agents/agents"
 remove_managed_link "$HOME/.agents/docs" "$repo/.agents/docs"
 remove_managed_link "$HOME/.agents/rules" "$repo/.agents/rules"
 link_dir_children "$repo/.agents/skills" "$HOME/.agents/skills"
-[[ -d "$nippo_skill" ]] && link_dir "$nippo_skill" "$HOME/.agents/skills/nippo"
+[[ -d "$nippo_skill" ]] && link_path "$nippo_skill" "$HOME/.agents/skills/nippo"
 
 link_dir_children "$repo/.agents/codex/agents" "$HOME/.codex/agents"
 
