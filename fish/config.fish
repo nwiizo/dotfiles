@@ -120,8 +120,7 @@ abbr --add -- ktn 'kubectl top nodes'
 
 # Abbreviations: AI tools
 abbr --add -- c claude
-abbr --add -- cunsafe 'claude --dangerously-skip-permissions'
-abbr --add -- cc 'claude -c'
+abbr --add -- cc 'claude --dangerously-skip-permissions'
 abbr --add -- cr 'claude --resume'
 abbr --add -- clp 'claude -p'
 abbr --add -- cplan 'claude --permission-mode plan'
@@ -130,8 +129,7 @@ abbr --add -- csafe 'claude --safe-mode'
 abbr --add -- cdoc 'claude doctor'
 abbr --add -- cagents 'claude agents'
 abbr --add -- cultra 'claude ultrareview'
-abbr --add -- cx codex
-abbr --add -- cxunsafe 'codex --dangerously-bypass-approvals-and-sandbox'
+abbr --add -- cx 'codex --dangerously-bypass-approvals-and-sandbox'
 abbr --add -- cxq 'codex -q'
 abbr --add -- cxs 'codex --sandbox workspace-write --ask-for-approval on-request'
 abbr --add -- cxro 'codex --sandbox read-only'
