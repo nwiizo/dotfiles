@@ -146,6 +146,7 @@ statusline/bufferlineを廃止し、必要な情報のみfloating windowで表�
 nvim/
 ├── init.lua                    # エントリポイント: require("config.lazy")
 ├── .stylua.toml                # Luaフォーマッター設定
+├── lazy-lock.json              # lazy.nvim plugin revision lockfile
 ├── lazyvim.json                # LazyVim metadata
 └── lua/
     ├── config/
@@ -162,7 +163,7 @@ nvim/
         ├── diagnostics.lua     # trouble override, todo-comments override, nvim-bqf
         ├── lsp.lua             # lspconfig, conform, mason, treesitter override
         ├── completion.lua      # blink.cmp override
-        ├── coding.lua          # yanky override
+        ├── coding.lua          # yanky, refactoring.nvim, treesj
         ├── ai.lua              # copilot-chat, avante, codecompanion, codex, claudecode
         └── lang.lua            # rustaceanvim, crates, neotest, dap, cargo, marp
 ```
@@ -557,16 +558,14 @@ Neovim側にも未保存の変更がある場合やfileが削除された場合�
 
 | キー | モード | 説明 | 出典 |
 |---|---|---|---|
-| `<leader>Rf` | x | Extract Function | P refactoring |
-| `<leader>RF` | x | Extract Function to File | P refactoring |
-| `<leader>Rv` | x | Extract Variable | P refactoring |
+| `<leader>Rf` | n,x | Extract Function | P refactoring |
+| `<leader>RF` | n,x | Extract Function to File | P refactoring |
+| `<leader>Rv` | n,x | Extract Variable | P refactoring |
 | `<leader>Ri` | n,x | Inline Variable | P refactoring |
-| `<leader>Rb` | n | Extract Block | P refactoring |
-| `<leader>RB` | n | Extract Block to File | P refactoring |
-| `<leader>Rp` | n | Debug Print 挿入 | P refactoring |
+| `<leader>Rp` | n | Debug Print Location | P refactoring |
 | `<leader>RP` | n,x | Debug Print Variable | P refactoring |
 | `<leader>Rc` | n | Debug Print 全削除 | P refactoring |
-| `<leader>Rs` | n,x | Refactoring Picker | P refactoring |
+| `<leader>Rs` | n,x | Refactoring Selector | P refactoring |
 
 ## インストール
 
@@ -581,14 +580,20 @@ cd ~/ghq/github.com/nwiizo/dotfiles
 # Neovim起動（プラグイン自動インストール）
 nvim
 
-# プラグイン同期
-:Lazy sync
+# lockfileの状態を再現
+:Lazy restore
 ```
+
+`lazy-lock.json` はlazy.nvim公式推奨どおりバージョン管理する。別マシンでは
+`:Lazy restore` でlockfileのrevisionへ復元できる。`:Lazy update` による
+revision更新は、関連する設定変更と一緒にレビュー・コミットする。
 
 ## メンテナンス
 
 ```vim
-:Lazy sync          " プラグイン更新
+:Lazy update        " プラグインとlockfileを更新
+:Lazy restore       " lockfileの状態へ復元
+:Lazy sync          " install・clean・updateをまとめて実行
 :Lazy health        " ヘルスチェック
 :LazyExtras         " Extras一覧・管理
 :Mason              " LSP/DAP/Linter管理

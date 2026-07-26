@@ -103,19 +103,6 @@ return {
     end,
   },
 
-  -- nvim-notify: Custom notification style
-  {
-    "rcarriga/nvim-notify",
-    opts = {
-      background_colour = "#000000",
-      fps = 60,
-      render = "compact",
-      stages = "fade",
-      timeout = 3000,
-      top_down = false,
-    },
-  },
-
   -- noice.nvim: Override LazyVim defaults for centered cmdline
   {
     "folke/noice.nvim",

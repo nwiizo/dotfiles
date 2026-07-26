@@ -16,7 +16,6 @@ return {
         mini = true,
         native_lsp = { enabled = true },
         noice = true,
-        notify = true,
         snacks = true,
         telescope = true,
         treesitter = true,

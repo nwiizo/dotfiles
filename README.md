@@ -317,7 +317,7 @@ nvim --startuptime /tmp/nvim.log
 Inside Neovim:
 
 ```vim
-:Lazy sync
+:Lazy restore
 :Mason
 :checkhealth
 :LspInfo

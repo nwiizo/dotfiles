@@ -25,6 +25,9 @@ Agent assets are sourced from `.agents/`. Claude Code project entrypoints in
 
 Keep changes scoped and follow the existing layout. Fish functions use
 `fish/functions/<name>.fish`; Neovim plugin specs go under `nvim/lua/plugins/`.
+Repo-managed Fish vendor overrides go in `fish/conf.d/` with the upstream
+basename. Keep `nvim/lazy-lock.json` tracked; use `:Lazy update` to advance
+plugin revisions and `:Lazy restore` to reproduce the locked state.
 Reusable skills use `.agents/skills/<name>/SKILL.md`. Reviewer or planner
 personas belong in `.agents/agents/`; Codex custom agents belong in
 `.agents/codex/agents/*.toml`.
@@ -34,9 +37,10 @@ personas belong in `.agents/agents/`; Codex custom agents belong in
 Run checks matching the changed area:
 
 ```bash
-fish -n fish/config.fish
+fish -n fish/config.fish fish/conf.d/*.fish
 for f in fish/functions/*.fish; do fish -n "$f" || exit 1; done
 stylua --check nvim/lua
+jq empty nvim/lazy-lock.json
 nvim --headless '+lua print("nvim-config-ok")' +qa
 ./scripts/link.sh
 ./scripts/audit-agent-config.sh

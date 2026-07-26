@@ -23,7 +23,7 @@ return {
         if prev_on_attach then
           prev_on_attach(client, bufnr)
         end
-        local kopts = { silent = true, buffer = bufnr }
+        local kopts = { silent = true, buf = bufnr }
         local map = vim.keymap.set
         map("n", "<leader>ra", function()
           vim.cmd.RustLsp("codeAction")
@@ -164,7 +164,7 @@ return {
         enabled = true,
         on_attach = function(_, bufnr)
           local crates = require("crates")
-          local opts = { silent = true, buffer = bufnr }
+          local opts = { silent = true, buf = bufnr }
           local map = vim.keymap.set
           map("n", "<leader>rct", crates.toggle, vim.tbl_extend("force", opts, { desc = "Toggle crates" }))
           map("n", "<leader>rcr", crates.reload, vim.tbl_extend("force", opts, { desc = "Reload crates" }))

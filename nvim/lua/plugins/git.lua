@@ -23,7 +23,7 @@ return {
         local gs = package.loaded.gitsigns
         local function map(mode, l, r, mopts)
           mopts = mopts or {}
-          mopts.buffer = bufnr
+          mopts.buf = bufnr
           vim.keymap.set(mode, l, r, mopts)
         end
         map("n", "<leader>gp", gs.preview_hunk, { desc = "Preview Hunk" })

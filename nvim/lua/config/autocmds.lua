@@ -5,10 +5,14 @@
 -- move. CursorHold also covers filesystems where change detection is delayed.
 local external_changes = vim.api.nvim_create_augroup("nwiizo_external_changes", { clear = true })
 
-vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "TermLeave" }, {
+vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold" }, {
   group = external_changes,
-  command = "silent! checktime",
-  desc = "Auto-reload files changed outside of nvim",
+  callback = function(args)
+    if vim.bo[args.buf].buftype == "" then
+      vim.cmd.checktime()
+    end
+  end,
+  desc = "Check for external changes not covered by LazyVim defaults",
 })
 
 vim.api.nvim_create_autocmd("FileChangedShell", {

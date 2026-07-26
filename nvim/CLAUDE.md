@@ -4,6 +4,11 @@ LazyVimベースのNeovim設定。Rust/Go/TypeScript/Python開発 + AI支援コ�
 
 **Base:** LazyVim | **Theme:** catppuccin mocha | **Completion:** blink.cmp | **Requirements:** Neovim 0.12+
 
+`lazy-lock.json` はプラグインの再現性を保つためリポジトリ管理する。
+`:Lazy update` で revision を更新し、`:Lazy restore` で lockfile の状態を
+再現する。`:Lazy sync` は install・clean・update をまとめて実行する。
+lockfile の変更は、関連するプラグイン設定と同じコミットに含める。
+
 ## Directory Structure
 
 ```
@@ -18,7 +23,7 @@ nvim/lua/
     ├── diagnostics.lua  # trouble, todo-comments, nvim-bqf
     ├── lsp.lua          # lspconfig, conform, mason, treesitter
     ├── completion.lua   # blink.cmp
-    ├── coding.lua       # yanky
+    ├── coding.lua       # yanky, refactoring.nvim, treesj
     ├── ai.lua           # copilot-chat, avante, codecompanion, codex.nvim, claudecode
     └── lang.lua         # rustaceanvim, crates, neotest, dap, cargo.nvim, marp.nvim
 ```
@@ -105,6 +110,12 @@ Extrasは頻繁に追加・削除される。存在しないextraを `import` �
 ### modes.nvim API変更
 
 `ignore_filetypes` → `ignore` にリネーム済み（2025年以降）
+
+### refactoring.nvim v2
+
+Neovim 0.12+ と `lewis6991/async.nvim` が必須。旧 `refactor("...")` API と
+Telescope extension は廃止済みなので、`extract_func()` などの操作別 API と
+`select_refactor()` を使う。debug API は `require("refactoring.debug")` から呼ぶ。
 
 ### デプロイ時の注意
 
