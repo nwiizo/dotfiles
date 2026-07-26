@@ -2,7 +2,7 @@
 
 ## NEVER
 - Hardcode API keys, passwords, or secrets
-- Push directly to main/master
+- Bypass branch protection or publish unreviewed, unverified changes
 
 ## MUST
 - Tests for new features and bug fixes

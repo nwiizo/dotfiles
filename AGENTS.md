@@ -18,8 +18,9 @@ Agent assets are sourced from `.agents/`. Claude Code project entrypoints in
   `~/.local/bin`, `~/.claude`, `~/.agents`, and `~/.codex`.
 - `fish scripts/install-fish-plugins.fish` applies `fish/fish_plugins`.
 - `brew bundle check --file Brewfile` verifies Homebrew dependencies.
-- `./scripts/audit-agent-config.sh` checks agent symlinks, stale references,
-  generated files, Codex agent TOML, and secrets.
+- `./scripts/audit-agent-config.sh` checks agent symlinks, portable skill
+  frontmatter, manual-only policy parity, stale references, generated files,
+  and, when their validators are installed, Codex agent TOML and secrets.
 
 ## Coding Style & Naming Conventions
 

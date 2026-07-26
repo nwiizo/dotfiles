@@ -38,12 +38,13 @@ Types: `feat` `fix` `docs` `style` `refactor` `test` `chore`
 - 依存関係のある多段タスクだけ、`手順 → verify: チェック` の形で計画を述べる
 - 詳細は skill: `home-karpathy-guidelines`
 
-## Git Discipline
-- コミット前に必ず `git status` と `git diff --staged` を確認する
-- 現在のブランチを確認してからコミットする
+## Version Control Discipline
+- 最初にリポジトリのVCSを確認し、jjでは `jj status` / `jj diff`、Gitでは `git status` / `git diff` を使う
+- コミット前に、確定対象の正確なdiffと現在のbookmarkまたはbranchを確認する
 - 他プロジェクトのファイルを含めてコミットしない
 - プロジェクトリポジトリ内で作業中に `~/.claude/` のグローバル設定を変更しない
-- バックアップbranchやstashを依頼なく作らない。復旧点が本当に必要な操作では、対象と戻し方を確認してから作る
+- push前にremote差分と対象bookmarkまたはbranchを確認し、ユーザーの依頼と保護ルールに従う
+- バックアップbranch、bookmark、stashを依頼なく作らない。復旧点が本当に必要な操作では、対象と戻し方を確認してから作る
 
 ## Evidence and Reporting
 - 進捗と完了の主張は、この実行で得たコマンド出力・差分・成果物に対応づける

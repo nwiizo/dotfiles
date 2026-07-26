@@ -32,9 +32,37 @@ Review judgment belongs in subagents. Skills may orchestrate review flows or
 apply accepted review comments, but reviewer personas and checklists should be
 implemented as Claude Code agents and Codex custom agents.
 
-Use `scripts/audit-agent-config.sh` after changing this tree. Use
-`scripts/summarize-ai-history.py` only on temporary collector output under
-`/tmp`; never commit raw AI conversation logs.
+## Choose the smallest instruction surface
+
+| Need | Surface |
+|---|---|
+| Repository facts, commands, completion criteria | `AGENTS.md`; import it from `CLAUDE.md` |
+| Claude-only policy | `.agents/rules/*.md`; add `paths` unless it is truly universal |
+| Repeatable workflow or detailed reference | `.agents/skills/<name>/` |
+| Deterministic enforcement at a lifecycle event | hook, config, or validation script |
+| Shareable bundle of skills, tools, or connectors | plugin |
+
+Keep always-loaded guidance short and concrete. Add durable guidance after
+repeated friction, not as speculative policy. Skills should keep portable
+`name` and `description` metadata, load detailed references only when needed,
+and separate Claude Code invocation controls from Codex
+`agents/openai.yaml` policy.
+
+Official references:
+
+- [OpenAI: Build skills](https://learn.chatgpt.com/docs/build-skills)
+- [OpenAI: Codex best practices](https://learn.chatgpt.com/guides/best-practices)
+- [Anthropic: Claude Code extensions](https://code.claude.com/docs/en/features-overview)
+- [Anthropic: Claude Code skills](https://code.claude.com/docs/en/skills)
+- [Anthropic: CLAUDE.md and path-scoped rules](https://code.claude.com/docs/en/memory)
+
+Use `scripts/audit-agent-config.sh` after changing this tree. It checks shared
+skill frontmatter, requires directory/name identity and a non-empty
+description, and enforces manual-only invocation policy in both Claude Code
+and Codex. Client-specific interface text and forward-test quality remain
+manual review items. The YAML checks require Ruby with its standard Psych
+library. Use `scripts/summarize-ai-history.py` only on temporary collector
+output under `/tmp`; never commit raw AI conversation logs.
 
 ## Excluded
 

@@ -56,6 +56,77 @@ for agent in "$repo"/.agents/codex/agents/*.toml; do
   check_link "$HOME/.codex/agents/$(basename "$agent")" "$agent"
 done
 
+if ! command -v ruby >/dev/null 2>&1; then
+  echo "ruby with Psych is required to validate agent YAML" >&2
+  fail=1
+elif ! ruby <<'RUBY'
+require "yaml"
+
+errors = []
+
+def load_yaml_mapping(text, path, label, errors)
+  metadata = YAML.safe_load(text, [], [], false) || {}
+  unless metadata.is_a?(Hash)
+    errors << "#{label} must be a mapping: #{path}"
+    return nil
+  end
+  metadata
+rescue StandardError => error
+  errors << "invalid #{label}: #{path}: #{error.message}"
+  nil
+end
+
+Dir[".agents/skills/*/SKILL.md"].sort.each do |skill_file|
+  skill_dir = File.dirname(skill_file)
+  skill_name = File.basename(skill_dir)
+  content = File.read(skill_file)
+  match = content.match(/\A---\r?\n(.*?)\r?\n---\r?\n/m)
+
+  unless match
+    errors << "missing or malformed skill frontmatter: #{skill_file}"
+    next
+  end
+
+  metadata =
+    load_yaml_mapping(match[1], skill_file, "skill frontmatter", errors)
+  next unless metadata
+
+  unless metadata["name"] == skill_name
+    errors << "skill name must match directory: #{skill_file}"
+  end
+  unless metadata["description"].is_a?(String) && !metadata["description"].strip.empty?
+    errors << "skill description must be a non-empty string: #{skill_file}"
+  end
+
+  openai_file = File.join(skill_dir, "agents", "openai.yaml")
+  openai_metadata = {}
+  if File.file?(openai_file)
+    openai_metadata =
+      load_yaml_mapping(
+        File.read(openai_file),
+        openai_file,
+        "Codex skill metadata",
+        errors
+      )
+    next unless openai_metadata
+  end
+
+  claude_manual_only = metadata["disable-model-invocation"] == true
+  policy = openai_metadata["policy"]
+  codex_manual_only =
+    policy.is_a?(Hash) && policy["allow_implicit_invocation"] == false
+  if claude_manual_only != codex_manual_only
+    errors << "manual-only policy differs between Claude Code and Codex: #{skill_dir}"
+  end
+end
+
+errors.each { |error| warn(error) }
+exit 1 unless errors.empty?
+RUBY
+then
+  fail=1
+fi
+
 check_absent "$HOME/.agents/agents"
 check_absent "$HOME/.agents/docs"
 check_absent "$HOME/.agents/rules"

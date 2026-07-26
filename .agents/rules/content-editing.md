@@ -1,3 +1,11 @@
+---
+paths:
+  - "**/*.md"
+  - "**/*.mdx"
+  - "**/*.rst"
+  - "**/*.txt"
+---
+
 # Content Editing Rules
 
 文書編集の原則。コード編集の同原則は [coding.md](coding.md) の Surgical Changes セクションを参照。

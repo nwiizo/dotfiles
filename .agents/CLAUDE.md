@@ -24,13 +24,11 @@
 - Rust、CLI、設計書、jj など対象が明確な場合は、対応する専門 reviewer agent を追加する
 - レビュー指摘の本文を整える場合は `home-constructive-reviewer` を使う
 
-## Rules (auto-loaded)
+## Rules
 
 - [security](rules/security.md) — Universal NEVER/MUST constraints
-- [coding](rules/coding.md) — Commit format, git discipline, universal rules
-- [content-editing](rules/content-editing.md) — 外科的編集・過剰修正防止・長文戦略
-- [authoring](rules/authoring.md) — .claude/ maintenance policy
-- Path-scoped: [rust](rules/rust.md) | [go](rules/go.md) | [typescript](rules/typescript.md) | [python](rules/python.md)
+- [coding](rules/coding.md) — Commit format, VCS discipline, universal rules
+- Path-scoped: [content-editing](rules/content-editing.md) | [authoring](rules/authoring.md) | [rust](rules/rust.md) | [go](rules/go.md) | [typescript](rules/typescript.md) | [python](rules/python.md)
 
 ## Docs (on-demand)
 
@@ -43,19 +41,5 @@ rust: [core](docs/rust-core.md) | [sqlx](docs/rust-sqlx.md) | [advanced](docs/ru
 
 ### Agent Tooling
 [claude-code](docs/claude-code.md) | [codex](docs/codex.md)
-
-## Skills
-
-### Code Quality
-home-self-review | home-fix-review-comments | home-karpathy-guidelines | home-systematic-debugging | home-verification-before-completion
-
-### Development Workflow
-home-brainstorming | home-grill-me | home-iterative-refinement | home-validate-on-oss | home-docs-curator | home-history-distill | home-jj-publish-main
-
-### SRE
-home-postmortem-writing | home-incident-runbook-templates | home-aws-finops-investigation | home-gcp-finops-investigation
-
-### Tools
-home-marp-slide-editing | prompt-review | nippo
 
 @RTK.md
