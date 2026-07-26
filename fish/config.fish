@@ -119,7 +119,7 @@ abbr --add -- ktp 'kubectl top pods'
 abbr --add -- ktn 'kubectl top nodes'
 
 # Abbreviations: AI tools
-abbr --add -- c claude
+abbr --add -- c 'claude --dangerously-skip-permissions'
 abbr --add -- cc 'claude --dangerously-skip-permissions'
 abbr --add -- cr 'claude --resume'
 abbr --add -- clp 'claude -p'
