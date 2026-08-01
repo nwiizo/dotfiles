@@ -195,25 +195,86 @@ return {
     },
   },
 
-  -- Codex (OpenAI Codex CLI): side-panel terminal wrapper.
-  -- The plugin can't pass `--dangerously-bypass-approvals-and-sandbox`
-  -- via opts; configure approval mode in `~/.codex/config.toml`
-  -- (e.g. `approval_policy = "on-failure"`) for fish abbr `cx` parity.
+  -- Signalbox: attention-first control surface for persistent Herdr agents.
   {
-    "johnseth97/codex.nvim",
-    cmd = { "Codex", "CodexToggle" },
+    "nwiizo/signalbox.nvim",
+    dir = vim.fn.expand("~/ghq/github.com/nwiizo/signalbox.nvim"),
+    event = "VeryLazy",
+    cmd = {
+      "Signalbox",
+      "SignalboxRefresh",
+      "SignalboxStart",
+      "SignalboxAttach",
+      "SignalboxPrompt",
+      "SignalboxRename",
+      "SignalboxSendVisual",
+      "SignalboxSendFile",
+      "SignalboxSendDiagnostics",
+      "SignalboxHealth",
+    },
     opts = {
-      keymaps = {
-        toggle = nil,
-        quit = "<C-q>",
+      board = {
+        width = 0.9,
+        height = 0.9,
+        preview = true,
+        preview_ratio = 0.58,
+        preview_lines = 80,
       },
-      panel = true,
-      width = 0.4,
-      height = 0.85,
-      autoinstall = false,
+      terminal = {
+        side = "right",
+        width = 0.4,
+        auto_insert = true,
+        return_key = "<C-g>",
+      },
     },
     keys = {
-      { "<leader>ax", "<cmd>CodexToggle<cr>", desc = "Toggle Codex (sidebar)" },
+      { "<C-g>", "<cmd>Signalbox<cr>", mode = { "n", "t" }, desc = "Agent Signalbox" },
+    },
+  },
+
+  -- Codex (OpenAI Codex CLI): terminal and app-server Neovim integration.
+  {
+    "nwiizo/codex.nvim",
+    dir = vim.fn.expand("~/ghq/github.com/nwiizo/codex.nvim"),
+    cmd = {
+      "Codex",
+      "CodexOpen",
+      "CodexClose",
+      "CodexFocus",
+      "CodexStop",
+      "CodexResume",
+      "CodexContinue",
+      "CodexFork",
+      "CodexReview",
+      "CodexImage",
+      "CodexPrompt",
+      "CodexSend",
+      "CodexSendVisual",
+      "CodexAdd",
+      "CodexTreeAdd",
+      "CodexSendText",
+      "CodexDiff",
+      "CodexInterrupt",
+      "CodexStatus",
+      "CodexHealth",
+    },
+    opts = {
+      backend = "terminal",
+      cwd = "root",
+      focus_after_send = true,
+      terminal = {
+        split_side = "right",
+        split_width_percentage = 0.4,
+        window_navigation = {
+          left = "<M-h>",
+          down = "<M-j>",
+          up = "<M-k>",
+          right = "<M-l>",
+        },
+      },
+    },
+    keys = {
+      { "<leader>ax", "<cmd>CodexFocus<cr>", desc = "Focus or hide Codex" },
     },
   },
 

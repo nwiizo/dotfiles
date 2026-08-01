@@ -208,8 +208,9 @@ Custom AI integrations live in `lua/plugins/ai.lua`:
 | Plugin | Role |
 |---|---|
 | `yetone/avante.nvim` | agentic editing through Codex ACP, Claude Code ACP, or Copilot |
-| `johnseth97/codex.nvim` | Codex CLI side-panel terminal |
+| `nwiizo/codex.nvim` | Codex CLI side panel with terminal and app-server backends |
 | `coder/claudecode.nvim` | Claude Code side-panel terminal |
+| `nwiizo/signalbox.nvim` | Herdr persistent agents の attention board |
 | `olimorris/codecompanion.nvim` | Vim-native Copilot-backed chat and inline actions |
 
 Other custom integrations live in feature files under `lua/plugins/`:
@@ -452,7 +453,8 @@ Neovim側にも未保存の変更がある場合やfileが削除された場合�
 | `<leader>aVc` | n | Avante provider: Codex ACP | P avante |
 | `<leader>aVl` | n | Avante provider: Claude Code ACP | P avante |
 | `<leader>aVp` | n | Avante provider: Copilot | P avante |
-| `<leader>ax` | n | Codex sidebar toggle | P codex.nvim |
+| `<leader>ax` | n | Codexを起動・フォーカス・非表示 | P codex.nvim |
+| `<C-g>` | n,t | Herdr agent attention board / attachから戻る | P signalbox.nvim |
 | `<leader>ao` | n | CopilotChat開く | P copilot-chat |
 | `<leader>aq` | n | CopilotChat閉じる | P copilot-chat |
 | `<leader>ar` | n | CopilotChatリセット | P copilot-chat |

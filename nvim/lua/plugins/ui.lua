@@ -74,8 +74,23 @@ return {
             table.insert(res, diag)
           end
 
+          local signalbox = package.loaded["signalbox"]
+          local agent_status = props.focused and signalbox and signalbox.statusline() or ""
+          if agent_status ~= "" then
+            local color = agent_status:find("!", 1, true) and "#f38ba8" or "#a6e3a1"
+            table.insert(res, { "  " .. agent_status, guifg = color, gui = "bold" })
+          end
+
           table.insert(res, { " " })
           return res
+        end,
+      })
+
+      vim.api.nvim_create_autocmd("User", {
+        group = vim.api.nvim_create_augroup("InclineSignalbox", { clear = true }),
+        pattern = "SignalboxUpdated",
+        callback = function()
+          require("incline").refresh()
         end,
       })
     end,
