@@ -17,6 +17,25 @@ Read this reference for changes under `fish/`.
 - Guard UI, prompt, key binding, and shell-hook work with
   `status is-interactive`.
 
+## Preserve command and safety semantics
+
+- Do not shadow standard commands such as `cat`, `grep`, or `ls` with an
+  autoloaded function that accepts a different option set. Fish also autoloads
+  those functions from scripts. Use an explicit command name or an interactive
+  abbreviation, whose expansion stays visible to the user.
+- Prefer maintained Rust CLI tools for interactive workflows when they close a
+  concrete gap. Normally require substantial adoption (about 5,000+ GitHub
+  stars), recent upstream activity, a Homebrew core formula, and no material
+  overlap with the existing stack. Record the selection snapshot and mapping
+  in `fish/README.md`.
+- Keep short aliases for AI agents, package cleanup, and VCS operations on
+  guarded defaults. Put bypass or force behavior behind a name containing
+  `unsafe` or an equally explicit warning.
+- Keep private module, credential, and machine-specific exceptions in
+  `~/.config/fish/local.fish`. It is sourced for interactive and non-interactive
+  Fish, so UI-only code inside it must use its own `status is-interactive`
+  guard.
+
 ## Keep PATH and generated hooks deterministic
 
 - Use `fish_add_path --path` for repo-managed PATH entries that must affect the

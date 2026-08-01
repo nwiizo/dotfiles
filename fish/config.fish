@@ -23,9 +23,11 @@ set -gx VISUAL nvim
 set -gx KUBE_EDITOR nvim
 
 # Go
-set -gx GOPATH $HOME/gopath
-set -gx GOPROXY direct
-set -gx GOSUMDB off
+# Clear only the retired shared values. Otherwise preserve inherited corporate
+# or machine-specific settings; Go supplies verified defaults when unset.
+test "$GOPATH" = "$HOME/gopath"; and set -e GOPATH
+test "$GOPROXY" = direct; and set -e GOPROXY
+test "$GOSUMDB" = off; and set -e GOSUMDB
 
 # Containers / Kubernetes
 set -gx DOCKER_BUILDKIT 1
@@ -35,7 +37,6 @@ set -gx KUBECONFIG $HOME/.kube/config
 
 # Locale
 set -gx LANG en_US.UTF-8
-set -gx LC_ALL en_US.UTF-8
 
 # Man pages
 set -gx MANPAGER "sh -c 'col -bx | bat -l man -p'"
@@ -46,12 +47,13 @@ set -gx HOMEBREW_AUTO_UPDATE_SECS 3600
 set -gx HOMEBREW_UPGRADE_GREEDY 1
 
 # PATH
-fish_add_path $HOME/.cargo/bin
-fish_add_path $HOME/.krew/bin
-fish_add_path $HOME/go/bin
-fish_add_path $HOME/gopath/bin
-fish_add_path /usr/local/kubebuilder/bin
-fish_add_path $HOME/.istioctl/bin
+# Remove the retired custom GOPATH bin inherited by already-running terminals.
+set -gx PATH (string match -v -- $HOME/gopath/bin $PATH)
+fish_add_path --path $HOME/.cargo/bin
+fish_add_path --path $HOME/.krew/bin
+fish_add_path --path $HOME/go/bin
+fish_add_path --path /usr/local/kubebuilder/bin
+fish_add_path --path $HOME/.istioctl/bin
 
 set -q MANPATH; or set MANPATH ''
 set -gx MANPATH /opt/homebrew/share/man $MANPATH
@@ -60,6 +62,10 @@ set -q INFOPATH; or set INFOPATH ''
 set -gx INFOPATH /opt/homebrew/share/info $INFOPATH
 
 test -f "$HOME/.cargo/env.fish"; and source "$HOME/.cargo/env.fish"
+
+# Machine-specific environment overrides must also apply to `fish -c` and Fish
+# scripts. Interactive-only work in this file must guard itself.
+test -f "$XDG_CONFIG_HOME/fish/local.fish"; and source "$XDG_CONFIG_HOME/fish/local.fish"
 
 # mise and direnv hooks are initialized from conf.d. The remainder is interactive-only.
 status is-interactive; or exit
@@ -99,7 +105,8 @@ abbr --add -- dps 'docker ps'
 abbr --add -- dcl 'docker compose logs -f'
 abbr --add -- dcr 'docker compose restart'
 abbr --add -- dcb 'docker compose build'
-abbr --add -- dsp 'docker system prune -af'
+abbr --add -- dsp 'docker system prune'
+abbr --add -- dspunsafe 'docker system prune --all --force'
 
 # Abbreviations: Kubernetes
 abbr --add -- k kubectl
@@ -119,8 +126,9 @@ abbr --add -- ktp 'kubectl top pods'
 abbr --add -- ktn 'kubectl top nodes'
 
 # Abbreviations: AI tools
-abbr --add -- c 'claude --dangerously-skip-permissions'
-abbr --add -- cc 'claude --dangerously-skip-permissions'
+abbr --add -- c claude
+abbr --add -- cc claude
+abbr --add -- cunsafe 'claude --dangerously-skip-permissions'
 abbr --add -- cr 'claude --resume'
 abbr --add -- clp 'claude -p'
 abbr --add -- cplan 'claude --permission-mode plan'
@@ -129,7 +137,8 @@ abbr --add -- csafe 'claude --safe-mode'
 abbr --add -- cdoc 'claude doctor'
 abbr --add -- cagents 'claude agents'
 abbr --add -- cultra 'claude ultrareview'
-abbr --add -- cx 'codex --dangerously-bypass-approvals-and-sandbox'
+abbr --add -- cx codex
+abbr --add -- cxunsafe 'codex --dangerously-bypass-approvals-and-sandbox'
 abbr --add -- cxq 'codex -q'
 abbr --add -- cxs 'codex --sandbox workspace-write --ask-for-approval on-request'
 abbr --add -- cxro 'codex --sandbox read-only'
@@ -161,6 +170,22 @@ abbr --add -- vim nvim
 abbr --add -- lg lazygit
 
 # Abbreviations: misc productivity
+# Rust-powered replacements stay interactive and visibly expand before running,
+# so scripts retain the native command interfaces.
+abbr --add -- cat bat
+abbr --add -- grep rg
+abbr --add -- ls 'eza --icons --group-directories-first'
+abbr --add -- find fd
+abbr --add -- du dust
+abbr --add -- sed sd
+abbr --add -- ps procs
+abbr --add -- top btm
+abbr --add -- ping gping
+abbr --add -- http xh
+abbr --add -- hex hexyl
+abbr --add -- bench hyperfine
+abbr --add -- b bat
+abbr --add -- l 'eza --icons --group-directories-first'
 abbr --add -- reload 'exec fish'
 abbr --add -- private 'fish --private'
 abbr --add -- myip 'curl -s ifconfig.me'
@@ -279,6 +304,3 @@ set -g __fish_git_prompt_color_cleanstate a6e3a1
 type -q zoxide; and __nwiizo_cached_init zoxide zoxide init fish --cmd z
 type -q carapace; and __nwiizo_cached_init carapace carapace _carapace fish
 type -q atuin; and __nwiizo_cached_init atuin atuin init fish --disable-up-arrow
-
-# Machine-specific local config.
-test -f $XDG_CONFIG_HOME/fish/local.fish; and source $XDG_CONFIG_HOME/fish/local.fish

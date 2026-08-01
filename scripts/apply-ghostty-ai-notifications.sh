@@ -4,7 +4,11 @@ set -euo pipefail
 claude_settings_path="${CLAUDE_SETTINGS_PATH:-$HOME/.claude/settings.json}"
 codex_config_path="${CODEX_CONFIG_PATH:-$HOME/.codex/config.toml}"
 ai_backup_root="${DOTFILES_AI_BACKUP_ROOT:-$HOME/.dotfiles-link-backups/ai-notifications-$(date +%Y%m%d%H%M%S)}"
+# These values are stored as shell commands in Claude Code settings, so the
+# home-directory shorthand must remain literal rather than expanding here.
+# shellcheck disable=SC2088
 notification_hook='~/.local/bin/ghostty-claude-notification'
+# shellcheck disable=SC2088
 legacy_notification_hook='~/.local/bin/ghostty-notification-bell'
 
 claude_existed=false

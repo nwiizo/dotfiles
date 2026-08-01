@@ -30,6 +30,9 @@ brew info <name>
    - GUI apps: `cask "<cask>"`
    - Keep existing grouping and simple alphabetical order where practical.
    - Keep package changes in `Brewfile`.
+   - If a repo config, validation command, or agent rule requires the binary,
+     keep the Homebrew-owned package explicit even when it is already installed
+     transitively or outside the Brewfile.
 
 4. Validate before applying:
 
@@ -83,6 +86,8 @@ for f in fish/functions/*.fish; do fish -n "$f" || exit 1; done
 
 - Do not create unrelated package management files.
 - Do not run `brew uninstall` unless the user explicitly asks.
+- Do not use `brew cleanup` or uninstall unrelated local packages merely to
+  make the machine match the Brewfile; report that drift separately.
 - Do not add a package twice under different names.
 - Do not edit generated target files under `~/.config`; edit repo sources.
 - Do not reformat unrelated parts of `Brewfile`.

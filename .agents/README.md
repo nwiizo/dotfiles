@@ -31,6 +31,8 @@ Codex UI and invocation policy belong in `agents/openai.yaml`.
 Review judgment belongs in subagents. Skills may orchestrate review flows or
 apply accepted review comments, but reviewer personas and checklists should be
 implemented as Claude Code agents and Codex custom agents.
+Reusable personas are kept as same-named pairs under `.agents/agents/` and
+`.agents/codex/agents/`; the audit script rejects a missing counterpart.
 
 ## Choose the smallest instruction surface
 
@@ -58,11 +60,12 @@ Official references:
 
 Use `scripts/audit-agent-config.sh` after changing this tree. It checks shared
 skill frontmatter, requires directory/name identity and a non-empty
-description, and enforces manual-only invocation policy in both Claude Code
-and Codex. Client-specific interface text and forward-test quality remain
-manual review items. The YAML checks require Ruby with its standard Psych
-library. Use `scripts/summarize-ai-history.py` only on temporary collector
-output under `/tmp`; never commit raw AI conversation logs.
+description, requires same-named Claude/Codex persona pairs, and enforces
+manual-only invocation policy in both clients. Client-specific interface text
+and forward-test quality remain manual review items. The YAML checks require
+Ruby with its standard Psych library. Use `scripts/summarize-ai-history.py`
+only on temporary collector output under `/tmp`; never commit raw AI
+conversation logs.
 
 ## Excluded
 

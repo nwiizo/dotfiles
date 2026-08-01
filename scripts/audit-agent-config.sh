@@ -56,6 +56,22 @@ for agent in "$repo"/.agents/codex/agents/*.toml; do
   check_link "$HOME/.codex/agents/$(basename "$agent")" "$agent"
 done
 
+for claude_agent in "$repo"/.agents/agents/*.md; do
+  agent_name="$(basename "$claude_agent" .md)"
+  if [[ ! -f "$repo/.agents/codex/agents/$agent_name.toml" ]]; then
+    echo "missing Codex agent counterpart: $agent_name" >&2
+    fail=1
+  fi
+done
+
+for codex_agent in "$repo"/.agents/codex/agents/*.toml; do
+  agent_name="$(basename "$codex_agent" .toml)"
+  if [[ ! -f "$repo/.agents/agents/$agent_name.md" ]]; then
+    echo "missing Claude Code agent counterpart: $agent_name" >&2
+    fail=1
+  fi
+done
+
 if ! command -v ruby >/dev/null 2>&1; then
   echo "ruby with Psych is required to validate agent YAML" >&2
   fail=1
@@ -74,6 +90,28 @@ def load_yaml_mapping(text, path, label, errors)
 rescue StandardError => error
   errors << "invalid #{label}: #{path}: #{error.message}"
   nil
+end
+
+Dir[".agents/agents/*.md"].sort.each do |agent_file|
+  agent_name = File.basename(agent_file, ".md")
+  content = File.read(agent_file)
+  match = content.match(/\A---\r?\n(.*?)\r?\n---\r?\n/m)
+
+  unless match
+    errors << "missing or malformed agent frontmatter: #{agent_file}"
+    next
+  end
+
+  metadata =
+    load_yaml_mapping(match[1], agent_file, "agent frontmatter", errors)
+  next unless metadata
+
+  unless metadata["name"] == agent_name
+    errors << "agent name must match filename: #{agent_file}"
+  end
+  unless metadata["description"].is_a?(String) && !metadata["description"].strip.empty?
+    errors << "agent description must be a non-empty string: #{agent_file}"
+  end
 end
 
 Dir[".agents/skills/*/SKILL.md"].sort.each do |skill_file|
@@ -149,11 +187,24 @@ if command -v git-secrets >/dev/null 2>&1; then
 fi
 
 if command -v python3 >/dev/null 2>&1; then
-  python3 - <<'PY'
+  if ! python3 - <<'PY'
 import pathlib, tomllib
+
+errors = []
 for path in pathlib.Path(".agents/codex/agents").glob("*.toml"):
-    tomllib.loads(path.read_text())
+    metadata = tomllib.loads(path.read_text())
+    if metadata.get("name") != path.stem:
+        errors.append(f"Codex agent name must match filename: {path}")
+    description = metadata.get("description")
+    if not isinstance(description, str) or not description.strip():
+        errors.append(f"Codex agent description must be a non-empty string: {path}")
+
+if errors:
+    raise SystemExit("\n".join(errors))
 PY
+  then
+    fail=1
+  fi
 fi
 
 if [[ "$fail" -ne 0 ]]; then

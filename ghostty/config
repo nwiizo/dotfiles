@@ -114,7 +114,7 @@ keybind = cmd+shift+left=goto_window:previous
 
 # ─── Clipboard ────────────────────────────────────────────────────────────────
 
-clipboard-read = allow
+clipboard-read = ask
 clipboard-write = allow
 clipboard-trim-trailing-spaces = true
 copy-on-select = true
@@ -137,7 +137,7 @@ cursor-click-to-move = true
 # ─── Scrollback & Navigation ─────────────────────────────────────────────────
 
 # 50 MB per terminal surface; allocated lazily by Ghostty
-scrollback-limit = 50000000
+scrollback-limit-bytes = 50000000
 
 keybind = ctrl+u=scroll_page_fractional:-0.5
 keybind = alt+b=scroll_page_up

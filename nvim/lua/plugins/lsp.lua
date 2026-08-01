@@ -1,5 +1,12 @@
 -- LSP, Formatting & Treesitter plugins
 -- LazyVim manages: nvim-lspconfig, mason, conform, treesitter
+local function js_formatters(bufnr)
+  if vim.fs.root(bufnr, { "deno.json", "deno.jsonc" }) then
+    return { "deno_fmt" }
+  end
+  return { "prettier" }
+end
+
 return {
   -- nvim-lspconfig: Configure servers and diagnostics
   {
@@ -78,10 +85,10 @@ return {
     "stevearc/conform.nvim",
     opts = {
       formatters_by_ft = {
-        typescript = { "prettier", "deno_fmt", stop_after_first = true },
-        javascript = { "prettier" },
-        typescriptreact = { "prettier" },
-        javascriptreact = { "prettier" },
+        typescript = js_formatters,
+        javascript = js_formatters,
+        typescriptreact = js_formatters,
+        javascriptreact = js_formatters,
         lua = { "stylua" },
         terraform = { "terraform_fmt" },
         bash = { "shfmt" },

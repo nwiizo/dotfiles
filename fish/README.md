@@ -4,7 +4,9 @@ This directory holds the Fish configuration. `scripts/link.sh`
 symlinks `config.fish`, `conf.d/`, and custom functions into
 `~/.config/fish/`. `fish_plugins` is the repo-managed desired plugin list;
 Fisher writes `~/.config/fish/fish_plugins` when
-`scripts/install-fish-plugins.fish` runs.
+`scripts/install-fish-plugins.fish` runs. The installer bootstraps Fisher from
+a reviewed commit with a pinned SHA-256 checksum; Sponge is fixed at `1.1.0`
+because the repo carries a Fish 4.x compatibility override for that release.
 
 ## Layout
 
@@ -34,6 +36,47 @@ available as the deliberately explicit `cunsafe` and `cxunsafe` aliases.
 | `awatch <command...>` | Re-run verification whenever an agent changes files |
 | `wx` | Direct `watchexec` access |
 | `private` | Start `fish --private` without reading or writing history |
+
+Interactive command lines visibly expand `cat`, `grep`, `ls`, `find`, and `du`
+to the Rust-powered `bat`, `rg`, `eza`, `fd`, and `dust`. These are
+abbreviations rather than autoloaded functions, so Fish scripts keep the native
+option semantics. The shorter explicit `b` and `l` abbreviations remain
+available too.
+
+## Rust-first CLI policy
+
+Interactive shell ergonomics deliberately favor mature Rust tools. A new
+replacement should have a clear workflow benefit, substantial adoption,
+recent maintenance, and a Homebrew core formula; overlapping novelty tools are
+not added. Incompatible CLIs use visible Fish abbreviations rather than
+autoloaded functions, so scripts retain the native commands.
+
+| Typed command | Expanded command | Role |
+|---|---|---|
+| `cat` | `bat` | syntax-aware file output |
+| `grep` | `rg` | fast recursive search |
+| `ls` | `eza --icons --group-directories-first` | rich directory listing |
+| `find` | `fd` | ergonomic file discovery |
+| `du` | `dust` | visual disk usage |
+| `sed` | `sd` | intuitive find and replace |
+| `ps` | `procs` | modern process listing |
+| `top` | `btm` | interactive system monitor |
+| `ping` | `gping` | latency graph |
+| `http` | `xh` | HTTPie-style requests; `curl` remains native |
+| `hex` | `hexyl` | hexadecimal file viewer |
+| `bench` | `hyperfine` | command benchmarking |
+
+`rga` remains explicit because it extends `rg` to PDFs, archives, Office
+documents, and other rich formats rather than replacing normal text search.
+
+Selection snapshot on 2026-08-02: [sd](https://github.com/chmln/sd) 7.3k,
+[procs](https://github.com/dalance/procs) 6.1k,
+[bottom](https://github.com/ClementTsang/bottom) 13.8k,
+[xh](https://github.com/ducaale/xh) 8.0k,
+[ripgrep-all](https://github.com/phiresky/ripgrep-all) 9.8k,
+[hexyl](https://github.com/sharkdp/hexyl) 10.2k, and
+[gping](https://github.com/orf/gping) 12.6k GitHub stars. All were non-archived,
+active in 2026, and available from Homebrew core when selected.
 
 For example, keep a Rust test loop next to Claude Code or Codex:
 

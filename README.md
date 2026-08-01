@@ -44,6 +44,7 @@ specific tool:
 | Agent config | `.agents/README.md` | reusable agents, rules, docs, and skills |
 | Claude Code entrypoints | `.claude/README.md` | symlinks into `.agents/` |
 | Codex entrypoints | `.codex/README.md` | symlinks into `.agents/codex/` |
+| Releases | `releases/` | versioned release notes |
 
 Contributor and agent-facing repository rules are in `AGENTS.md`. `CLAUDE.md`
 imports the same guide so Claude Code and Codex share the base rules.
@@ -82,6 +83,7 @@ dotfiles/
 ├── bat/                     # bat config
 ├── atuin/                   # atuin config
 ├── tealdeer/                # tealdeer config
+├── releases/                # versioned release notes
 └── archive/                 # retired configs, reference only
 ```
 
@@ -112,8 +114,9 @@ fish scripts/install-fish-plugins.fish
 
 ## Linked Paths
 
-`scripts/link.sh` replaces existing symlinks and backs up non-symlink targets
-under `~/.dotfiles-link-backups/pre-dotfiles-link-*` before linking.
+`scripts/link.sh` leaves already-correct links untouched and backs up any
+conflicting path, including an unrelated symlink, under
+`~/.dotfiles-link-backups/pre-dotfiles-link-*` before linking.
 
 | Repo path | Target path |
 |---|---|
@@ -129,6 +132,7 @@ under `~/.dotfiles-link-backups/pre-dotfiles-link-*` before linking.
 | `git/config` | `~/.config/git/config` |
 | `gh/config.yml` | `~/.config/gh/config.yml` |
 | `git/power_pull.sh` | `~/.local/bin/power_pull` |
+| Homebrew Docker Compose plugin | `~/.docker/cli-plugins/docker-compose` |
 | `scripts/audit-agent-config.sh` | Local validation helper |
 | `scripts/summarize-ai-history.py` | Local AI-history aggregate helper |
 | `scripts/apply-ghostty-ai-notifications.sh` | Merge Ghostty notification settings into Claude Code and Codex |
@@ -219,10 +223,14 @@ g=git        gst='git status'        gaa='git add --all'
 gc='git commit -v'                   gcm='git commit -m'
 gp='git push'                        gpl='git pull'
 d=docker     dc='docker compose'     k=kubectl
-c='claude --dangerously-skip-permissions'
+cat=bat      grep=rg                 ls='eza --icons --group-directories-first'
+find=fd      du=dust
+sed=sd       ps=procs                top=btm       ping=gping
+http=xh      hex=hexyl               bench=hyperfine
+c=claude     cunsafe='claude --dangerously-skip-permissions'
 cbare='claude --bare'                csafe='claude --safe-mode'
 cdoc='claude doctor'                 cagents='claude agents'
-cx='codex --dangerously-bypass-approvals-and-sandbox'
+cx=codex     cxunsafe='codex --dangerously-bypass-approvals-and-sandbox'
 cxs='codex --sandbox workspace-write --ask-for-approval on-request'
 cxro='codex --sandbox read-only'     cxe='codex exec'
 cxr='codex resume'                   cxrev='codex review --uncommitted'

@@ -8,7 +8,7 @@ This directory contains the active Git config and helper scripts linked by
 | Path | Live path | Role |
 |---|---|---|
 | `config` | `~/.config/git/config` | User identity, aliases, credential helpers, delta pager |
-| `power_pull.sh` | `~/.local/bin/power_pull` | Force-reset helper for disposable worktrees |
+| `power_pull.sh` | `~/.local/bin/power_pull` | Fast-forward-only pull helper for the current branch |
 
 GitHub CLI config lives next door in `../gh/config.yml` and is linked to
 `~/.config/gh/config.yml`.
@@ -17,6 +17,8 @@ GitHub CLI config lives next door in `../gh/config.yml` and is linked to
 
 - User identity is `nwiizo <syu.m.5151@gmail.com>`.
 - `push.autoSetupRemote = true` creates upstream tracking on first push.
+- Pulls are fast-forward-only and fetches prune stale remote-tracking refs.
+- New repositories use `main` as the initial branch name.
 - GitHub credentials are delegated to `gh auth git-credential`.
 - `delta` is the pager for `diff`, `log`, `show`, and `blame`.
 - `interactive.diffFilter = delta --color-only` keeps interactive staging
@@ -26,16 +28,14 @@ GitHub CLI config lives next door in `../gh/config.yml` and is linked to
 
 ## Helper Scripts
 
-`power_pull` is intentionally destructive:
+`power_pull` updates the checked-out branch without rewriting local work:
 
 ```bash
-git fetch origin
-git reset --hard origin/master
+git pull --ff-only --prune
 ```
 
-Use it only in throwaway clones or repos where resetting to `origin/master` is
-the intended operation. For normal work, prefer `git pull --ff-only` or the
-repo's jj workflow.
+It refuses detached HEADs and divergent history. Use the repository's jj
+workflow when working in a colocated jj repository.
 
 ## Apply
 

@@ -8,6 +8,15 @@
 [push]
 	autoSetupRemote = true
 
+[pull]
+	ff = only
+
+[fetch]
+	prune = true
+
+[init]
+	defaultBranch = main
+
 [credential]
 	helper = osxkeychain
 

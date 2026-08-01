@@ -27,6 +27,7 @@ ghostty +validate-config
 - Shell integration: Fish 4.8+
 - Window: fullscreen by default, native tabs, saved state
 - Scrollback: 50 MB per terminal surface (allocated lazily)
+- Clipboard reads requested by terminal applications require confirmation
 - Quick terminal: configured but default global hotkey is unbound
 - AI notifications: macOS banner + sound + transient `🔔` tab marker
 

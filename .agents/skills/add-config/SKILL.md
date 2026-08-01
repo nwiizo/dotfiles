@@ -46,13 +46,15 @@ repository behavior or commands need clarification:
 
 1. Inspect the repo source, its link rule, and the current tool version.
 2. Put the change in the mapped source file and follow the area reference.
-3. Preserve grouped style and keep app reload work separate from package
-   installation.
-4. Reload the owning app for an existing linked file. When adding or removing
+3. Preserve grouped style. Keep guarded behavior behind short/default aliases;
+   use explicit names for permission bypasses or destructive modes.
+4. Keep app reload work separate from package installation. Validate effective
+   behavior when a parser accepts obsolete or ignored settings.
+5. Reload the owning app for an existing linked file. When adding or removing
    a path, inspect whether its parent is linked, update `scripts/link.sh` only
    if needed, then run it.
-5. Use `add-package` when a binary must also be added to `Brewfile`.
-6. Keep caches, histories, generated state, credentials, and local overrides
+6. Use `add-package` when a binary must also be added to `Brewfile`.
+7. Keep caches, histories, generated state, credentials, and local overrides
    outside the repository.
 
 ## Validation
@@ -70,4 +72,6 @@ Additionally:
 - Do not edit `archive/` unless the user explicitly asks.
 - Do not edit generated target files directly.
 - Do not symlink writable cache/state directories unless the tool expects it.
+- Do not replace a standard command with a function unless its CLI is fully
+  compatible; prefer a distinct name or an interactive abbreviation.
 - Do not reformat or refactor unrelated config.

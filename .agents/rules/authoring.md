@@ -15,6 +15,8 @@ paths:
 - 基盤モデルが既知の汎用知識は書かない（言語の基本、doc template、一般的ベストプラクティス）
 - **制約・好み・ドメイン知識**のみ記載する
 - agents/, skills/ は `home-` prefix でグローバルとプロジェクト固有を区別
+- Claude Code と Codex の両方で使う persona は `.agents/agents/<name>.md` と `.agents/codex/agents/<name>.toml` を同名で保つ
+- 読み取り専用 persona は prose だけに頼らず、Claude Code の `permissionMode: plan` と Codex の `sandbox_mode = "read-only"` を対応させる。Claude で Bash を許可する場合も診断用途に限定する
 - 常時必要な事実・コマンド・制約は AGENTS.md / CLAUDE.md、path 固有の規則は rules、反復手順・参照資料は skills に置く
 - CLAUDE.md の `@path` import は常時contextへ入るため、遅延ロード目的で rules / skills の代わりに使わない
 - 厳密に強制する処理を prose rule にせず、hook・設定・検証 script を使う

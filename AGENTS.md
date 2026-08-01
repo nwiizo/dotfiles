@@ -61,4 +61,9 @@ move `main` and push only when requested.
 Do not track sessions, logs, caches, credentials, local settings, or generated
 state. Edit repo sources, not linked targets under `~/.config` or agent home
 directories. Run `git secrets --scan` before publishing agent or history-derived
-assets.
+assets. Keep short/default aliases guarded; permission bypasses and destructive
+operations must use explicit names and resolve their exact targets. Do not
+replace standard commands with Fish functions that implement a different CLI.
+For interactive shell ergonomics, prefer established, actively maintained Rust
+CLI tools; expose incompatible replacements as visible Fish abbreviations so
+scripts retain native command behavior.

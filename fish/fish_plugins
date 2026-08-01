@@ -1,5 +1,5 @@
 # Plugin manager
-jorgebucaran/fisher
+jorgebucaran/fisher@4.4.8
 
 # Fuzzy search / navigation
 patrickf1/fzf.fish
@@ -9,7 +9,7 @@ jorgebucaran/autopair.fish
 nickeb96/puffer-fish
 
 # History and feedback
-meaningful-ooo/sponge
+meaningful-ooo/sponge@1.1.0
 gazorby/fish-abbreviation-tips
 
 # Display polish
