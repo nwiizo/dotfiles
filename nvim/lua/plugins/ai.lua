@@ -265,6 +265,7 @@ return {
       terminal = {
         split_side = "right",
         split_width_percentage = 0.4,
+        normal_mode_key = "<Esc><Esc>",
         window_navigation = {
           left = "<M-h>",
           down = "<M-j>",
