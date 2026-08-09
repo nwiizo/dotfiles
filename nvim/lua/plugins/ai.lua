@@ -203,6 +203,7 @@ return {
     cmd = {
       "Signalbox",
       "SignalboxRefresh",
+      "SignalboxUpdateAll",
       "SignalboxStart",
       "SignalboxAttach",
       "SignalboxPrompt",
