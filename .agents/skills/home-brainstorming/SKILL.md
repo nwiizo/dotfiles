@@ -1,50 +1,34 @@
 ---
 name: home-brainstorming
-description: Use before non-trivial creative work when a material product or design choice is still unresolved. Clarifies purpose, constraints, success criteria, and tradeoffs before implementation. Skip when the request is trivial or already well specified.
+description: Clarify an idea or stress-test an existing design when material choices remain unresolved. Use for design exploration or a requested decision interview; skip routine implementation whose important choices are settled.
 ---
 
-# Brainstorming Ideas Into Designs
+# Design Exploration
 
-Turn an unclear idea into a decision-ready design. Scale the process to the uncertainty; do not force a ceremony onto a task whose important choices are already settled.
+Produce a recommendation the user can assess from its intended outcome,
+constraints, meaningful tradeoffs, and verification criteria.
 
-## Boundary
+Inspect the relevant project and settled decisions before asking questions.
+Recommend an approach once the evidence supports it; show alternatives only
+when a real tradeoff could change the user's choice. Discuss components, data
+flow, failures, or migration only to the depth the design needs.
 
-- This skill produces a design or recommendation. Do not implement unless the user also asks for implementation.
-- Do not create or commit a design document unless the user requests one or the repository requires it.
-- Inspect project context before asking questions. Resolve facts from files and tools when possible.
-- Pause only for a choice that materially changes scope, an irreversible action, or information only the user can provide.
-- When enough information is available, recommend and finish the design. Do not add approval gates between sections.
+Separate missing user decisions from facts that can be checked during
+implementation. A design-only request ends with the design. If implementation
+is also requested, continue when its important choices are resolved.
 
-## Workflow
+Create a design file only when requested or required by the repository.
+Do not add a review round, commit, or approval gate simply to finish the design.
 
-1. Read the relevant files, local guidance, and recent changes.
-2. State the work contract in compact form:
-   - purpose: what progress the design should enable
-   - scope: what is included and excluded
-   - success: observable acceptance and verification criteria
-   - constraints: compatibility, safety, cost, and operational boundaries
-3. Identify only the unknowns that could change the design. Ask one question at a time when an answer must come from the user.
-4. Lead with the recommended approach. Present alternatives only when they expose a real tradeoff the user may choose differently.
-5. Describe the design at the level the task needs: components, data flow, failure behavior, migration, and validation. Omit irrelevant sections.
-6. Separate unresolved decisions from facts to verify during implementation.
+## Requested Design Interview
 
-## Working in Existing Codebases
-
-- Follow existing patterns unless they cause a problem inside the requested scope.
-- Include targeted structural improvements only when the requested design depends on them.
-- Avoid unrelated refactoring and hypothetical extensibility.
-- Prefer small units with explicit interfaces when isolation materially improves testing or change safety.
-
-## Output
-
-Lead with the recommendation, then give:
-
-- the design and why it fits
-- meaningful tradeoffs and rejected alternatives
-- acceptance and verification criteria
-- unresolved user decisions, if any
-- implementation-time checks that do not block the design
+When the user asks to challenge an existing plan, follow its dependent
+decisions and ask one material question at a time. Investigate factual answers
+yourself; ask the user about priorities and tradeoffs. Finish with the settled
+decisions, reasons, and remaining questions once the acceptance criteria are clear.
 
 ## Visual Companion
 
-Offer `visual-companion.md` only when a mockup, layout, or diagram would materially clarify a live decision. Ask once, at the point it becomes useful. If accepted, read the reference and use the browser for visual choices; keep textual requirements and tradeoffs in the conversation.
+Use the optional browser companion only when a visual choice would benefit
+from it and the user accepts it. Then read [visual-companion.md](visual-companion.md).
+A small inline diagram does not require starting the companion.

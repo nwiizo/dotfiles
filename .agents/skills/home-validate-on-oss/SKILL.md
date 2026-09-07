@@ -1,36 +1,34 @@
 ---
 name: home-validate-on-oss
-description: ツールを実際のOSSプロジェクト(bat, fd, ripgrep, eza, tokei)で検証する。ツールの品質・パフォーマンス検証時に使用。
+description: 開発中のツールを代表的な実プロジェクトで検証し、誤検出・クラッシュ・処理時間を改善する。OSSでの実用性や一般化可能性の確認を明示的に求められたときに使う。
 disable-model-invocation: true
 ---
 
-# Validate on OSS
+# Validate a Tool on Real Projects
 
-ツールを実際の OSS プロジェクトで検証する。
+Use this workflow when behavior on real projects is part of the success criteria.
+Ordinary implementation and its unit tests do not require an external repository sweep.
 
-## Test Projects (Rust)
+## Select Evidence
 
-| Project | Size | Clone |
-|---------|------|-------|
-| bat | M | `gh repo clone sharkdp/bat /tmp/bat` |
-| fd | S | `gh repo clone sharkdp/fd /tmp/fd` |
-| ripgrep | L | `gh repo clone BurntSushi/ripgrep /tmp/rg` |
-| eza | M | `gh repo clone eza-community/eza /tmp/eza` |
-| tokei | S | `gh repo clone XAMPPRocky/tokei /tmp/tokei` |
+1. Define what is being measured: correctness, false positives, actionable output, runtime, or memory.
+2. Select a small representative set based on supported languages and project structure. Existing local checkouts are preferable when suitable.
+3. For downloaded fixtures, create an isolated temporary directory with `mktemp -d`, record the repository revision, and keep the user's working trees untouched.
+4. Decide the expected behavior from documented requirements or inspected cases. Never assign expected grades based on a project's reputation.
 
-## Workflow
-```bash
-for proj in /tmp/bat /tmp/fd /tmp/eza; do
-  echo "=== $proj ==="
-  your-tool $proj/src
-done
-```
+Rust tools may use projects such as bat, fd, ripgrep, eza, or tokei when those inputs fit the tool. They are examples, not a required suite.
 
-## Expected Outcomes
-bat: A-B / fd: A / ripgrep: B-C / eza: B
+## Iterate from Failures
 
-## Red Flags
-- 全プロジェクト同一グレード（ツールが鈍感）
-- 品質コードが F（厳しすぎ）
-- 実コードでクラッシュ
-- 中規模で >30s
+- Run the current tool and its own tests first. Record the command, revision, input size, and observed outcome.
+- Reproduce a concrete failure before editing. Fix crashes and incorrect results before noise or presentation issues.
+- Inspect representative findings against the source. Equal grades or a long runtime are not failures without a relevant acceptance criterion.
+- Reduce a useful failing case to a maintainable regression test when possible; respect the source project's license.
+- Rerun affected cases after a fix. Broaden the sample only when a new failure or an explicit generalization claim warrants it.
+- Stop when the agreed criteria pass. Do not create modes, flags, or formatting variants merely because another tool once needed them.
+
+## Output
+
+Report the tested revisions, commands, coverage, concrete failures and fixes, and remaining limits.
+Separate observed performance from estimates and one-project results from broader claims.
+Do not claim a tool is validated solely because it produced attractive scores.

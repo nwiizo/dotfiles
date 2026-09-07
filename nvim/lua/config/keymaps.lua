@@ -16,7 +16,7 @@ local function copy_file_reference(include_line, visual)
     return
   end
 
-  local root = vim.fs.root(file, { ".jj", ".git" }) or vim.uv.cwd()
+  local root = vim.fs.root(file, { ".git" }) or vim.uv.cwd()
   local reference = vim.fs.relpath(root, file) or file
 
   if include_line then

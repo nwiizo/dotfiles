@@ -1,46 +1,27 @@
 ---
 name: home-docs-curator
-description: README、AGENTS、CLAUDE、ツール別READMEを俯瞰し、重複・古い前提・読みにくい構成・不要ファイルを整理する。ドキュメント整備やリポジトリを読みやすくしたいときに使用。
+description: README・AGENTS・CLAUDE・関連文書の重複、古い前提、参照切れを整理する。文書全体の改稿では、現在の動作と判断を初見の読者に伝わる形へまとめる。
 ---
 
-# home-docs-curator
+# Documentation Cleanup
 
-Use this skill for documentation cleanup across a repository.
+Start from the relevant entrypoints and map where the maintained information
+lives, what links to it, and which files are generated, private, or archived.
 
-## Workflow
+Keep the facts readers need to edit, apply, operate, and verify the current
+system. Remove obsolete or redundant prose; moving generic advice to a new
+reference file does not make it useful. Preserve history only when it explains
+a current compatibility or operational decision.
 
-1. Read root entry points first:
-   - `README.md`
-   - `AGENTS.md`
-   - `CLAUDE.md`
-   - tool-specific README files
+For a full rewrite, describe the final design for someone who has not read the
+conversation. Include the necessary context and reasons without reconstructing
+the discussion or implying that unknown facts have been verified.
 
-2. Build a map:
-   - setup and apply commands
-   - source-of-truth files
-   - generated or linked targets
-   - archive/reference-only paths
+For agent instructions, retain environment facts, user preferences, and
+task-specific judgment. Remove duplicate warnings and mechanical procedures
+that no longer improve a decision; preserve real safety and authority boundaries.
 
-3. Remove or merge docs only when they are redundant:
-   - duplicate instructions with no additional context
-   - stale references to removed tooling
-   - generated state or local-only notes
-
-4. Keep docs task-oriented:
-   - where to edit
-   - how to apply
-   - how to validate
-   - what not to track
-
-5. Validate claims against the repo:
-
-```bash
-rg -n "stale term|removed tool|old path"
-./scripts/link.sh
-```
-
-## Don't
-
-- Do not preserve historical explanations in active docs just because they are interesting.
-- Do not move local secrets, sessions, caches, or logs into documentation.
-- Do not create a second source of truth when a table can point to the existing file.
+Check callers before removing documents, then inspect the diff and affected
+references. In dotfiles, run `./scripts/audit-agent-config.sh`; run
+`./scripts/link.sh` when installation paths change. A prose-only edit to an
+already linked file does not require relinking the environment.

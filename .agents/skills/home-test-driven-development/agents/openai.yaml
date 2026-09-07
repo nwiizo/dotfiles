@@ -1,0 +1,4 @@
+interface:
+  display_name: "Test-Driven Development"
+  short_description: "Drive changes through honest red-green tests"
+  default_prompt: "Use $home-test-driven-development to implement this behavior with a focused red-green-refactor cycle."

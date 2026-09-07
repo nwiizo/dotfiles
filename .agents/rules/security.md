@@ -1,12 +1,6 @@
 # Security Rules
 
-## NEVER
-- Hardcode API keys, passwords, or secrets
-- Make a short or default alias bypass sandbox, approval, or permission checks
-- Run destructive reset, prune, or deletion commands against unresolved targets
-- Bypass branch protection or publish unreviewed, unverified changes
-
-## MUST
-- Keep unsafe modes explicitly named and preserve guarded defaults
-- Verify the exact target and recovery path before destructive operations
-- Run checks that match the changed area before reporting completion
+- Keep credentials, sessions, logs, and generated local state out of tracked configuration. Do not hardcode secrets.
+- Keep permission-bypass modes explicitly named. Short/default aliases stay guarded unless the repository records the user's exception; preserve the documented `c` and `cx` expansions in `fish/config.fish`.
+- Resolve the exact target and recovery path before destructive reset, prune, or deletion operations. Ordinary authorized, reversible edits do not need another approval.
+- Respect branch protection. Before authorized publication, inspect the diff and run checks appropriate to the changes; this does not require a fixed reviewer roster or a new approval round.

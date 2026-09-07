@@ -34,8 +34,7 @@ GitHub CLI config lives next door in `../gh/config.yml` and is linked to
 git pull --ff-only --prune
 ```
 
-It refuses detached HEADs and divergent history. Use the repository's jj
-workflow when working in a colocated jj repository.
+It refuses detached HEADs and divergent history.
 
 ## Apply
 

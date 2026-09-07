@@ -26,7 +26,7 @@ ghostty +validate-config
 - Font: Hack Nerd Font Mono, 24pt
 - Shell integration: Fish 4.8+
 - Window: fullscreen by default, native tabs, saved state
-- Scrollback: 50 MB per terminal surface (allocated lazily)
+- Scrollback: 100 MB per terminal surface (allocated lazily)
 - Clipboard reads requested by terminal applications require confirmation
 - Quick terminal: configured but default global hotkey is unbound
 - AI notifications: macOS banner + sound + transient `🔔` tab marker
@@ -101,6 +101,16 @@ Codex のユーザー設定へ通知項目だけをマージする。権限、MC
 | 作業中 | Codex／Claude Code が設定する動的タイトル | なし |
 | 応答・許可待ち | 先頭に `🔔` | バナーと通知音 |
 | タブを選択または操作 | `🔔` が消えて元のタイトルへ戻る | 通知を解除 |
+
+通常のシェルコマンドは、30秒以上かかり、Ghosttyを操作していない間に
+終了した場合だけバナーで通知する。Codex／Claude Code側の通知と音が重ならないよう、
+この通知ではベルを鳴らさない。
+
+```ini
+notify-on-command-finish = unfocused
+notify-on-command-finish-after = 30s
+notify-on-command-finish-action = no-bell,notify
+```
 
 Codex は公式の `OSC 9` 通知を使う。
 

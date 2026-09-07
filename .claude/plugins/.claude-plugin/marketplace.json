@@ -1,0 +1,16 @@
+{
+  "name": "nwiizo-local",
+  "owner": {
+    "name": "nwiizo"
+  },
+  "metadata": {
+    "description": "Local Claude Code integrations maintained in nwiizo's dotfiles."
+  },
+  "plugins": [
+    {
+      "name": "home-typescript-lsp",
+      "source": "./home-typescript-lsp",
+      "description": "TypeScript 7 native LSP for this macOS environment."
+    }
+  ]
+}

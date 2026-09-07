@@ -113,12 +113,10 @@ chmod +x "$HOME/.local/bin/ghostty-claude-notification"
 link_path "$repo/warp/keybindings.yaml" "$HOME/.warp/keybindings.yaml"
 link_path "$repo/warp/themes/custom.yaml" "$HOME/.warp/themes/custom.yaml"
 link_path "$repo/warp/themes/catppuccin-mocha.yaml" "$HOME/.warp/themes/catppuccin-mocha.yaml"
+link_dir_children "$repo/warp/workflows" "$HOME/.warp/workflows"
 
-for workflow_file in "$repo"/warp/workflows/*.yaml; do
-  link_path "$workflow_file" "$HOME/.warp/workflows/$(basename "$workflow_file")"
-done
-
-nippo_skill="$HOME/ghq/github.com/nwiizo/nippo/.claude/skills/nippo"
+nippo_claude_skill="$HOME/ghq/github.com/nwiizo/nippo/.claude/skills/nippo"
+nippo_codex_skill="$HOME/ghq/github.com/nwiizo/nippo/.agents/skills/nippo"
 
 link_path "$repo/.agents/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
 link_path "$repo/.agents/RTK.md" "$HOME/.claude/RTK.md"
@@ -127,7 +125,7 @@ link_path "$repo/.agents/agents" "$HOME/.claude/agents"
 link_path "$repo/.agents/docs" "$HOME/.claude/docs"
 link_path "$repo/.agents/rules" "$HOME/.claude/rules"
 link_dir_children "$repo/.agents/skills" "$HOME/.claude/skills"
-[[ -d "$nippo_skill" ]] && link_path "$nippo_skill" "$HOME/.claude/skills/nippo"
+[[ -d "$nippo_claude_skill" ]] && link_path "$nippo_claude_skill" "$HOME/.claude/skills/nippo"
 
 # ~/.agents is the cross-client Agent Skills location. Product-specific
 # agents, rules, and docs stay under ~/.claude or ~/.codex.
@@ -135,8 +133,10 @@ remove_managed_link "$HOME/.agents/agents" "$repo/.agents/agents"
 remove_managed_link "$HOME/.agents/docs" "$repo/.agents/docs"
 remove_managed_link "$HOME/.agents/rules" "$repo/.agents/rules"
 link_dir_children "$repo/.agents/skills" "$HOME/.agents/skills"
-[[ -d "$nippo_skill" ]] && link_path "$nippo_skill" "$HOME/.agents/skills/nippo"
+[[ -d "$nippo_codex_skill" ]] && link_path "$nippo_codex_skill" "$HOME/.agents/skills/nippo"
 
+link_path "$repo/.agents/RTK.md" "$HOME/.codex/RTK.md"
+link_path "$repo/.agents/codex/AGENTS.md" "$HOME/.codex/AGENTS.md"
 link_dir_children "$repo/.agents/codex/agents" "$HOME/.codex/agents"
 
 "$repo/scripts/apply-ghostty-ai-notifications.sh"

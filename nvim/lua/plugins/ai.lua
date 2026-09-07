@@ -156,43 +156,10 @@ return {
       file_types = {
         "markdown",
         "Avante",
-        "codecompanion",
         "copilot-chat",
       },
     },
-    ft = { "markdown", "Avante", "codecompanion", "copilot-chat" },
-  },
-
-  -- CodeCompanion: Vim-native AI chat & editing
-  {
-    "olimorris/codecompanion.nvim",
-    event = "VeryLazy",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "nvim-treesitter/nvim-treesitter",
-    },
-    opts = {
-      strategies = {
-        chat = { adapter = "copilot" },
-        inline = { adapter = "copilot" },
-      },
-      adapters = {
-        copilot = function()
-          return require("codecompanion.adapters").extend("copilot", {
-            schema = { model = { default = "claude-sonnet-4-20250514" } },
-          })
-        end,
-      },
-      display = {
-        chat = { window = { layout = "vertical", width = 0.35 } },
-        diff = { provider = "mini_diff" },
-      },
-    },
-    keys = {
-      { "<leader>aC", "<cmd>CodeCompanionChat Toggle<cr>", desc = "CodeCompanion Chat", mode = { "n", "v" } },
-      { "<leader>ai", "<cmd>CodeCompanionActions<cr>", desc = "CodeCompanion Actions", mode = { "n", "v" } },
-      { "<leader>ap", "<cmd>CodeCompanion<cr>", desc = "CodeCompanion Inline", mode = { "n", "v" } },
-    },
+    ft = { "markdown", "Avante", "copilot-chat" },
   },
 
   -- Signalbox: attention-first control surface for persistent Herdr agents.
@@ -205,6 +172,7 @@ return {
       "SignalboxRefresh",
       "SignalboxUpdateAll",
       "SignalboxStart",
+      "SignalboxResume",
       "SignalboxAttach",
       "SignalboxPrompt",
       "SignalboxRename",

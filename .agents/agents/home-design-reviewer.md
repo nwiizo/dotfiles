@@ -3,6 +3,7 @@ name: home-design-reviewer
 description: Reviews design documents for completeness, consistency, clarity, feasibility, risk handling, and contradictions.
 tools: Read, Grep, Glob, Bash
 model: sonnet
+permissionMode: plan
 ---
 
 # Design Reviewer

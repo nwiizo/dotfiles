@@ -44,8 +44,13 @@ check_link ".claude/skills" "../.agents/skills"
 check_link ".codex/agents" "../.agents/codex/agents"
 
 check_link "$HOME/.claude/agents" "$repo/.agents/agents"
+check_link "$HOME/.claude/CLAUDE.md" "$repo/.agents/CLAUDE.md"
+check_link "$HOME/.claude/RTK.md" "$repo/.agents/RTK.md"
+check_link "$HOME/.claude/.claudeignore" "$repo/.agents/claudeignore"
 check_link "$HOME/.claude/docs" "$repo/.agents/docs"
 check_link "$HOME/.claude/rules" "$repo/.agents/rules"
+check_link "$HOME/.codex/RTK.md" "$repo/.agents/RTK.md"
+check_link "$HOME/.codex/AGENTS.md" "$repo/.agents/codex/AGENTS.md"
 
 for skill in "$repo"/.agents/skills/*; do
   check_link "$HOME/.claude/skills/$(basename "$skill")" "$skill"
@@ -182,29 +187,47 @@ if rg -n -i '(^|[^a-z])nix([^a-z]|$)|home manager|home-manager|nix-darwin|/nix/s
   fail=1
 fi
 
+if rg -n -i '\bjj\b|jujutsu' \
+  Brewfile fish warp .agents/CLAUDE.md .agents/agents .agents/skills .agents/codex/agents \
+  >/tmp/dotfiles-agent-audit-jj.txt; then
+  echo "removed version-control tool references found in active config:" >&2
+  cat /tmp/dotfiles-agent-audit-jj.txt >&2
+  fail=1
+fi
+
 if command -v git-secrets >/dev/null 2>&1; then
   git-secrets --scan
 fi
 
-if command -v python3 >/dev/null 2>&1; then
-  if ! python3 - <<'PY'
-import pathlib, tomllib
+if ! command -v yq >/dev/null 2>&1 || ! command -v jq >/dev/null 2>&1; then
+  echo "yq (Mike Farah) and jq from Brewfile are required to validate Codex agents" >&2
+  fail=1
+else
+  for agent in .agents/codex/agents/*.toml; do
+    agent_name="$(basename "$agent" .toml)"
+    if ! metadata="$(yq -p toml -o json '.' "$agent")"; then
+      echo "invalid Codex agent TOML: $agent" >&2
+      fail=1
+      continue
+    fi
+    if ! jq -e --arg name "$agent_name" '
+      .name == $name and
+      (.description | type) == "string" and
+      (.description | test("\\S"))
+    ' <<<"$metadata" >/dev/null; then
+      echo "Codex agent needs a matching name and non-empty description: $agent" >&2
+      fail=1
+    fi
 
-errors = []
-for path in pathlib.Path(".agents/codex/agents").glob("*.toml"):
-    metadata = tomllib.loads(path.read_text())
-    if metadata.get("name") != path.stem:
-        errors.append(f"Codex agent name must match filename: {path}")
-    description = metadata.get("description")
-    if not isinstance(description, str) or not description.strip():
-        errors.append(f"Codex agent description must be a non-empty string: {path}")
-
-if errors:
-    raise SystemExit("\n".join(errors))
-PY
-  then
-    fail=1
-  fi
+    claude_agent=".agents/agents/$agent_name.md"
+    if [[ "$(jq -r '.sandbox_mode // empty' <<<"$metadata")" == "read-only" && -f "$claude_agent" ]]; then
+      if ! permission_mode="$(yq --front-matter=extract -r '.permissionMode // ""' "$claude_agent")" ||
+        [[ "$permission_mode" != "plan" ]]; then
+        echo "read-only Codex agent needs Claude permissionMode: plan: $claude_agent" >&2
+        fail=1
+      fi
+    fi
+  done
 fi
 
 if [[ "$fail" -ne 0 ]]; then

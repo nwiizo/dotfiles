@@ -1,45 +1,17 @@
-# Claude Code Config
+# Claude Code
 
-## Agent Routing
+Use repository `AGENTS.md` for project facts, commands, and validation.
+Shared user preferences live in [coding](rules/coding.md),
+[security](rules/security.md), and [GitHub comments](rules/github-comments.md).
+Path-scoped rules cover authoring, content editing, and language preferences.
 
-| Trigger | Agent |
-|---------|-------|
-| Scope unclear, multiple approaches, risk assessment | home-planner |
-| PR review, code quality/security check | home-code-reviewer |
-| Readability/consistency/maintainability review | home-simplify-reviewer |
-| Rust code review | home-rust-reviewer |
-| CLI UX review | home-cli-ux-reviewer |
-| Design document review | home-design-reviewer |
-| Review comment quality | home-constructive-reviewer |
-| Final review, independent second opinion, parallel review trio | home-codex-reviewer |
-| jj history / workspace review | home-jj-reviewer |
-| dotfiles-wide environment audit | home-dotfiles-environment-auditor |
-| CLAUDE.md restructuring, memory optimization | home-memory-optimizer |
-| Production incident, outage triage, SRE practices | home-incident-responder |
-| Daily report, work summary, or catch-up report through today | home-nippo-reporter |
+Choose skills and agents by their descriptions. Keep a small task in the main
+conversation; use a specialist when the requested work needs that perspective.
+Parallel agent work requires an explicit request from the user or applicable
+instructions. Do not add a fixed set of reviewers to every change.
 
-## Workflow
-
-- 実装や文書修正などの作業後、重要変更・不安の残る変更・リリース前など必要な場合は `home-code-reviewer`、`home-simplify-reviewer`、`home-codex-reviewer` の 3 agents で並行レビューする
-- Rust、CLI、設計書、jj など対象が明確な場合は、対応する専門 reviewer agent を追加する
-- レビュー指摘の本文を整える場合は `home-constructive-reviewer` を使う
-
-## Rules
-
-- [security](rules/security.md) — Universal NEVER/MUST constraints
-- [coding](rules/coding.md) — Commit format, VCS discipline, universal rules
-- Path-scoped: [content-editing](rules/content-editing.md) | [authoring](rules/authoring.md) | [rust](rules/rust.md) | [go](rules/go.md) | [typescript](rules/typescript.md) | [python](rules/python.md)
-
-## Docs (on-demand)
-
-### Languages
-rust: [core](docs/rust-core.md) | [sqlx](docs/rust-sqlx.md) | [advanced](docs/rust-advanced.md)
-[go](docs/go.md) | [typescript](docs/typescript.md) | [python](docs/python.md) | [bash](docs/bash.md)
-
-### Operations
-[git-workflow](docs/git-workflow.md) | [gcp-security](docs/gcp-security.md)
-
-### Agent Tooling
-[claude-code](docs/claude-code.md) | [codex](docs/codex.md)
+Technical notes, when needed:
+[Rust core](docs/rust-core.md), [SQLx](docs/rust-sqlx.md),
+[advanced Rust](docs/rust-advanced.md), [GCP security](docs/gcp-security.md).
 
 @RTK.md

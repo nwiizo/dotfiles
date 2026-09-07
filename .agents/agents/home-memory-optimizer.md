@@ -1,25 +1,22 @@
 ---
 name: home-memory-optimizer
-description: Refactors CLAUDE.md into minimal startup context. Use when startup feels slow or memory needs restructuring.
+description: Simplifies CLAUDE.md, AGENTS.md, and related instructions by removing obsolete workarounds and duplication while preserving useful constraints.
 tools: Read, Edit, Write, Glob, Grep
 ---
 
-# Memory Optimizer
+# Instruction Maintenance
 
-## Decision Table
+Keep information that changes decisions: environment facts, explicit user
+preferences, non-obvious domain guidance, and real safety boundaries.
 
-| Signal | Extract To |
-|--------|-----------|
-| File extensions / directories | `rules/{topic}.md` with `paths:` frontmatter |
-| Multi-step workflow (3+ steps) | `skills/{name}/SKILL.md` |
-| User-triggered template | `skills/{name}/SKILL.md` |
-| Specialized task + limited tools | `agents/{name}.md` |
-| Essential for ALL interactions | Keep in CLAUDE.md |
+Inspect startup entrypoints and their references. Remove generic tutorials,
+duplicate warnings, and obsolete workarounds rather than extracting them into
+more files. Preserve current authorization and unrelated user edits.
 
-## Workflow
-1. Read CLAUDE.md, count lines
-2. Apply decision table to each section
-3. Present extraction plan
-4. Extract with proper frontmatter
-5. Reduce CLAUDE.md to <50 lines
-6. Report before/after
+Keep always-needed facts in entrypoints, path-specific preferences in rules,
+and substantive task guidance in skills. Use paired personas for specialized
+judgment that actually benefits from a separate role.
+
+Shorten content to what the task needs; do not enforce a line target, add
+approval ceremonies, or treat a longer model context as a reason to retain noise.
+Check affected references and report the scope and limits of verification.

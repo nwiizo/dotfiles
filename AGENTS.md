@@ -1,69 +1,56 @@
-# Repository Guidelines
+# Dotfiles Repository
 
-## Project Structure & Module Organization
+This repository manages a personal macOS development environment.
+Homebrew packages live in `Brewfile`; tool configuration lives in `fish/`,
+`nvim/`, `ghostty/`, `warp/`, `git/`, `gh/`, `bat/`, `atuin/`, and
+`tealdeer/`. Helper scripts live in `scripts/`.
 
-This repository manages a personal macOS development environment. Homebrew
-packages are listed in `Brewfile`; configuration sources live in tool-specific
-directories such as `fish/`, `nvim/`, `ghostty/`, `warp/`, `git/`, `gh/`,
-`bat/`, `atuin/`, and `tealdeer/`. Helper scripts live in `scripts/`.
+## Where to Edit
 
-Agent assets are sourced from `.agents/`. Claude Code project entrypoints in
-`.claude/` and Codex project agents in `.codex/` are symlinks into `.agents/`.
-`archive/` is reference-only; do not edit it unless explicitly requested.
+- Edit repository sources, not linked targets under `~/.config` or agent homes.
+- Shared agent assets live in `.agents/`. Project `.claude/` entrypoints and
+  `.codex/agents` link there. Personal workflows use
+  `.agents/skills/<name>/SKILL.md`; personas have same-named Claude Markdown
+  and Codex TOML files under `.agents/agents/` and `.agents/codex/agents/`.
+- Fish functions use `fish/functions/<name>.fish`; vendor overrides use
+  `fish/conf.d/` with the upstream basename.
+- Neovim plugin specs use `nvim/lua/plugins/`. Keep `nvim/lazy-lock.json`
+  tracked; use `:Lazy update` to advance revisions and `:Lazy restore` to
+  reproduce the lock.
+- `archive/` is reference-only; edit it only when explicitly requested.
 
-## Build, Test, and Development Commands
+## Apply and Verify
 
 - `./scripts/bootstrap.sh` installs packages, links configs, and installs Fish plugins.
-- `./scripts/link.sh` links repo sources into `~/.config`, `~/.warp`,
-  `~/.local/bin`, `~/.claude`, `~/.agents`, and `~/.codex`.
+- `./scripts/link.sh` installs config and agent links. Run it when adding,
+  removing, or changing an installation path; existing linked-file edits apply directly.
 - `fish scripts/install-fish-plugins.fish` applies `fish/fish_plugins`.
-- `brew bundle check --file Brewfile` verifies Homebrew dependencies.
-- `./scripts/audit-agent-config.sh` checks agent symlinks, portable skill
-  frontmatter, manual-only policy parity, stale references, generated files,
-  and, when their validators are installed, Codex agent TOML and secrets.
+- `brew bundle check --file Brewfile` checks package dependencies.
+- `./scripts/audit-agent-config.sh` checks agent links, metadata, persona pairs,
+  invocation and read-only policy parity, stale references, and generated state.
+  It needs Ruby/Psych, yq, and jq, and runs git-secrets when installed.
 
-## Coding Style & Naming Conventions
+Run the checks for the changed area:
 
-Keep changes scoped and follow the existing layout. Fish functions use
-`fish/functions/<name>.fish`; Neovim plugin specs go under `nvim/lua/plugins/`.
-Repo-managed Fish vendor overrides go in `fish/conf.d/` with the upstream
-basename. Keep `nvim/lazy-lock.json` tracked; use `:Lazy update` to advance
-plugin revisions and `:Lazy restore` to reproduce the locked state.
-Reusable skills use `.agents/skills/<name>/SKILL.md`. Reviewer or planner
-personas belong in `.agents/agents/`; Codex custom agents belong in
-`.agents/codex/agents/*.toml`.
-
-## Testing Guidelines
-
-Run checks matching the changed area:
-
-```bash
+```sh
 fish -n fish/config.fish fish/conf.d/*.fish
 for f in fish/functions/*.fish; do fish -n "$f" || exit 1; done
 stylua --check nvim/lua
 jq empty nvim/lazy-lock.json
 nvim --headless '+lua print("nvim-config-ok")' +qa
-./scripts/link.sh
-./scripts/audit-agent-config.sh
 ```
 
-For package changes, also run `brew bundle check --file Brewfile`.
+## Repository Preferences
 
-## Commit & Pull Request Guidelines
-
-Use concise conventional commits, for example
-`chore(agents): align claude and codex workflows`. In this jj repository,
-finish a change with `jj describe`, open a fresh change with `jj new`, then
-move `main` and push only when requested.
-
-## Security & Configuration Tips
-
-Do not track sessions, logs, caches, credentials, local settings, or generated
-state. Edit repo sources, not linked targets under `~/.config` or agent home
-directories. Run `git secrets --scan` before publishing agent or history-derived
-assets. Keep short/default aliases guarded; permission bypasses and destructive
-operations must use explicit names and resolve their exact targets. Do not
-replace standard commands with Fish functions that implement a different CLI.
-For interactive shell ergonomics, prefer established, actively maintained Rust
-CLI tools; expose incompatible replacements as visible Fish abbreviations so
-scripts retain native command behavior.
+- Use Git only; do not install, invoke, or recommend Jujutsu. Inspect
+  `git status` and `git diff`; stage only intended paths and commit or push only
+  when requested. Use concise conventional commits.
+- Do not track sessions, logs, caches, credentials, local settings, or generated
+  state. Run `git secrets --scan` before publishing agent or history-derived assets.
+- Short/default aliases stay guarded unless the source records a user-approved
+  exception. The `c` and `cx` abbreviations in `fish/config.fish` must retain
+  their permission-bypass expansions. Other bypasses and destructive operations
+  need explicit names and verified targets.
+- Do not replace standard commands with Fish functions that implement a different
+  CLI. Prefer maintained Rust tools for interactive ergonomics and expose
+  incompatible replacements as visible abbreviations.

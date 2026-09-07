@@ -1,68 +1,37 @@
 ---
 name: home-empirical-prompt-tuning
-description: 高頻度・高リスクのagent向け指示、または期待どおり動かないskillやプロンプトを、独立した実行者と固定シナリオで比較評価する。小さな文言修正には使わず、指示側の曖昧さや過剰制約を実測したいときに使用する。
+description: 高頻度・高リスクの指示や、期待どおり動かないスキルを、固定した依頼と独立した実行者で比較する。通常の文言整理には静的確認を使い、モデルの振る舞いを確かめたいときに使う。
 ---
 
-# Empirical Prompt Tuning
+# Evaluate Instruction Changes
 
-重要なプロンプトは自己評価だけで判断しない。**独立した実行者に代表シナリオを実行してもらい、成果物と実行報告の両面で比較する**。評価コストは指示の頻度と失敗時の影響に合わせる。
+Evaluate whether instructions improve observable work, rather than whether
+they look comprehensive. Match the evaluation effort to the uncertainty and
+consequences of failure.
 
-**用語**: Task tool / Agent tool で起動する新規 agent を「実行者（= subagent）」と呼ぶ。起動操作を「dispatch」と呼ぶ。以下「実行者」で統一する。
+## Behavioral Comparison
 
-## いつ使うか
+- Freeze representative requests, raw inputs, and observable acceptance criteria
+  before comparing versions. Include the ordinary case and a meaningful boundary;
+  reserve a separate case when testing generalization matters.
+- Use independent subagents for behavioral evaluation when delegation is allowed.
+  Give them the task, relevant instruction version, and raw artifacts without
+  the proposed fix, desired conclusion, or prior evaluator results.
+- Inspect generated artifacts and tool results as well as self-reports.
+  Distinguish an instruction defect from missing context or an unavailable tool.
+- Compare versions under comparable conditions. Record inherited context and
+  tool limitations; fresh agents do not guarantee complete isolation.
+- Change instructions in response to an observed problem, then rerun affected
+  cases. Keep acceptance criteria fixed instead of redefining a failure as success.
+- Stop when the target behavior is supported and further evaluation is unlikely
+  to change the decision. Do not require a fixed number of clean iterations or
+  stable timing measurements to declare the editing task finished.
 
-- 高頻度または高リスクのskill / task promptを新規作成・大幅改訂したとき
-- エージェントが期待通り動かず、原因を指示側の曖昧さに求めたいとき
-- 重要度の高い指示（頻繁に使う skill、自動化の中核プロンプト）を堅牢化したいとき
+Use [evaluation.md](references/evaluation.md) for evidence and stopping decisions,
+[dispatch.md](references/dispatch.md) when setting up an evaluator, and
+[formats.md](references/formats.md) when reporting a comparison.
 
-使わない場面:
-- 一回限りの使い捨てプロンプト（評価コストが割に合わない）
-- 誤字、リンク、説明文など、振る舞いを変えない局所修正
-- 成功率の改善が目的ではなく、書き手の主観的好みを反映したいだけのとき
-- 汎用的な Build→Test→Feedback ループ（`iterative-refinement` の守備範囲）。本 skill は **プロンプトテキストに特化し、評価を外部実行者に委ねる** 点で差別化される
-
-該当した場合は [references/formats.md](references/formats.md) の「モード 3: 適用外」フォーマットで報告して終了する。
-
-## 参照ファイル
-
-- [references/evaluation.md](references/evaluation.md) — 評価軸の判定ルール（一元定義）、`tool_uses` の質的解釈、修正の波及パターン、反復の打ち切り基準
-- [references/dispatch.md](references/dispatch.md) — subagent 起動契約（実行者に渡すプロンプト構造）、環境制約、構造審査モード
-- [references/formats.md](references/formats.md) — イテレーション提示フォーマット（empirical / 構造審査 / 適用外）、Red flags、よくある失敗
-
-## ワークフロー
-
-評価の深さを先に決める。
-
-- **静的監査**: 振る舞いを変えない修正。description/body整合と構造検証だけで終える
-- **標準評価**: 振る舞いを変える通常の改訂。中央値1件、edge 1件、hold-out 1件で変更前後を比較する
-- **収束評価**: 高頻度・高リスクの中核指示。`evaluation.md`の連続クリア条件まで反復する
-
-標準評価を収束済みとは呼ばない。追加反復の価値がコストを下回る場合は、未収束であることを明示して止める。
-
-0. **Iteration 0 — description と body の整合チェック**（静的、dispatch 不要）
-   - frontmatter `description` が謳う trigger / 用途と body がカバーする範囲を読み比べ、乖離があれば iter 1 に進む前に合わせる
-   - 例: description「navigation / form filling / data extraction」と書いてあるが body は `npx playwright test` の CLI ref のみ、のような乖離を検出
-   - これを飛ばすと、subagent は description に合わせて body を「再解釈」し、実質 skill が要件を満たしていないのに精度が出る（false positive）
-   - **Iter 0 で合わせきれない乖離の扱い**: description が要求する具体性が body 側に欠けていて Iter 0 単独では埋められない場合、乖離を Iter 1 の修正対象として記録のうえ先に進む。対象に frontmatter がない場合は「冒頭 1 文 = description 相当、以降 = body 相当」として扱う
-
-1. **ベースライン準備**: 対象プロンプトを確定し、次の 3 つを用意する。
-   - **評価シナリオ** 2 〜 3 種（中央値 1 + edge 1 〜 2）。標準評価は2種、収束評価は必要に応じて3種にする。
-   - **hold-out シナリオ** 1 本。収束判定時の過適合チェック専用で、baseline と同じタイミングで設計・封印する（イテレーション後に作ると改善済みプロンプトに無意識に最適化される）。評価シナリオと hold-out を合わせて最低 3 本を確保。
-   - **要件チェックリスト**（精度算出のため）。シナリオごとに 3 〜 7 項目。`[critical]` タグ付き項目を最低 1 つ含める（0 件だと成功判定が vacuous になる）。事前に固定し、後から動かさない。
-
-2. **バイアス排除読み**: 指示を「白紙」の実行者に読ませる。Task tool で **新規実行者を dispatch** する。自己再読で済ませない（直前に書いた文章を客観視することは構造的に不可能）。並列実行は単一メッセージ内で複数 Agent 呼び出しを並べる。dispatch 不能環境の扱いは dispatch.md の「環境制約」を参照。
-
-3. **実行**: dispatch.md の **subagent 起動契約** に従ったプロンプトを実行者に渡し、シナリオを実行させる。実行者は成果物を生成し、最後に自己申告レポートを返す。
-
-4. **両面評価**: 戻ってきた結果を記録する。判定ルールは evaluation.md に一元定義。
-   - **実行者の自己申告**: 不明瞭点 / 裁量補完 / 再試行回数（意思決定ステップ単位）
-   - **指示側の計測**: `tool_uses` / `duration_ms` を usage メタから取得。失敗時は「どの [critical] 項目が落ちたか」を提示フォーマットの "不明瞭点" 節に 1 行添える
-
-5. **差分適用**: 不明瞭点を潰す最小修正をプロンプトに入れる。1 イテレーション 1 テーマ（関連する複数修正は OK、無関係な修正は次回に回す）。
-   - **修正前に「この修正が要件チェックリスト / 判定文言のどの項目を満たすか」を明示する**（軸名から推測した修正は届かないことが多い。evaluation.md の「修正の波及パターン」を参照）
-
-6. **再評価**: 新しい実行者で再度 2 → 5 を回す（同一実行者は再利用しない: 前回の改善を学習している）。
-
-7. **停止判定**: 収束評価では`evaluation.md`の打ち切り基準に従う。標準評価では変更前後とhold-outを1回比較し、残る不明瞭点と未収束を報告して止めてよい。3回連続で不明瞭点が出続けるなら、局所修正をやめて構造から見直す。
-
-各イテレーションの結果は formats.md のフォーマットでユーザーに提示する。迷ったら formats.md の Red flags 表で自分の合理化をチェックする。
+For static cleanup, inspect scope, metadata, references, and representative task
+routing. If execution is unavailable, report that limit and finish the useful
+static work; do not call it behavioral validation. A small evaluation supports
+only the tested cases, not a general claim about a newer model's capability.

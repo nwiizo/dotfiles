@@ -14,7 +14,7 @@ because the repo carries a Fish 4.x compatibility override for that release.
 |---|---|
 | `config.fish` | Main shell init, abbreviations, env vars, and tool integrations |
 | `fish_plugins` | Repo-managed Fisher desired plugin list |
-| `functions/` | Custom fish functions (prompt, AI helpers, jj wrappers, `update_all`, etc.) |
+| `functions/` | Custom fish functions (prompt, AI helpers, Git pickers, `update_all`, etc.) |
 | `conf.d/` | Early PATH setup, cached mise/direnv hooks, and Fish 4.x compatibility snippets |
 
 ## How edits flow
@@ -26,9 +26,16 @@ because the repo carries a Fish 4.x compatibility override for that release.
 
 ## Agent-assisted workflow
 
-The short aliases are safe by default. `c` starts Claude Code and `cx`
-starts Codex with their normal permission checks. The bypass modes remain
-available as the deliberately explicit `cunsafe` and `cxunsafe` aliases.
+The short aliases intentionally start unrestricted sessions: `c` expands to
+`claude --dangerously-skip-permissions`, and `cx` expands to
+`codex --dangerously-bypass-approvals-and-sandbox`. This is a local exception
+that overrides the guarded-default convention for these two aliases. Use `cc`
+for normal Claude Code permissions, `cxs` for workspace-write Codex with
+approval prompts, or `cxro` for read-only Codex.
+
+`cxq` and `cxe` both expand to `codex exec` for non-interactive tasks. Codex
+0.153.4 no longer accepts the old `-q` flag. See the
+[Codex configuration notes](../.codex/README.md) for current settings and checks.
 
 | Command | Purpose |
 |---|---|
@@ -88,6 +95,11 @@ Watchexec uses native filesystem events, respects project ignore files, and
 restarts an in-flight verification when a newer edit arrives.
 
 ## Startup behavior
+
+For Claude Code troubleshooting, `csafe` preserves normal authentication while
+disabling personal customizations. `cbare` requires an API key or `apiKeyHelper`
+because bare mode skips OAuth and keychain authentication. Configuration choices
+and validation commands are documented in the [Claude Code guide](../.claude/README.md).
 
 Interactive shells use full `mise activate` behavior, including directory
 hooks and environment variables. Non-interactive agent commands add mise's

@@ -329,6 +329,12 @@ function update_all -d "Update tools with their native managers"
                             continue
                         end
 
+                        set -l module_version (go version -m "$binary" 2>/dev/null | awk '\''$1 == "mod" { print $3; exit }'\'')
+                        if test "$module_version" = "(devel)"
+                            echo "Skipping local/devel Go binary: "(basename "$binary")
+                            continue
+                        end
+
                         echo "go install $package@latest"
                         go install $package"@latest"
                         or set -a failed (basename "$binary")
@@ -723,6 +729,12 @@ function update_all -d "Update tools with their native managers"
                 for binary in (find "$go_bin" -maxdepth 1 -type f -perm -111 2>/dev/null)
                     set -l package (go version -m "$binary" 2>/dev/null | awk '\''$1 == "path" { print $2; exit }'\'')
                     if test -z "$package"
+                        continue
+                    end
+
+                    set -l module_version (go version -m "$binary" 2>/dev/null | awk '\''$1 == "mod" { print $3; exit }'\'')
+                    if test "$module_version" = "(devel)"
+                        echo "Skipping local/devel Go binary: "(basename "$binary")
                         continue
                     end
 

@@ -3,6 +3,7 @@ name: home-constructive-reviewer
 description: Reviews or rewrites review comments so they are clear, kind, actionable, and labeled as blocking or non-blocking.
 tools: Read, Grep, Glob, Bash
 model: sonnet
+permissionMode: plan
 ---
 
 # Constructive Review Commenter

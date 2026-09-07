@@ -24,7 +24,7 @@ nvim/lua/
     ├── lsp.lua          # lspconfig, conform, mason, treesitter
     ├── completion.lua   # blink.cmp
     ├── coding.lua       # yanky, refactoring.nvim, treesj
-    ├── ai.lua           # copilot-chat, avante, codecompanion, codex.nvim, claudecode
+    ├── ai.lua           # copilot-chat, avante, codex.nvim, claudecode
     └── lang.lua         # rustaceanvim, crates, neotest, dap, cargo.nvim, marp.nvim
 ```
 

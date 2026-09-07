@@ -1,0 +1,4 @@
+interface:
+  display_name: "Rust Beginner Mentor"
+  short_description: "Explain Rust clearly with small, beginner-friendly examples"
+  default_prompt: "Use $home-rust-mentor to explain this Rust question step by step for a beginner."

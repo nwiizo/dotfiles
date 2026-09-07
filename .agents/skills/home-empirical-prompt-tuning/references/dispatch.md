@@ -1,49 +1,27 @@
-# subagent 起動契約と環境制約
+# Independent Evaluator Setup
 
-## subagent 起動契約
+Use a fresh evaluator for each compared instruction version. Give it the
+instruction path, realistic user request, raw artifacts, permitted workspace,
+and actual task constraints. Do not provide the expected conclusion, previous
+findings, or a suggested fix.
 
-実行者に渡すプロンプトは次の構造を取る。これが「両面評価」の入力契約。
+Keep evaluation outputs in an isolated temporary directory. Make ownership and
+side-effect limits explicit; a simulated production incident never authorizes
+access to a live service.
 
-```
-あなたは <対象プロンプト名> を白紙で読む実行者です。
+Ask the evaluator to complete the task and return:
+- the artifact or result and evidence supporting it;
+- incomplete work, ambiguous instructions, and environment limitations;
+- material choices it made using its own judgment.
 
-## 対象プロンプト
-<対象プロンプトの本文を全文貼る or Read で読ませるパスを指定>
+The caller owns acceptance criteria and checks the result independently.
+A test about asking for permission must not tell the evaluator whether to ask.
 
-## シナリオ
-<シナリオの状況設定 1 段落>
+Record inherited instructions and model/tool settings that affect comparability.
+A new subagent may still inherit global instructions; disclose that limit.
+Do not silently substitute another model when the comparison depends on one.
 
-## 要件チェックリスト（成果物が満たすべき項目）
-1. [critical] <最低ラインに含む項目>
-2. <通常項目>
-3. <通常項目>
-...
-
-## タスク
-1. 対象プロンプトに従ってシナリオを実行し、成果物を生成する。
-2. 終了時に下記レポート構造で返答する。
-
-## レポート構造
-- 成果物: <生成物 or 実行結果サマリ>
-- 要件達成: 各項目について ○ / × / 部分的（理由付き）
-- 不明瞭点: 対象プロンプトで詰まった箇所、解釈に迷った文言（箇条書き）
-- 裁量補完: 指示で決まっておらず自分の判断で埋めた箇所（箇条書き）
-- 再試行: 同じ意思決定ステップをやり直した回数とその理由
-```
-
-呼び出し側メモ（実行者には渡さない）: `[critical]` 最低 1 件の制約チェック、レポートからの自己申告抽出、`tool_uses` / `duration_ms` の usage メタ取得はすべて呼び出し側の責務。
-
-## 環境制約
-
-新規実行者を dispatch できない環境（既に subagent として動作している、Task tool が無効化されている等）では、**この実行インスタンスからは** 本 skill を実行しない。
-- 代替案 1: 親セッションのユーザーに別 Claude Code セッションを起動して依頼してもらう
-- 代替案 2: 評価を諦め、ユーザーに「empirical evaluation skipped: dispatch unavailable」と明示報告する
-- **NG**: 自己再読で代替する（バイアスが入るので評価結果を信じてはいけない）
-
-**部分失敗**: 並列 dispatch で一部の実行者が timeout / error で終わった場合、完了分だけで評価しない（シナリオ欠損は比較の前提を崩す）。該当シナリオを新しい実行者で再 dispatch する。
-
-**継承される文脈**: 新規 subagent であっても親セッションの CLAUDE.md やグローバルルールは継承される。「コンテキスト完全ゼロ」ではなく「対象プロンプトについての記憶だけがゼロ」と理解すること。完全な隔離が必要なら別セッションからの起動（代替案 1）を選ぶ。
-
-## 構造審査モード
-
-empirical 評価ではなく、プロンプトの **記述の整合性・明瞭性だけ** をチェックしたい場合のモード。dispatch 可能・不可能にかかわらず選択できる。実行者への依頼プロンプトに「今回は構造審査モード: 実行ではなくテキスト整合性チェック」と明記する。構造審査は empirical の代替ではなく補助（連続クリア判定には使えない）。
+If an evaluator fails or times out, record the missing case. Retry when a
+specific transient cause makes that useful, without duplicating running work.
+If delegation is unavailable or not authorized, perform static review and
+report that behavioral execution was not tested.

@@ -48,6 +48,10 @@ specific tool:
 
 Contributor and agent-facing repository rules are in `AGENTS.md`. `CLAUDE.md`
 imports the same guide so Claude Code and Codex share the base rules.
+The shared agent configuration includes minimal implementation, data-shape,
+test-driven development, planning, and independent-review contracts. Its
+minimal-solution discipline adapts Ponytail without installing the upstream
+plugin; see the [agent config guide](.agents/README.md#instruction-ownership).
 
 ## Managed Stack
 
@@ -134,18 +138,18 @@ conflicting path, including an unrelated symlink, under
 | `git/power_pull.sh` | `~/.local/bin/power_pull` |
 | Homebrew Docker Compose plugin | `~/.docker/cli-plugins/docker-compose` |
 | `scripts/audit-agent-config.sh` | Local validation helper |
-| `scripts/summarize-ai-history.py` | Local AI-history aggregate helper |
 | `scripts/apply-ghostty-ai-notifications.sh` | Merge Ghostty notification settings into Claude Code and Codex |
 | `warp/keybindings.yaml` | `~/.warp/keybindings.yaml` |
 | `warp/themes/*.yaml` | `~/.warp/themes/*.yaml` |
 | `warp/workflows/*.yaml` | `~/.warp/workflows/*.yaml` |
 | `.agents/CLAUDE.md` | `~/.claude/CLAUDE.md` |
-| `.agents/RTK.md` | `~/.claude/RTK.md` |
+| `.agents/RTK.md` | `~/.claude/RTK.md`, `~/.codex/RTK.md` |
 | `.agents/claudeignore` | `~/.claude/.claudeignore` |
 | `.agents/agents/` | `~/.claude/agents` |
 | `.agents/docs/` | `~/.claude/docs` |
 | `.agents/rules/` | `~/.claude/rules` |
 | `.agents/skills/*` | `~/.claude/skills/*`, `~/.agents/skills/*` |
+| `.agents/codex/AGENTS.md` | `~/.codex/AGENTS.md` |
 | `.agents/codex/agents/*.toml` | `~/.codex/agents/*.toml` |
 | `.claude/agents`, `.claude/rules`, `.claude/skills` | project symlinks into `.agents/` |
 | `.codex/agents` | project symlink into `.agents/codex/agents` |
@@ -210,7 +214,7 @@ Notable bindings:
 | Key | Action |
 |---|---|
 | `Ctrl+G` | Select a ghq repository |
-| `Alt+J` | Select a jj/ghq repository |
+| `Alt+J` | Select a Git/ghq repository |
 | `Ctrl+B` | Select a Git branch |
 | `Ctrl+F` | fzf directory search |
 | `Ctrl+L` | Clear screen |
@@ -227,16 +231,19 @@ cat=bat      grep=rg                 ls='eza --icons --group-directories-first'
 find=fd      du=dust
 sed=sd       ps=procs                top=btm       ping=gping
 http=xh      hex=hexyl               bench=hyperfine
-c=claude     cunsafe='claude --dangerously-skip-permissions'
+c='claude --dangerously-skip-permissions'  cc=claude
 cbare='claude --bare'                csafe='claude --safe-mode'
 cdoc='claude doctor'                 cagents='claude agents'
-cx=codex     cxunsafe='codex --dangerously-bypass-approvals-and-sandbox'
+cx='codex --dangerously-bypass-approvals-and-sandbox'
 cxs='codex --sandbox workspace-write --ask-for-approval on-request'
 cxro='codex --sandbox read-only'     cxe='codex exec'
 cxr='codex resume'                   cxrev='codex review --uncommitted'
 v=nvim       lg=lazygit              repo=ghq_fzf_repo
 actx=ai_context                      actxc='ai_context | pbcopy'
 ```
+
+`c` and `cx` intentionally start unrestricted sessions. Use `cc` for normal
+Claude Code permissions, or `cxs` / `cxro` for constrained Codex sessions.
 
 See `fish/README.md` for the directory contract.
 
@@ -283,11 +290,13 @@ brew bundle check --file Brewfile
 ./scripts/audit-agent-config.sh
 ```
 
-For AI-history-derived changes, aggregate locally and do not commit raw logs:
+For AI-history-derived changes, start with a bounded local aggregate from the
+installed Rust `nippo` CLI. Follow
+[`home-history-distill`](.agents/skills/home-history-distill/SKILL.md) for
+redaction and evidence review; do not commit raw logs.
 
 ```bash
-python3 .agents/skills/prompt-review/scripts/collect.py --days 0 > /tmp/dotfiles-prompt-review-data.json
-python3 scripts/summarize-ai-history.py /tmp/dotfiles-prompt-review-data.json
+rtk proxy nippo collect --days 7 --stats-only
 ```
 
 ```bash

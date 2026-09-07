@@ -1,62 +1,20 @@
 ---
 name: home-fix-review-comments
-description: 直前の会話に含まれるレビュー結果を精査し、妥当な指摘に対してのみ修正を実施する。レビュアーの指摘がすべて正しいとは限らないため、各コメントを批判的に評価する。
+description: 会話中のレビュー指摘を実コードと照合し、妥当なものを修正・検証する。重複した指摘をまとめ、対応しない理由も報告する。
 ---
 
-# fix-review-comments
+# Apply Review Findings
 
-直前の会話に含まれるレビュー指摘を精査し、妥当な指摘のみ修正を行う。
+Use the review in the conversation or the user's specified review target.
+Check each finding against the actual code, requirements, and relevant evidence;
+a reviewer label or severity is not proof that the change is necessary.
 
-## 動作フロー
+Apply valid findings within the requested scope, consolidating duplicates.
+For style-only suggestions, prefer consistency with the surrounding code.
+Do not turn a rejected finding into an unrelated refactor.
 
-1. 直前の会話からレビュー指摘を特定・一覧化する
-2. 各指摘の妥当性を評価する
-   - 技術的に正しいか
-   - プロジェクトの方針・コンテキストと合致するか
-   - 実装上のトレードオフとして妥当か
-3. 妥当と判断した指摘のみ修正を実施する
-4. 最終サマリーを出力する
-
-## 妥当性評価の基準
-
-- レビュアーの指摘を鵜呑みにせず、技術的妥当性を独自に判断する
-- 対応しない場合は、レビュアーが納得できる理由を明記する
-- 修正によって新たな問題が発生しないか確認する
-- スタイルのみの指摘（Nit）は原則対応するが、既存コードとの一貫性を優先する
-
-## 最終サマリーの形式
-
-修正完了後、以下の形式でサマリーを出力すること。
-サマリーの目的は「修正判断が適切だったかをユーザーがダブルチェックできること」であり、元の指摘内容・判断根拠を省略しすぎないこと。
-
-### 記載ルール
-
-各指摘について以下の3点を必ず記載する：
-
-1. **見出し**: 「レビュアー識別子: 指摘の要点」の形式
-   - レビュアー識別子は会話中のレビュー結果に記載された名前・番号をそのまま使う（例：code #1, simplify #3, rust #2）
-   - 複数レビュアーが同じ指摘をしている場合は「code #5 / simplify #3」のようにスラッシュで併記する
-2. **指摘内容**: レビュアーが何を問題視したか。元のレビューコメントの趣旨がわかる程度に具体的に書く
-3. **修正内容 or 対応しない理由**: 何をどう変えたか、またはなぜ対応不要と判断したかの根拠
-
-### 出力テンプレート
-
-```markdown
-## レビュー対応サマリー
-
-### 対応した指摘
-
-#### code #1: [指摘の要点]
-- **指摘内容**: [レビュアーが何を問題視したか]
-- **修正内容**: [何をどう変えたか]
-
-#### code #3 / simplify #2: [指摘の要点]
-- **指摘内容**: [レビュアーが何を問題視したか]
-- **修正内容**: [何をどう変えたか]
-
-### 対応しなかった指摘
-
-#### simplify #4: [指摘の要点]
-- **指摘内容**: [レビュアーが何を問題視したか]
-- **対応しない理由**: [技術的根拠]
-```
+Verify the affected behavior after the edits. Report what was changed and why
+other findings were declined or remain unresolved. Preserve finding identifiers
+when available so the user can trace decisions back to the review.
+Choose a concise format appropriate to the number of findings; no fixed report
+template or extra approval round is needed.

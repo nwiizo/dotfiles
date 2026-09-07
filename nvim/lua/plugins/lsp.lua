@@ -99,7 +99,13 @@ return {
         go = { "goimports", "gofumpt" },
         yaml = { "prettier" },
         json = { "prettier" },
-        markdown = { "prettier" },
+        markdown = { "prettier_markdown" },
+      },
+      formatters = {
+        prettier_markdown = {
+          inherit = "prettier",
+          prepend_args = { "--prose-wrap", "never" },
+        },
       },
     },
   },

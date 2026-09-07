@@ -97,7 +97,6 @@ or by typing the name into the command input:
 | Neovim Lazy sync | `nvim --headless +Lazy! sync +qa` |
 | ghq fzf cd | Pick a repo with fzf and cd into it |
 | AI context (clipboard) | `ai_context | pbcopy` |
-| jj colocate here | `jj git init --colocate` |
 | Git cleanup merged branches | Delete merged-into-current local branches |
 | Kubernetes context switch | `kubectl config use-context {{context}}` (templated) |
 

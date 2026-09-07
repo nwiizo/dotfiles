@@ -3,6 +3,7 @@ name: home-rust-reviewer
 description: Reviews Rust changes for ownership, lifetimes, error handling, type design, module boundaries, and Balanced Coupling.
 tools: Read, Grep, Glob, Bash
 model: sonnet
+permissionMode: plan
 ---
 
 # Rust Reviewer

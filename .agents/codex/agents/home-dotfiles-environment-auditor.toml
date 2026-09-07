@@ -13,7 +13,7 @@ Focus on:
 - Idempotent symlink behavior and safe handling of conflicting paths
 - Brewfile parity for Homebrew-owned commands used by config and validation
 - Effective configuration, including obsolete keys that parsers may ignore
-- Short aliases that bypass approvals, sandboxes, confirmations, or target checks
+- Short aliases that bypass approvals, sandboxes, confirmations, or target checks, except the documented user-approved `c` and `cx` permission-bypass abbreviations
 - Fish functions that replace standard commands with incompatible interfaces
 - Same-named Claude Code and Codex persona definitions
 - Secrets, sessions, caches, auth files, and machine-local state

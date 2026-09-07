@@ -1,89 +1,31 @@
 ---
 name: home-karpathy-guidelines
-description: LLM特有のコーディング失敗（黙って推測する・過剰実装・スコープ滑落・成功基準が曖昧）を抑えるための事前規律。曖昧/大きい/不確実なタスクを受けた直後に明示起動して、実装前に前提と検証可能ゴールを言語化する。
+description: 曖昧な実装依頼や最小実装・YAGNIの依頼で、結果を左右する前提と検証方法を整理する。方針が決まった通常の変更では追加の手順を課さない。
 license: MIT
 ---
 
-Andrej Karpathy の LLM コーディング観察に基づく 4 原則。**主な追加価値は実装"前"のゲート**（`home-self-review` / `home-fix-review-comments` は事後レビュー、本 skill はその前段）。
+# Implementation Preflight
 
-出典: <https://x.com/karpathy/status/2015883857489522876> /
-適応元: <https://github.com/multica-ai/andrej-karpathy-skills>
+Use this preflight when uncertainty could change the implementation, not as a
+ceremony before every edit.
 
-**トレードオフ:** 速度より慎重さに振っている。自明な変更（typo 修正、明白な one-liner）には適用しない。
+- Resolve facts from the repository and current conversation first. State only
+  assumptions that affect the outcome; ask about choices evidence cannot settle.
+- Identify the observable result and how to verify it. For dependent work, give
+  a short plan whose steps lead to that result.
+- After tracing the affected flow, stop at the first sufficient option: no new
+  code, existing code, standard library, native feature, installed dependency,
+  then the minimum clear implementation.
+- Preserve trust-boundary validation, data-loss prevention, security,
+  accessibility, explicit requirements, and necessary verification.
+- Keep each change tied to the requested result. Include dependent fixes, but
+  avoid speculative features, abstractions, and unrelated cleanup.
+- Once the necessary choices are resolved, continue authorized implementation.
+  Do not ask for another approval of the plan or repeat settled discovery.
 
-## いつ使うか
+A small diff is useful when it remains clear and correct. Do not replace
+engineering judgment with a line count or a fixed number of questions.
 
-- 要件が曖昧（"X を直して" / "Y を改善して" など）
-- 影響範囲が読みにくい変更（複数ファイル / 共通基盤 / 既存挙動への上書き）
-- 結果や変更範囲を左右する前提を仮定したと気づいたとき
-- 「とりあえず書いてみる」とコードを打ち始めそうになったとき
-
-## 手順（コード生成前に実行）
-
-### 1. Think Before Coding — 前提を surface する
-
-- 結果を変える前提だけを **1〜3 個** 示す。リポジトリやツールで確認できる事実は先に調べる
-- 複数解釈のうち、実装や成果物が変わるものだけを提示する
-- 情報が十分なら、妥当な解釈を明示して進む。既に決まった事実を再検討しない
-- ユーザーだけが答えられる入力、実質的なスコープ変更、破壊的な操作でのみ止まる
-- より簡素な方法で要求を満たせるなら、選択肢を網羅せず推奨案として示す
-
-### 2. Goal-Driven Execution — 検証可能ゴールに変換
-
-曖昧タスクを次のいずれかの形に書き換えてから着手:
-
-| 入力 | 検証可能ゴール |
-|---|---|
-| "バグを直して" | 再現するテストを書く → 通す |
-| "バリデーション追加" | 不正入力のテストを書く → 通す |
-| "リファクタ" | 変更前後でテスト green を確認 |
-| "機能追加" | 受け入れ条件をテスト化 → 通す |
-
-依存関係のある複数ステップなら、以下の形式で計画を **1 度だけ** 出す。明白な一段の変更には計画を増やさない。
-
-```
-1. [step] → verify: [check]
-2. [step] → verify: [check]
-```
-
-強い成功基準があれば LLM は自律的にループできる。弱い基準（「動くようにして」）は常に再確認が必要になる。
-
-### 3. Simplicity First — 書きながら抑制
-
-- 要求されていない機能・抽象・設定可能性を入れない
-- 1 回しか使わないコードに抽象化（interface / factory / builder）を入れない
-- 起き得ないシナリオへの error handling を書かない
-- 変更量が要求に対して膨らんだら、より小さな実装で同じ成功条件を満たせないか見直す
-
-### 4. Surgical Changes — スコープ封じ
-
-- 隣接コードの "improve" は禁止（フォーマット・コメント含む）
-- 既存スタイルに合わせる。違和感があっても黙って合わせる
-- 関係ない dead code に気付いても **report only / 削除しない**
-- 自分の変更が生んだ未使用 import/var/fn のみ片付ける
-
-## 実装後の自己テスト（2 つだけ）
-
-両方 yes になるまでコミットしない:
-
-- **Senior engineer test**: シニアが見て「これ過剰では」と言わないか
-- **Traceability test**: diff の **全行** がユーザ要求に直接トレースできるか
-  - できない行を 1 つでも見つけたら、その行が本当に必要か再検討
-
-## Codex での読み替え
-
-元リポジトリは Claude Code / Cursor 向けだが、Codex CLI では次のように読み替える。
-
-- `CLAUDE.md` や Cursor rules 相当は **system/developer instructions、AGENTS.md、ユーザー依頼、skill 本文**として扱う
-- まず `rg` / `git status` で対象範囲を確認し、依頼と関係するファイルだけ読む
-- 手編集は `apply_patch` を優先し、生成コマンドや formatter 以外でファイルを書き換えない
-- 既存の未コミット変更はユーザーの作業とみなし、依頼されない限り戻さない
-- 最終報告は結果を先に書き、実行した検証と観測結果を対応づける。未検証は理由と範囲を明示する
-- 長い作業では、探索結果・編集意図・検証結果を短い進捗更新で共有する
-
-## 効いていない兆候（要見直し）
-
-- 「ついでにこれも直しておきました」が頻発する
-- 1 つの関数なのに interface + impl + factory + builder で 5 ファイル作る
-- 「動きました」と言うが具体的な検証手段が示されていない
-- 成果物を変える曖昧さを調べも明示もせず、大きな変更を始める
+Adapted from [Karpathy's observations](https://x.com/karpathy/status/2015883857489522876),
+[andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills),
+and [Ponytail](https://github.com/DietrichGebert/ponytail).

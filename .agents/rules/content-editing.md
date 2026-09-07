@@ -6,34 +6,11 @@ paths:
   - "**/*.txt"
 ---
 
-# Content Editing Rules
+# Content Editing
 
-文書編集の原則。コード編集の同原則は [coding.md](coding.md) の Surgical Changes セクションを参照。
-両者の根拠は skill `home-karpathy-guidelines`。
-
-## 外科的編集の原則
-
-- 指示された変更**のみ**行う。関係ない箇所を勝手に修正しない
-- パンチライン、表現、メタコメンタリー、文体の装飾を追加しない（明示的に依頼された場合を除く）
-- 他に変更すべき箇所があると思ったら、適用せずリストとして提示する
-- ユーザーの声・トーン・表現の癖を正確に保持する
-- 判定基準: 変更された全箇所が、ユーザーの依頼に直接トレースできるか
-
-## 日本語コンテンツ
-
-- 学術的な引用・参照を勝手に追加しない
-- 小説的な比喩・メタファーを挿入しない
-- ユーザーが使っていない用語（例: 「CTOエンジニア」等）を導入しない
-- 「〜することが重要です」「〜が求められます」の連発はAIっぽさの象徴。具体的に書く
-
-## 長文コンテンツの生成
-
-- 長い成果物はセクション単位でファイルへ反映し、最後に全体の接続を確認する
-- 短い文書を機械的に分割しない。コンテキスト上限への不安だけを理由に、要約や別セッションへの移行を提案しない
-- 生成した分量ではなく、依頼された範囲と検証結果で完了を判断する
-
-## 複数ファイルのレビュー
-
-- ユーザーが指定したファイル、現在の差分、リポジトリ既定の対象の順で範囲を決める
-- 総合レビューやシリーズ全体の依頼でだけ全ファイルを対象にする
-- 読み取りで範囲を特定できず、選択によって結論が変わる場合だけ確認する
+- Match the requested scope: a typo fix preserves phrasing; a rewrite may change structure and wording. Include related edits needed for the requested result without asking again.
+- Preserve the author's meaning, voice, and factual claims. Do not invent experience, quotations, citations, or supporting facts.
+- Keep edits outside the requested subject separate. Do not add punchlines, literary flourishes, or new terminology to a mechanical edit.
+- In Japanese, use concrete, idiomatic phrasing and avoid repeated vague prescriptions such as 「重要です」 and 「求められます」.
+- Resolve the target from the request, current diff, and workspace conventions. A series-wide request covers its parts; an explicit file or part limits the work.
+- For long documents, choose a writing sequence that preserves the whole requested scope, then check continuity. Do not impose section-by-section approval or stop at a summary because the document is long.

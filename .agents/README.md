@@ -1,79 +1,85 @@
-# Agent Config
+# Agent Configuration
 
-This directory is the source of truth for reusable agent configuration that is
-safe to keep with dotfiles. Project entrypoints under `.claude/` and `.codex/`
-symlink back here, and `scripts/link.sh` also links selected assets into user
-agent homes.
+This directory contains the reusable configuration managed by dotfiles.
+Edit these sources; `scripts/link.sh` installs links into the client homes.
 
-## Managed
+## Installation Map
 
-| Path | Linked to | Purpose |
-|---|---|---|
-| `CLAUDE.md` | `~/.claude/CLAUDE.md` | Claude Code entry point |
-| `RTK.md` | `~/.claude/RTK.md` | RTK command guidance |
-| `claudeignore` | `~/.claude/.claudeignore` | Global ignore patterns |
-| `agents/` | `~/.claude/agents` | Reusable Claude Code subagent prompts |
-| `rules/` | `~/.claude/rules` | Reusable Claude Code rules |
-| `docs/` | `~/.claude/docs` | On-demand Claude Code technical notes |
-| `skills/` | `~/.claude/skills/*`, `~/.agents/skills/*` | Reusable skills |
-| `codex/agents/` | `~/.codex/agents/*.toml` | Reusable Codex subagents |
-| `.claude/` symlinks | project `.claude/*` | Claude Code project entrypoints |
-| `.codex/agents` symlink | project `.codex/agents` | Codex project custom-agent entrypoint |
-
-`scripts/link.sh` links skill directories one by one. This keeps room for
-external skills such as `nippo`, which belongs to its own repository.
-
-Only portable Agent Skills are published under `~/.agents`. Keep
-product-specific assets under `~/.claude` or `~/.codex`. Shared skills may use
-client extensions when required: Claude Code fields stay in `SKILL.md`, while
-Codex UI and invocation policy belong in `agents/openai.yaml`.
-
-Review judgment belongs in subagents. Skills may orchestrate review flows or
-apply accepted review comments, but reviewer personas and checklists should be
-implemented as Claude Code agents and Codex custom agents.
-Reusable personas are kept as same-named pairs under `.agents/agents/` and
-`.agents/codex/agents/`; the audit script rejects a missing counterpart.
-
-## Choose the smallest instruction surface
-
-| Need | Surface |
+| Source | Installed path |
 |---|---|
-| Repository facts, commands, completion criteria | `AGENTS.md`; import it from `CLAUDE.md` |
-| Claude-only policy | `.agents/rules/*.md`; add `paths` unless it is truly universal |
-| Repeatable workflow or detailed reference | `.agents/skills/<name>/` |
-| Deterministic enforcement at a lifecycle event | hook, config, or validation script |
-| Shareable bundle of skills, tools, or connectors | plugin |
+| `CLAUDE.md` | `~/.claude/CLAUDE.md` |
+| `RTK.md` | `~/.claude/RTK.md`, `~/.codex/RTK.md` |
+| `claudeignore` | `~/.claude/.claudeignore` |
+| `agents/`, `rules/`, `docs/` | Corresponding directories under `~/.claude/` |
+| `skills/<name>/` | `~/.claude/skills/<name>`, `~/.agents/skills/<name>` |
+| `codex/AGENTS.md` | `~/.codex/AGENTS.md` |
+| `codex/agents/*.toml` | `~/.codex/agents/*.toml` |
 
-Keep always-loaded guidance short and concrete. Add durable guidance after
-repeated friction, not as speculative policy. Skills should keep portable
-`name` and `description` metadata, load detailed references only when needed,
-and separate Claude Code invocation controls from Codex
-`agents/openai.yaml` policy.
+Project `.claude/{agents,rules,skills}` and `.codex/agents` also link here.
+Skills are installed individually so external skills such as `nippo` and
+the private blog bundle can coexist. Do not copy or remove their sources as
+part of dotfiles maintenance.
 
-Official references:
+## Instruction Ownership
 
-- [OpenAI: Build skills](https://learn.chatgpt.com/docs/build-skills)
-- [OpenAI: Codex best practices](https://learn.chatgpt.com/guides/best-practices)
-- [Anthropic: Claude Code extensions](https://code.claude.com/docs/en/features-overview)
-- [Anthropic: Claude Code skills](https://code.claude.com/docs/en/skills)
-- [Anthropic: CLAUDE.md and path-scoped rules](https://code.claude.com/docs/en/memory)
+| Information | Maintained in |
+|---|---|
+| Repository layout, apply commands, checks | Root `AGENTS.md`; root `CLAUDE.md` imports it |
+| Codex user preferences | `codex/AGENTS.md` |
+| Claude user preferences | `rules/coding.md`, `rules/security.md`, `rules/github-comments.md` |
+| Path-specific preferences | `rules/*.md` with `paths` |
+| Task-specific judgment and procedures | `skills/<name>/SKILL.md` |
+| Specialized reviewer or planner role | Same-named files in `agents/` and `codex/agents/` |
+| Deterministic enforcement | Existing hooks, config, or validation scripts |
 
-Use `scripts/audit-agent-config.sh` after changing this tree. It checks shared
-skill frontmatter, requires directory/name identity and a non-empty
-description, requires same-named Claude/Codex persona pairs, and enforces
-manual-only invocation policy in both clients. Client-specific interface text
-and forward-test quality remain manual review items. The YAML checks require
-Ruby with its standard Psych library. Use `scripts/summarize-ai-history.py`
-only on temporary collector output under `/tmp`; never commit raw AI
-conversation logs.
+Keep information that changes the model's decisions. Remove redundant tutorials,
+fixed ceremonies, and obsolete workarounds rather than moving them into new
+references. Preserve environment facts, explicit user preferences, and safety
+boundaries. Details for maintenance are in `rules/authoring.md`.
 
-## Excluded
+## Skills by Purpose
 
-The following are local state or machine-specific policy and are not tracked here:
+| Skill | Use |
+|---|---|
+| `add-config` | Source paths, application, and validation for dotfiles configuration |
+| `add-package` | Homebrew package installation and repository tracking |
+| `home-karpathy-guidelines` | Preflight for material uncertainty or minimal implementation |
+| `home-brainstorming` | Design exploration and requested design interviews |
+| `home-data-shape-contract` | Persisted data and public-interface compatibility decisions |
+| `home-test-driven-development` | Meaningful red/green behavior checks |
+| `home-systematic-debugging` | Evidence-driven diagnosis when the cause is unknown |
+| `home-verification-before-completion` | Evidence supporting completion claims |
+| `home-self-review` | Independent review through the opposite AI CLI |
+| `home-fix-review-comments` | Evaluate and apply review findings |
+| `home-docs-curator` | Documentation and instruction cleanup |
+| `home-history-distill` | Reusable guidance from bounded local history through `nippo` |
+| `home-empirical-prompt-tuning` | Behavioral comparison of instructions |
+| `home-validate-on-oss` | Explicitly requested validation on real projects |
+| `home-rust-mentor` | Beginner-oriented Rust explanations |
+| `home-marp-slide-editing` | Marp layout and rendered-output checks |
+| `home-translation-quality` | Technical translation conventions and consistency |
+| `home-incident-runbook-templates` | Service-specific response procedures |
+| `home-postmortem-writing` | Evidence-based incident reviews |
+| `home-aws-finops-investigation` | Local AWS investigation notes |
+| `home-gcp-finops-investigation` | Local GCP investigation notes |
 
-- conversation history, project sessions, file history, and plans
-- settings files with machine-specific paths or permissions
-- daemon files, control keys, auth caches, security state, and logs
-- plugin caches, downloaded artifacts, and other runtime data
-- backups created by agent tools
-- local Codex approval rules with project-specific paths
+Choose personas by their descriptions; do not automatically run a fixed reviewer
+set. `home-self-review` selects the other AI product; a persona name alone does not.
+
+## Validation and Local State
+
+Run `./scripts/audit-agent-config.sh` after edits. It checks links, skill and agent
+metadata, same-named persona pairs, manual-only invocation parity, read-only
+permissions, stale tooling references, and generated state. Ruby/Psych, yq, and
+jq are the existing validators. It also scans secrets when git-secrets is installed.
+
+Preserve client-specific metadata: Claude extensions in skill frontmatter and
+Codex UI/invocation policy in `agents/openai.yaml`. Read-only personas pair
+Claude `permissionMode: plan` with Codex `sandbox_mode = "read-only"`.
+The memory editor and report writer retain the access their tasks need.
+
+Static checks do not establish model performance. Use representative behavioral
+evaluation when a change warrants it, and report its actual scope.
+
+Keep sessions, history, caches, credentials, machine-specific settings, plugin
+downloads, and runtime state outside this tree.

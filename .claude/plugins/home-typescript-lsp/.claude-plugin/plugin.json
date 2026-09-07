@@ -1,0 +1,24 @@
+{
+  "name": "home-typescript-lsp",
+  "version": "1.0.0",
+  "author": {
+    "name": "nwiizo"
+  },
+  "description": "Use Homebrew TypeScript 7's native LSP without changing the shell's tsc command.",
+  "lspServers": {
+    "typescript": {
+      "command": "/opt/homebrew/opt/typescript/bin/tsc",
+      "args": ["--lsp", "--stdio"],
+      "extensionToLanguage": {
+        ".ts": "typescript",
+        ".tsx": "typescriptreact",
+        ".js": "javascript",
+        ".jsx": "javascriptreact",
+        ".mts": "typescript",
+        ".cts": "typescript",
+        ".mjs": "javascript",
+        ".cjs": "javascript"
+      }
+    }
+  }
+}

@@ -5,43 +5,28 @@ description: Diagnose bugs, test failures, performance regressions, build failur
 
 # Systematic Debugging
 
-Find the failing mechanism before changing code. Reuse facts already established in the conversation or by current-session tools; do not repeat an investigation merely to satisfy a phase checklist.
+Locate the failing mechanism before changing code. Reuse current evidence rather
+than restarting discovery to satisfy a checklist.
 
-## Scope and Authority
+- Capture the symptom, expected behavior, and affected boundary. Reproduce it
+  when practical; intermittent failures may need timing or environment evidence.
+- Trace the bad value or state through the smallest relevant set of boundaries.
+  Compare recent changes and a working path where useful.
+- Test a hypothesis with an observation that can disprove it. Change one relevant
+  variable at a time; update the explanation instead of stacking speculative fixes.
+- For a fix request, repair the source of the failure across the affected flow
+  and verify the original reproduction plus relevant regression checks.
+  A diagnosis-only request ends with findings and supporting evidence.
+- Separate a confirmed cause from a hypothesis, and completed work from
+  unresolved verification.
 
-- A diagnosis request ends with findings and evidence. Do not implement a fix unless the user asks for one.
-- A fix request authorizes the smallest reversible change supported by the evidence.
-- Ask the user only when the next step requires unavailable input, a destructive action, or a real scope decision.
-- Do not present a root cause as confirmed when the evidence supports only a hypothesis.
+Repeated failed hypotheses are a reason to revisit assumptions, shared state,
+or the test premise. Continue when a new discriminating check is available.
+Ask the user when missing input, a scope decision, or an unsafe next action
+actually prevents progress; the number of attempts alone is not a stopping rule.
 
-## Workflow
+## Conditional References
 
-1. **Define the symptom**
-   - Capture the exact error, observed behavior, expected behavior, and affected boundary.
-   - Reproduce it when practical. If it is intermittent, collect timing and environment evidence instead of guessing.
-2. **Locate the failure**
-   - Check relevant recent changes, configuration, dependencies, and one comparable working path.
-   - In multi-component systems, inspect inputs and outputs at the smallest set of boundaries needed to locate the break.
-   - Trace a bad value or state backward to the earliest point where it becomes wrong.
-3. **Test one hypothesis**
-   - State the hypothesis and the observation that would disprove it.
-   - Run the smallest discriminating check. Change one variable at a time.
-   - If disproved, update the hypothesis from the new evidence rather than stacking fixes.
-4. **Fix when authorized**
-   - Add a focused regression test or reliable reproduction when practical.
-   - Change the source of the failure, not merely the visible symptom.
-   - Avoid adjacent cleanup, refactoring, and speculative error handling.
-5. **Verify**
-   - Re-run the original reproduction and relevant regression checks.
-   - Report passes, failures, skipped checks, and remaining uncertainty exactly as observed.
-
-## Escalation
-
-After three evidence-based hypotheses fail, stop adding local patches and question the architecture, hidden shared state, or test premise. Present the evidence and the decision that requires the user; do not continue with a fourth speculative fix.
-
-## References
-
-- Read [root-cause-tracing.md](root-cause-tracing.md) when the bad state originates deep in a call chain.
-- Read [condition-based-waiting.md](condition-based-waiting.md) for timing and polling failures.
-- Use [defense-in-depth.md](defense-in-depth.md) only after locating the root cause and when additional boundaries are justified.
-- Use `home-verification-before-completion` before reporting the fix as verified.
+- [root-cause-tracing.md](root-cause-tracing.md): a failure originating deep in a call chain.
+- [condition-based-waiting.md](condition-based-waiting.md): timing and polling failures.
+- [defense-in-depth.md](defense-in-depth.md): additional validation boundaries justified by the diagnosed cause.

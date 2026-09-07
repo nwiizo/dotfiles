@@ -4,6 +4,10 @@ LazyVimベースのNeovim設定。Rust、Go、TypeScript、Python開発とAI支�
 
 **2026 Minimal UI**: statusline-less ワークフローで編集領域を最大化。
 
+外部変更と未保存編集のマージを変更した場合は、リポジトリのルートから
+`rtk proxy nvim --headless -u NONE -l nvim/tests/external_changes.lua` を実行する。
+空行、末尾改行、競合時の内容保持、Undoを確認できる。
+
 ## 概要
 
 - **ベース**: [LazyVim](https://github.com/LazyVim/LazyVim)
@@ -164,7 +168,7 @@ nvim/
         ├── lsp.lua             # lspconfig, conform, mason, treesitter override
         ├── completion.lua      # blink.cmp override
         ├── coding.lua          # yanky, refactoring.nvim, treesj
-        ├── ai.lua              # copilot-chat, avante, codecompanion, codex, claudecode
+        ├── ai.lua              # copilot-chat, avante, codex, claudecode
         └── lang.lua            # rustaceanvim, crates, neotest, dap, cargo, marp
 ```
 
@@ -211,7 +215,6 @@ Custom AI integrations live in `lua/plugins/ai.lua`:
 | `nwiizo/codex.nvim` | Codex CLI side panel with terminal and app-server backends |
 | `coder/claudecode.nvim` | Claude Code side-panel terminal |
 | `nwiizo/signalbox.nvim` | Herdr persistent agents の attention board |
-| `olimorris/codecompanion.nvim` | Vim-native Copilot-backed chat and inline actions |
 
 Other custom integrations live in feature files under `lua/plugins/`:
 
@@ -429,8 +432,10 @@ Other custom integrations live in feature files under `lua/plugins/`:
 未変更bufferは自動的に再読込する。focus/buffer/terminalの切り替えと
 normal modeのidle時だけ確認し、カーソル移動ごとのfilesystem確認は行わない。
 
-Neovim側にも未保存の変更がある場合やfileが削除された場合は、内容を
-自動上書きせず選択を求める。
+Neovim側にも未保存の変更がある場合は、バッファを開いた時点の内容を基準に
+`git merge-file`で3-way mergeする。競合しない変更は両方を保持し、同じ箇所を
+変更した場合は両方を競合マーカー付きでバッファへ残す。統合結果は未保存の
+ままなので確認後に保存する。ファイル削除時や自動統合できない形式では選択を求める。
 エージェントへ場所を渡すときは`<leader>yl`で`path:line`形式をclipboardへ
 コピーでき、visual selectionでは行範囲になる。
 
@@ -469,9 +474,6 @@ Neovim側にも未保存の変更がある場合やfileが削除された場合�
 | `<leader>ag` | n | staged diffレビュー | P copilot-chat |
 | `<leader>aG` | n | unstaged diffレビュー | P copilot-chat |
 | `<leader>aW` | n | workspace tool chat | P copilot-chat |
-| `<leader>aC` | n,v | CodeCompanion Chat | P codecompanion |
-| `<leader>ai` | n,v | CodeCompanion Actions | P codecompanion |
-| `<leader>ap` | n,v | CodeCompanion Inline | P codecompanion |
 | `<leader>ac` | n | Claude Codeトグル | P claudecode |
 | `<leader>aF` | n | Claude Codeフォーカス | P claudecode |
 | `<leader>au` | n | Claude Code Resume | P claudecode |

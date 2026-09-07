@@ -126,9 +126,9 @@ abbr --add -- ktp 'kubectl top pods'
 abbr --add -- ktn 'kubectl top nodes'
 
 # Abbreviations: AI tools
-abbr --add -- c claude
+# ローカル例外: この c/cx 設定では「短いaliasは安全な既定にする」規約を無視し、permission bypassで起動する。
+abbr --add -- c 'claude --dangerously-skip-permissions'
 abbr --add -- cc claude
-abbr --add -- cunsafe 'claude --dangerously-skip-permissions'
 abbr --add -- cr 'claude --resume'
 abbr --add -- clp 'claude -p'
 abbr --add -- cplan 'claude --permission-mode plan'
@@ -137,9 +137,8 @@ abbr --add -- csafe 'claude --safe-mode'
 abbr --add -- cdoc 'claude doctor'
 abbr --add -- cagents 'claude agents'
 abbr --add -- cultra 'claude ultrareview'
-abbr --add -- cx codex
-abbr --add -- cxunsafe 'codex --dangerously-bypass-approvals-and-sandbox'
-abbr --add -- cxq 'codex -q'
+abbr --add -- cx 'codex --dangerously-bypass-approvals-and-sandbox'
+abbr --add -- cxq 'codex exec'
 abbr --add -- cxs 'codex --sandbox workspace-write --ask-for-approval on-request'
 abbr --add -- cxro 'codex --sandbox read-only'
 abbr --add -- cxe 'codex exec'
@@ -149,9 +148,6 @@ abbr --add -- cxrl 'codex resume --last'
 abbr --add -- cxrev 'codex review --uncommitted'
 abbr --add -- cxdoc 'codex doctor'
 abbr --add -- cxm 'codex mcp list'
-abbr --add -- ai aider
-abbr --add -- aiw 'aider --watch-files'
-abbr --add -- aia 'aider --architect'
 abbr --add -- actx ai_context
 abbr --add -- actxc 'ai_context | pbcopy'
 abbr --add -- arv ai_review
@@ -201,7 +197,7 @@ abbr --add -- fh 'atuin search -i'
 abbr --add -- gb git_fzf_branch
 abbr --add -- kc kubectl_fzf_ctx
 abbr --add -- de docker_fzf_exec
-abbr --add -- repo ghq_fzf_repo
+abbr --add -- repo git_fzf_ghq
 
 # FZF configuration
 if type -q fzf

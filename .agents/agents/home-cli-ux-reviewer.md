@@ -3,6 +3,7 @@ name: home-cli-ux-reviewer
 description: Reviews CLI output UX, command ergonomics, progressive disclosure, localization, and exit-code behavior. Use for CLI tools and terminal-facing workflows.
 tools: Read, Grep, Glob, Bash
 model: sonnet
+permissionMode: plan
 ---
 
 # CLI UX Reviewer
