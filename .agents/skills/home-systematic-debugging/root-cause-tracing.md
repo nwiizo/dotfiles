@@ -1,169 +1,42 @@
 # Root Cause Tracing
 
-## Overview
+Use this reference when a bad value or state reaches a failing operation through
+several callers. Find where the value first becomes invalid or violates an
+established assumption.
 
-Bugs often manifest deep in the call stack (git init in wrong directory, file created in wrong location, database opened with wrong path). Your instinct is to fix where the error appears, but that's treating a symptom.
+## Trace the Smallest Relevant Chain
 
-**Core principle:** Trace backward through the call chain until you find the original trigger, then fix at the source.
+- Record the failing operation, actual input, expected input, and runtime context.
+- Follow the value through callers, defaults, conversions, and initialization.
+  Compare a working path when it helps distinguish the cause.
+- Add temporary instrumentation only where the chain is unclear. Use the
+  project's test output or logger, capture the relevant stack or state, and
+  avoid dumping credentials or unrelated environment variables.
+- Verify a suspected source with an observation or focused reproduction.
+  Do not treat the nearest visible failure as proof of its origin.
 
-## When to Use
+For example, a test fixture may expose an empty working directory before setup
+runs. A later process launch then uses the current directory and creates files
+in the source tree. Correct the fixture lifecycle and reject invalid input at
+the operation's actual boundary; choose additional guards from the paths that
+can still reach the operation.
 
-```dot
-digraph when_to_use {
-    "Bug appears deep in stack?" [shape=diamond];
-    "Can trace backwards?" [shape=diamond];
-    "Fix at symptom point" [shape=box];
-    "Trace to original trigger" [shape=box];
-    "BETTER: Also add defense-in-depth" [shape=box];
+If the source is outside the editable scope, document it and distinguish any
+authorized mitigation from a permanent fix. Do not keep tracing unrelated code
+merely to avoid reporting that boundary.
 
-    "Bug appears deep in stack?" -> "Can trace backwards?" [label="yes"];
-    "Can trace backwards?" -> "Trace to original trigger" [label="yes"];
-    "Can trace backwards?" -> "Fix at symptom point" [label="no - dead end"];
-    "Trace to original trigger" -> "BETTER: Also add defense-in-depth";
-}
-```
+## Find a Test That Leaves State Behind
 
-**Use when:**
-- Error happens deep in execution (not at entry point)
-- Stack trace shows long call chain
-- Unclear where invalid data originated
-- Need to find which test/code triggers the problem
+Use the repository's test filters or bisection support in an isolated workspace.
+Check the suspected artifact before and after each run and inspect test exit
+codes. Preserve existing user files and state.
 
-## The Tracing Process
+The bundled [find-polluter.sh](find-polluter.sh) is an npm-specific diagnostic
+example. It suppresses test failures and skips cases when the artifact already
+exists, so its final message does not prove that the tests ran successfully.
+Inspect those limitations before using it; prefer the project's existing runner.
 
-### 1. Observe the Symptom
-```
-Error: git init failed in ~/project/packages/core
-```
-
-### 2. Find Immediate Cause
-**What code directly causes this?**
-```typescript
-await execFileAsync('git', ['init'], { cwd: projectDir });
-```
-
-### 3. Ask: What Called This?
-```typescript
-WorktreeManager.createSessionWorktree(projectDir, sessionId)
-  → called by Session.initializeWorkspace()
-  → called by Session.create()
-  → called by test at Project.create()
-```
-
-### 4. Keep Tracing Up
-**What value was passed?**
-- `projectDir = ''` (empty string!)
-- Empty string as `cwd` resolves to `process.cwd()`
-- That's the source code directory!
-
-### 5. Find Original Trigger
-**Where did empty string come from?**
-```typescript
-const context = setupCoreTest(); // Returns { tempDir: '' }
-Project.create('name', context.tempDir); // Accessed before beforeEach!
-```
-
-## Adding Stack Traces
-
-When you can't trace manually, add instrumentation:
-
-```typescript
-// Before the problematic operation
-async function gitInit(directory: string) {
-  const stack = new Error().stack;
-  console.error('DEBUG git init:', {
-    directory,
-    cwd: process.cwd(),
-    nodeEnv: process.env.NODE_ENV,
-    stack,
-  });
-
-  await execFileAsync('git', ['init'], { cwd: directory });
-}
-```
-
-**Critical:** Use `console.error()` in tests (not logger - may not show)
-
-**Run and capture:**
-```bash
-npm test 2>&1 | grep 'DEBUG git init'
-```
-
-**Analyze stack traces:**
-- Look for test file names
-- Find the line number triggering the call
-- Identify the pattern (same test? same parameter?)
-
-## Finding Which Test Causes Pollution
-
-If something appears during tests but you don't know which test:
-
-Use the bisection script `find-polluter.sh` in this directory:
-
-```bash
-./find-polluter.sh '.git' 'src/**/*.test.ts'
-```
-
-Runs tests one-by-one, stops at first polluter. See script for usage.
-
-## Real Example: Empty projectDir
-
-**Symptom:** `.git` created in `packages/core/` (source code)
-
-**Trace chain:**
-1. `git init` runs in `process.cwd()` ← empty cwd parameter
-2. WorktreeManager called with empty projectDir
-3. Session.create() passed empty string
-4. Test accessed `context.tempDir` before beforeEach
-5. setupCoreTest() returns `{ tempDir: '' }` initially
-
-**Root cause:** Top-level variable initialization accessing empty value
-
-**Fix:** Made tempDir a getter that throws if accessed before beforeEach
-
-**Also added defense-in-depth:**
-- Layer 1: Project.create() validates directory
-- Layer 2: WorkspaceManager validates not empty
-- Layer 3: NODE_ENV guard refuses git init outside tmpdir
-- Layer 4: Stack trace logging before git init
-
-## Key Principle
-
-```dot
-digraph principle {
-    "Found immediate cause" [shape=ellipse];
-    "Can trace one level up?" [shape=diamond];
-    "Trace backwards" [shape=box];
-    "Is this the source?" [shape=diamond];
-    "Fix at source" [shape=box];
-    "Add validation at each layer" [shape=box];
-    "Bug impossible" [shape=doublecircle];
-    "NEVER fix just the symptom" [shape=octagon, style=filled, fillcolor=red, fontcolor=white];
-
-    "Found immediate cause" -> "Can trace one level up?";
-    "Can trace one level up?" -> "Trace backwards" [label="yes"];
-    "Can trace one level up?" -> "NEVER fix just the symptom" [label="no"];
-    "Trace backwards" -> "Is this the source?";
-    "Is this the source?" -> "Trace backwards" [label="no - keeps going"];
-    "Is this the source?" -> "Fix at source" [label="yes"];
-    "Fix at source" -> "Add validation at each layer";
-    "Add validation at each layer" -> "Bug impossible";
-}
-```
-
-**NEVER fix just where the error appears.** Trace back to find the original trigger.
-
-## Stack Trace Tips
-
-**In tests:** Use `console.error()` not logger - logger may be suppressed
-**Before operation:** Log before the dangerous operation, not after it fails
-**Include context:** Directory, cwd, environment variables, timestamps
-**Capture stack:** `new Error().stack` shows complete call chain
-
-## Real-World Impact
-
-From debugging session (2025-10-03):
-- Found root cause through 5-level trace
-- Fixed at source (getter validation)
-- Added 4 layers of defense
-- 1847 tests passed, zero pollution
+After fixing the source, verify the original reproduction and relevant
+regressions. Read [defense-in-depth.md](defense-in-depth.md) when another reachable
+boundary still needs protection. Report the observed coverage without claiming
+that every future variant is impossible.

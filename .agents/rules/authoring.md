@@ -21,6 +21,7 @@ paths:
 - Skills require a matching `name` and a concise `description` that distinguishes nearby tasks. Preserve client extensions and existing invocation policy.
 - Manual-only skills need both Claude `disable-model-invocation: true` and Codex `policy.allow_implicit_invocation: false`. Do not infer manual-only invocation merely from possible side effects.
 - Keep skill bodies as short as the task permits. Link substantial conditional references with a reading condition; do not duplicate them in the body.
+- Audit linked references as well as entrypoints. Examples and helper guides must preserve the skill's scope, authorization, and verification limits; do not let an old example reintroduce a universal approval gate or fixed workflow.
 - A Claude `@path` import is not deferred loading. Avoid importing task-specific manuals into startup context.
 - Use the existing repository audit for metadata, persona pairs, and links. Do not install a validator or delete supported metadata just to satisfy another client's validator.
 - Trace relevant requests after workflow changes. Use `home-empirical-prompt-tuning` when independent behavioral comparison would resolve a meaningful uncertainty; static checks do not establish model performance.

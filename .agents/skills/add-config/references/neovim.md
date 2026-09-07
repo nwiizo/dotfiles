@@ -44,11 +44,13 @@ Read this reference for changes under `nvim/`.
 ## Validate
 
 ```bash
-stylua --check nvim/lua
-jq empty nvim/lazy-lock.json
-nvim --headless '+lua print("nvim-config-ok")' +qa
-nvim --headless '+checkhealth vim.deprecated' +qa
+rtk proxy stylua --check nvim/lua
+rtk proxy jq empty nvim/lazy-lock.json
+rtk proxy nvim --headless '+lua print("nvim-config-ok")' +qa
 ```
+
+When changing Neovim APIs or investigating a deprecation warning, also run
+`rtk proxy nvim --headless '+checkhealth vim.deprecated' +qa`.
 
 When a lazy-loaded integration changed, explicitly load the plugin and exercise
 its changed module, command, or keymap; startup alone does not cover deferred

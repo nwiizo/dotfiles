@@ -24,13 +24,13 @@ Read this reference for changes under `fish/`.
   those functions from scripts. Use an explicit command name or an interactive
   abbreviation, whose expansion stays visible to the user.
 - Prefer maintained Rust CLI tools for interactive workflows when they close a
-  concrete gap. Normally require substantial adoption (about 5,000+ GitHub
-  stars), recent upstream activity, a Homebrew core formula, and no material
-  overlap with the existing stack. Record the selection snapshot and mapping
-  in `fish/README.md`.
+  concrete gap. Assess maintenance, adoption, Homebrew availability, and overlap
+  with the existing stack; a star count alone is not a selection gate. Record
+  the chosen command mapping and relevant tradeoff in `fish/README.md`.
 - Keep short aliases for AI agents, package cleanup, and VCS operations on
   guarded defaults. Put bypass or force behavior behind a name containing
-  `unsafe` or an equally explicit warning.
+  `unsafe` or an equally explicit warning. Preserve the documented `c` and `cx`
+  exceptions in `fish/config.fish`.
 - Keep private module, credential, and machine-specific exceptions in
   `~/.config/fish/local.fish`. It is sourced for interactive and non-interactive
   Fish, so UI-only code inside it must use its own `status is-interactive`
@@ -58,27 +58,19 @@ Read this reference for changes under `fish/`.
 
 ## Validate
 
-Run for every Fish change:
+Run `rtk proxy fish -n` separately on each affected `.fish` file. Exercise the
+changed function or abbreviation when syntax checking cannot establish its
+behavior.
 
-```bash
-fish -n fish/config.fish fish/conf.d/*.fish
-for f in fish/functions/*.fish; do fish -n "$f" || exit 1; done
-```
+For startup-sensitive changes, exercise the affected interactive and
+non-interactive paths. Test normal and minimal inherited PATHs when changing
+PATH resolution or hook dependencies.
 
-For PATH, `conf.d`, hook, plugin, or other startup-sensitive changes, also test
-normal and minimal inherited PATHs. Warm generated-code caches before measuring,
-run benchmarks sequentially, and compare variance as well as the median:
-
-```bash
-hyperfine --warmup 10 --runs 30 'fish -i -c exit'
-profile_file="$(mktemp)"
-trap 'rm -f "$profile_file"' EXIT
-fish --profile-startup "$profile_file" -i -c exit
-sed -n '1,80p' "$profile_file"
-```
-
-Profile the dominant external init commands separately when whole-shell timing
-is noisy.
+Benchmark when startup performance is part of the request or a regression is
+suspected. Reuse the installed benchmark or Fish startup profiler; warm relevant
+caches, run comparisons sequentially, and inspect variance before attributing a
+timing difference to the edit. Profile dominant external init commands when
+whole-shell timing is noisy.
 
 Official references:
 

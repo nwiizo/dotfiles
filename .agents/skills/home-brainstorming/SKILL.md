@@ -30,5 +30,6 @@ decisions, reasons, and remaining questions once the acceptance criteria are cle
 ## Visual Companion
 
 Use the optional browser companion only when a visual choice would benefit
-from it and the user accepts it. Then read [visual-companion.md](visual-companion.md).
+from it and the user requests or has accepted it; do not ask again for existing
+authorization. Then read [visual-companion.md](visual-companion.md).
 A small inline diagram does not require starting the companion.

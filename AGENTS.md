@@ -21,24 +21,31 @@ Homebrew packages live in `Brewfile`; tool configuration lives in `fish/`,
 
 ## Apply and Verify
 
-- `./scripts/bootstrap.sh` installs packages, links configs, and installs Fish plugins.
-- `./scripts/link.sh` installs config and agent links. Run it when adding,
-  removing, or changing an installation path; existing linked-file edits apply directly.
-- `fish scripts/install-fish-plugins.fish` applies `fish/fish_plugins`.
-- `brew bundle check --file Brewfile` checks package dependencies.
-- `./scripts/audit-agent-config.sh` checks agent links, metadata, persona pairs,
-  invocation and read-only policy parity, stale references, and generated state.
-  It needs Ruby/Psych, yq, and jq, and runs git-secrets when installed.
+- Use `rtk proxy ./scripts/bootstrap.sh` for requested environment setup.
+  It installs packages, links configs, and installs Fish plugins.
+- Run `rtk proxy ./scripts/link.sh` when adding, removing, or changing an
+  installation path. Existing linked-file edits need no relinking; reload
+  the owning app as needed and verify the effective setting. Report changes
+  that only take effect in new sessions, tabs, or windows.
+- `rtk proxy fish scripts/install-fish-plugins.fish` applies `fish/fish_plugins`.
 
-Run the checks for the changed area:
+Select checks for the affected area and complete its required validation:
 
-```sh
-fish -n fish/config.fish fish/conf.d/*.fish
-for f in fish/functions/*.fish; do fish -n "$f" || exit 1; done
-stylua --check nvim/lua
-jq empty nvim/lazy-lock.json
-nvim --headless '+lua print("nvim-config-ok")' +qa
-```
+| Changed area | Checks |
+|---|---|
+| Fish | Run `rtk proxy fish -n` on each affected `.fish` file. |
+| Neovim | `rtk proxy stylua --check nvim/lua`; `rtk proxy jq empty nvim/lazy-lock.json`; `rtk proxy nvim --headless '+lua print("nvim-config-ok")' +qa` |
+| Homebrew packages | `rtk proxy brew bundle check --file Brewfile` |
+| Agent instructions, skills, or personas | `rtk proxy ./scripts/audit-agent-config.sh` |
+| Other app config | Use the app's native validation and the relevant checks in its README. |
+
+The agent audit checks links, metadata, persona pairs, invocation and read-only
+policy parity, stale references, and generated state. It needs Ruby/Psych, yq,
+and jq, and runs git-secrets when installed.
+
+For low-impact config edits, prefer native validation over tests that only
+repeat the setting. Once required checks pass, broaden or repeat them only
+for new changes, failures, or unresolved concerns.
 
 ## Repository Preferences
 

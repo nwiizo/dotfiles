@@ -50,9 +50,11 @@ repository behavior or commands need clarification:
    use explicit names for permission bypasses or destructive modes.
 4. Keep app reload work separate from package installation. Validate effective
    behavior when a parser accepts obsolete or ignored settings.
-5. Reload the owning app for an existing linked file. When adding or removing
-   a path, inspect whether its parent is linked, update `scripts/link.sh` only
-   if needed, then run it.
+5. Existing linked-file edits need no relinking. Reload the owning app as needed
+   and distinguish a saved setting from behavior verified in the app; report
+   settings that only affect new sessions, tabs, or windows. When adding or
+   removing a path, inspect whether its parent is linked, update `scripts/link.sh`
+   only if needed, then run it.
 6. Use `add-package` when a binary must also be added to `Brewfile`.
 7. Keep caches, histories, generated state, credentials, and local overrides
    outside the repository.

@@ -15,6 +15,8 @@ GCP 特有のコスト可視化・削減の学びのみを記載。一般的な 
 
 ## 参照するサブファイル
 
+今回の調査に必要なファイルだけ読む。認証済みの継続調査で認証手順をやり直したり、単発の確認で全サービスの棚卸しを始めたりしない。
+
 - [best_practices_2026.md](best_practices_2026.md) — FinOps Foundation 2026 Framework、業界ベンチマーク、クラウド非依存の原則
 - [auth.md](auth.md) — 認証（gcloud ADC、サービスアカウント impersonation、OIDC）の罠
 - [cost_analysis.md](cost_analysis.md) — Billing Export (BigQuery) の読み方、FinOps Hub、数値の分母混在回避
@@ -31,7 +33,9 @@ GCP 特有のコスト可視化・削減の学びのみを記載。一般的な 
 - 重複計上・警告漏れ・計算矛盾を検証する。独立レビューは依頼または適用される運用手順が求める場合に行う
 - 学びは調査結果に残す。CLAUDE.md / memory への反映は、その編集が依頼に含まれる場合に限る
 
-## Phases
+## 調査の進め方
+
+次は広い調査の流れ。依頼範囲と現在の証拠に合わせて必要な段階を選び、既存の認証経路を優先する。
 
 1. 認証確立（gcloud ADC または SA 鍵、非対話環境で impersonation する場合はトークン生成経路を明示）
 2. 権限検証（Viewer/Billing Account Viewer/Recommender Viewer を冒頭で確認）
@@ -62,5 +66,5 @@ GCP 特有のコスト可視化・削減の学びのみを記載。一般的な 
 - レポート: `docs/cost_analysis_YYYYMMDD.md`（日付付き、上書き禁止）
 - 生データ: `output/<resource>_YYYYMMDD.json`
 - 履歴: `docs/finops_history.md` 追記式、完了チェックボックス付き
-- 優先度: 🔴即時 / 🟡担当者確認 / 🟢中期 の3段階
+- 優先度: 既存の分類を優先する。例は `reporting.md` を参照し、未確認の候補を実行可能と断定しない
 - 権限依頼は IAM ロール + 必要な追加 Permission を具体的に列挙（既定ロールは粒度が粗いので Custom Role 推奨時も明記）

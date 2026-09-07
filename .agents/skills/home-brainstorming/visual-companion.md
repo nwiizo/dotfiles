@@ -33,7 +33,7 @@ The server watches a directory for HTML files and serves the newest one to the b
 ## Starting a Session
 
 ```bash
-# Start AFTER the user approves the companion. --open auto-opens their browser on
+# Start when the user requests or has accepted the companion. --open opens their browser on
 # the first screen; --project-dir persists mockups and enables same-port restart.
 scripts/start-server.sh --project-dir /path/to/project --open
 
@@ -55,7 +55,7 @@ without repeating it.
 
 **Finding connection info:** The server writes its startup JSON to `$STATE_DIR/server-info`. If you launched the server in the background and didn't capture stdout, read that file to get the URL and port. When using `--project-dir`, check `<project>/.superpowers/brainstorm/` for the session directory.
 
-**Note:** Pass the project root as `--project-dir` so mockups persist in `.superpowers/brainstorm/` and survive server restarts. Without it, files go to `/tmp` and get cleaned up. Remind the user to add `.superpowers/` to `.gitignore` if it's not already there.
+**Storage:** Use `--project-dir` when persistent mockups are part of the requested work. Otherwise omit it to use a temporary session. Keep generated mockups and runtime state out of tracked files; reuse the project's existing ignore or local exclusion when persistence is needed.
 
 **Launching the server by platform:**
 
@@ -104,19 +104,19 @@ Use `--url-host` to control what hostname is printed in the returned URL JSON.
    - Use your file-creation tool — **never use cat/heredoc** (dumps noise into terminal)
    - Server automatically serves the newest file
 
-2. **Tell user what to expect and end your turn:**
-   - Remind them of the URL (every step, not just first)
-   - Give a brief text summary of what's on screen (e.g., "Showing 3 layout options for the homepage")
-   - Ask them to respond in the terminal: "Take a look and let me know what you think. Click to select an option if you'd like."
+2. **Explain the current visual decision:**
+   - Share the complete URL initially, when it changes, or when the user needs it again
+   - Briefly explain what is on screen and which unresolved choice needs input
+   - Ask for feedback only when it affects the result; continue independent authorized work while waiting
 
 3. **On your next turn** — after the user responds in the terminal:
    - Read `$STATE_DIR/events` if it exists — this contains the user's browser interactions (clicks, selections) as JSON lines
    - Merge with the user's terminal text to get the full picture
    - The terminal message is the primary feedback; `state_dir/events` provides structured interaction data
 
-4. **Iterate or advance** — if feedback changes current screen, write a new file (e.g., `layout-v2.html`). Only move to the next question when the current step is validated.
+4. **Iterate or advance** — if feedback changes the current screen, write a new file (e.g., `layout-v2.html`). Reuse decisions the user has already made. Wait for an unresolved choice before dependent work, without requiring approval of each screen.
 
-5. **Unload when returning to terminal** — when the next step doesn't need the browser (e.g., a clarifying question, a tradeoff discussion), push a waiting screen to clear the stale content:
+5. **Clear a stale choice when needed** — if an old screen would mislead the user after the conversation moves on, push a waiting screen:
 
    ```html
    <!-- filename: waiting.html (or waiting-2.html, etc.) -->
@@ -257,7 +257,7 @@ When the user clicks options in the browser, their interactions are recorded to 
 {"type":"click","choice":"b","text":"Option B - Hybrid","timestamp":1706000115}
 ```
 
-The full event stream shows the user's exploration path — they may click multiple options before settling. The last `choice` event is typically the final selection, but the pattern of clicks can reveal hesitation or preferences worth asking about.
+Read the recorded selections together with the user's message. Click sequences alone do not establish a final decision, hesitation, or permission for unrelated work.
 
 If `$STATE_DIR/events` doesn't exist, the user didn't interact with the browser — use only their terminal text.
 
@@ -266,7 +266,7 @@ If `$STATE_DIR/events` doesn't exist, the user didn't interact with the browser 
 - **Scale fidelity to the question** — wireframes for layout, polish for polish questions
 - **Explain the question on each page** — "Which layout feels more professional?" not just "Pick one"
 - **Iterate before advancing** — if feedback changes current screen, write a new version
-- **2-4 options max** per screen
+- Show only distinct options that help resolve the current choice; do not invent alternatives to fill a fixed count
 - **Use real content when it matters** — for a photography portfolio, use actual images (Unsplash). Placeholder content obscures design issues.
 - **Keep mockups simple** — focus on layout and structure, not pixel-perfect design
 

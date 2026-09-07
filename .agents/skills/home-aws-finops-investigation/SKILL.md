@@ -15,6 +15,8 @@ FinOps 調査で実践で躓いた学びのみを記載。一般的な AWS / Fin
 
 ## 参照するサブファイル
 
+今回の調査に必要なファイルだけ読む。認証済みの継続調査で認証手順をやり直したり、単発の確認で全サービスの棚卸しを始めたりしない。
+
 - [best_practices_2026.md](best_practices_2026.md) — FinOps Foundation 2026 Framework、業界ベンチマーク、クラウド非依存の原則
 - [auth.md](auth.md) — MFA + AssumeRole の非対話環境での突破手順と罠
 - [cost_analysis.md](cost_analysis.md) — Cost Explorer の読み方、異常値の解釈、数値の分母混在回避
@@ -31,7 +33,10 @@ FinOps 調査で実践で躓いた学びのみを記載。一般的な AWS / Fin
 - 重複計上・警告漏れ・計算矛盾を検証する。独立レビューは依頼または適用される運用手順が求める場合に行う
 - 学びは調査結果に残す。CLAUDE.md / memory への反映は、その編集が依頼に含まれる場合に限る
 
-## Phases（実施順）
+## 調査の進め方
+
+次は広い調査の流れ。依頼範囲と現在の証拠に合わせて必要な段階を選ぶ。
+既存の認証経路を優先し、下記の MFA 手順はそれが必要な環境で使う。
 
 1. 認証確立（MFA + AssumeRole、対話シェルで JSON 生成→Claude が読む）
 2. 権限検証（使える/使えない API を冒頭で明示）
@@ -44,7 +49,7 @@ FinOps 調査で実践で躓いた学びのみを記載。一般的な AWS / Fin
 ## Anti-Patterns（やらかしがち）
 
 - いきなり describe 系 API を全件取得 → 先に Cost Explorer で金額の大枠を押さえる
-- 単一の削減額を1数字で提示 → 分母ごとに3通り併記する
+- 期間や費用の定義を示さず削減額を提示 → 主指標の分母を明示し、判断に必要な補助指標だけ併記する
 - RI 購入直後の月を「異常」と警告 → `HeavyUsage:*` USAGE_TYPE を確認
 - Savings Plans が RDS に効くと誤案内 → 専用 RI が必要
 - 停止中 EC2 を「課金ゼロ」と報告 → EBS / EIP / AWS Backup は課金継続
@@ -60,5 +65,5 @@ FinOps 調査で実践で躓いた学びのみを記載。一般的な AWS / Fin
 - レポート: `docs/cost_analysis_YYYYMMDD.md`（日付付き、上書き禁止）
 - 生データ: `output/<resource>_YYYYMMDD.json`（再分析時のベースライン）
 - 履歴: `docs/finops_history.md` 追記式、完了チェックボックス付き
-- 優先度: 🔴即時 / 🟡担当者確認 / 🟢中期 の3段階で統一
-- 追加権限依頼: IAM ポリシー JSON と Slack 依頼文のセットで出力
+- 優先度: 既存の分類を優先する。例は `reporting.md` を参照し、未確認の候補を実行可能と断定しない
+- 追加権限が調査を妨げる場合: 必要な操作と対象を示す。ポリシー JSON や依頼文は、依頼または運用手順に必要なものを用意する

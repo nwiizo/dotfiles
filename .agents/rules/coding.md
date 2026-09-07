@@ -4,9 +4,16 @@
 
 - Prefer the first sufficient option: no new code, existing code, standard library, native feature, installed dependency, then a small implementation. Preserve necessary validation, safety, accessibility, and verification.
 - Use `home-karpathy-guidelines` when material uncertainty or an explicit minimal/YAGNI request needs a preflight. Do not repeat its checklist in ordinary tasks.
-- Continue authorized work using repository evidence and reasonable defaults. Ask only about missing information or decisions that materially affect the result; preserve existing authorization.
+- For implementation requests, carry authorized work through applying changes and relevant verification using repository evidence and reasonable defaults. Reuse settled decisions; ask about missing input that materially affects the result, and continue independent authorized work while waiting.
+- Before seeking approval for an action outside the authorized scope, prepare the reviewable work already within scope. Preserve tool approval requirements and the commit/push restriction below.
 - For persisted data or public interfaces, use `home-data-shape-contract` to assess compatibility. Already specified or agreed shapes do not need another approval.
 - Fix the cause across the affected flow. Keep unrelated edits out of the diff.
+
+## Skills
+
+- Follow explicit user instructions over skill guidelines, within system, developer, and tool constraints.
+- Apply skill procedures when their stated conditions match the task. Do not infer an extra approval step from general guidance.
+- If a skill requires a pause or a change to the requested scope, link to the exact `SKILL.md`, quote the relevant instruction, and explain why it applies.
 
 ## Local Tooling
 
@@ -23,4 +30,6 @@
 
 ## Reporting
 
-Tie completion claims to current command results or inspected artifacts. Distinguish failures and unrun checks from successful verification; a reviewer's report alone is not proof.
+Lead with the outcome in concise paragraphs. Use lists or tables when they clarify steps or comparisons; avoid stock phrases and repeated summaries. Use concrete, idiomatic Japanese when writing in Japanese.
+
+State what changed, what verification established, and any unresolved limitation that affects the result. Tie claims to current command results or inspected artifacts; a reviewer's report alone is not proof.

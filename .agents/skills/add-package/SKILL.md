@@ -34,11 +34,15 @@ brew info <name>
      keep the Homebrew-owned package explicit even when it is already installed
      transitively or outside the Brewfile.
 
-4. Validate before applying:
+4. Check installed dependencies before applying:
 
 ```bash
 brew bundle check --file Brewfile
 ```
+
+If the check reports the newly requested package as missing, continue with its
+authorized installation. Distinguish that expected result from an invalid
+Brewfile or an unrelated dependency problem.
 
 5. Apply:
 
@@ -51,6 +55,7 @@ brew bundle --file Brewfile
 ```bash
 command -v <binary>
 <binary> --version
+brew bundle check --file Brewfile
 ```
 
 For casks, verify with `brew list --cask <name>` or by checking the app
@@ -68,19 +73,9 @@ for example npm-only ACP adapters. In that case:
 
 ## Validation
 
-For package-only changes:
-
-```bash
-brew bundle check --file Brewfile
-brew bundle --file Brewfile
-```
-
-If the package affects shell integration, also validate Fish:
-
-```bash
-fish -n fish/config.fish
-for f in fish/functions/*.fish; do fish -n "$f" || exit 1; done
-```
+The install and verification results above cover package-only changes; do not
+run `brew bundle` again just to complete this section. If shell integration
+also changes, use the affected Fish checks in `add-config`.
 
 ## Don't
 
