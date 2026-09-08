@@ -64,6 +64,18 @@ return {
     opts = {},
   },
 
+  -- CodeDiff: Live review while agents keep changing the working tree.
+  {
+    "esmuellert/codediff.nvim",
+    version = "*",
+    cmd = "CodeDiff",
+    opts = {},
+    keys = {
+      { "<leader>gR", "<cmd>CodeDiff<cr>", desc = "Review Changes (CodeDiff)" },
+      { "<leader>gV", "<cmd>CodeDiff --staged<cr>", desc = "Review Staged Changes (CodeDiff)" },
+    },
+  },
+
   -- diffview.nvim: Git diff visualization
   {
     "sindrets/diffview.nvim",

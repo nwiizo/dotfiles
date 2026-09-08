@@ -1,7 +1,10 @@
-# Warp Terminal Configuration
+# Warp Terminal Configuration (Archived)
 
-Active alongside [Ghostty](../ghostty/). Config files are symlinked by
-[`../scripts/link.sh`](../scripts/link.sh).
+Archived on 2026-09-08. [Ghostty](../../ghostty/) is the active terminal.
+The files below preserve the former setup for reference. Warp is no longer
+in `Brewfile`, and [`link.sh`](../../scripts/link.sh) removes only the old
+repository-managed links under `~/.warp`. The installed app and local settings
+remain untouched.
 
 Warp's strengths complement Ghostty:
 
@@ -21,8 +24,7 @@ Warp's strengths complement Ghostty:
 | `themes/catppuccin-mocha.yaml` | Custom theme matching `ghostty/config`'s palette |
 | `workflows/*.yaml` | Reusable command templates (open via `Cmd+\` Warp Drive, or search by name) |
 
-These files are symlinked into `~/.warp/...`; edits land immediately on
-save. Warp restart picks them up.
+These files were previously symlinked into `~/.warp/...`.
 
 ## Notable bindings
 
@@ -100,11 +102,5 @@ or by typing the name into the command input:
 | Git cleanup merged branches | Delete merged-into-current local branches |
 | Kubernetes context switch | `kubectl config use-context {{context}}` (templated) |
 
-Add new workflows by dropping a YAML file in `warp/workflows/` and
-running `../scripts/link.sh`. Workflows created from Warp's UI land in
-`~/.warp/workflows/` directly and coexist with the symlinked ones.
-
-## Install
-
-Run `../scripts/link.sh`, then restart Warp to pick up the new
-keybindings and workflows.
+Workflows created from Warp's UI live in `~/.warp/workflows/` and are not
+removed by the link migration. This archive is not installed by bootstrap.

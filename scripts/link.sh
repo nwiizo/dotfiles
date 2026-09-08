@@ -110,10 +110,12 @@ remove_managed_link "$HOME/.local/bin/ghostty-notification-bell" "$repo/ghostty/
 link_path "$repo/ghostty/claude-notification.sh" "$HOME/.local/bin/ghostty-claude-notification"
 chmod +x "$HOME/.local/bin/ghostty-claude-notification"
 
-link_path "$repo/warp/keybindings.yaml" "$HOME/.warp/keybindings.yaml"
-link_path "$repo/warp/themes/custom.yaml" "$HOME/.warp/themes/custom.yaml"
-link_path "$repo/warp/themes/catppuccin-mocha.yaml" "$HOME/.warp/themes/catppuccin-mocha.yaml"
-link_dir_children "$repo/warp/workflows" "$HOME/.warp/workflows"
+# Warp is archived. Remove only links installed by this repository.
+remove_managed_link "$HOME/.warp/keybindings.yaml" "$repo/warp/keybindings.yaml"
+for source in "$repo/archive/warp/themes/"*.yaml "$repo/archive/warp/workflows/"*.yaml; do
+  relative="${source#"$repo/archive/warp/"}"
+  remove_managed_link "$HOME/.warp/$relative" "$repo/warp/$relative"
+done
 
 nippo_claude_skill="$HOME/ghq/github.com/nwiizo/nippo/.claude/skills/nippo"
 nippo_codex_skill="$HOME/ghq/github.com/nwiizo/nippo/.agents/skills/nippo"

@@ -18,13 +18,9 @@ cd ~/ghq/github.com/nwiizo/dotfiles
 ./scripts/bootstrap.sh
 ```
 
-For an existing machine after editing config:
-
-```bash
-./scripts/link.sh
-fish scripts/install-fish-plugins.fish
-brew bundle check --file Brewfile
-```
+For an existing machine, edit the source and reload the owning app. Run
+`rtk proxy ./scripts/link.sh` only when installation paths change, and run
+the Fish plugin installer or Homebrew bundle only when that layer changes.
 
 ## Documentation Map
 
@@ -38,7 +34,6 @@ specific tool:
 | Fish | `fish/README.md` | `fish/config.fish`, `fish/functions/`, `fish/fish_plugins` |
 | Neovim | `nvim/README.md` | `nvim/lua/config/`, `nvim/lua/plugins/` |
 | Ghostty | `ghostty/README.md` | `ghostty/config` |
-| Warp | `warp/README.md` | `warp/keybindings.yaml`, `warp/themes/`, `warp/workflows/` |
 | Git / GitHub CLI | `git/README.md` | `git/config`, `git/power_pull.sh`, `gh/config.yml` |
 | Small CLI configs | this README | `bat/`, `atuin/`, `tealdeer/` |
 | Agent config | `.agents/README.md` | reusable agents, rules, docs, and skills |
@@ -48,10 +43,9 @@ specific tool:
 
 Contributor and agent-facing repository rules are in `AGENTS.md`. `CLAUDE.md`
 imports the same guide so Claude Code and Codex share the base rules.
-The shared agent configuration includes minimal implementation, data-shape,
-test-driven development, planning, and independent-review contracts. Its
-minimal-solution discipline adapts Ponytail without installing the upstream
-plugin; see the [agent config guide](.agents/README.md#instruction-ownership).
+Global preferences describe how to work; this repository's guide describes
+where to edit and how to verify the result. Conditional procedures live in
+skills; see the [agent config guide](.agents/README.md#instruction-ownership).
 
 ## Managed Stack
 
@@ -60,7 +54,7 @@ plugin; see the [agent config guide](.agents/README.md#instruction-ownership).
 | Packages | Homebrew | `Brewfile` |
 | Shell | Fish + Fisher | `fish/config.fish`, `fish/functions/`, `fish/fish_plugins` |
 | Editor | Neovim + LazyVim | `nvim/` |
-| Terminals | Ghostty, Warp | `ghostty/config`, `warp/` |
+| Terminal | Ghostty | `ghostty/config` |
 | GitHub / Git | gh, git-delta, lazygit | `gh/config.yml`, `git/config`, `git/power_pull.sh` |
 | CLI config | bat, atuin, tealdeer | `bat/config`, `atuin/config.toml`, `tealdeer/config.toml` |
 | Linking / bootstrap | Shell scripts | `scripts/bootstrap.sh`, `scripts/link.sh` |
@@ -78,7 +72,6 @@ dotfiles/
 ├── fish/                    # Fish init, functions, plugins, conf.d patch
 ├── nvim/                    # LazyVim based Neovim config
 ├── ghostty/                 # Ghostty terminal config
-├── warp/                    # Warp keybindings, themes, workflows
 ├── git/                     # Git config and helper scripts
 ├── gh/                      # GitHub CLI config
 ├── .agents/                 # Source for reusable agents, rules, docs, and skills
@@ -125,7 +118,7 @@ conflicting path, including an unrelated symlink, under
 | Repo path | Target path |
 |---|---|
 | `fish/config.fish` | `~/.config/fish/config.fish` |
-| `fish/conf.d/zz_sponge_compat.fish` | `~/.config/fish/conf.d/zz_sponge_compat.fish` |
+| `fish/conf.d/*.fish` | `~/.config/fish/conf.d/*.fish` |
 | `fish/functions/*.fish` | `~/.config/fish/functions/*.fish` |
 | `nvim/` | `~/.config/nvim` |
 | `ghostty/config` | `~/.config/ghostty/config` |
@@ -139,9 +132,6 @@ conflicting path, including an unrelated symlink, under
 | Homebrew Docker Compose plugin | `~/.docker/cli-plugins/docker-compose` |
 | `scripts/audit-agent-config.sh` | Local validation helper |
 | `scripts/apply-ghostty-ai-notifications.sh` | Merge Ghostty notification settings into Claude Code and Codex |
-| `warp/keybindings.yaml` | `~/.warp/keybindings.yaml` |
-| `warp/themes/*.yaml` | `~/.warp/themes/*.yaml` |
-| `warp/workflows/*.yaml` | `~/.warp/workflows/*.yaml` |
 | `.agents/CLAUDE.md` | `~/.claude/CLAUDE.md` |
 | `.agents/RTK.md` | `~/.claude/RTK.md`, `~/.codex/RTK.md` |
 | `.agents/claudeignore` | `~/.claude/.claudeignore` |
@@ -168,8 +158,7 @@ Most edits happen in the repo, then the owning app or shell is restarted.
 | Add/remove `fish/functions/*.fish` | Run `./scripts/link.sh` |
 | Fish plugins | Edit `fish/fish_plugins`, then run `fish scripts/install-fish-plugins.fish` |
 | Neovim config | Restart Neovim |
-| Ghostty, Warp, Git, gh, bat, atuin, tealdeer config | Restart the app or open a new shell |
-| Warp workflows/themes | Run `./scripts/link.sh`, then restart Warp if needed |
+| Ghostty, Git, gh, bat, atuin, tealdeer config | Restart the app or open a new shell |
 | Homebrew packages | Edit `Brewfile`, then run `brew bundle --file Brewfile` |
 | Agent assets | Edit `.agents/`, `.claude/`, `.codex/`, then run `./scripts/link.sh` and `./scripts/audit-agent-config.sh` |
 
@@ -198,7 +187,6 @@ update_all --help
 | Fisher plugins | `fish/fish_plugins` | `fish scripts/install-fish-plugins.fish` |
 | Neovim plugin or keymap | `nvim/lua/...` | restart Neovim |
 | Ghostty / AI notifications | `ghostty/`, `scripts/apply-ghostty-ai-notifications.sh` | `./scripts/link.sh`, then reload Ghostty |
-| Warp keybindings/theme/workflow | `warp/...` | `./scripts/link.sh`, then restart Warp if needed |
 | Git / gh | `git/config`, `gh/config.yml` | new shell or next command invocation |
 | Homebrew package | `Brewfile` | `brew bundle --file Brewfile` |
 | Shared agent config | `.agents/`, `.claude/`, `.codex/` | `./scripts/link.sh` |
@@ -238,14 +226,15 @@ cx='codex --dangerously-bypass-approvals-and-sandbox'
 cxs='codex --sandbox workspace-write --ask-for-approval on-request'
 cxro='codex --sandbox read-only'     cxe='codex exec'
 cxr='codex resume'                   cxrev='codex review --uncommitted'
-v=nvim       lg=lazygit              repo=ghq_fzf_repo
+v=nvim       lg=lazygit              repo=git_fzf_ghq
+gwl='git worktree list'              gwa='git worktree add'
 actx=ai_context                      actxc='ai_context | pbcopy'
 ```
 
 `c` and `cx` intentionally start unrestricted sessions. Use `cc` for normal
 Claude Code permissions, or `cxs` / `cxro` for constrained Codex sessions.
 
-See `fish/README.md` for the directory contract.
+See `fish/README.md` for configuration and workflow details.
 
 ## Neovim
 
@@ -259,8 +248,9 @@ Configuration layout:
 - UI: catppuccin mocha, no statusline, `incline.nvim`, `noice.nvim`,
   `snacks.nvim`, `oil.nvim`, `overlook.nvim`
 - Completion: `blink.cmp`
-- AI: CopilotChat, Avante, CodeCompanion, Codex, Claude Code
-- Git: gitsigns, Diffview, LazyGit, gitlinker
+- AI: CopilotChat, Avante, Signalbox, Codex, Claude Code
+- Search: Telescope, Snacks, fff
+- Git: gitsigns, CodeDiff, Diffview, LazyGit, gitlinker
 - Rust: rustaceanvim, crates.nvim, neotest, DAP
 
 See `nvim/README.md` for plugin layout, LazyVim Extras, and keymaps.
@@ -276,8 +266,9 @@ Ghostty is the primary terminal config in `ghostty/config`.
 - AI-friendly scrollback and screen dump bindings
 - Split zoom, split equalization, and resize-mode bindings
 
-Warp config is also managed here for Agent Mode, block-based output, notebooks,
-Warp Drive, and reusable workflows. See `warp/README.md`.
+Warp settings are preserved in [`archive/warp/`](archive/warp/README.md).
+Bootstrap no longer installs Warp; `link.sh` removes the former repo-managed
+links without deleting the app or local settings.
 
 ## Validation
 
@@ -310,8 +301,10 @@ nvim --headless '+lua print("nvim-config-ok")' +qa
 ```
 
 ```bash
-nvim --headless '+lua require("lazy").load({ plugins = { "CopilotChat.nvim", "avante.nvim", "codecompanion.nvim", "claudecode.nvim" } }); print("ai-plugins-ok")' +qa
+rtk proxy nvim --headless '+lua require("lazy").load({ plugins = { "CopilotChat.nvim", "avante.nvim", "signalbox.nvim", "codex.nvim", "claudecode.nvim" } }); print("ai-plugins-loaded")' +qa
 ```
+
+Loading plugins checks their setup, not provider authentication or live AI requests.
 
 ## Local State
 

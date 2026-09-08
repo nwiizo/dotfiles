@@ -18,8 +18,8 @@ nvim/lua/
     ├── disabled.lua     # lualine, bufferline, mini.surround, mini.pairs を無効化
     ├── colorscheme.lua  # catppuccin mocha
     ├── ui.lua           # incline, modes, vimade, better-escape, noice, which-key, nvim-surround, mini.ai, nvim-autopairs
-    ├── navigation.lua   # Snacks, telescope, oil, flash, overlook, hbac
-    ├── git.lua          # gitsigns, diffview, gitlinker
+    ├── navigation.lua   # Snacks, telescope, fff, oil, flash, overlook, hbac
+    ├── git.lua          # gitsigns, codediff, diffview, gitlinker
     ├── diagnostics.lua  # trouble, todo-comments, nvim-bqf
     ├── lsp.lua          # lspconfig, conform, mason, treesitter
     ├── completion.lua   # blink.cmp

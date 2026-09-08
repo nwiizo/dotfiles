@@ -46,10 +46,10 @@ brew "typescript", link: false
 brew "viddy"
 brew "watchexec"
 brew "xh"
+brew "yazi"
 brew "yq"
 brew "zoxide"
 
 cask "codex"
 cask "font-hack-nerd-font"
 cask "ghostty@tip"
-cask "warp"

@@ -188,7 +188,7 @@ if rg -n -i '(^|[^a-z])nix([^a-z]|$)|home manager|home-manager|nix-darwin|/nix/s
 fi
 
 if rg -n -i '\bjj\b|jujutsu' \
-  Brewfile fish warp .agents/CLAUDE.md .agents/agents .agents/skills .agents/codex/agents \
+  Brewfile fish .agents/CLAUDE.md .agents/agents .agents/skills .agents/codex/agents \
   >/tmp/dotfiles-agent-audit-jj.txt; then
   echo "removed version-control tool references found in active config:" >&2
   cat /tmp/dotfiles-agent-audit-jj.txt >&2

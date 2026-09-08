@@ -43,6 +43,15 @@ approval prompts, or `cxro` for read-only Codex.
 | `awatch <command...>` | Re-run verification whenever an agent changes files |
 | `wx` | Direct `watchexec` access |
 | `private` | Start `fish --private` without reading or writing history |
+| `gwl` | List Git worktrees and their branches |
+| `gwa -b <branch> <path>` | Create a separate working directory for an agent task |
+| `gwt` | Direct `git worktree` access |
+
+For concurrent work, `gwa -b agent/task ../project-agent` creates a new branch
+and worktree; then open a shell or Neovim in that directory. Git keeps each
+worktree's checkout and index separate. These abbreviations use standard
+[Git worktree](https://git-scm.com/docs/git-worktree) behavior, including its
+checks for branches already checked out elsewhere.
 
 Interactive command lines visibly expand `cat`, `grep`, `ls`, `find`, and `du`
 to the Rust-powered `bat`, `rg`, `eza`, `fd`, and `dust`. These are
@@ -93,6 +102,26 @@ awatch cargo test --all
 
 Watchexec uses native filesystem events, respects project ignore files, and
 restarts an in-flight verification when a newer edit arrives.
+
+## File browsing with Yazi
+
+Run `y [directory]` to browse files with [Yazi](https://github.com/sxyazi/yazi).
+`Enter` opens a file, `Space` selects files, and `~` opens the key help.
+Quit with `q` to keep Yazi's final directory in Fish; `Q` exits without changing
+the shell directory. Use `yazi` directly when no directory handoff is needed.
+
+The Fish wrapper follows [Yazi's shell integration](https://yazi-rs.github.io/docs/quick-start/)
+and preserves a failing Yazi exit status. Its temporary cwd file is removed
+after exit. Homebrew owns the binary; `functions/y.fish` owns the integration.
+
+Selected on 2026-09-08: 42,042 GitHub stars, maintained Rust implementation,
+and a Homebrew core formula. It adds interactive multi-file operations and
+previews to the shell; Oil remains the Neovim file explorer. Yazi is under
+active development, so check release notes when updating.
+
+Other popular options were considered: Television overlaps with the existing
+fzf pickers, while Starship and Tide replace the custom prompt. The current
+Atuin, zoxide, Fisher, and fzf.fish integrations already cover their workflows.
 
 ## Startup behavior
 

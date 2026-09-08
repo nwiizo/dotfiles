@@ -95,6 +95,9 @@ abbr --add -- gcp 'git cherry-pick'
 abbr --add -- gbl 'git blame'
 abbr --add -- gcl 'git clone'
 abbr --add -- grv 'git remote -v'
+abbr --add -- gwt 'git worktree'
+abbr --add -- gwl 'git worktree list'
+abbr --add -- gwa 'git worktree add'
 
 # Abbreviations: Docker
 abbr --add -- d docker

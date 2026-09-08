@@ -72,6 +72,13 @@ return {
         desc = "LazyGit File Log",
       },
       {
+        "<leader>gC",
+        function()
+          Snacks.picker.git_status({ cwd = LazyVim.root.git() })
+        end,
+        desc = "Changed Files (Git Root)",
+      },
+      {
         "<leader>uz",
         function()
           Snacks.zen()
@@ -98,9 +105,10 @@ return {
   -- telescope: Override for custom layout and insert-mode navigation
   {
     "nvim-telescope/telescope.nvim",
-    opts = function()
+    opts = function(_, opts)
       local actions = require("telescope.actions")
-      return {
+      -- Retain LazyVim's Trouble, Flash, search command, and window selection.
+      return vim.tbl_deep_extend("force", opts, {
         defaults = {
           prompt_prefix = "   ",
           selection_caret = " ",
@@ -123,10 +131,38 @@ return {
             end,
           },
         },
-      }
+      })
     end,
     keys = {
       { "<C-p>", "<cmd>Telescope find_files<cr>", desc = "Find Files" },
+    },
+  },
+
+  -- fff: Rust-backed file/content search with typo tolerance and frecency.
+  {
+    "dmtrKovalenko/fff",
+    -- Numeric commit tags can win over release tags with version = "*".
+    version = "^0.10.6",
+    lazy = true,
+    build = function()
+      require("fff.download").download_or_build_binary()
+    end,
+    opts = {},
+    keys = {
+      {
+        "<leader>fP",
+        function()
+          require("fff").find_files({ cwd = LazyVim.root() })
+        end,
+        desc = "Find Files (fff, Root)",
+      },
+      {
+        "<leader>sF",
+        function()
+          require("fff").live_grep({ cwd = LazyVim.root() })
+        end,
+        desc = "Search Content (fff, Root)",
+      },
     },
   },
 

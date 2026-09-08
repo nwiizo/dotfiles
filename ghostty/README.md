@@ -204,10 +204,10 @@ split-divider-color = #313244
 split-preserve-zoom = navigation
 ```
 
-## Warp との併用
+## 以前のターミナル設定
 
-Ghostty は primary terminal として使う。Warp は Agent Mode、block-based output、
-notebooks、Warp Drive、reusable workflows 用に残す。
+現在はGhosttyを使う。Warpの設定は[archive/warp](../archive/warp/README.md)に保管し、
+Homebrewとリンクの管理対象から外している。
 
 ## 参考リンク
 

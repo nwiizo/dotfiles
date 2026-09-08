@@ -2,11 +2,7 @@
 
 LazyVimベースのNeovim設定。Rust、Go、TypeScript、Python開発とAI支援コーディングに最適化。
 
-**2026 Minimal UI**: statusline-less ワークフローで編集領域を最大化。
-
-外部変更と未保存編集のマージを変更した場合は、リポジトリのルートから
-`rtk proxy nvim --headless -u NONE -l nvim/tests/external_changes.lua` を実行する。
-空行、末尾改行、競合時の内容保持、Undoを確認できる。
+ステータスラインを省き、コードとエージェント用のターミナルに表示領域を使う。
 
 ## 概要
 
@@ -21,7 +17,7 @@ LazyVimベースのNeovim設定。Rust、Go、TypeScript、Python開発とAI支�
 | 目的 | セクション |
 |---|---|
 | ファイル配置を知りたい | カスタム設定の配置ルール、ディレクトリ構成 |
-| UI 全体の考え方を知りたい | 2026 Minimal UI アーキテクチャ |
+| UI 全体の考え方を知りたい | 画面構成 |
 | 有効な LazyVim Extras を確認したい | 有効化している LazyVim Extras |
 | AI / Git / Rust などのキーを調べたい | キーマップ |
 | セットアップや検証をしたい | インストール、メンテナンス、要件 |
@@ -41,67 +37,16 @@ LazyVimでは設定ファイルの配置場所が役割で決まっている。
 
 ### lua/plugins/ -- プラグイン定義
 
-このディレクトリ内の全 `.lua` ファイルが自動で読み込まれる。
-ファイル名は自由だが、機能別に分割するのがベストプラクティス。
+`lazy.lua` の `{ import = "plugins" }` が、機能別の定義を読み込む。
+通常は `opts = { ... }` で必要な値だけ指定し、LazyVimの設定にマージする。
+コールバックなどを扱う場合は `opts = function(_, opts)` で受け取った設定を
+変更する。新しいテーブルだけを返すと元の設定が置き換わるため、検索や
+キーマップの連携も失われる。既存の `on_attach` は呼び出しを引き継ぐ。
+無効化は `enabled = false` を使う。
 
-#### 設定パターン
-
-**1. LazyVimが管理するプラグインをカスタマイズ（override）**
-
-optsテーブルだけ返す。LazyVimのデフォルトにディープマージされる。
-
-```lua
-return {
-  {
-    "folke/noice.nvim",
-    opts = {
-      -- ここに書いた設定がLazyVimデフォルトにマージされる
-      presets = { command_palette = true },
-    },
-  },
-}
-```
-
-**2. LazyVimが管理するプラグインを無効化**
-
-```lua
-return {
-  { "owner/plugin.nvim", enabled = false },
-}
-```
-
-**3. 独自プラグインを追加**
-
-通常のlazy.nvimスペックをそのまま返す。
-
-```lua
-return {
-  {
-    "b0o/incline.nvim",
-    event = "BufReadPre",
-    config = function()
-      require("incline").setup({ ... })
-    end,
-  },
-}
-```
-
-**4. optsテーブルではなく関数で完全制御**
-
-LazyVimデフォルトを上書きしたい場合はopts関数を使う。
-
-```lua
-return {
-  {
-    "echasnovski/mini.ai",
-    opts = function(_, opts)
-      -- opts にはLazyVimデフォルトが入っている
-      opts.n_lines = 500
-      opts.custom_textobjects = { ... }
-    end,
-  },
-}
-```
+詳細は [lazy.nvimの設定仕様](https://lazy.folke.io/spec#spec-setup) と
+[LazyVimのカスタマイズ](https://www.lazyvim.org/configuration/plugins) を参照。
+Neovim本体のオプションは `config/options.lua` に差分だけを置く。
 
 ### LazyVim Extras の有効化
 
@@ -113,7 +58,7 @@ return {
 
 利用可能なExtras一覧: `:LazyExtras` コマンドで確認できる。
 
-## 2026 Minimal UI アーキテクチャ
+## 画面構成
 
 statusline/bufferlineを廃止し、必要な情報のみfloating windowで表示。
 
@@ -162,8 +107,8 @@ nvim/
         ├── disabled.lua        # LazyVimデフォルト無効化
         ├── colorscheme.lua     # catppuccin mocha
         ├── ui.lua              # incline, modes, vimade, better-escape, noice override
-        ├── navigation.lua      # Snacks override, telescope override, oil, overlook, hbac
-        ├── git.lua             # gitsigns override, diffview, gitlinker
+        ├── navigation.lua      # Snacks override, telescope override, fff, oil, overlook, hbac
+        ├── git.lua             # gitsigns override, codediff, diffview, gitlinker
         ├── diagnostics.lua     # trouble override, todo-comments override, nvim-bqf
         ├── lsp.lua             # lspconfig, conform, mason, treesitter override
         ├── completion.lua      # blink.cmp override
@@ -226,7 +171,21 @@ Other custom integrations live in feature files under `lua/plugins/`:
 
 ## プラグイン選定メモ
 
-既存の LazyVim / Snacks / Oil / Blink / Noice 構成と重複しないものだけを追加する。
+既存の LazyVim / Snacks / Oil / Blink / Noice 構成を基準に、不足する操作を補う。
+機能が重なる候補は専用キーに割り当て、既存の操作と比較できるようにする。
+
+2026-09-08の[人気・開発状況の調査](plugin-research.md)では、Snacks・Blink・Oilの
+継続を選んだ。入力ミスを許容する検索のfffと、変更に追従するレビュー画面の
+CodeDiffを導入した。SidekickとQuickerは追加候補として調査メモに残している。
+
+fffは `<leader>fP` でファイル、`<leader>sF` で内容を検索する。
+検索画面の `Shift-Tab` でplain・regex・fuzzyを切り替える。Telescopeは従来のキーで使える。
+数値だけの開発用タグを避けるため、バージョン範囲を `^0.10.6` に絞っている。
+
+CodeDiffは `<leader>gR` で作業中の変更、`<leader>gV` でステージ済みの変更を表示する。
+画面内の `t` で左右分割とインラインを切り替え、`q` で閉じる。
+Diffviewのキーも使える。ネイティブライブラリとCodeDiffの変更監視バイナリはリリースから取得し、
+プラグインのリビジョンは `lazy-lock.json` で管理する。
 
 | 追加 | 理由 |
 |---|---|
@@ -275,24 +234,28 @@ Other custom integrations live in feature files under `lua/plugins/`:
 | `<leader>ff` | n | ファイル検索 | L |
 | `<leader>fn` | n | 新規ファイル | L |
 | `<C-p>` | n | ファイル検索 (Telescope) | C |
+| `<leader>fP` | n | 入力ミスを許容するファイル検索（ルート） | C fff |
 | `-` | n | Oil ファイルエクスプローラ | P oil |
 | `<leader>e` | n | Oil ファイルエクスプローラ | P oil |
 
-### Snacks Picker (`<leader>s` prefix)
+### 検索 (`<leader>s` prefix)
+
+通常の検索にはTelescope Extraを使い、Smart Pickerと変更ファイル一覧には
+Snacksを使う。Telescope内では `Ctrl-J/K` で移動、`Ctrl-T` / `Alt-T` で
+Troubleへ送り、`Ctrl-S` でFlashのラベルから候補を選択できる。
 
 | キー | モード | 説明 | 出典 |
 |---|---|---|---|
-| `<leader>sf` | n | ファイル検索 | P Snacks |
-| `<leader>sg` | n | Grep | P Snacks |
-| `<leader>sw` | n,x | カーソル下の単語をGrep | P Snacks |
-| `<leader>sb` | n | バッファ一覧 | P Snacks |
-| `<leader>sr` | n | 最近使用したファイル | P Snacks |
-| `<leader>sc` | n | コマンド | P Snacks |
-| `<leader>sh` | n | ヘルプページ | P Snacks |
-| `<leader>sk` | n | キーマップ | P Snacks |
-| `<leader>sd` | n | 診断一覧 | P Snacks |
-| `<leader>ss` | n | LSPシンボル | P Snacks |
-| `<leader>sR` | n | 最後のPickerを再開 | P Snacks |
+| `<leader>sg` | n | ルートディレクトリをGrep | L Telescope |
+| `<leader>sF` | n | 内容検索（plain / regex / fuzzy） | C fff |
+| `<leader>sw` | n,x | カーソル下の単語・選択範囲をGrep | L Telescope |
+| `<leader>sb` | n | 現在バッファ内の行検索 | L Telescope |
+| `<leader>sc` | n | コマンド履歴 | L Telescope |
+| `<leader>sh` | n | ヘルプページ | L Telescope |
+| `<leader>sk` | n | キーマップ | L Telescope |
+| `<leader>sd` | n | 診断一覧 | L Telescope |
+| `<leader>ss` | n | LSPシンボル | L Telescope |
+| `<leader>sR` | n | カーソル下の単語の置換を準備 | C |
 | `<leader>sT` | n | TODO検索 | P todo-comments |
 | `<leader>sy` | n | ヤンク履歴 | P yanky |
 
@@ -357,6 +320,9 @@ Other custom integrations live in feature files under `lua/plugins/`:
 | `<leader>gg` | n | LazyGit | P Snacks |
 | `<leader>gl` | n | LazyGit Log | P Snacks |
 | `<leader>gf` | n | LazyGit ファイル履歴 | P Snacks |
+| `<leader>gC` | n | 変更ファイル一覧と差分プレビュー | P Snacks |
+| `<leader>gR` | n | 変更に追従する差分レビュー | C CodeDiff |
+| `<leader>gV` | n | ステージ済み変更のレビュー | C CodeDiff |
 | `<leader>gd` | n | Working tree diff | P diffview |
 | `<leader>gD` | n | 前のコミットとのdiff | P diffview |
 | `<leader>gs` | n | ステージ済み変更 | P diffview |
@@ -427,6 +393,11 @@ Other custom integrations live in feature files under `lua/plugins/`:
 | `<C-x>` | t | ターミナルモード終了 | C |
 
 ### AIエージェントによる外部編集
+
+エージェントが保存した変更は `<leader>gC` でファイルごとに確認できる。
+リポジトリのルートを対象に、ステージ前後の変更と未追跡ファイルを一覧にする。
+まとまった差分の確認には `<leader>gd`、ステージ済み差分には `<leader>gs` を使う。
+一覧表示には既存の [Snacks Git status picker](https://github.com/folke/snacks.nvim/blob/main/docs/picker.md#git_status) を利用する。
 
 `autoread`と低頻度の`checktime`を利用し、Claude CodeやCodexが保存した
 未変更bufferは自動的に再読込する。focus/buffer/terminalの切り替えと
@@ -574,18 +545,12 @@ Neovim側にも未保存の変更がある場合は、バッファを開いた�
 ## インストール
 
 ```bash
-# 既存設定をバックアップ
-mv ~/.config/nvim ~/.config/nvim.bak
-
-# シンボリックリンク作成
+# 既存の別設定はlink.shがバックアップしてからリンクする
 cd ~/ghq/github.com/nwiizo/dotfiles
-./scripts/link.sh
+rtk proxy ./scripts/link.sh
 
 # Neovim起動（プラグイン自動インストール）
-nvim
-
-# lockfileの状態を再現
-:Lazy restore
+rtk proxy nvim
 ```
 
 `lazy-lock.json` はlazy.nvim公式推奨どおりバージョン管理する。別マシンでは
@@ -593,6 +558,19 @@ nvim
 revision更新は、関連する設定変更と一緒にレビュー・コミットする。
 
 ## メンテナンス
+
+設定変更は新しく起動したNeovimに反映される。リポジトリのルートで検証する。
+
+```sh
+rtk proxy stylua --check nvim/lua
+rtk proxy jq empty nvim/lazy-lock.json
+rtk proxy nvim --headless '+lua print("nvim-config-ok")' +qa
+```
+
+遅延読み込みの設定を変えた場合は対象プラグインを読み込み、操作も確認する。
+外部変更と未保存編集のマージを変更した場合は
+`rtk proxy nvim --headless -u NONE -l nvim/tests/external_changes.lua` で
+空行、末尾改行、競合時の内容保持、Undoを検証する。
 
 ```vim
 :Lazy update        " プラグインとlockfileを更新
