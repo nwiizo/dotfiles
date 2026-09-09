@@ -37,12 +37,27 @@ fixed ceremonies, and obsolete workarounds rather than moving them into new
 references. Preserve environment facts, explicit user preferences, and safety
 boundaries. Details for maintenance are in `rules/authoring.md`.
 
+Codex global preferences are self-contained because Codex does not load Claude's
+rules or expand `@path` imports. Claude's global entrypoint points to its loaded
+rules; the root `CLAUDE.md` imports `AGENTS.md` without repeating project guidance.
+Keep overlapping user preferences aligned across the two clients.
+
+The entrypoints follow [GPT-6 Astra's prompting guidance](https://developers.openai.com/api/docs/guides/latest-model#prompting-best-practices),
+reviewed on 2026-09-08: finish authorized work, resolve conflicting skill guidance,
+use concise prose, define delegation explicitly, and scale verification to the
+change. Parallel agents remain opt-in for this environment. Repository-specific
+checks and safety boundaries remain in place. This is an instruction cleanup,
+not a measured claim of better model performance. See also
+[Codex instruction discovery](https://learn.chatgpt.com/docs/agent-configuration/agents-md)
+and [Claude instruction loading](https://code.claude.com/docs/en/memory).
+
 ## Skills by Purpose
 
 | Skill | Use |
 |---|---|
 | `add-config` | Source paths, application, and validation for dotfiles configuration |
 | `add-package` | Homebrew package installation and repository tracking |
+| `nwiizo-coding-style` | Minimal implementation modes, review/audit, debt/gain/help, and Rust similarity/coupling diagnostics |
 | `home-karpathy-guidelines` | Preflight for material uncertainty or minimal implementation |
 | `home-brainstorming` | Design exploration and requested design interviews |
 | `home-data-shape-contract` | Persisted data and public-interface compatibility decisions |

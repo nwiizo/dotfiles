@@ -44,23 +44,9 @@ reviewer名が上記のいずれにも一致しない場合は、エラーとし
 
 ### Rust 差分の構造診断
 
-Rust の構造・重複・結合度がレビューの主題、または差分から具体的な懸念がある場合に、実装側ホストで次の診断を使う。変更された crate と直接関係する source path に範囲を絞る。Rust ファイルが含まれるだけでは診断を追加しない。
+Rust の構造・重複・結合度がレビューの主題、または差分から具体的な懸念がある場合に、実装側ホストで [Rust の構造診断](../nwiizo-coding-style/references/rust-analysis.md) を使う。`similarity-rs` と `cargo-coupling` の実行方法、workspace に広がる解析範囲、結果の解釈はこの手順に合わせる。Rust ファイルが含まれるだけでは診断を追加しない。
 
-```bash
-similarity-rs <source-path> --skip-test --threshold 0.90 --min-lines 10
-cargo coupling <crate-root> --exclude-tests --hotspots=10
-cargo coupling <crate-root> --exclude-tests --summary
-```
-
-Git 履歴を利用できない環境では `cargo coupling` に `--no-git` を付け、その制限を最終報告に残す。tool が未installの場合は勝手にinstallせず、未実行の診断として報告する。
-
-出力は修正候補を探す証拠として扱い、scoreや件数だけを改善目標にしない。次は自動的なリファクタリング理由にならない。
-
-- test、UI描画、builderなど、用途上必要な定型処理の類似
-- 実コードを確認して再現できない循環や高結合の警告
-- gradeを上げるためだけのtrait、facade、newtype、module分割
-
-実際の重複責務、循環依存、変更影響の集中がコードからも確認でき、レビュー対象の範囲内で振る舞いを保てる場合だけ修正候補に加える。既存テストまたはcharacterization testを基準にし、修正後は同じ条件で両toolを再実行して差分を確認する。診断結果や実装側の結論は外部レビュアーへ渡さず、下記のraw diffのみを渡す原則を維持する。
+診断結果や実装側の結論は外部レビュアーへ渡さず、下記のraw diffのみを渡す原則を維持する。
 
 ### 実行製品の分離
 
