@@ -199,14 +199,10 @@ return {
     },
   },
 
-  -- neotest: Override for adapters
+  -- neotest: Test output and keymaps (adapters come from language extras)
   {
     "nvim-neotest/neotest",
     opts = {
-      adapters = {
-        ["neotest-rust"] = { args = { "--no-capture" }, dap_adapter = "lldb" },
-        ["neotest-golang"] = {},
-      },
       status = { virtual_text = true },
       output = { open_on_run = true },
       quickfix = {

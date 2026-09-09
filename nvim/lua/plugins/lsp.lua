@@ -40,16 +40,6 @@ return {
             },
           },
         },
-        gopls = {
-          settings = {
-            gopls = {
-              analyses = { unusedparams = true },
-              staticcheck = true,
-              usePlaceholders = true,
-              experimentalPostfixCompletions = true,
-            },
-          },
-        },
         -- Web
         html = {},
         cssls = {},
@@ -96,7 +86,6 @@ return {
         python = { "ruff_format", "ruff_organize_imports" },
         rust = { "rustfmt" },
         zig = { "zigfmt" },
-        go = { "goimports", "gofumpt" },
         yaml = { "prettier" },
         json = { "prettier" },
         markdown = { "prettier_markdown" },

@@ -133,6 +133,14 @@ nvim/
 | `lang.terraform` | terraform-ls |
 | `lang.zig` | zls |
 
+Go の補完・定義ジャンプ・参照検索・整形・テスト・デバッグは
+[`lang.go` の公式設定](https://www.lazyvim.org/extras/lang/go)を使う。
+gopls・整形ツール・テストアダプターの既定値は個別設定にコピーせず、Extra の更新を引き継ぐ。
+gopls の設定を追加するときは、[現行版の設定一覧](https://go.dev/gopls/settings)で対応を確認する。
+
+Rust のテストも `lang.rust` が用意する `rustaceanvim.neotest` を使う。
+別の `neotest-rust` アダプターは追加しない。
+
 ### エディタ・コーディング
 
 | Extra | 内容 |
