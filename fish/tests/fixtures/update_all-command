@@ -1,0 +1,45 @@
+#!/bin/sh
+# Test double for updater subprocesses and Codex; never runs a real updater.
+case "${0##*/}" in
+    fish)
+        exec "$UPDATE_ALL_TEST_FISH" --no-config "$@"
+        ;;
+    mktemp)
+        exec /usr/bin/mktemp -d "$UPDATE_ALL_TEST_DIR/tmp/run.XXXXXX"
+        ;;
+    date)
+        if [ "${UPDATE_ALL_TEST_TIMEOUT:-0}" = 1 ]; then
+            if [ -f "$UPDATE_ALL_TEST_DIR/clock" ]; then
+                echo 1000
+            else
+                touch "$UPDATE_ALL_TEST_DIR/clock"
+                echo 0
+            fi
+        else
+            exec /bin/date "$@"
+        fi
+        ;;
+    brew)
+        if [ "$1" = cleanup ]; then
+            echo 'cleanup output'
+            exit "${UPDATE_ALL_TEST_CLEANUP_EXIT:-0}"
+        fi
+        echo 'Homebrew output'
+        exit "${UPDATE_ALL_TEST_BREW_EXIT:-0}"
+        ;;
+    mise)
+        echo 'mise output'
+        exit "${UPDATE_ALL_TEST_MISE_EXIT:-0}"
+        ;;
+    nvim)
+        exec /bin/sleep 30
+        ;;
+    codex)
+        echo call >> "$UPDATE_ALL_TEST_DIR/codex.calls"
+        printf '%s\n' "$@" > "$UPDATE_ALL_TEST_DIR/codex.args"
+        printf '%s\n' "$UPDATE_ALL_CODEX_ACTIVE" > "$UPDATE_ALL_TEST_DIR/codex.guard"
+        echo 'Codex test result'
+        exit "${UPDATE_ALL_TEST_CODEX_EXIT:-0}"
+        ;;
+esac
+exit 127

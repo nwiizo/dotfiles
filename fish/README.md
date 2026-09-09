@@ -123,6 +123,68 @@ Other popular options were considered: Television overlaps with the existing
 fzf pickers, while Starship and Tide replace the custom prompt. The current
 Atuin, zoxide, Fisher, and fzf.fish integrations already cover their workflows.
 
+## Updating tools and handling failures
+
+`update_all` uses each tool's native updater. Sequential and parallel modes
+share the same job definitions and result handling; `--parallel` also retains
+the Neovim and Mason timeouts. Each run has its own log directory.
+
+When an updater or Homebrew cleanup fails, all remaining jobs finish before
+one Codex request is made. The request includes the failed updater names and
+the log directory, and asks for diagnosis, relevant repairs, and verification.
+It works from this dotfiles repository, regardless of where `update_all` was
+invoked. Logs are kept, and `update_all` returns `1` even if Codex exits
+successfully: a completed agent session alone does not prove every updater
+has recovered.
+
+Normal terminal runs open interactive Codex with the `workspace-write` sandbox
+and approval on request. `--parallel`, `--non-interactive`, or redirected input
+or output uses [`codex exec`](https://learn.chatgpt.com/docs/non-interactive-mode)
+with the same sandbox and no approval prompts. Non-interactive repairs that
+need permissions outside that sandbox are reported as unresolved. Its output
+is saved as `codex.log`, and its final response as `codex-result.md`, alongside
+`codex-prompt.txt` and the update logs.
+
+Use `update_all --no-codex` to keep failure reporting without invoking Codex.
+Repair sessions also inherit a recursion guard. If Codex is missing or fails,
+the update failure and logs remain available. Successful update runs do not
+invoke Codex and remove their temporary logs.
+
+Run the regression checks from the repository root:
+
+```fish
+rtk proxy fish --no-config fish/tests/update_all.fish
+```
+
+Updaters and Codex are replaced by local test commands; the checks do not
+update real tools or send an AI request. To cover interactive Codex launch
+selection through RTK, allocate a terminal for the test:
+
+```fish
+rtk proxy script -q /dev/null fish --no-config fish/tests/update_all.fish
+```
+
+## Interactive selection
+
+| Shortcut | Action |
+|---|---|
+| `repo` / `Alt-J` / `Ctrl-G` | Select a ghq repository with fzf and change directory |
+| `gb` / `Ctrl-B` | Select a local Git branch and switch without forcing away changes |
+| `kc` | Select a context from the local kubeconfig and make it current |
+| `de [command...]` | Select a running Docker container and run the command, or `sh` by default |
+| `Ctrl-F` | Search files and directories with fzf |
+| `Ctrl-R` / `fh` | Search history with Atuin |
+| Tab on an empty command line | Search history with fzf |
+| `Ctrl-L` | Clear the screen and redraw the prompt with Fish's built-in `clear-screen` |
+
+Cancelling a picker leaves the branch or context unchanged and does not execute
+a container command. These pickers use the installed Git, kubectl, Docker,
+fzf, and Atuin commands; they do not require peco. User key bindings reapply
+Atuin's `Ctrl-R` binding after fzf removes its previous bindings.
+
+Bindings use Fish's [named keys and input functions](https://fishshell.com/docs/current/cmds/bind.html).
+No external `clear` process is needed to redraw the prompt.
+
 ## Startup behavior
 
 For Claude Code troubleshooting, `csafe` preserves normal authentication while
