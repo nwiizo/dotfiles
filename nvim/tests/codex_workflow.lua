@@ -25,6 +25,15 @@ local function wait_for(label, predicate)
   print("ok - " .. label)
 end
 
+local function check_send_hint()
+  local header = vim.api.nvim_eval_statusline(vim.wo.winbar, {
+    winid = vim.api.nvim_get_current_win(),
+    use_winbar = true,
+    maxwidth = 24,
+  }).str
+  assert(header:find("Ctrl-S", 1, true), "send shortcut is not visible in the request header")
+end
+
 local function answer(marker)
   local status = codex.status()
   if not status.bufnr then
@@ -76,6 +85,7 @@ local ok, err = xpcall(function()
   assert(vim.api.nvim_buf_get_name(draft) == "codex://ask", "Edit did not open a draft")
   assert(table.concat(vim.api.nvim_buf_get_lines(draft, 0, -1, false), "\n"):find("before", 1, true))
   assert(not codex.status().running, "Edit submitted without Ctrl-S")
+  check_send_hint()
   keys("<C-s>")
   if real_cli then
     local trust_prompt = false
@@ -137,6 +147,7 @@ local ok, err = xpcall(function()
     return vim.api.nvim_buf_get_name(0) == "codex://ask"
   end)
   assert(vim.deep_equal(vim.api.nvim_buf_get_lines(0, 0, -1, false), { "" }), "follow-up included terminal text")
+  check_send_hint()
   keys("Reply with exactly WORKFLOW_FOLLOWUP_OK. Do not use tools or modify files.<C-s>")
   wait_for("follow-up answer arrives in the same process", function()
     return answer("WORKFLOW_FOLLOWUP_OK")
@@ -173,6 +184,7 @@ local ok, err = xpcall(function()
   assert(codex.status().jobid == jobid and codex.status().running)
   keys("<leader>oR")
   assert(vim.api.nvim_buf_get_name(0) == "codex://ask", "review did not open an editable request")
+  check_send_hint()
   local review = table.concat(vim.api.nvim_buf_get_lines(0, 0, -1, false), "\n")
   assert(review:find("Review the uncommitted changes", 1, true))
   assert(review:find("Do not modify files", 1, true))

@@ -451,7 +451,7 @@ CodexとAvanteのCodex ACPは `gpt-6-astra`、CopilotChatとAvanteのCopilotは
 | `<leader>oS` / `<leader>oq` | n | 状態表示 / 停止 | P codex.nvim |
 
 選択中は範囲の下に `[Codex <leader>oa: Ask, <leader>oe: Edit]` を表示する。
-依頼画面は入力モードで開く。指示と添付コードを編集し、`Ctrl-S` または `:write` で送信する。
+依頼画面は入力モードで開き、上部の先頭に `Ctrl-S Send` を表示する。指示と添付コードを編集し、`Ctrl-S` または `:write` で送信する。
 `Ctrl-P` で説明・修正・テスト追加・リファクタの指示を選び、`Ctrl-D` で診断、
 `Ctrl-F` でファイルを追加できる。Normal mode の `q` で下書きを残して閉じ、
 `<leader>oa` で再表示する。破棄する場合は依頼画面で `:bdelete!` を使う。
