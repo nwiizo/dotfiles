@@ -58,7 +58,7 @@ function update_all -d "Update tools with their native managers"
     set -l mason_timeout_seconds 900
     set -l nvim_timeout_seconds 900
     set -l interactive 1
-    if set -q _flag_parallel; or set -q _flag_non_interactive
+    if set -q _flag_parallel; or set -q _flag_non_interactive; or not isatty stdin; or not isatty stdout
         set interactive 0
     end
     set -lx UPDATE_ALL_INTERACTIVE $interactive
@@ -111,7 +111,7 @@ function update_all -d "Update tools with their native managers"
 
     function __update_all_run_job --no-scope-shadowing --argument-names label script log status_file
         if set -q _flag_parallel
-            fish -lc $script $status_file $argv[5..-1] >$log 2>&1 &
+            fish -lc $script $status_file $argv[5..-1] </dev/null >$log 2>&1 &
             set -a job_pids $last_pid
             set -a job_labels $label
             set -a job_logs $log
@@ -124,11 +124,13 @@ function update_all -d "Update tools with their native managers"
         echo "== $label =="
 
         set -l code
-        if test "$UPDATE_ALL_INTERACTIVE" -eq 1
+        if test "$UPDATE_ALL_INTERACTIVE" -eq 1; and isatty stdin; and isatty stdout
             fish -lc $script $status_file $argv[5..-1] 2>&1 | tee $log
             set code $pipestatus[1]
         else
-            fish -lc $script $status_file $argv[5..-1] >$log 2>&1
+            # Non-interactive jobs must not inherit a closed or detached terminal.
+            set -lx UPDATE_ALL_INTERACTIVE 0
+            fish -lc $script $status_file $argv[5..-1] </dev/null >$log 2>&1
             set code $status
         end
 

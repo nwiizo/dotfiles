@@ -30,39 +30,23 @@ return {
       },
       codelens = { enabled = true },
       servers = {
-        lua_ls = {
-          settings = {
-            Lua = {
-              runtime = { version = "LuaJIT" },
-              diagnostics = { globals = { "vim" } },
-              workspace = { library = vim.api.nvim_get_runtime_file("", true), checkThirdParty = false },
-              telemetry = { enable = false },
-            },
-          },
-        },
+        -- lua_ls: LazyVim and lazydev.nvim provide Neovim types; no manual workspace.library.
         -- Web
         html = {},
         cssls = {},
-        emmet_ls = {},
+        emmet_language_server = {}, -- maintained successor of emmet_ls
         -- Shell
         bashls = {},
-        -- Go: golangci-lint LSP
-        golangci_lint_ls = {},
+        -- Go linting comes from the go extra (nvim-lint golangci-lint); golangci_lint_ls would duplicate it.
+        -- zls: keys checked against the zls 0.16 schema; schema defaults are omitted.
         zls = {
           settings = {
             zls = {
-              enable_inlay_hints = true,
-              inlay_hints_show_builtin = true,
-              inlay_hints_exclude_single_argument = true,
               inlay_hints_hide_redundant_param_names = true,
               inlay_hints_hide_redundant_param_names_last_token = true,
               warn_style = true,
               highlight_global_var_declarations = true,
-              enable_autofix = true,
-              enable_import_pop = true,
-              include_at_in_builtins = true,
               enable_build_on_save = true,
-              build_on_save_step = "check",
             },
           },
         },
@@ -71,6 +55,7 @@ return {
   },
 
   -- conform.nvim: Override formatters (let LazyVim manage format-on-save via <leader>uf)
+  -- LazyVim already sets lua/sh; the terraform extra sets terraform.
   {
     "stevearc/conform.nvim",
     opts = {
@@ -79,10 +64,7 @@ return {
         javascript = js_formatters,
         typescriptreact = js_formatters,
         javascriptreact = js_formatters,
-        lua = { "stylua" },
-        terraform = { "terraform_fmt" },
         bash = { "shfmt" },
-        sh = { "shfmt" },
         python = { "ruff_format", "ruff_organize_imports" },
         rust = { "rustfmt" },
         zig = { "zigfmt" },
@@ -131,32 +113,10 @@ return {
     opts = { linters_by_ft = { markdown = {} } },
   },
 
-  -- treesitter: Override ensure_installed (LazyVim handles main branch + install internally)
+  -- treesitter: LazyVim core and the language extras already install every parser
+  -- this config needs except css. opts_extend appends to ensure_installed.
   {
     "nvim-treesitter/nvim-treesitter",
-    opts = {
-      ensure_installed = {
-        "vim",
-        "lua",
-        "vimdoc",
-        "html",
-        "css",
-        "markdown",
-        "markdown_inline",
-        "terraform",
-        "hcl",
-        "bash",
-        "python",
-        "rust",
-        "go",
-        "typescript",
-        "javascript",
-        "tsx",
-        "json",
-        "yaml",
-        "toml",
-        "zig",
-      },
-    },
+    opts = { ensure_installed = { "css" } },
   },
 }

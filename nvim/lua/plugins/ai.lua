@@ -1,7 +1,74 @@
 -- AI Integration plugins
 -- LazyVim manages: copilot, copilot-chat (via extras)
+local function codex_changes()
+  local status = require("codex").status()
+  local cwd = status.cwd or status.resolved_cwd
+  if not cwd then
+    vim.notify("Codex: 変更を確認するディレクトリを特定できません", vim.log.levels.WARN)
+    return
+  end
+  -- Use the session's project even when invoked from its terminal or another tab.
+  vim.cmd.CodeDiff({ args = { "--repo", cwd } })
+end
+
+local function codex_review()
+  local codex = require("codex")
+  local prompt = "Review the uncommitted changes in this project. Inspect the diff, identify bugs and regressions, "
+    .. "and report findings with file paths and line numbers. Do not modify files."
+  if codex.status().running then
+    codex.follow_up(prompt)
+  else
+    codex.ask(prompt)
+  end
+end
+
+local function codex_actions()
+  local codex = require("codex")
+  local running = codex.status().running
+  local actions = {
+    {
+      label = running and "追加依頼を書く（同じ会話・Ctrl-Sで送信）"
+        or "現在のファイルについて依頼を書く",
+      run = running and codex.follow_up or codex.ask,
+    },
+    { label = "回答・会話を開く", run = codex.open },
+    { label = "変更を確認する（CodeDiff・qで戻る）", run = codex_changes },
+    { label = "変更のレビュー依頼を書く", run = codex_review },
+    { label = "編集へ戻る（会話は継続）", run = codex.close },
+    {
+      label = "接続状態を確認する",
+      run = function()
+        vim.cmd.CodexStatus()
+      end,
+    },
+    {
+      label = "回答画面の操作を確認する",
+      run = function()
+        vim.notify(
+          "続けて入力してEnter: 追加依頼\nEsc Esc: 回答をスクロール・選択・yでコピー / i: 入力へ\n"
+            .. "Alt-a: 操作一覧 / Alt-d: 変更確認 / Alt-q: 編集へ戻る\n"
+            .. "実行中の中断・承認はCodex画面の案内に従って操作します。",
+          vim.log.levels.INFO,
+          { title = "Codex の操作" }
+        )
+      end,
+    },
+  }
+  vim.ui.select(actions, {
+    prompt = "Codex: 次の操作",
+    format_item = function(action)
+      return action.label
+    end,
+  }, function(action)
+    if action then
+      action.run()
+    end
+  end)
+end
+
 return {
-  -- copilot.lua: Enable broadly + inline suggestions
+  -- copilot.lua: inline suggestions everywhere. vim.g.ai_cmp = false (options.lua)
+  -- makes LazyVim enable suggestions and keep copilot out of the blink menu.
   {
     "zbirenbaum/copilot.lua",
     opts = {
@@ -11,14 +78,10 @@ return {
         gitrebase = false,
       },
       suggestion = {
-        enabled = true,
-        auto_trigger = true,
         keymap = {
           accept = "<M-l>",
           accept_word = "<M-k>",
           accept_line = "<M-j>",
-          next = "<M-]>",
-          prev = "<M-[>",
           dismiss = "<C-]>",
         },
       },
@@ -30,7 +93,7 @@ return {
   {
     "CopilotC-Nvim/CopilotChat.nvim",
     opts = {
-      model = "claude-opus-4.8",
+      model = "claude-opus-5",
       debug = false,
       instruction_files = {
         ".github/copilot-instructions.md",
@@ -61,14 +124,14 @@ return {
       },
     },
     keys = {
-      -- LazyVim copilot-chat extra binds <leader>ax to Reset; we want it
-      -- on codex instead. CopilotChatReset is reachable via <leader>ar.
-      { "<leader>ax", false },
+      -- LazyVim copilot-chat extra binds <leader>aa (toggle) and <leader>ax (reset).
+      -- Avante owns <leader>aa and Codex owns <leader>ax; open with <leader>ao, reset with <leader>ar.
+      -- <leader>aq (Quick Chat) and <leader>ap (prompts) stay on LazyVim defaults; q closes the window.
+      { "<leader>aa", false, mode = { "n", "x" } },
+      { "<leader>ax", false, mode = { "n", "x" } },
       { "<leader>ao", "<cmd>CopilotChatOpen<cr>", desc = "Open Chat" },
-      { "<leader>aq", "<cmd>CopilotChatClose<cr>", desc = "Close Chat" },
       { "<leader>ar", "<cmd>CopilotChatReset<cr>", desc = "Reset Chat" },
       { "<leader>am", "<cmd>CopilotChatModels<cr>", desc = "Select Model" },
-      { "<leader>aP", "<cmd>CopilotChatPrompts<cr>", desc = "Prompt Library" },
       { "<leader>ae", "<cmd>CopilotChatExplain<cr>", desc = "Explain Code", mode = { "n", "v" } },
       { "<leader>af", "<cmd>CopilotChatFix<cr>", desc = "Fix Code", mode = { "n", "v" } },
       { "<leader>aO", "<cmd>CopilotChatOptimize<cr>", desc = "Optimize Code", mode = { "n", "v" } },
@@ -92,17 +155,19 @@ return {
       mode = "agentic",
       input = { provider = "snacks" },
       selector = { provider = "snacks" },
+      -- Show Avante actions alongside Codex's selection hints.
+      selection = { hint_display = "immediate" },
       providers = {
         copilot = {
           endpoint = "https://api.githubcopilot.com",
-          model = "claude-opus-4.8",
+          model = "claude-opus-5",
           timeout = 30000,
         },
       },
       acp_providers = {
         ["codex"] = {
           command = "codex-acp",
-          args = { "-c", 'forced_login_method="chatgpt"' },
+          args = { "-c", 'forced_login_method="chatgpt"', "-c", 'model="gpt-6-astra"' },
           env = {
             NODE_NO_WARNINGS = "1",
             HOME = os.getenv("HOME"),
@@ -115,6 +180,7 @@ return {
           env = {
             NODE_NO_WARNINGS = "1",
             ACP_PATH_TO_CLAUDE_CODE_EXECUTABLE = vim.fn.exepath("claude"),
+            ANTHROPIC_MODEL = "best",
             ACP_PERMISSION_MODE = "bypassPermissions",
           },
         },
@@ -133,14 +199,14 @@ return {
       windows = { position = "right", width = 35 },
     },
     keys = {
-      { "<leader>aVc", "<cmd>AvanteSwitchProvider codex<cr>", desc = "Avante: Codex ACP" },
-      { "<leader>aVl", "<cmd>AvanteSwitchProvider claude-code<cr>", desc = "Avante: Claude Code ACP" },
-      { "<leader>aVp", "<cmd>AvanteSwitchProvider copilot<cr>", desc = "Avante: Copilot" },
+      -- Provider switches use free digit keys so they stay at two keys after <leader>.
+      { "<leader>a1", "<cmd>AvanteSwitchProvider codex<cr>", desc = "Avante: Codex ACP" },
+      { "<leader>a2", "<cmd>AvanteSwitchProvider claude-code<cr>", desc = "Avante: Claude Code ACP" },
+      { "<leader>a3", "<cmd>AvanteSwitchProvider copilot<cr>", desc = "Avante: Copilot" },
     },
     build = "make",
     dependencies = {
       "nvim-treesitter/nvim-treesitter",
-      "stevearc/dressing.nvim",
       "nvim-lua/plenary.nvim",
       "MunifTanjim/nui.nvim",
       "nvim-tree/nvim-web-devicons",
@@ -202,9 +268,12 @@ return {
   },
 
   -- Codex (OpenAI Codex CLI): terminal and app-server Neovim integration.
+  -- <leader>ax stays as the AI-group toggle; the Codex actions get their own
+  -- <leader>o group so every chord stays at two keys after <leader>.
   {
     "nwiizo/codex.nvim",
     dir = vim.fn.expand("~/ghq/github.com/nwiizo/codex.nvim"),
+    event = "VeryLazy",
     cmd = {
       "Codex",
       "CodexOpen",
@@ -217,8 +286,15 @@ return {
       "CodexReview",
       "CodexImage",
       "CodexPrompt",
+      "CodexAsk",
+      "CodexAskVisual",
+      "CodexFollowUp",
+      "CodexEdit",
+      "CodexActions",
+      "CodexChanges",
       "CodexSend",
       "CodexSendVisual",
+      "CodexAddVisual",
       "CodexAdd",
       "CodexTreeAdd",
       "CodexSendText",
@@ -229,12 +305,19 @@ return {
     },
     opts = {
       backend = "terminal",
+      cmd = { "codex", "-c", 'model="gpt-6-astra"' },
+      app_server = { cmd = { "codex", "-c", 'model="gpt-6-astra"', "app-server" } },
       cwd = "root",
       focus_after_send = true,
+      selection = {
+        enabled = true,
+        hint = true,
+        keymaps = { ask = "<leader>oa", edit = "<leader>oe" },
+      },
       terminal = {
         split_side = "right",
         split_width_percentage = 0.4,
-        normal_mode_key = "<Esc><Esc>",
+        normal_mode_keys = { "<Esc><Esc>" },
         window_navigation = {
           left = "<M-h>",
           down = "<M-j>",
@@ -243,8 +326,62 @@ return {
         },
       },
     },
+    config = function(_, opts)
+      local codex = require("codex").setup(opts)
+      vim.api.nvim_create_user_command("CodexActions", codex_actions, { desc = "Choose the next Codex action" })
+      vim.api.nvim_create_user_command("CodexChanges", codex_changes, { desc = "Review the Codex project's changes" })
+      local function decorate(status)
+        if status.backend ~= "terminal" or not status.bufnr or not vim.api.nvim_buf_is_valid(status.bufnr) then
+          return
+        end
+        for _, binding in ipairs({
+          { "<M-a>", "CodexActions", "Codex actions" },
+          { "<M-d>", "CodexChanges", "Review project changes" },
+          { "<M-q>", "CodexClose", "Hide Codex and return to editor" },
+        }) do
+          vim.keymap.set("t", binding[1], "<C-\\><C-n><Cmd>" .. binding[2] .. "<CR>", {
+            buf = status.bufnr,
+            desc = binding[3],
+          })
+          vim.keymap.set("n", binding[1], "<Cmd>" .. binding[2] .. "<CR>", {
+            buf = status.bufnr,
+            desc = binding[3],
+          })
+        end
+        for _, win in ipairs(vim.fn.win_findbuf(status.bufnr)) do
+          vim.wo[win].winbar = "Codex  Alt-a Actions  Alt-d Diff  Alt-q Hide"
+        end
+      end
+      vim.api.nvim_create_autocmd("User", {
+        group = vim.api.nvim_create_augroup("nwiizo_codex_workflow", { clear = true }),
+        pattern = { "CodexStarted", "CodexOpened" },
+        callback = function(event)
+          decorate(event.data)
+        end,
+      })
+      decorate(codex.status())
+    end,
     keys = {
       { "<leader>ax", "<cmd>CodexFocus<cr>", desc = "Focus or hide Codex" },
+      { "<leader>oo", "<cmd>CodexFocus<cr>", desc = "Focus or hide Codex" },
+      { "<leader>op", "<cmd>CodexPrompt<cr>", desc = "Prompt Codex" },
+      { "<leader>om", "<cmd>CodexActions<cr>", desc = "Codex: Next action" },
+      { "<leader>ou", "<cmd>CodexFollowUp<cr>", desc = "Codex: Follow up in this conversation" },
+      { "<leader>od", "<cmd>CodexChanges<cr>", desc = "Codex: Review project changes" },
+      { "<leader>oh", "<cmd>CodexClose<cr>", desc = "Codex: Hide and return to editor" },
+      -- Visual Ask/Edit mappings and their hints are installed by selection.keymaps.
+      { "<leader>oa", "<cmd>CodexAsk<cr>", desc = "Codex: Ask with file context" },
+      { "<leader>os", "<cmd>CodexSend<cr>", desc = "Send current line" },
+      { "<leader>os", ":<C-U>CodexSendVisual<CR>", mode = "x", desc = "Send selection" },
+      { "<leader>ob", "<cmd>CodexAdd<cr>", desc = "Add current buffer (@path)" },
+      { "<leader>ob", ":<C-U>CodexAddVisual<CR>", mode = "x", desc = "Add selection without sending" },
+      { "<leader>ot", "<cmd>CodexTreeAdd<cr>", desc = "Add file from tree", ft = "oil" },
+      { "<leader>or", "<cmd>CodexResume<cr>", desc = "Resume session" },
+      { "<leader>oc", "<cmd>CodexContinue<cr>", desc = "Continue last session" },
+      { "<leader>of", "<cmd>CodexFork<cr>", desc = "Fork session" },
+      { "<leader>oR", codex_review, desc = "Codex: Compose a review request" },
+      { "<leader>oS", "<cmd>CodexStatus<cr>", desc = "Status" },
+      { "<leader>oq", "<cmd>CodexStop<cr>", desc = "Stop Codex" },
     },
   },
 
@@ -254,6 +391,7 @@ return {
     event = "VeryLazy",
     dependencies = { "folke/snacks.nvim" },
     opts = {
+      env = { ANTHROPIC_MODEL = "best" },
       focus_after_send = true,
       terminal = {
         split_side = "right",
@@ -272,7 +410,7 @@ return {
         "<leader>aT",
         "<cmd>ClaudeCodeTreeAdd<cr>",
         desc = "Add file from tree",
-        ft = { "NvimTree", "neo-tree", "oil" },
+        ft = "oil",
       },
       { "<leader>ay", "<cmd>ClaudeCodeDiffAccept<cr>", desc = "Accept diff" },
       { "<leader>an", "<cmd>ClaudeCodeDiffDeny<cr>", desc = "Deny diff" },

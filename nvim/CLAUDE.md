@@ -15,17 +15,17 @@ lockfile の変更は、関連するプラグイン設定と同じコミット�
 nvim/lua/
 ├── config/          # Neovim本体の設定 (options, keymaps, autocmds, lazy bootstrap)
 └── plugins/         # プラグイン定義 (LazyVim override + カスタム)
-    ├── disabled.lua     # lualine, bufferline, mini.surround, mini.pairs を無効化
+    ├── disabled.lua     # lualine, bufferline, mini.surround, mini.pairs, neo-tree を無効化
     ├── colorscheme.lua  # catppuccin mocha
-    ├── ui.lua           # incline, modes, vimade, better-escape, noice, which-key, nvim-surround, mini.ai, nvim-autopairs
-    ├── navigation.lua   # Snacks, telescope, fff, oil, flash, overlook, hbac
-    ├── git.lua          # gitsigns, codediff, diffview, gitlinker
+    ├── ui.lua           # incline, modes, vimade, better-escape, noice, which-key, nvim-surround, mini.ai, nvim-autopairs, vim-matchup
+    ├── navigation.lua   # Snacks, fff, oil, flash, overlook, hbac, treewalker
+    ├── git.lua          # gitsigns, codediff, diffview
     ├── diagnostics.lua  # trouble, todo-comments, nvim-bqf
     ├── lsp.lua          # lspconfig, conform, mason, treesitter
     ├── completion.lua   # blink.cmp
     ├── coding.lua       # yanky, refactoring.nvim, treesj
-    ├── ai.lua           # copilot-chat, avante, codex.nvim, claudecode
-    └── lang.lua         # rustaceanvim, crates, neotest, dap, cargo.nvim, marp.nvim
+    ├── ai.lua           # copilot, copilot-chat, avante, render-markdown, signalbox, codex.nvim, claudecode
+    └── lang.lua         # nvim-ts-autotag, rustaceanvim, crates, neotest, cargo.nvim, marp.nvim
 ```
 
 ## Key Architecture Decisions
@@ -34,7 +34,8 @@ nvim/lua/
 - **No bufferline**: bufferline disabled, Snacks picker for buffer selection
 - **No mode text**: modes.nvim colors cursorline by mode
 - **No cmdline**: cmdheight=0, noice.nvim centered popup
-- **blink.cmp**: LazyVim default completion, copilot source via extras
+- **blink.cmp**: LazyVim default completion. Copilot is inline only (`vim.g.ai_cmp = false` in options.lua), not a blink source
+- **Picker**: LazyVim 既定の Snacks picker に統一（`editor.telescope` extra は使わない）
 - **LazyVim Extras**: 言語サポートはExtrasで管理 (lang.rust, lang.go, etc.)
 
 ## Plugin Override Pattern
@@ -44,8 +45,18 @@ LazyVim管理プラグインは `opts` テーブルのみ返す（LazyVimデフ�
 
 ## AI Keymaps (`<leader>a` prefix)
 
-`<leader>ax` toggles Codex sidebar. Avante uses `<leader>aa` for ask,
-`<leader>aE` for edit, and `<leader>aV{c,l,p}` to switch between Codex ACP,
+`<leader>ax` toggles Codex sidebar and `<leader>o*` holds the other Codex
+actions (ask, edit, prompt, send, add, resume, review). Codex selection hints show
+`<leader>oa` for Ask and `<leader>oe` for Edit; configure both through
+`selection.keymaps`. Avante's selection hint is also shown so either integration
+can be chosen from the same selection.
+After sending, `<leader>om` opens next actions, `<leader>ou` composes a follow-up,
+`<leader>od` reviews the session project's changes with CodeDiff, and `<leader>oh`
+hides the panel without stopping it. The terminal winbar advertises buffer-local
+`Alt-a` actions, `Alt-d` diff, and `Alt-q` hide. `<leader>oR` composes a review
+request in the current conversation; submission remains explicit with Ctrl-S.
+Avante uses `<leader>aa` for ask,
+`<leader>aE` for edit, and `<leader>a1`/`<leader>a2`/`<leader>a3` to switch between Codex ACP,
 Claude Code ACP, and Copilot providers. Claude Code uses `<leader>ac`,
 `<leader>aF`, `<leader>au`, and `<leader>aK`.
 
@@ -78,7 +89,7 @@ opts.server.default_settings = vim.tbl_deep_extend("force", opts.server.default_
 
 ### キーマップ衝突の解決パターン
 
-LazyVimが使う主要prefix: `<leader>c` (code), `<leader>f` (find), `<leader>s` (search), `<leader>g` (git), `<leader>d` (debug/DAP), `<leader>x` (diagnostics), `<leader>b` (buffer), `<leader>u` (toggle), `<leader>q` (session)
+LazyVimが使う主要prefix: `<leader>c` (code), `<leader>f` (find), `<leader>s` (search), `<leader>g` (git), `<leader>gh` (hunks), `<leader>d` (debug/DAP), `<leader>x` (diagnostics), `<leader>b` (buffer), `<leader>u` (toggle), `<leader>q` (session), `<leader>t` (test), `<leader>l` (Lazy UI)
 
 衝突回避で採用した方式:
 - AI integrations: `<leader>a` group
@@ -86,6 +97,15 @@ LazyVimが使う主要prefix: `<leader>c` (code), `<leader>f` (find), `<leader>s
 - Avante edit: `<leader>aE` to leave `<leader>ax` for Codex
 - Crates.nvim: `<leader>c` → `<leader>rc`（Rust subgroup）
 - Delete without yank: `<leader>d` → `<leader>D`（大文字）
+- Diffview file history: `<leader>gh` → `<leader>gF`（`<leader>gh` は gitsigns hunk group）
+- neotest は LazyVim の `<leader>t` をそのまま使い、自前の `<leader>T` グループは置かない
+- `<leader>l` は `:Lazy` なので LSP 用 prefix にしない（行診断は `<leader>cd`、シグネチャは `gK`）
+- `<leader>` の後は 2 キーまでにする。空いている 1 文字目（`h`、`o` など）は積極的に使い、独自の 3 キーチェーンは作らない
+- gitsigns の hunk 操作は 2 キーの `<leader>h*`（LazyVim の `<leader>gh*` も残る）
+- Codex は `<leader>o*`、Claude Code と Avante、CopilotChat は `<leader>a*`
+- crates.nvim は Cargo.toml バッファ限定なので `<leader>r*` を直接使う（.rs バッファの rustaceanvim キーと衝突しない）
+- quickfix 移動は `]q` / `[q`、picker の再開は `<leader>sR`。単語置換の準備は `<leader>cw`
+- CopilotChat の `<leader>aq`（Quick Chat）と `<leader>ap`（プロンプト）は LazyVim 既定のまま。閉じるのは窓内の `q`
 
 ### プラグインのGitHub org名変更（2025-2026）
 
@@ -106,10 +126,19 @@ Extrasは頻繁に追加・削除される。存在しないextraを `import` �
 - **dashboard**: Snacks の `dashboard = { enabled = false }` で無効化
 - **format_on_save**: conform.nvim に直接 `format_on_save` を設定するとLazyVimの `<leader>uf` トグルが効かなくなる。LazyVim に任せること
 - **nvim-notify**: Snacks.notifier と競合する。Snacks.notifier を使う場合は nvim-notify のスペックを削除
+- **行番号の強制 autocmd**: 不要。LazyVim 既定で number/relativenumber は有効で、Snacks の terminal/backdrop は自前で無効化する
 
 ### modes.nvim API変更
 
 `ignore_filetypes` → `ignore` にリネーム済み（2025年以降）
+
+### rust-analyzer の設定キー
+
+`checkOnSave` は boolean で、clippy の指定は `check.command` / `check.extraArgs` に置く。
+除外ディレクトリは `files.exclude`（`files.excludeDirs` は廃止）。
+`rust-analyzer --print-config-schema` でキーの有無を確認できる。LazyVim の
+`lang.rust` extra が cargo・procMacro・files.exclude を設定するので、自分の
+`default_settings` には差分だけを書く。
 
 ### refactoring.nvim v2
 

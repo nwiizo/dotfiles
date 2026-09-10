@@ -44,9 +44,6 @@ require("lazy").setup({
     { import = "lazyvim.plugins.extras.lang.toml" },
     { import = "lazyvim.plugins.extras.lang.git" },
 
-    -- LazyVim Extras: Editor
-    { import = "lazyvim.plugins.extras.editor.telescope" },
-
     -- LazyVim Extras: DAP & Test
     { import = "lazyvim.plugins.extras.dap.core" },
     { import = "lazyvim.plugins.extras.test.core" },

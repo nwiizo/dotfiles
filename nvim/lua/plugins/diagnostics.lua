@@ -19,7 +19,7 @@ return {
     opts = { auto_close = true, auto_preview = true, focus = true },
   },
 
-  -- todo-comments.nvim: Override
+  -- todo-comments.nvim: Override keywords; <leader>st / <leader>sT pickers come from LazyVim
   {
     "folke/todo-comments.nvim",
     opts = {
@@ -32,9 +32,6 @@ return {
         NOTE = { icon = " ", color = "hint", alt = { "INFO" } },
         PERF = { icon = " ", color = "default", alt = { "OPTIM", "PERFORMANCE" } },
       },
-    },
-    keys = {
-      { "<leader>sT", "<cmd>TodoTelescope<cr>", desc = "Search TODOs" },
     },
   },
 }

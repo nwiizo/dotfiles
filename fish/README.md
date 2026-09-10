@@ -129,6 +129,11 @@ Atuin, zoxide, Fisher, and fzf.fish integrations already cover their workflows.
 share the same job definitions and result handling; `--parallel` also retains
 the Neovim and Mason timeouts. Each run has its own log directory.
 
+Prompts are enabled only when both stdin and stdout are terminals, checked
+at startup and again before each sequential job. Parallel
+jobs and other non-interactive runs read from `/dev/null`, so they do not
+inherit unusable terminal input or consume the caller's piped input.
+
 When an updater or Homebrew cleanup fails, all remaining jobs finish before
 one Codex request is made. The request includes the failed updater names and
 the log directory, and asks for diagnosis, relevant repairs, and verification.

@@ -20,3 +20,7 @@ o.swapfile = false
 -- Word wrap (LazyVim: wrap=false)
 o.wrap = true
 o.breakindent = true
+
+-- Copilot: inline ghost text only. LazyVim would otherwise add copilot as a
+-- blink.cmp source that outranks LSP items; inline keeps <Tab>/<M-l> accept.
+vim.g.ai_cmp = false

@@ -34,6 +34,18 @@ case "${0##*/}" in
     nvim)
         exec /bin/sleep 30
         ;;
+    pipx)
+        echo call >> "$UPDATE_ALL_TEST_DIR/pipx.calls"
+        printf '%s\n' "$UPDATE_ALL_INTERACTIVE" > "$UPDATE_ALL_TEST_DIR/pipx.interactive"
+        if [ "${UPDATE_ALL_INTERACTIVE:-0}" = 1 ]; then
+            [ -t 0 ] || exit 12
+        else
+            cat > "$UPDATE_ALL_TEST_DIR/pipx.stdin" || exit 13
+            [ ! -s "$UPDATE_ALL_TEST_DIR/pipx.stdin" ] || exit 14
+        fi
+        echo 'pipx output'
+        exit 0
+        ;;
     codex)
         echo call >> "$UPDATE_ALL_TEST_DIR/codex.calls"
         printf '%s\n' "$@" > "$UPDATE_ALL_TEST_DIR/codex.args"

@@ -1,7 +1,7 @@
 -- Git integration plugins
 -- LazyVim manages: gitsigns.nvim
 return {
-  -- gitsigns: Override signs, preserve LazyVim on_attach
+  -- gitsigns: Override signs and add two-key <leader>h* hunk shortcuts.
   {
     "lewis6991/gitsigns.nvim",
     opts = function(_, opts)
@@ -14,54 +14,35 @@ return {
         changedelete = { text = "~" },
         untracked = { text = "┆" },
       }
-      opts.current_line_blame = false
-      opts.current_line_blame_opts = { delay = 500, virtual_text_pos = "eol" }
+      opts.current_line_blame_opts = { delay = 500 }
       opts.on_attach = function(bufnr)
         if prev_on_attach then
           prev_on_attach(bufnr)
         end
+        -- Two-key hunk shortcuts; LazyVim's <leader>gh* group stays available.
         local gs = package.loaded.gitsigns
-        local function map(mode, l, r, mopts)
-          mopts = mopts or {}
-          mopts.buf = bufnr
-          vim.keymap.set(mode, l, r, mopts)
+        local function map(mode, lhs, rhs, desc)
+          vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, desc = desc })
         end
-        map("n", "<leader>gp", gs.preview_hunk, { desc = "Preview Hunk" })
-        map("n", "<leader>gb", function()
+        map("n", "<leader>hs", gs.stage_hunk, "Stage/Unstage Hunk")
+        map("v", "<leader>hs", function()
+          gs.stage_hunk({ vim.fn.line("."), vim.fn.line("v") })
+        end, "Stage/Unstage Hunk")
+        map("n", "<leader>hr", gs.reset_hunk, "Reset Hunk")
+        map("v", "<leader>hr", function()
+          gs.reset_hunk({ vim.fn.line("."), vim.fn.line("v") })
+        end, "Reset Hunk")
+        map("n", "<leader>hS", gs.stage_buffer, "Stage Buffer")
+        map("n", "<leader>hR", gs.reset_buffer, "Reset Buffer")
+        map("n", "<leader>hp", gs.preview_hunk_inline, "Preview Hunk Inline")
+        map("n", "<leader>hb", function()
           gs.blame_line({ full = true })
-        end, { desc = "Blame Line" })
-        map("n", "<leader>gB", gs.toggle_current_line_blame, { desc = "Toggle Blame" })
-        map("n", "<leader>hr", gs.reset_hunk, { desc = "Reset Hunk" })
-        map("n", "<leader>hs", gs.stage_hunk, { desc = "Stage Hunk" })
-        map("n", "<leader>hu", gs.undo_stage_hunk, { desc = "Undo Stage Hunk" })
+        end, "Blame Line")
+        map("n", "<leader>hB", gs.toggle_current_line_blame, "Toggle Line Blame")
+        map("n", "<leader>hd", gs.diffthis, "Diff This")
       end
       return opts
     end,
-  },
-
-  -- gitlinker.nvim: Copy/open Git host permalinks for the current line or visual range
-  {
-    "linrongbin16/gitlinker.nvim",
-    cmd = "GitLink",
-    keys = {
-      {
-        "<leader>gy",
-        function()
-          require("gitlinker").link()
-        end,
-        mode = { "n", "v" },
-        desc = "Copy Git Permalink",
-      },
-      {
-        "<leader>gY",
-        function()
-          require("gitlinker").link({ action = require("gitlinker.actions").system })
-        end,
-        mode = { "n", "v" },
-        desc = "Open Git Permalink",
-      },
-    },
-    opts = {},
   },
 
   -- CodeDiff: Live review while agents keep changing the working tree.
@@ -84,7 +65,8 @@ return {
     keys = {
       { "<leader>gd", "<cmd>DiffviewOpen<cr>", desc = "Git Diff (working tree)" },
       { "<leader>gD", "<cmd>DiffviewOpen HEAD~1<cr>", desc = "Diff vs previous commit" },
-      { "<leader>gh", "<cmd>DiffviewFileHistory %<cr>", desc = "File History" },
+      -- <leader>gh is LazyVim's gitsigns hunk group, so file history lives on <leader>gF.
+      { "<leader>gF", "<cmd>DiffviewFileHistory %<cr>", desc = "File History" },
       { "<leader>gH", "<cmd>DiffviewFileHistory<cr>", desc = "Branch History" },
       { "<leader>gq", "<cmd>DiffviewClose<cr>", desc = "Close Diffview" },
       { "<leader>gm", "<cmd>DiffviewOpen main...HEAD<cr>", desc = "Diff vs main branch" },

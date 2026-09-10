@@ -113,12 +113,12 @@ return {
         set_cursor = true,
         set_cursorline = true,
         set_number = true,
-        ignore = { "NvimTree", "TelescopePrompt", "oil", "lazy", "Avante", "AvanteInput", "snacks_dashboard" },
+        ignore = { "oil", "lazy", "Avante", "AvanteInput", "snacks_dashboard" },
       })
     end,
   },
 
-  -- noice.nvim: Override LazyVim defaults for centered cmdline
+  -- noice.nvim: Override LazyVim defaults for centered cmdline (command_palette and long_message_to_split stay on)
   {
     "folke/noice.nvim",
     opts = {
@@ -142,8 +142,6 @@ return {
       },
       presets = {
         bottom_search = false,
-        command_palette = true,
-        long_message_to_split = true,
         lsp_doc_border = true,
       },
     },
@@ -179,19 +177,18 @@ return {
     },
   },
 
-  -- which-key.nvim: Override for custom group names
+  -- which-key.nvim: Override for custom group names (helix preset is the LazyVim default)
   {
     "folke/which-key.nvim",
     opts = {
-      preset = "helix",
       delay = 300,
       spec = {
         { "<leader>a", group = "AI", icon = "" },
-        { "<leader>l", group = "LSP Extra", icon = "" },
+        { "<leader>o", group = "Codex", icon = "" },
+        { "<leader>h", group = "Hunks", icon = "" },
         { "<leader>p", group = "Peek", icon = "" },
         { "<leader>r", group = "Rust", icon = "" },
         { "<leader>R", group = "Refactoring", icon = "" },
-        { "<leader>T", group = "Test (custom)", icon = "" },
       },
     },
   },
@@ -204,21 +201,13 @@ return {
     opts = {},
   },
 
-  -- mini.ai: Override for custom text objects
+  -- mini.ai: Add an argument text object; LazyVim already defines o/f/c/t/d/e/g/u/U and n_lines
   {
     "nvim-mini/mini.ai",
     opts = function(_, opts)
       local ai = require("mini.ai")
-      opts.n_lines = 500
-      opts.custom_textobjects = {
-        o = ai.gen_spec.treesitter({
-          a = { "@block.outer", "@conditional.outer", "@loop.outer" },
-          i = { "@block.inner", "@conditional.inner", "@loop.inner" },
-        }),
-        f = ai.gen_spec.treesitter({ a = "@function.outer", i = "@function.inner" }),
-        c = ai.gen_spec.treesitter({ a = "@class.outer", i = "@class.inner" }),
-        a = ai.gen_spec.treesitter({ a = "@parameter.outer", i = "@parameter.inner" }),
-      }
+      opts.custom_textobjects = opts.custom_textobjects or {}
+      opts.custom_textobjects.a = ai.gen_spec.treesitter({ a = "@parameter.outer", i = "@parameter.inner" })
       return opts
     end,
   },

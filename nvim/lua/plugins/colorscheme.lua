@@ -1,4 +1,5 @@
 -- Colorscheme: catppuccin mocha
+-- Plugin integrations come from catppuccin's auto_integrations and LazyVim's spec.
 return {
   {
     "catppuccin/nvim",
@@ -7,21 +8,6 @@ return {
     priority = 1000,
     opts = {
       flavour = "mocha",
-      transparent_background = false,
-      integrations = {
-        cmp = true,
-        flash = true,
-        gitsigns = true,
-        mason = true,
-        mini = true,
-        native_lsp = { enabled = true },
-        noice = true,
-        snacks = true,
-        telescope = true,
-        treesitter = true,
-        trouble = true,
-        which_key = true,
-      },
       custom_highlights = function(colors)
         return {
           Comment = { style = { "italic" } },

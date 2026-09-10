@@ -8,7 +8,7 @@ return {
       {
         "<leader>sy",
         function()
-          require("telescope").extensions.yank_history.yank_history({})
+          Snacks.picker.yanky()
         end,
         desc = "Yank History",
       },

@@ -1,7 +1,6 @@
 # dotfiles
 
-Personal macOS development environment. Homebrew owns binaries; this repo owns
-config files through direct symlinks.
+Personal macOS development environment. Homebrew owns binaries; this repo owns config files through direct symlinks.
 
 ## Start Here
 
@@ -18,17 +17,14 @@ cd ~/ghq/github.com/nwiizo/dotfiles
 ./scripts/bootstrap.sh
 ```
 
-For an existing machine, edit the source and reload the owning app. Run
-`rtk proxy ./scripts/link.sh` only when installation paths change, and run
-the Fish plugin installer or Homebrew bundle only when that layer changes.
+For an existing machine, edit the source and reload the owning app. Run `rtk proxy ./scripts/link.sh` only when installation paths change, and run the Fish plugin installer or Homebrew bundle only when that layer changes.
 
 ## Documentation Map
 
-Read this file for the overall model. Use the subdirectory docs when changing a
-specific tool:
+Read this file for the overall model. Use the subdirectory docs when changing a specific tool:
 
 | Area | Start here | Edit mostly |
-|---|---|---|
+| --- | --- | --- |
 | Packages | `Brewfile` | `Brewfile` |
 | Linking/bootstrap | `scripts/link.sh`, `scripts/bootstrap.sh` | `scripts/` |
 | Fish | `fish/README.md` | `fish/config.fish`, `fish/functions/`, `fish/fish_plugins` |
@@ -41,16 +37,12 @@ specific tool:
 | Codex entrypoints | `.codex/README.md` | symlinks into `.agents/codex/` |
 | Releases | `releases/` | versioned release notes |
 
-Contributor and agent-facing repository rules are in `AGENTS.md`. `CLAUDE.md`
-imports the same guide so Claude Code and Codex share the base rules.
-Global preferences describe how to work; this repository's guide describes
-where to edit and how to verify the result. Conditional procedures live in
-skills; see the [agent config guide](.agents/README.md#instruction-ownership).
+Contributor and agent-facing repository rules are in `AGENTS.md`. `CLAUDE.md` imports the same guide so Claude Code and Codex share the base rules. Global preferences describe how to work; this repository's guide describes where to edit and how to verify the result. Conditional procedures live in skills; see the [agent config guide](.agents/README.md#instruction-ownership).
 
 ## Managed Stack
 
 | Layer | Owner | Files |
-|---|---|---|
+| --- | --- | --- |
 | Packages | Homebrew | `Brewfile` |
 | Shell | Fish + Fisher | `fish/config.fish`, `fish/functions/`, `fish/fish_plugins` |
 | Editor | Neovim + LazyVim | `nvim/` |
@@ -111,12 +103,10 @@ fish scripts/install-fish-plugins.fish
 
 ## Linked Paths
 
-`scripts/link.sh` leaves already-correct links untouched and backs up any
-conflicting path, including an unrelated symlink, under
-`~/.dotfiles-link-backups/pre-dotfiles-link-*` before linking.
+`scripts/link.sh` leaves already-correct links untouched and backs up any conflicting path, including an unrelated symlink, under `~/.dotfiles-link-backups/pre-dotfiles-link-*` before linking.
 
 | Repo path | Target path |
-|---|---|
+| --- | --- |
 | `fish/config.fish` | `~/.config/fish/config.fish` |
 | `fish/conf.d/*.fish` | `~/.config/fish/conf.d/*.fish` |
 | `fish/functions/*.fish` | `~/.config/fish/functions/*.fish` |
@@ -144,16 +134,14 @@ conflicting path, including an unrelated symlink, under
 | `.claude/agents`, `.claude/rules`, `.claude/skills` | project symlinks into `.agents/` |
 | `.codex/agents` | project symlink into `.agents/codex/agents` |
 
-`~/.agents` is reserved for cross-client assets. This repository currently
-publishes only Agent Skills there; Claude Code and Codex subagents, rules, and
-tool-specific documentation stay in their product-specific home directories.
+`~/.agents` is reserved for cross-client assets. This repository currently publishes only Agent Skills there; Claude Code and Codex subagents, rules, and tool-specific documentation stay in their product-specific home directories.
 
 ## Daily Workflow
 
 Most edits happen in the repo, then the owning app or shell is restarted.
 
 | Change | Apply |
-|---|---|
+| --- | --- |
 | Existing Fish config or function | Open a new shell, or run `exec fish` |
 | Add/remove `fish/functions/*.fish` | Run `./scripts/link.sh` |
 | Fish plugins | Edit `fish/fish_plugins`, then run `fish scripts/install-fish-plugins.fish` |
@@ -162,10 +150,7 @@ Most edits happen in the repo, then the owning app or shell is restarted.
 | Homebrew packages | Edit `Brewfile`, then run `brew bundle --file Brewfile` |
 | Agent assets | Edit `.agents/`, `.claude/`, `.codex/`, then run `./scripts/link.sh` and `./scripts/audit-agent-config.sh` |
 
-The `update_all` Fish function updates common tools sequentially by default and
-streams updater output so confirmation prompts are visible. Use `--parallel` or
-`--non-interactive` when prompts should be disabled. Mac App Store updates are
-skipped by default.
+The `update_all` Fish function updates common tools sequentially by default and streams updater output so confirmation prompts are visible. Use `--parallel` or `--non-interactive` when prompts should be disabled. Mac App Store updates are skipped by default.
 
 ```bash
 update_all
@@ -181,7 +166,7 @@ update_all --help
 ## Change Guide
 
 | You want to change ... | Edit | Apply |
-|---|---|---|
+| --- | --- | --- |
 | Shell env, PATH, abbreviations, fzf defaults | `fish/config.fish` | new shell or `exec fish` |
 | Fish helper command | `fish/functions/*.fish` | `./scripts/link.sh` if adding/removing files |
 | Fisher plugins | `fish/fish_plugins` | `fish scripts/install-fish-plugins.fish` |
@@ -193,20 +178,18 @@ update_all --help
 
 ## Fish
 
-`fish/config.fish` defines XDG paths, Homebrew paths, language tool paths,
-environment variables, abbreviations, fzf defaults, and integrations for
-zoxide, mise, carapace, atuin, and direnv.
+`fish/config.fish` defines XDG paths, Homebrew paths, language tool paths, environment variables, abbreviations, fzf defaults, and integrations for zoxide, mise, carapace, atuin, and direnv.
 
 Notable bindings:
 
-| Key | Action |
-|---|---|
-| `Ctrl+G` | Select a ghq repository |
-| `Alt+J` | Select a Git/ghq repository |
-| `Ctrl+B` | Select a Git branch |
-| `Ctrl+F` | fzf directory search |
-| `Ctrl+L` | Clear screen |
-| `Tab` | History completion on empty command line |
+| Key      | Action                                   |
+| -------- | ---------------------------------------- |
+| `Ctrl+G` | Select a ghq repository                  |
+| `Alt+J`  | Select a Git/ghq repository              |
+| `Ctrl+B` | Select a Git branch                      |
+| `Ctrl+F` | fzf directory search                     |
+| `Ctrl+L` | Clear screen                             |
+| `Tab`    | History completion on empty command line |
 
 Common abbreviations:
 
@@ -231,26 +214,23 @@ gwl='git worktree list'              gwa='git worktree add'
 actx=ai_context                      actxc='ai_context | pbcopy'
 ```
 
-`c` and `cx` intentionally start unrestricted sessions. Use `cc` for normal
-Claude Code permissions, or `cxs` / `cxro` for constrained Codex sessions.
+`c` and `cx` intentionally start unrestricted sessions. Use `cc` for normal Claude Code permissions, or `cxs` / `cxro` for constrained Codex sessions.
 
 See `fish/README.md` for configuration and workflow details.
 
 ## Neovim
 
-`nvim/` is a LazyVim based configuration for Rust, Go, TypeScript, Python,
-Terraform, Lua, Bash, Zig, HTML/CSS, and AI-assisted coding.
+`nvim/` is a LazyVim based configuration for Rust, Go, TypeScript, Python, Terraform, Lua, Bash, Zig, HTML/CSS, and AI-assisted coding.
 
 Configuration layout:
 
 - `nvim/lua/config/`: LazyVim bootstrap, options, keymaps, autocmds
 - `nvim/lua/plugins/`: feature-grouped plugin specs
-- UI: catppuccin mocha, no statusline, `incline.nvim`, `noice.nvim`,
-  `snacks.nvim`, `oil.nvim`, `overlook.nvim`
+- UI: catppuccin mocha, no statusline, `incline.nvim`, `noice.nvim`, `snacks.nvim`, `oil.nvim`, `overlook.nvim`
 - Completion: `blink.cmp`
 - AI: CopilotChat, Avante, Signalbox, Codex, Claude Code
-- Search: Telescope, Snacks, fff
-- Git: gitsigns, CodeDiff, Diffview, LazyGit, gitlinker
+- Search: Snacks, fff
+- Git: gitsigns, CodeDiff, Diffview, LazyGit, Snacks gitbrowse
 - Rust: rustaceanvim, crates.nvim, neotest, DAP
 
 See `nvim/README.md` for plugin layout, LazyVim Extras, and keymaps.
@@ -266,9 +246,7 @@ Ghostty is the primary terminal config in `ghostty/config`.
 - AI-friendly scrollback and screen dump bindings
 - Split zoom, split equalization, and resize-mode bindings
 
-Warp settings are preserved in [`archive/warp/`](archive/warp/README.md).
-Bootstrap no longer installs Warp; `link.sh` removes the former repo-managed
-links without deleting the app or local settings.
+Warp settings are preserved in [`archive/warp/`](archive/warp/README.md). Bootstrap no longer installs Warp; `link.sh` removes the former repo-managed links without deleting the app or local settings.
 
 ## Validation
 
@@ -281,10 +259,7 @@ brew bundle check --file Brewfile
 ./scripts/audit-agent-config.sh
 ```
 
-For AI-history-derived changes, start with a bounded local aggregate from the
-installed Rust `nippo` CLI. Follow
-[`home-history-distill`](.agents/skills/home-history-distill/SKILL.md) for
-redaction and evidence review; do not commit raw logs.
+For AI-history-derived changes, start with a bounded local aggregate from the installed Rust `nippo` CLI. Follow [`home-history-distill`](.agents/skills/home-history-distill/SKILL.md) for redaction and evidence review; do not commit raw logs.
 
 ```bash
 rtk proxy nippo collect --days 7 --stats-only

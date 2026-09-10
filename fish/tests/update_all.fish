@@ -20,7 +20,7 @@ end
 mkdir -p "$UPDATE_ALL_TEST_DIR/bin" "$UPDATE_ALL_TEST_DIR/tmp"
 cp "$fish_dir/tests/fixtures/update_all-command" "$UPDATE_ALL_TEST_DIR/command"
 chmod +x "$UPDATE_ALL_TEST_DIR/command"
-for name in fish mktemp date brew mise codex nvim
+for name in fish mktemp date brew mise codex nvim pipx
     ln -s "$UPDATE_ALL_TEST_DIR/command" "$UPDATE_ALL_TEST_DIR/bin/$name"
 end
 set -gx PATH "$UPDATE_ALL_TEST_DIR/bin" /usr/bin /bin /usr/sbin /sbin
@@ -29,6 +29,39 @@ set -g fish_function_path "$fish_dir/functions" $fish_function_path
 set -e UPDATE_ALL_CODEX_ACTIVE
 
 set -l skips --no-claude --no-rust --no-nvim --no-mason --no-fisher --no-npm --no-cargo --no-go --no-uv --no-pipx --no-gem --no-mas
+
+set -l pipx_skips --no-brew --no-mise (string match -v -- --no-pipx $skips)
+printf '%s\n' 'caller input must not reach a non-interactive updater' >"$UPDATE_ALL_TEST_DIR/input"
+for mode in default --non-interactive --parallel
+    set -l mode_args $mode
+    if test "$mode" = default
+        set mode_args
+    end
+    for input in data closed
+        rm -f "$UPDATE_ALL_TEST_DIR/pipx.calls"
+        set -l code
+        if test "$input" = data
+            update_all $mode_args --no-codex $pipx_skips <"$UPDATE_ALL_TEST_DIR/input" >"$UPDATE_ALL_TEST_DIR/output" 2>&1
+            set code $status
+        else
+            update_all $mode_args --no-codex $pipx_skips <&- >"$UPDATE_ALL_TEST_DIR/output" 2>&1
+            set code $status
+        end
+        check "$mode with $input stdin succeeds" test $code -eq 0
+        check "$mode with $input stdin runs pipx" test -f "$UPDATE_ALL_TEST_DIR/pipx.calls"
+        check "$mode with $input stdin disables prompts" grep -qx 0 "$UPDATE_ALL_TEST_DIR/pipx.interactive"
+        check "$mode with $input stdin skips Codex" test ! -f "$UPDATE_ALL_TEST_DIR/codex.calls"
+        check "$mode with $input stdin removes success logs" test (count "$TMPDIR"/*) -eq 0
+    end
+    echo "PASS: $mode isolates updater stdin from caller input and closed descriptors"
+end
+
+if isatty stdin; and isatty stdout
+    update_all --no-codex $pipx_skips
+    check 'terminal updater keeps interactive stdin' test $status -eq 0
+    check 'terminal updater enables prompts' grep -qx 1 "$UPDATE_ALL_TEST_DIR/pipx.interactive"
+    echo 'PASS: terminal updater keeps interactive stdin'
+end
 
 for mode in default --non-interactive --parallel
     set -l mode_args $mode

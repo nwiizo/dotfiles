@@ -277,18 +277,3 @@ vim.api.nvim_create_autocmd("FileChangedShellPost", {
 -- Disable spell check for markdown (Japanese text causes false positives)
 -- LazyVim enables spell via lazyvim_wrap_spell autocmd group
 pcall(vim.api.nvim_del_augroup_by_name, "lazyvim_wrap_spell")
-
--- Ensure line numbers are always enabled
-local line_numbers = vim.api.nvim_create_augroup("nwiizo_line_numbers", { clear = true })
-vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter", "WinEnter" }, {
-  group = line_numbers,
-  callback = function()
-    local exclude_ft =
-      { "NvimTree", "lazy", "mason", "help", "TelescopePrompt", "Avante", "AvanteInput", "snacks_dashboard" }
-    if not vim.tbl_contains(exclude_ft, vim.bo.filetype) then
-      vim.wo.number = true
-      vim.wo.relativenumber = true
-    end
-  end,
-  desc = "Ensure line numbers are always shown",
-})

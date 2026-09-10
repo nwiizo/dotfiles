@@ -1,38 +1,14 @@
 -- Navigation & Search plugins
--- LazyVim manages: Snacks.nvim, flash.nvim, persistence.nvim, telescope
+-- LazyVim manages: Snacks.nvim (picker included), flash.nvim, persistence.nvim
 return {
-  -- Snacks.nvim: Override LazyVim defaults
+  -- Snacks.nvim: Override LazyVim defaults. Feature toggles, zen/zoom keys, <leader>gg and the
+  -- lazygit theme already come from LazyVim and Snacks defaults.
   {
     "folke/snacks.nvim",
     opts = {
       dashboard = { enabled = false },
-      bigfile = { enabled = true },
-      notifier = { enabled = true },
-      quickfile = { enabled = true },
-      statuscolumn = { enabled = false },
-      words = { enabled = true },
-      indent = { enabled = true },
-      scroll = { enabled = true },
-      zen = { enabled = true },
-      rename = { enabled = true },
-      input = { enabled = true },
-      terminal = { enabled = true, win = { style = "terminal" } },
-      lazygit = {
-        configure = true,
-        config = {
-          os = { editPreset = "nvim-remote" },
-          gui = { nerdFontsVersion = "3" },
-        },
-        theme_path = vim.fs.normalize(vim.fn.stdpath("cache") .. "/lazygit-theme.yml"),
-        theme = {
-          [241] = { fg = "Special" },
-          activeBorderColor = { fg = "MatchParen", bold = true },
-          defaultFgColor = { fg = "Normal" },
-          inactiveBorderColor = { fg = "FloatBorder" },
-          selectedLineBgColor = { bg = "Visual" },
-          unstagedChangesColor = { fg = "DiagnosticError" },
-        },
-      },
+      -- <leader>gB opens and <leader>gY copies a permalink for the cursor line or visual range.
+      gitbrowse = { what = "permalink" },
       picker = {
         sources = {
           files = { hidden = true, ignored = false },
@@ -51,11 +27,11 @@ return {
         desc = "Smart Picker",
       },
       {
-        "<leader>gg",
+        "<C-p>",
         function()
-          Snacks.lazygit.open()
+          LazyVim.pick("files")()
         end,
-        desc = "LazyGit",
+        desc = "Find Files (Root Dir)",
       },
       {
         "<leader>gl",
@@ -78,20 +54,6 @@ return {
         end,
         desc = "Changed Files (Git Root)",
       },
-      {
-        "<leader>uz",
-        function()
-          Snacks.zen()
-        end,
-        desc = "Toggle Zen Mode",
-      },
-      {
-        "<leader>uZ",
-        function()
-          Snacks.zen.zoom()
-        end,
-        desc = "Toggle Zen Zoom",
-      },
     },
   },
 
@@ -100,42 +62,6 @@ return {
     "axkirillov/hbac.nvim",
     event = "VeryLazy",
     opts = { autoclose = true, threshold = 10, close_buffers_with_windows = false },
-  },
-
-  -- telescope: Override for custom layout and insert-mode navigation
-  {
-    "nvim-telescope/telescope.nvim",
-    opts = function(_, opts)
-      local actions = require("telescope.actions")
-      -- Retain LazyVim's Trouble, Flash, search command, and window selection.
-      return vim.tbl_deep_extend("force", opts, {
-        defaults = {
-          prompt_prefix = "   ",
-          selection_caret = " ",
-          sorting_strategy = "ascending",
-          layout_config = { horizontal = { prompt_position = "top", preview_width = 0.55 } },
-          file_ignore_patterns = { "node_modules", ".git/", "target/", "dist/", "build/" },
-          mappings = {
-            i = {
-              ["<C-j>"] = actions.move_selection_next,
-              ["<C-k>"] = actions.move_selection_previous,
-              ["<Esc>"] = actions.close,
-            },
-          },
-        },
-        pickers = {
-          find_files = { hidden = true },
-          live_grep = {
-            additional_args = function()
-              return { "--hidden" }
-            end,
-          },
-        },
-      })
-    end,
-    keys = {
-      { "<C-p>", "<cmd>Telescope find_files<cr>", desc = "Find Files" },
-    },
   },
 
   -- fff: Rust-backed file/content search with typo tolerance and frecency.
@@ -193,12 +119,10 @@ return {
     },
   },
 
-  -- flash.nvim: Override for rainbow labels
+  -- flash.nvim: Override for rainbow labels (label set and multi_window are defaults)
   {
     "folke/flash.nvim",
     opts = {
-      labels = "asdfghjklqwertyuiopzxcvbnm",
-      search = { multi_window = true },
       label = { rainbow = { enabled = true, shade = 5 } },
       modes = { char = { jump_labels = true } },
     },
