@@ -4,7 +4,7 @@ local function codex_changes()
   local status = require("codex").status()
   local cwd = status.cwd or status.resolved_cwd
   if not cwd then
-    vim.notify("Codex: 変更を確認するディレクトリを特定できません", vim.log.levels.WARN)
+    vim.notify("Codex: cannot determine which directory to review", vim.log.levels.WARN)
     return
   end
   -- Use the session's project even when invoked from its terminal or another tab.
@@ -27,35 +27,35 @@ local function codex_actions()
   local running = codex.status().running
   local actions = {
     {
-      label = running and "追加依頼を書く（同じ会話・Ctrl-Sで送信）"
-        or "現在のファイルについて依頼を書く",
+      label = running and "Write a follow-up (same conversation, Ctrl-S to send)"
+        or "Write a request about the current file",
       run = running and codex.follow_up or codex.ask,
     },
-    { label = "回答・会話を開く", run = codex.open },
-    { label = "変更を確認する（CodeDiff・qで戻る）", run = codex_changes },
-    { label = "変更のレビュー依頼を書く", run = codex_review },
-    { label = "編集へ戻る（会話は継続）", run = codex.close },
+    { label = "Open the conversation", run = codex.open },
+    { label = "Review changes (CodeDiff, q to return)", run = codex_changes },
+    { label = "Write a review request for the changes", run = codex_review },
+    { label = "Back to editing (conversation keeps running)", run = codex.close },
     {
-      label = "接続状態を確認する",
+      label = "Show connection status",
       run = function()
         vim.cmd.CodexStatus()
       end,
     },
     {
-      label = "回答画面の操作を確認する",
+      label = "Show answer-window controls",
       run = function()
         vim.notify(
-          "続けて入力してEnter: 追加依頼\nEsc Esc: 回答をスクロール・選択・yでコピー / i: 入力へ\n"
-            .. "Alt-a: 操作一覧 / Alt-d: 変更確認 / Alt-q: 編集へ戻る\n"
-            .. "実行中の中断・承認はCodex画面の案内に従って操作します。",
+          "Type and press Enter: follow-up request\nEsc Esc: scroll or select the answer, y copies / i: back to input\n"
+            .. "Alt-a: actions / Alt-d: review changes / Alt-q: back to editing\n"
+            .. "While a turn is running, follow the Codex window prompts to interrupt or approve.",
           vim.log.levels.INFO,
-          { title = "Codex の操作" }
+          { title = "Codex controls" }
         )
       end,
     },
   }
   vim.ui.select(actions, {
-    prompt = "Codex: 次の操作",
+    prompt = "Codex: next action",
     format_item = function(action)
       return action.label
     end,
