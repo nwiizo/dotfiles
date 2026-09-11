@@ -131,7 +131,8 @@ abbr --add -- ktn 'kubectl top nodes'
 # Abbreviations: AI tools
 # ローカル例外: この c/cx 設定では「短いaliasは安全な既定にする」規約を無視し、permission bypassで起動する。
 abbr --add -- c 'claude --dangerously-skip-permissions'
-abbr --add -- cc claude
+# cl, not cc: cc is the system C compiler and must stay reachable.
+abbr --add -- cl claude
 abbr --add -- cr 'claude --resume'
 abbr --add -- clp 'claude -p'
 abbr --add -- cplan 'claude --permission-mode plan'

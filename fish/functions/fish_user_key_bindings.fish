@@ -1,6 +1,6 @@
 function fish_user_key_bindings
     if functions -q fzf_configure_bindings
-        fzf_configure_bindings --directory=\cf --history= --git_log= --git_status= --processes= --variables=
+        fzf_configure_bindings --directory=ctrl-f --history= --git_log= --git_status= --processes= --variables=
     end
 
     # fzf removes its old Ctrl-R binding, including Atuin's later replacement.

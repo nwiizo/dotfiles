@@ -29,7 +29,7 @@ because the repo carries a Fish 4.x compatibility override for that release.
 The short aliases intentionally start unrestricted sessions: `c` expands to
 `claude --dangerously-skip-permissions`, and `cx` expands to
 `codex --dangerously-bypass-approvals-and-sandbox`. This is a local exception
-that overrides the guarded-default convention for these two aliases. Use `cc`
+that overrides the guarded-default convention for these two aliases. Use `cl`
 for normal Claude Code permissions, `cxs` for workspace-write Codex with
 approval prompts, or `cxro` for read-only Codex.
 

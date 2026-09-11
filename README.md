@@ -214,7 +214,7 @@ gwl='git worktree list'              gwa='git worktree add'
 actx=ai_context                      actxc='ai_context | pbcopy'
 ```
 
-`c` and `cx` intentionally start unrestricted sessions. Use `cc` for normal Claude Code permissions, or `cxs` / `cxro` for constrained Codex sessions.
+`c` and `cx` intentionally start unrestricted sessions. Use `cl` for normal Claude Code permissions, or `cxs` / `cxro` for constrained Codex sessions.
 
 See `fish/README.md` for configuration and workflow details.
 
