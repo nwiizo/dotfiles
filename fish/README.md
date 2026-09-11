@@ -178,14 +178,16 @@ rtk proxy script -q /dev/null fish --no-config fish/tests/update_all.fish
 | `kc` | Select a context from the local kubeconfig and make it current |
 | `de [command...]` | Select a running Docker container and run the command, or `sh` by default |
 | `Ctrl-F` | Search files and directories with fzf |
-| `Ctrl-R` / `fh` | Search history with Atuin |
+| `Ctrl-R` | Search history with fzf |
+| `fh` | Search history with Atuin (synced, with stats) |
 | Tab on an empty command line | Search history with fzf |
 | `Ctrl-L` | Clear the screen and redraw the prompt with Fish's built-in `clear-screen` |
 
 Cancelling a picker leaves the branch or context unchanged and does not execute
 a container command. These pickers use the installed Git, kubectl, Docker,
-fzf, and Atuin commands; they do not require peco. User key bindings reapply
-Atuin's `Ctrl-R` binding after fzf removes its previous bindings.
+and fzf commands; they do not require peco. Atuin still records history and
+backs `fh`, but its own `Ctrl-R` and Up-arrow bindings are disabled so fzf.fish
+owns `Ctrl-R`.
 
 Bindings use Fish's [named keys and input functions](https://fishshell.com/docs/current/cmds/bind.html).
 No external `clear` process is needed to redraw the prompt.

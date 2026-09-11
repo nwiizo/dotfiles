@@ -305,4 +305,5 @@ type -q zoxide; and __nwiizo_cached_init zoxide zoxide init fish --cmd z
 # Keep Fish's native Git completion, which handles non-ASCII paths correctly.
 set -gx CARAPACE_EXCLUDES git
 type -q carapace; and __nwiizo_cached_init carapace-excluding-git carapace _carapace fish
-type -q atuin; and __nwiizo_cached_init atuin atuin init fish --disable-up-arrow
+# Atuin records history and powers `fh`; fzf.fish owns Ctrl-R (see fish_user_key_bindings).
+type -q atuin; and __nwiizo_cached_init atuin atuin init fish --disable-up-arrow --disable-ctrl-r
