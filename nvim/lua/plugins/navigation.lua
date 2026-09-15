@@ -1,5 +1,14 @@
 -- Navigation & Search plugins
 -- LazyVim manages: Snacks.nvim (picker included), flash.nvim, persistence.nvim
+local function television(channel, cwd)
+  return function()
+    require("config.television").open({
+      channel = channel,
+      cwd = cwd == "config" and vim.fn.stdpath("config") or cwd == "cwd" and vim.fn.getcwd() or LazyVim.root(),
+    })
+  end
+end
+
 return {
   -- Snacks.nvim: Override LazyVim defaults. Feature toggles, zen/zoom keys, <leader>gg and the
   -- lazygit theme already come from LazyVim and Snacks defaults.
@@ -14,24 +23,34 @@ return {
           files = { hidden = true, ignored = false },
           grep = { hidden = true },
           buffers = { current = false },
+          -- ghq stores repositories as ~/ghq/<host>/<owner>/<repo>.
+          projects = { dev = { "~/ghq" }, max_depth = 4, patterns = { ".git" } },
         },
         win = { input = { keys = { ["<Esc>"] = { "close", mode = { "n", "i" } } } } },
       },
     },
     keys = {
+      { "<leader><leader>", LazyVim.pick("smart"), desc = "Smart Picker (Root)" },
+      { "<C-p>", television("files"), desc = "Find Files (Television, Root)" },
+      { "<leader>ff", television("files"), desc = "Find Files (Television, Root)" },
+      { "<leader>fF", television("files", "cwd"), desc = "Find Files (Television, cwd)" },
+      { "<leader>fc", television("files", "config"), desc = "Find Config File (Television)" },
+      { "<leader>/", television("text"), desc = "Search Text (Television, Root)" },
+      { "<leader>sg", television("text"), desc = "Search Text (Television, Root)" },
+      { "<leader>sG", television("text", "cwd"), desc = "Search Text (Television, cwd)" },
       {
-        "<leader><leader>",
+        "<leader>fm",
         function()
-          Snacks.picker.smart()
+          Snacks.picker.buffers({ modified = true, current = true })
         end,
-        desc = "Smart Picker",
+        desc = "Modified Buffers",
       },
       {
-        "<C-p>",
+        "<leader>sP",
         function()
-          LazyVim.pick("files")()
+          Snacks.picker.pickers()
         end,
-        desc = "Find Files (Root Dir)",
+        desc = "Picker Sources",
       },
       {
         "<leader>gl",
@@ -54,6 +73,13 @@ return {
         end,
         desc = "Changed Files (Git Root)",
       },
+      {
+        "<leader>gT",
+        function()
+          require("config.television").open({ channel = "git-diff", cwd = LazyVim.root.git() or LazyVim.root() })
+        end,
+        desc = "Changed Files (Television, Git Root)",
+      },
     },
   },
 
@@ -64,10 +90,9 @@ return {
     opts = { autoclose = true, threshold = 10, close_buffers_with_windows = false },
   },
 
-  -- fff: Rust-backed file/content search with typo tolerance and frecency.
+  -- Keep typo-tolerant/frecency search and live regex as dedicated alternatives.
   {
     "dmtrKovalenko/fff",
-    -- Numeric commit tags can win over release tags with version = "*".
     version = "^0.10.6",
     lazy = true,
     build = function()

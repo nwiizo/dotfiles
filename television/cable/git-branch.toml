@@ -1,0 +1,11 @@
+[metadata]
+name = "git-branch"
+description = "Local Git branches, newest first"
+requirements = ["git"]
+
+[source]
+command = "git for-each-ref --sort=-committerdate --format='%(refname:short)' refs/heads/"
+no_sort = true
+
+[preview]
+command = "git log --oneline --decorate --color=always -20 '{replace:s/'/'\\''/g}' --"

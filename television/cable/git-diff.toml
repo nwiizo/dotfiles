@@ -1,0 +1,15 @@
+[metadata]
+name = "git-diff"
+description = "Staged, unstaged and untracked files"
+requirements = ["git", "bat"]
+
+[source]
+command = "{ git diff --name-only --relative -z; git diff --cached --name-only --relative -z; git ls-files --others --exclude-standard -z; } | sort -zu"
+entry_delimiter = "\u0000"
+
+[preview]
+command = [
+  { name = "Changes", run = "printf 'UNSTAGED\\n'; git diff --color=always -- '{replace:s/'/'\\''/g}'; printf '\\nSTAGED\\n'; git diff --cached --color=always -- '{replace:s/'/'\\''/g}'; printf '\\nFILE\\n'; bat --color=always --style=numbers --line-range :200 -- '{replace:s/'/'\\''/g}'" },
+  { name = "Worktree", run = "git diff --color=always -- '{replace:s/'/'\\''/g}'" },
+  { name = "Staged", run = "git diff --cached --color=always -- '{replace:s/'/'\\''/g}'" },
+]

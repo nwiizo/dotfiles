@@ -24,6 +24,79 @@ because the repo carries a Fish 4.x compatibility override for that release.
 3. Run `fish ../scripts/install-fish-plugins.fish` when changing plugins.
 4. New shells pick up changes; reload the shell with `exec fish`.
 
+## Development setup (2026-09-15)
+
+Validated with Fish `4.9.3`, the current release listed in the
+[official release notes](https://fishshell.com/docs/current/relnotes.html).
+It includes recent macOS keyboard-layout and IME fixes. The configuration uses
+Fish 4.9's abbreviation descriptions and Fish 4.8's separate colors for builtins
+and functions. Start a new shell with `reload` after editing; sourcing
+`config.fish` again is skipped by its once-per-shell guard.
+
+### Prompt and colors
+
+The native two-line prompt shares Catppuccin Mocha colors with Ghostty and
+Neovim. It highlights the repository name, shows Git changes and upstream
+distance, and adds background jobs, command durations above two seconds, and
+failed exit codes when relevant. For example:
+
+```text
+╭─ ~/g/g/n/dotfiles   main !⇡1  3s
+╰─❯ cargo test
+```
+
+Completed commands collapse to `❯` using `fish_transient_prompt`. Directory
+shortening uses native `prompt_pwd`, including its control-character handling.
+With `NO_COLOR`, paths, status information, and the input marker remain visible.
+The prompt uses Fish helpers and the installed Nerd Font.
+
+Syntax colors distinguish external commands, builtins, functions, options,
+quoted strings, and errors. Suggestions use a brighter gray, and completion
+selections use an explicit background. Colors are global variables set in
+`config.fish`, so repository settings take precedence over local universal
+variables without rewriting `fish_variables`.
+
+### Discoverable shortcuts and previews
+
+`repo`, `gb`, `ff`, `fgl`, `fgs`, `fp`, `fh`, `gwl`, and other workflow
+abbreviations include descriptions in the completion pager via
+[`abbr --description`](https://fishshell.com/docs/current/cmds/abbr.html).
+For example, type `rep` and press Tab to see what `repo` does.
+
+Television uses rounded borders and Catppuccin colors shared with Ghostty.
+File previews use bat; directory previews use eza's tree view. Reviewed channels
+live in [`television/cable/`](../television/cable/), shared with Neovim.
+Hidden files are searchable while `.git` and `node_modules` are excluded;
+normal ignore files still apply.
+
+Fish's native editing remains useful alongside the pickers:
+
+| Shortcut | Action |
+|---|---|
+| `Right` at the end of input | Accept the autosuggestion |
+| `Alt+F` | Accept the next suggested word |
+| `Alt+E` / `Alt+V` | Edit the command buffer in Neovim |
+| `Ctrl+S` while the completion pager is open | Search completion candidates |
+
+These come from Fish's [interactive features](https://fishshell.com/docs/current/interactive.html).
+Ghostty reserves `Cmd` combinations for pane navigation, leaving Fish's
+`Ctrl+U`, `Ctrl+W`, and `Ctrl+L` editing actions available.
+
+### Validation
+
+```fish
+rtk proxy fish -n fish/config.fish
+rtk proxy fish -n fish/functions/fish_prompt.fish
+rtk proxy fish -n fish/functions/fish_user_key_bindings.fish
+rtk proxy fish --no-config fish/tests/prompt.fish
+```
+
+The prompt checks cover rendering without color, transient output, failed
+commands and pipelines, and duration formatting. Also exercise the interactive
+completion descriptions and Television previews after changing their settings.
+Run `rtk proxy fish --no-config fish/tests/television.fish` for insertion,
+multiline history, cancellation, operation arguments, and literal-path previews.
+
 ## Agent-assisted workflow
 
 The short aliases intentionally start unrestricted sessions: `c` expands to
@@ -119,9 +192,24 @@ and a Homebrew core formula. It adds interactive multi-file operations and
 previews to the shell; Oil remains the Neovim file explorer. Yazi is under
 active development, so check release notes when updating.
 
-Other popular options were considered: Television overlaps with the existing
-fzf pickers, while Starship and Tide replace the custom prompt. The current
-Atuin, zoxide, Fisher, and fzf.fish integrations already cover their workflows.
+Television replaced the fzf pickers on 2026-09-15. Starship and Tide would replace
+the native prompt, which remains intentionally small. Atuin records history,
+zoxide ranks directories, and Fisher manages the editing plugins.
+
+## Database browsing with rainfrog
+
+Run `rainfrog` for a Rust-based database TUI with Vim-style navigation, a query
+editor, history, favorites and a result table. It supports PostgreSQL, MySQL and
+SQLite. Homebrew manages the binary through `Brewfile`; connection settings,
+history and exports stay outside this repository.
+
+Selected on 2026-09-15: version `0.4.5`, 5,332 GitHub stars, active Rust project
+and a Homebrew core formula with no runtime dependencies. It replaces the local
+mycli installation, whose Homebrew formula requires fzf. This is a separate
+interface, so use `rainfrog` explicitly rather than aliasing `mycli` to it.
+See the [upstream usage guide](https://github.com/achristmascarl/rainfrog#usage)
+for connection options. Upstream treats MySQL and SQLite as tier 2 and does not
+recommend production write access.
 
 ## Updating tools and handling failures
 
@@ -180,21 +268,44 @@ rtk proxy script -q /dev/null fish --no-config fish/tests/update_all.fish
 
 | Shortcut | Action |
 |---|---|
-| `repo` / `Alt-J` / `Ctrl-G` | Select a ghq repository with fzf and change directory |
+| `repo` / `Alt-J` / `Ctrl-G` | Select a ghq repository with Television and change directory |
 | `gb` / `Ctrl-B` | Select a local Git branch and switch without forcing away changes |
 | `kc` | Select a context from the local kubeconfig and make it current |
 | `de [command...]` | Select a running Docker container and run the command, or `sh` by default |
-| `Ctrl-F` | Search files and directories with fzf |
-| `Ctrl-R` | Search history with fzf |
+| `Ctrl-T` | Choose a Television channel based on the current command |
+| `ff` / `Ctrl-F` | Search files and directories with Television |
+| `Ctrl-R` | Search current Fish history with Television |
+| `Ctrl-Alt-L` | Browse Git commits with a diff preview |
+| `Ctrl-Alt-S` | Pick changed files with a diff preview |
+| `Ctrl-Alt-P` | Search running processes |
 | `fh` | Search history with Atuin (synced, with stats) |
-| Tab on an empty command line | Search history with fzf |
+| `zi [keywords...]` | Select a frequent directory from zoxide with Television |
+| Tab on an empty command line | Search history with Television |
 | `Ctrl-L` | Clear the screen and redraw the prompt with Fish's built-in `clear-screen` |
 
 Cancelling a picker leaves the branch or context unchanged and does not execute
 a container command. These pickers use the installed Git, kubectl, Docker,
-and fzf commands; they do not require peco. Atuin still records history and
-backs `fh`, but its own `Ctrl-R` and Up-arrow bindings are disabled so fzf.fish
-owns `Ctrl-R`.
+and Television commands. Atuin still records history and backs `fh`, but its
+own `Ctrl-R` and Up-arrow bindings are disabled. `z` keeps ordinary directory
+completion; Tab after search keywords opens ranked Television selection and
+jumps to the chosen directory. `zi` opens that selection directly.
+
+`repo`, `gb`, `kc`, and `de` expand to `git_tv_ghq`, `git_tv_branch`,
+`kubectl_tv_ctx`, and `docker_tv_exec`. Their descriptions remain visible in
+Fish completion. `fgl`, `fgs`, `fp`, and `fv` insert commits, changed paths,
+process IDs, and variable names into the command buffer.
+
+The Fish helpers merge other sessions' history outside private mode, then feed
+the current shell's timestamped history to Television with NUL entry separators.
+Multiline and unsaved commands remain intact, with syntax-colored previews.
+Several commands can be selected with Tab; selection only edits the command
+buffer, and Enter executes it. `fv` previews full variable values and their
+scope/export information, including local variables at the invocation site.
+Smart completion
+filters paths from the current working directory; `Ctrl-F` on a directory path
+ending in `/` searches that directory instead. The native `tv init fish` hook
+is not also loaded, avoiding duplicate bindings and its separate history source.
+See the [Television guide](../television/README.md) for picker controls.
 
 Bindings use Fish's [named keys and input functions](https://fishshell.com/docs/current/cmds/bind.html).
 No external `clear` process is needed to redraw the prompt.
@@ -229,7 +340,7 @@ the Fisher `done` plugin is intentionally not installed.
 
 - `fish_variables` — local Fish universal variables/runtime state.
 - `~/.config/fish/fish_plugins` — Fisher's normalized installed plugin file.
-- Tool caches and histories (`atuin`, `fzf`, shell history).
+- Tool caches and histories (`atuin`, `television`, shell history).
 
 ## Editing Rules
 

@@ -1,108 +1,87 @@
-# Catppuccin Mocha prompt — replaces Starship
-#
-# Layout:
-#   [line1] dir  branch status  jobs duration  exit
-#   [line2] ❯
-
+# Catppuccin Mocha prompt using Fish's native Git and path helpers.
+# Completed commands collapse to ❯ via fish_transient_prompt.
 function fish_prompt
     set -l last_status $status
     set -l last_pipestatus $pipestatus
     set -l last_duration $CMD_DURATION
 
-    # Catppuccin Mocha palette
     set -l c_red f38ba8
     set -l c_green a6e3a1
     set -l c_yellow f9e2af
     set -l c_blue 89b4fa
     set -l c_lavender b4befe
-    set -l c_mauve cba6f7
-    set -l c_maroon eba0ac
+    set -l c_frame 7f849c
+    set -l c_status $c_green
+    test $last_status -ne 0; and set c_status $c_red
 
-    # Transient prompt: ❯ only
+    # Keep text separate from set_color: it may produce nothing with NO_COLOR.
     if contains -- --final-rendering $argv
-        if test $last_status -eq 0
-            echo -n (set_color --bold $c_green)'❯ '(set_color normal)
-        else
-            echo -n (set_color --bold $c_red)'❯ '(set_color normal)
-        end
+        set_color --bold $c_status
+        printf '❯ '
+        set_color normal
         return
     end
 
-    # Newline before prompt (separates from previous command output)
-    echo
+    printf '\n'
+    set_color $c_frame
+    printf '╭─ '
 
-    # ── Directory with repo root highlighting ──
-    set -l git_root (git rev-parse --show-toplevel 2>/dev/null)
-
+    # Native prompt_pwd shortens and sanitizes the path around the repo root.
+    set -l git_root (command git rev-parse --show-toplevel 2>/dev/null)
+    set_color $c_lavender
     if test -n "$git_root"
-        set -l repo_name (path basename $git_root)
-        set -l cwd (pwd)
-        # Path before repo root (abbreviated)
-        set -l parent (string replace $HOME '~' (path dirname $git_root))
-        set -l abbreviated_parent (string replace -ar '([^/])[^/]+/' '$1/' $parent)
-
-        if test "$cwd" = "$git_root"
-            echo -n (set_color $c_lavender)$abbreviated_parent/(set_color --bold $c_blue)$repo_name(set_color normal)
-        else
-            set -l rel_path (string replace "$git_root/" '' $cwd)
-            # Abbreviate intermediate dirs to 1 char, keep last full
-            set -l parts (string split '/' $rel_path)
-            set -l display_parts
-            for i in (seq (count $parts))
-                if test $i -eq (count $parts)
-                    set -a display_parts $parts[$i]
-                else
-                    set -a display_parts (string sub -l 1 $parts[$i])
-                end
-            end
-            echo -n (set_color $c_lavender)$abbreviated_parent/(set_color --bold $c_blue)$repo_name(set_color normal)(set_color $c_lavender)/(string join '/' $display_parts)(set_color normal)
+        set -l parent (prompt_pwd --dir-length 1 --full-length-dirs 0 -- (path dirname "$git_root"))
+        set -l repo_name (path basename "$git_root" | string replace -ra '[[:cntrl:]]' '')
+        printf '%s/' "$parent"
+        set_color --bold $c_blue
+        printf '%s' "$repo_name"
+        set_color normal
+        if test "$PWD" != "$git_root"
+            set -l rel_path (string replace -- "$git_root/" '' "$PWD")
+            set_color $c_lavender
+            printf '/%s' (prompt_pwd --dir-length 1 --full-length-dirs 1 -- "$rel_path")
         end
     else
-        echo -n (set_color $c_lavender)(prompt_pwd --dir-length 1 --full-length-dirs 1)(set_color normal)
+        printf '%s' (prompt_pwd --dir-length 1 --full-length-dirs 1)
     end
+    set_color normal
 
-    # ── Git branch + status ──
-    echo -n (fish_git_prompt)
+    fish_git_prompt '   %s'
 
-    # ── Jobs ──
     set -l job_count (count (jobs -p))
     if test $job_count -gt 0
-        echo -n ' '(set_color $c_blue)' '$job_count(set_color normal)
+        set_color $c_blue
+        printf '  &%s' "$job_count"
+        set_color normal
     end
 
-    # ── Command duration (> 2s) ──
-    if test -n "$last_duration" -a "$last_duration" -gt 2000
+    if test -n "$last_duration"; and test "$last_duration" -gt 2000
         set -l secs (math --scale=0 "$last_duration / 1000")
+        set_color $c_yellow
         if test $secs -ge 3600
-            set -l h (math --scale=0 "$secs / 3600")
-            set -l m (math --scale=0 "$secs % 3600 / 60")
-            set -l s (math --scale=0 "$secs % 60")
-            echo -n ' '(set_color $c_yellow)"took {$h}h{$m}m{$s}s"(set_color normal)
+            printf '  %sh%sm%ss' (math --scale=0 "$secs / 3600") (math --scale=0 "$secs % 3600 / 60") (math --scale=0 "$secs % 60")
         else if test $secs -ge 60
-            set -l m (math --scale=0 "$secs / 60")
-            set -l s (math --scale=0 "$secs % 60")
-            echo -n ' '(set_color $c_yellow)"took {$m}m{$s}s"(set_color normal)
+            printf '  %sm%ss' (math --scale=0 "$secs / 60") (math --scale=0 "$secs % 60")
         else
-            echo -n ' '(set_color $c_yellow)"took {$secs}s"(set_color normal)
+            printf '  %ss' "$secs"
         end
+        set_color normal
     end
 
-    # ── Exit status (pipestatus) ──
     if test $last_status -ne 0
-        echo -n ' '(set_color $c_red)' '
+        set_color $c_red
         if test (count $last_pipestatus) -gt 1
-            echo -n '['(string join '|' $last_pipestatus)']'
+            printf '  ✗ [%s]' (string join '|' $last_pipestatus)
         else
-            echo -n $last_status
+            printf '  ✗ %s' "$last_status"
         end
-        echo -n (set_color normal)
+        set_color normal
     end
 
-    # ── Line break + character ──
-    echo
-    if test $last_status -eq 0
-        echo -n (set_color --bold $c_green)'❯ '(set_color normal)
-    else
-        echo -n (set_color --bold $c_red)'❯ '(set_color normal)
-    end
+    printf '\n'
+    set_color $c_frame
+    printf '╰─'
+    set_color --bold $c_status
+    printf '❯ '
+    set_color normal
 end

@@ -1,0 +1,14 @@
+[metadata]
+name = "dirs"
+description = "Directories with a tree preview"
+requirements = ["fd", "eza"]
+
+[source]
+command = "fd --type d --hidden --exclude .git --exclude node_modules --print0"
+entry_delimiter = "\u0000"
+
+[preview]
+command = "eza --all --tree --level=2 --color=always --icons --group-directories-first -- '{replace:s/'/'\\''/g}'"
+
+[keybindings]
+shortcut = "f2"

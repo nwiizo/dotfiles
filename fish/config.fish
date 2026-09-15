@@ -96,8 +96,8 @@ abbr --add -- gbl 'git blame'
 abbr --add -- gcl 'git clone'
 abbr --add -- grv 'git remote -v'
 abbr --add -- gwt 'git worktree'
-abbr --add -- gwl 'git worktree list'
-abbr --add -- gwa 'git worktree add'
+abbr --add --description='List worktrees and their branches' -- gwl 'git worktree list'
+abbr --add --description='Create a separate working directory' -- gwa 'git worktree add'
 
 # Abbreviations: Docker
 abbr --add -- d docker
@@ -160,7 +160,7 @@ abbr --add -- apr ai_pr
 
 # Abbreviations: agent-assisted development
 abbr --add -- ast ast-grep
-abbr --add -- awatch ai_watch
+abbr --add --description='Re-run a command when files change' -- awatch ai_watch
 abbr --add -- wx watchexec
 
 # Abbreviations: editor / TUI
@@ -187,62 +187,51 @@ abbr --add -- bench hyperfine
 abbr --add -- b bat
 abbr --add -- l 'eza --icons --group-directories-first'
 abbr --add -- reload 'exec fish'
-abbr --add -- private 'fish --private'
+abbr --add --description='Start a shell without persistent history' -- private 'fish --private'
 abbr --add -- myip 'curl -s ifconfig.me'
 abbr --add -- listening 'lsof -iTCP -sTCP:LISTEN -n -P'
 
-# Abbreviations: fzf shortcuts
-abbr --add -- ff _fzf_search_directory
-abbr --add -- fgl _fzf_search_git_log
-abbr --add -- fgs _fzf_search_git_status
-abbr --add -- fp _fzf_search_processes
-abbr --add -- fv _fzf_search_variables
-abbr --add -- fh 'atuin search -i'
-abbr --add -- gb git_fzf_branch
-abbr --add -- kc kubectl_fzf_ctx
-abbr --add -- de docker_fzf_exec
-abbr --add -- repo git_fzf_ghq
+# Abbreviations: Television shortcuts
+abbr --add --description='Find files and directories with a preview' -- ff '__tv_complete paths'
+abbr --add --description='Browse Git commits with a diff preview' -- fgl '__tv_complete git-log'
+abbr --add --description='Pick changed files with a diff preview' -- fgs '__tv_complete git-diff'
+abbr --add --description='Search running processes' -- fp '__tv_complete processes'
+abbr --add --description='Inspect shell variables' -- fv '__tv_variables (set --show | psub) (set --names | psub)'
+abbr --add --description='Search synced history with Atuin' -- fh 'atuin search -i'
+abbr --add --description='Select and switch a local Git branch' -- gb git_tv_branch
+abbr --add --description='Select a Kubernetes context' -- kc kubectl_tv_ctx
+abbr --add --description='Run a command in a selected container' -- de docker_tv_exec
+abbr --add --description='Find a ghq repository and change directory' -- repo git_tv_ghq
 
-# FZF configuration
-if type -q fzf
-    set -gx FZF_DEFAULT_OPTS "\
-        --height 50% \
-        --layout=reverse \
-        --border rounded \
-        --inline-info \
-        --preview-window=right:50%:wrap \
-        --bind='ctrl-/:toggle-preview' \
-        --bind='ctrl-u:preview-page-up' \
-        --bind='ctrl-d:preview-page-down' \
-        --color=fg:#cdd6f4,bg:#1e1e2e,hl:#f38ba8 \
-        --color=fg+:#cdd6f4,bg+:#313244,hl+:#f38ba8 \
-        --color=info:#89b4fa,prompt:#89dceb,pointer:#cba6f7 \
-        --color=marker:#a6e3a1,spinner:#cba6f7,header:#89b4fa \
-        --color=border:#6c7086,gutter:#1e1e2e"
-
-    if type -q fd
-        set -gx FZF_DEFAULT_COMMAND "fd --type f --hidden --follow --exclude .git --exclude node_modules"
-        set -gx FZF_CTRL_T_COMMAND "$FZF_DEFAULT_COMMAND"
-        set -gx FZF_ALT_C_COMMAND "fd --type d --hidden --follow --exclude .git --exclude node_modules"
-    else if type -q rg
-        set -gx FZF_DEFAULT_COMMAND "rg --files --hidden --follow --glob '!.git/*' --glob '!node_modules/*'"
-    end
-
-    if type -q bat; and type -q eza
-        set -gx FZF_CTRL_T_OPTS "--preview 'if test -d {}; eza --tree --level=2 --color=always --icons {}; else; bat --style=numbers,changes,header --color=always --line-range :500 {}; end'"
-        set -gx FZF_ALT_C_OPTS "--preview 'eza --tree --level=2 --color=always --icons {} | head -200'"
-    else if type -q bat
-        set -gx FZF_CTRL_T_OPTS "--preview 'bat --style=numbers,changes,header --color=always --line-range :500 {}'"
-    end
-end
-
-# Fish behavior
+# Catppuccin Mocha: global scope keeps the theme out of fish_variables.
 set -g fish_prompt_pwd_dir_length 3
-set -g fish_color_autosuggestion brblack
-set -g fish_pager_color_completion normal
-set -g fish_pager_color_description yellow
-set -g fish_pager_color_prefix cyan
-set -g fish_pager_color_progress cyan
+set -g fish_color_normal cdd6f4
+set -g fish_color_command 89b4fa
+set -g fish_color_builtin 89dceb
+set -g fish_color_function b4befe
+set -g fish_color_keyword cba6f7
+set -g fish_color_quote a6e3a1
+set -g fish_color_redirection f5c2e7
+set -g fish_color_end fab387
+set -g fish_color_error f38ba8 --bold
+set -g fish_color_param cdd6f4
+set -g fish_color_option fab387
+set -g fish_color_comment 7f849c
+set -g fish_color_selection --background=45475a
+set -g fish_color_search_match --background=45475a
+set -g fish_color_operator f5c2e7
+set -g fish_color_escape eba0ac
+set -g fish_color_autosuggestion 9399b2
+set -g fish_color_cancel f38ba8
+set -g fish_color_valid_path --underline
+set -g fish_pager_color_progress cdd6f4 --background=45475a
+set -g fish_pager_color_prefix cba6f7 --bold
+set -g fish_pager_color_completion cdd6f4
+set -g fish_pager_color_description a6adc8
+set -g fish_pager_color_selected_background --background=45475a
+set -g fish_pager_color_selected_prefix cba6f7 --bold
+set -g fish_pager_color_selected_completion cdd6f4
+set -g fish_pager_color_selected_description bac2de
 
 # Command-not-found: let mise auto-install tools, then fall back to fish.
 function __nwiizo_setup_cnf --on-event fish_prompt
@@ -301,9 +290,15 @@ set -g __fish_git_prompt_color_merging f9e2af
 set -g __fish_git_prompt_color_cleanstate a6e3a1
 
 # Tool integrations
-type -q zoxide; and __nwiizo_cached_init zoxide zoxide init fish --cmd z
+if type -q zoxide
+    __nwiizo_cached_init zoxide zoxide init fish --no-cmd
+    # Keep zoxide's ranking/hooks, with Television's autoloaded zi picker.
+    alias z __zoxide_z
+    complete --erase --command z
+    complete --command z --no-files --arguments '(__tv_z_complete)'
+end
 # Keep Fish's native Git completion, which handles non-ASCII paths correctly.
 set -gx CARAPACE_EXCLUDES git
 type -q carapace; and __nwiizo_cached_init carapace-excluding-git carapace _carapace fish
-# Atuin records history and powers `fh`; fzf.fish owns Ctrl-R (see fish_user_key_bindings).
+# Atuin records history and powers `fh`; Television owns Ctrl-R.
 type -q atuin; and __nwiizo_cached_init atuin atuin init fish --disable-up-arrow --disable-ctrl-r

@@ -1,0 +1,14 @@
+[metadata]
+name = "git-log"
+description = "Git commits with patch previews"
+requirements = ["git"]
+
+[source]
+command = "git log --no-show-signature --date=short --color=always --format='%H %C(auto)%h %ad %d %s %C(dim)[%an]%C(reset)'"
+ansi = true
+no_sort = true
+display = "{split: :1..}"
+output = "{strip_ansi|split: :0}"
+
+[preview]
+command = "git show --stat --patch --color=always '{strip_ansi|split: :0}' --"

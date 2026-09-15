@@ -1,0 +1,10 @@
+[metadata]
+name = "processes"
+description = "Processes, command arguments and resource usage"
+
+[source]
+command = "ps -ax -o pid=,command="
+output = "{trim|split: :0}"
+
+[preview]
+command = "ps -o pid,ppid,user,%cpu,rss,start,command -p '{trim|split: :0}'"

@@ -1,0 +1,13 @@
+[metadata]
+name = "git-repos"
+description = "ghq repositories"
+requirements = ["ghq", "git"]
+
+[source]
+command = "ghq list --full-path"
+
+[preview]
+command = "git -C '{replace:s/'/'\\''/g}' log --oneline --decorate --color=always -20"
+
+[keybindings]
+shortcut = "f3"

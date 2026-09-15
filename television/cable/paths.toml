@@ -1,0 +1,11 @@
+[metadata]
+name = "paths"
+description = "Files and directories for shell arguments"
+requirements = ["fd", "bat", "eza"]
+
+[source]
+command = "fd --hidden --exclude .git --exclude node_modules --print0"
+entry_delimiter = "\u0000"
+
+[preview]
+command = "if test -d '{replace:s/'/'\\''/g}'; then eza --all --tree --level=2 --color=always --icons -- '{replace:s/'/'\\''/g}'; else bat --color=always --style=numbers,changes,header --line-range :500 -- '{replace:s/'/'\\''/g}'; fi"

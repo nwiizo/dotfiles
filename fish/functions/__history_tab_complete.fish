@@ -2,12 +2,7 @@ function __history_tab_complete
     set -l cmd (commandline -b)
 
     if test -z "$cmd"
-        set -l selected (history | fzf --height=40% --layout=reverse --prompt="History: ")
-
-        if test -n "$selected"
-            commandline -r "$selected"
-            commandline -f repaint
-        end
+        __tv_history
     else
         commandline -f complete
     end

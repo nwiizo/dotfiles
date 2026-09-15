@@ -63,7 +63,7 @@ statusline/bufferlineを廃止し、必要な情報のみfloating windowで表�
 | バッファ薄暗化   | vimade             | 非アクティブバッファを dim     |
 | 関数コンテキスト | treesitter-context | 画面上部に関数ヘッダー固定     |
 | コードピーク     | overlook.nvim      | LSP定義をstackable popup表示   |
-| ファイル選択     | Snacks.nvim        | smart pickerでbufferline代替   |
+| ファイル選択     | Television         | Fishと同じ検索画面・配色       |
 
 ### incline.nvim 表示内容
 
@@ -91,7 +91,7 @@ nvim/
         ├── disabled.lua        # LazyVimデフォルト無効化
         ├── colorscheme.lua     # catppuccin mocha
         ├── ui.lua              # incline, modes, vimade, better-escape, noice override
-        ├── navigation.lua      # Snacks override, fff, oil, overlook, hbac
+        ├── navigation.lua      # Television, Snacks override, oil, overlook, hbac
         ├── git.lua             # gitsigns override, codediff, diffview
         ├── diagnostics.lua     # trouble override, todo-comments override, nvim-bqf
         ├── lsp.lua             # lspconfig, conform, mason, treesitter override
@@ -115,7 +115,6 @@ nvim/
 | `lang.yaml`       | yamlls + schemastore                            |
 | `lang.markdown`   | markdownlint + render-markdown                  |
 | `lang.terraform`  | terraform-ls                                    |
-| `lang.zig`        | zls                                             |
 
 Go の補完・定義ジャンプ・参照検索・整形・テスト・デバッグは [`lang.go` の公式設定](https://www.lazyvim.org/extras/lang/go)を使う。gopls・整形ツール・テストアダプターの既定値は個別設定にコピーせず、Extra の更新を引き継ぐ。gopls の設定を追加するときは、[現行版の設定一覧](https://go.dev/gopls/settings)で対応を確認する。
 
@@ -162,7 +161,7 @@ Other custom integrations live in feature files under `lua/plugins/`:
 
 2026-09-08の[人気・開発状況の調査](plugin-research.md)では、Snacks・Blink・Oilの継続を選んだ。入力ミスを許容する検索のfffと、変更に追従するレビュー画面のCodeDiffを導入した。SidekickとQuickerは追加候補として調査メモに残している。
 
-fffは `<leader>fP` でファイル、`<leader>sF` で内容を検索する。検索画面の `Shift-Tab` でplain・regex・fuzzyを切り替える。通常の検索は LazyVim 既定の Snacks picker で行う。数値だけの開発用タグを避けるため、バージョン範囲を `^0.10.6` に絞っている。
+2026-09-15に通常のファイル・本文検索とquickfixの絞り込みをTelevisionへ移行した。設定はFishと共通で、接続処理は `lua/config/television.lua` に置く。Smart Picker、ステージ操作付き変更一覧、LSPなどの検索はSnacks、入力ミス補正とplain・regex・fuzzy検索はfffを元のキーで使える。[操作・機能差・検証方法](../television/README.md)を参照。
 
 CodeDiffは `<leader>gR` で作業中の変更、`<leader>gV` でステージ済みの変更を表示する。画面内の `t` で左右分割とインラインを切り替え、`q` で閉じる。Diffviewのキーも使える。ネイティブライブラリとCodeDiffの変更監視バイナリはリリースから取得し、プラグインのリビジョンは `lazy-lock.json` で管理する。
 
@@ -208,23 +207,27 @@ CodeDiffは `<leader>gR` で作業中の変更、`<leader>gV` でステージ済
 
 | キー | モード | 説明 | 出典 |
 | --- | --- | --- | --- |
-| `<leader><leader>` | n | Smart Picker（ファイル+バッファ+最近使用） | P Snacks |
-| `<leader>/` | n | Grep（ルートディレクトリ） | L |
-| `<leader>ff` | n | ファイル検索 | L |
+| `<leader><leader>` | n | Smart Picker（ルートのファイル・バッファ・最近使用） | P Snacks |
+| `<leader>fp` | n | Projects（ghq配下と最近開いたリポジトリ） | P Snacks |
+| `<leader>fm` | n | 未保存バッファ一覧（現在のバッファも含む） | C Snacks |
+| `<leader>/` | n | 本文検索（ルート） | C Television |
+| `<leader>ff` / `<leader>fF` | n | ファイル検索（ルート / cwd） | C Television |
 | `<leader>fn` | n | 新規ファイル | L |
-| `<C-p>` | n | ファイル検索（ルート） | C Snacks |
+| `<C-p>` | n | ファイル検索（ルート） | C Television |
 | `<leader>fP` | n | 入力ミスを許容するファイル検索（ルート） | C fff |
 | `-` | n | Oil ファイルエクスプローラ | P oil |
 | `<leader>e` | n | Oil ファイルエクスプローラ | P oil |
 
 ### 検索 (`<leader>s` prefix)
 
-検索は LazyVim 既定の Snacks picker に統一している。picker 内では `Ctrl-J/K` で移動し、`<Esc>` で閉じる。Smart Picker と変更ファイル一覧も同じ picker を使う。
+通常のファイル・本文検索はTelevisionを使う。`Ctrl-J/K` で移動、`Tab` で複数選択、`Ctrl-Q` でquickfixへ送り、`Esc` で閉じる。本文検索はripgrepが返す行をTelevisionで絞り込む。入力ミス補正やlive regex検索はfff、エディタ内部の検索はSnacksが担当する。
 
 | キー | モード | 説明 | 出典 |
 | --- | --- | --- | --- |
-| `<leader>sg` | n | ルートディレクトリをGrep | L Snacks |
+| `<leader>sg` | n | 本文検索（ルート） | C Television |
 | `<leader>sF` | n | 内容検索（plain / regex / fuzzy） | C fff |
+| `<leader>sG` | n | 本文検索（cwd） | C Television |
+| `<leader>sq` | n | quickfixを検索して移動 | L Snacks |
 | `<leader>sw` | n,x | カーソル下の単語・選択範囲をGrep | L Snacks |
 | `<leader>sb` | n | 現在バッファ内の行検索 | L Snacks |
 | `<leader>sc` | n | コマンド履歴 | L Snacks |
@@ -233,8 +236,40 @@ CodeDiffは `<leader>gR` で作業中の変更、`<leader>gV` でステージ済
 | `<leader>sd` | n | 診断一覧 | L Snacks |
 | `<leader>ss` | n | LSPシンボル | L Snacks |
 | `<leader>sR` | n | 直前の検索を再開 | L Snacks |
+| `<leader>sP` | n | Snacksの検索機能一覧 | C Snacks |
+| `<leader>su` | n | Undo履歴のプレビューと復元 | L Snacks |
 | `<leader>st` / `<leader>sT` | n | TODO検索（全て / TODO・FIX・FIXME） | L todo-comments |
 | `<leader>sy` | n | ヤンク履歴 | P yanky |
+
+#### Snacks Pickerの標準機能と使い分け
+
+2026-09-15に[LazyVimの公式設定](https://www.lazyvim.org/extras/editor/snacks_picker)と
+[Snacksの公式ドキュメント](https://github.com/folke/snacks.nvim/blob/main/docs/picker.md)を確認した。
+SnacksはLazyVimの標準Pickerで、導入済みの `882c996` は確認時の上流mainと一致する。
+LSP・履歴・診断・Undo・Git操作は標準の連携を使う。fzf本体への依存はない。
+
+Smart Pickerは、開いているバッファ・最近使ったファイル・プロジェクト内のファイルをまとめ、
+利用頻度と最近の利用状況で並べる。検索起点はLazyVimが判定するルートに揃え、他のプロジェクトの
+履歴も残す。Projectsは `~/ghq/<host>/<owner>/<repo>` の `.git` を探すため、深さ4まで探索する。
+`<leader>sP` から検索機能を探せるので、使用頻度が低い機能に個別のキーを増やす必要はない。
+
+Snacksの入力欄では次の標準操作が使える。Gitなど一部の検索では専用操作が優先されるため、
+その画面の `?`（Normalモード）でキーを確認する。
+
+| 操作 | キー |
+| --- | --- |
+| 複数選択 / 検索結果を一括選択 | `Tab` / `Ctrl-A` |
+| 選択項目をquickfixへ送る | `Ctrl-Q` |
+| 分割 / 縦分割 / 新しいタブで開く | `Ctrl-S` / `Ctrl-V` / `Ctrl-T` |
+| 表示先ウィンドウを選んで開く | `Shift-Enter` |
+| ルートとcwdの切り替え | `Alt-C` |
+| 隠しファイル / ignore対象の表示切り替え | `Alt-H` / `Alt-I` |
+| プレビュー / 最大化の切り替え | `Alt-P` / `Alt-M` |
+| 入力履歴を移動 | `Ctrl-Up` / `Ctrl-Down` |
+
+画面幅に応じた横・縦レイアウトの切り替え、LSP移動時の既存ウィンドウの再利用、
+Git差分の色付きプレビューも公式の既定動作を引き継ぐ。Televisionのquickfix内で一括選択が
+必要になった場合も、`<leader>sq` のSnacksで絞り込み、`Ctrl-A` → `Ctrl-Q` を使える。
 
 ### バッファ管理
 
@@ -294,6 +329,7 @@ CodeDiffは `<leader>gR` で作業中の変更、`<leader>gV` でステージ済
 | `<leader>gl` | n | LazyGit Log | P Snacks |
 | `<leader>gf` | n | LazyGit ファイル履歴 | P Snacks |
 | `<leader>gC` | n | 変更ファイル一覧と差分プレビュー | P Snacks |
+| `<leader>gT` | n | 変更ファイル一覧と差分プレビュー | C Television |
 | `<leader>gR` | n | 変更に追従する差分レビュー | C CodeDiff |
 | `<leader>gV` | n | ステージ済み変更のレビュー | C CodeDiff |
 | `<leader>gd` | n | Working tree diff | P diffview |
@@ -361,7 +397,7 @@ CodeDiffは `<leader>gR` で作業中の変更、`<leader>gV` でステージ済
 | `<leader>yp` | n | リポジトリ相対のファイルパスをコピー | C |
 | `<leader>yl` | n,x | `path:line` / `path:start-end` をコピー | C |
 | `<leader>cx` | n | 現在ファイルに実行権限を付与 | C |
-| `zf` | qf | quickfix内をfzf風に絞り込み | P nvim-bqf |
+| `zf` | qf | quickfixをTelevisionで絞り込み | C Television |
 | `<C-x>` / `<C-v>` | qf | quickfix項目を水平/垂直分割で開く | P nvim-bqf |
 | `<C-a>` / `<C-x>` | n | インクリメント/デクリメント (dial拡張) | P dial |
 | `[y` / `]y` | n | ペースト後にヤンク履歴サイクル | P yanky |
@@ -375,7 +411,7 @@ CodeDiffは `<leader>gR` で作業中の変更、`<leader>gV` でステージ済
 
 ### AIエージェントによる外部編集
 
-エージェントが保存した変更は `<leader>gC` でファイルごとに確認できる。リポジトリのルートを対象に、ステージ前後の変更と未追跡ファイルを一覧にする。まとまった差分の確認には `<leader>gd`、ステージ済み差分には `<leader>gs` を使う。一覧表示には既存の [Snacks Git status picker](https://github.com/folke/snacks.nvim/blob/main/docs/picker.md#git_status) を利用する。
+エージェントが保存した変更は `<leader>gC` で確認でき、Snacksのステージ・復元操作も使える。`<leader>gT` はTelevisionの `git-diff` チャンネルで、ステージ前後の変更と未追跡ファイルを一覧にする。まとまった差分の確認には `<leader>gd`、ステージ済み差分には `<leader>gs` を使う。
 
 `autoread`と低頻度の`checktime`を利用し、Claude CodeやCodexが保存した未変更bufferは自動的に再読込する。focus/buffer/terminalの切り替えとnormal modeのidle時だけ確認し、カーソル移動ごとのfilesystem確認は行わない。
 

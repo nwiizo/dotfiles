@@ -1,0 +1,11 @@
+[metadata]
+name = "text"
+description = "Search project text with line previews"
+requirements = ["rg", "bat"]
+
+[source]
+command = "rg --line-number --column --no-heading --color=never --hidden --glob '!.git' --glob '!node_modules' ."
+
+[preview]
+command = "bat --color=always --style=numbers --highlight-line '{split:\\::1|replace:s/'/'\\''/g}' -- '{split:\\::0|replace:s/'/'\\''/g}'"
+offset = '{split:\::1}'

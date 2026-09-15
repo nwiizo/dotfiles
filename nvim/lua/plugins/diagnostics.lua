@@ -5,8 +5,19 @@ return {
   {
     "kevinhwang91/nvim-bqf",
     ft = "qf",
+    keys = {
+      {
+        "zf",
+        function()
+          require("config.television").quickfix()
+        end,
+        ft = "qf",
+        desc = "Filter Quickfix (Television)",
+      },
+    },
     opts = {
       auto_enable = true,
+      func_map = { fzffilter = "" },
       preview = {
         border = "rounded",
       },

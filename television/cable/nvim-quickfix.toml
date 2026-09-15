@@ -1,0 +1,14 @@
+[metadata]
+name = "nvim-quickfix"
+description = "Editor-owned quickfix input and buffer preview"
+requirements = ["bat"]
+
+# Neovim supplies both commands for each invocation.
+[source]
+command = "true"
+no_sort = true
+display = "{split:\t:4..}"
+
+[preview]
+command = "true"
+offset = "{split:\t:2}"

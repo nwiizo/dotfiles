@@ -1,10 +1,10 @@
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# Ghostty Configuration - 2026 AI Era
+# Ghostty Configuration - Development & Readability
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 #
-# Theme: Catppuccin Mocha (consistent with Neovim + Starship)
+# Theme: Catppuccin Mocha (consistent with Neovim + Fish)
 # Font:  Hack Nerd Font Mono
-# Shell: Fish 4.8+ with Starship prompt
+# Shell: Fish 4.9+ with native transient prompt
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 auto-update = check
@@ -33,7 +33,7 @@ macos-titlebar-style = tabs
 macos-option-as-alt = true
 macos-window-shadow = true
 macos-non-native-fullscreen = false
-window-colorspace = display-p3
+window-colorspace = srgb
 window-padding-x = 12
 window-padding-y = 12
 window-padding-balance = true
@@ -48,12 +48,12 @@ resize-overlay = after-first
 # Native overlay scrollbars (Ghostty 1.3+)
 scrollbar = system
 
-# Translucent glass effect (titlebar inherits this look)
-background-opacity = 0.90
+# Subtle transparency outside native fullscreen; changing opacity needs restart.
+background-opacity = 0.95
 background-blur = true
 
 # Split appearance (catppuccin mocha colors)
-unfocused-split-opacity = 0.65
+unfocused-split-opacity = 0.85
 unfocused-split-fill = #11111b
 split-divider-color = #313244
 focus-follows-mouse = false
@@ -80,26 +80,27 @@ keybind = cmd+zero=reset_font_size
 
 keybind = cmd+d=new_split:right
 keybind = cmd+shift+d=new_split:down
-keybind = cmd+|=new_split:right
 keybind = cmd+shift+minus=new_split:down
 
-# performable: pass to app (Neovim) when no splits exist
-keybind = performable:ctrl+h=goto_split:left
-keybind = performable:ctrl+j=goto_split:bottom
-keybind = performable:ctrl+k=goto_split:top
-keybind = performable:ctrl+l=goto_split:right
+# Keep Ctrl+H/J/K/L available to Fish and Neovim, even with Ghostty splits.
+# performable only checks Ghostty's action; it does not detect app keybindings.
+keybind = cmd+alt+h=goto_split:left
+keybind = cmd+alt+j=goto_split:bottom
+keybind = cmd+alt+k=goto_split:top
+keybind = cmd+alt+l=goto_split:right
 
 keybind = cmd+shift+enter=toggle_split_zoom
 keybind = cmd+ctrl+equal=equalize_splits
 split-preserve-zoom = navigation
 
-# Key table: Ctrl+W → R for resize mode, h/j/k/l to adjust, Esc to exit
-keybind = ctrl+w>r=activate_key_table:resize
+# Resize mode without intercepting Fish's Ctrl+W or Neovim's window prefix.
+keybind = cmd+ctrl+r=activate_key_table:resize
 keybind = resize/h=resize_split:left,10
 keybind = resize/j=resize_split:down,10
 keybind = resize/k=resize_split:up,10
 keybind = resize/l=resize_split:right,10
 keybind = resize/escape=deactivate_key_table
+keybind = resize/ctrl+c=deactivate_key_table
 keybind = resize/catch_all=ignore
 
 # ─── Tab Management ──────────────────────────────────────────────────────────
@@ -117,7 +118,7 @@ keybind = cmd+shift+left=goto_window:previous
 clipboard-read = ask
 clipboard-write = allow
 clipboard-trim-trailing-spaces = true
-copy-on-select = true
+copy-on-select = clipboard
 clipboard-paste-protection = true
 keybind = cmd+shift+c=copy_to_clipboard:html
 
@@ -139,25 +140,31 @@ cursor-click-to-move = true
 # 100 MB per terminal surface; allocated lazily by Ghostty
 scrollback-limit-bytes = 100000000
 
-keybind = ctrl+u=scroll_page_fractional:-0.5
-keybind = alt+b=scroll_page_up
-keybind = alt+g=scroll_to_top
-keybind = alt+shift+g=scroll_to_bottom
+# Leave Ctrl+U and Alt+B/G to shell editing and TUI applications.
+keybind = cmd+ctrl+u=scroll_page_fractional:-0.5
+keybind = cmd+ctrl+d=scroll_page_fractional:0.5
+# Native bindings: Cmd+PageUp/PageDown, Cmd+Home/End, Cmd+F/E/G for search.
 
 # ─── AI Workflow ──────────────────────────────────────────────────────────────
 
-# Auto-scroll on AI streaming output
-scroll-to-bottom = keystroke,output
+# Keep the reading position during streaming output; typing returns to bottom.
+scroll-to-bottom = keystroke,no-output
 
 # Clear selection on typing (reduce noise during AI output review)
 selection-clear-on-typing = true
-selection-clear-on-copy = true
+# Keep the copied selection available for Cmd+E (search selection).
+selection-clear-on-copy = false
 
 # Save terminal screen to file (useful for long Claude Code output)
 keybind = cmd+shift+s=write_screen_file:open,plain
 keybind = cmd+alt+shift+s=write_scrollback_file:open,plain
 
-# Freeze noisy panes/log output without killing the process
+# Copy a log file path, then paste it into the AI prompt when ready.
+keybind = cmd+ctrl+s=write_selection_file:copy,plain
+keybind = cmd+ctrl+shift+s=write_screen_file:copy,plain
+keybind = cmd+ctrl+l=write_scrollback_file:copy,plain
+
+# Block accidental input while reviewing output; the process keeps producing it.
 keybind = cmd+shift+r=toggle_readonly
 
 # Toggle mouse reporting for TUI apps
@@ -173,7 +180,7 @@ desktop-notifications = true
 # Prepend 🔔 while an unfocused surface needs attention; focusing or typing
 # clears the marker. Desktop notification sound is handled by OSC 9/777.
 bell-features = title,attention
-minimum-contrast = 1.2
+minimum-contrast = 3
 title-report = false
 enquiry-response =
 image-storage-limit = 320000000

@@ -30,6 +30,7 @@ Read this file for the overall model. Use the subdirectory docs when changing a 
 | Fish | `fish/README.md` | `fish/config.fish`, `fish/functions/`, `fish/fish_plugins` |
 | Neovim | `nvim/README.md` | `nvim/lua/config/`, `nvim/lua/plugins/` |
 | Ghostty | `ghostty/README.md` | `ghostty/config` |
+| Television | `television/README.md` | `television/config.toml`, `television/cable/` |
 | Git / GitHub CLI | `git/README.md` | `git/config`, `git/power_pull.sh`, `gh/config.yml` |
 | Small CLI configs | this README | `bat/`, `atuin/`, `tealdeer/` |
 | Agent config | `.agents/README.md` | reusable agents, rules, docs, and skills |
@@ -115,6 +116,7 @@ fish scripts/install-fish-plugins.fish
 | `ghostty/claude-notification.sh` | `~/.local/bin/ghostty-claude-notification` |
 | `bat/config` | `~/.config/bat/config` |
 | `atuin/config.toml` | `~/.config/atuin/config.toml` |
+| `television/config.toml`, `television/cable/*.toml` | `~/.config/television/config.toml`, `~/.config/television/cable/*.toml` |
 | `tealdeer/config.toml` | `~/.config/tealdeer/config.toml` |
 | `git/config` | `~/.config/git/config` |
 | `gh/config.yml` | `~/.config/gh/config.yml` |
@@ -154,13 +156,7 @@ The `update_all` Fish function updates common tools sequentially by default and 
 
 `tbls` uses Homebrew core because its old `k1low/tap` formula is deprecated.
 
-If bundle checks report a `libtiff`/`webp` dependency cycle, compare the installed
-receipts with `brew info --json=v2 libtiff webp` and check `brew linkage webp`.
-The `webp` 1.6.0 macOS bottle still links to `libtiff`, while the
-[current formula](https://github.com/Homebrew/homebrew-core/blob/HEAD/Formula/w/webp.rb)
-disables TIFF input to avoid that cycle. In this case, rebuild just `webp` with
-`rtk proxy brew reinstall --build-from-source webp`, then verify with
-`rtk proxy brew bundle check --file Brewfile`.
+If bundle checks report a `libtiff`/`webp` dependency cycle, compare the installed receipts with `brew info --json=v2 libtiff webp` and check `brew linkage webp`. The `webp` 1.6.0 macOS bottle still links to `libtiff`, while the [current formula](https://github.com/Homebrew/homebrew-core/blob/HEAD/Formula/w/webp.rb) disables TIFF input to avoid that cycle. In this case, rebuild just `webp` with `rtk proxy brew reinstall --build-from-source webp`, then verify with `rtk proxy brew bundle check --file Brewfile`.
 
 ```bash
 update_all
@@ -177,7 +173,8 @@ update_all --help
 
 | You want to change ... | Edit | Apply |
 | --- | --- | --- |
-| Shell env, PATH, abbreviations, fzf defaults | `fish/config.fish` | new shell or `exec fish` |
+| Shell env, PATH, abbreviations | `fish/config.fish` | new shell or `exec fish` |
+| Television channels and appearance | `television/` | next picker invocation |
 | Fish helper command | `fish/functions/*.fish` | `./scripts/link.sh` if adding/removing files |
 | Fisher plugins | `fish/fish_plugins` | `fish scripts/install-fish-plugins.fish` |
 | Neovim plugin or keymap | `nvim/lua/...` | restart Neovim |
@@ -188,18 +185,20 @@ update_all --help
 
 ## Fish
 
-`fish/config.fish` defines XDG paths, Homebrew paths, language tool paths, environment variables, abbreviations, fzf defaults, and integrations for zoxide, mise, carapace, atuin, and direnv.
+`fish/config.fish` defines XDG paths, Homebrew paths, language tool paths, environment variables, abbreviations, and integrations for Television, zoxide, mise, carapace, atuin, and direnv.
 
 Notable bindings:
 
-| Key      | Action                                   |
-| -------- | ---------------------------------------- |
-| `Ctrl+G` | Select a ghq repository                  |
-| `Alt+J`  | Select a Git/ghq repository              |
-| `Ctrl+B` | Select a Git branch                      |
-| `Ctrl+F` | fzf directory search                     |
-| `Ctrl+L` | Clear screen                             |
-| `Tab`    | History completion on empty command line |
+| Key      | Action                                        |
+| -------- | --------------------------------------------- |
+| `Ctrl+G` | Select a ghq repository                       |
+| `Alt+J`  | Select a Git/ghq repository                   |
+| `Ctrl+B` | Select a Git branch                           |
+| `Ctrl+F` | Television file and directory search          |
+| `Ctrl+T` | Television completion for the current command |
+| `Ctrl+R` | Television history search                     |
+| `Ctrl+L` | Clear screen                                  |
+| `Tab`    | History completion on empty command line      |
 
 Common abbreviations:
 
@@ -219,7 +218,7 @@ cx='codex --dangerously-bypass-approvals-and-sandbox'
 cxs='codex --sandbox workspace-write --ask-for-approval on-request'
 cxro='codex --sandbox read-only'     cxe='codex exec'
 cxr='codex resume'                   cxrev='codex review --uncommitted'
-v=nvim       lg=lazygit              repo=git_fzf_ghq
+v=nvim       lg=lazygit              repo=git_tv_ghq
 gwl='git worktree list'              gwa='git worktree add'
 actx=ai_context                      actxc='ai_context | pbcopy'
 ```
@@ -239,7 +238,7 @@ Configuration layout:
 - UI: catppuccin mocha, no statusline, `incline.nvim`, `noice.nvim`, `snacks.nvim`, `oil.nvim`, `overlook.nvim`
 - Completion: `blink.cmp`
 - AI: CopilotChat, Avante, Signalbox, Codex, Claude Code
-- Search: Snacks, fff
+- Search: Television for files/text/quickfix, Snacks for editor-specific lists, fff for typo-tolerant search
 - Git: gitsigns, CodeDiff, Diffview, LazyGit, Snacks gitbrowse
 - Rust: rustaceanvim, crates.nvim, neotest, DAP
 
@@ -252,7 +251,7 @@ Ghostty is the primary terminal config in `ghostty/config`.
 - Hack Nerd Font Mono, 24pt
 - Catppuccin Mocha palette
 - Fish shell integration
-- Vim-style pane navigation with `Ctrl+H/J/K/L`
+- Vim-style pane navigation with `Cmd+Alt+H/J/K/L`
 - AI-friendly scrollback and screen dump bindings
 - Split zoom, split equalization, and resize-mode bindings
 

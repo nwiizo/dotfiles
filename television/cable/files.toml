@@ -1,0 +1,15 @@
+[metadata]
+name = "files"
+description = "Project files, including dotfiles"
+requirements = ["fd", "bat"]
+
+[source]
+command = "fd --type f --hidden --exclude .git --exclude node_modules --print0"
+entry_delimiter = "\u0000"
+
+[preview]
+# Escape embedded quotes before inserting a path into a bash command.
+command = "bat --color=always --style=numbers,changes,header --line-range :500 -- '{replace:s/'/'\\''/g}'"
+
+[keybindings]
+shortcut = "f1"

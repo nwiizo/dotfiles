@@ -1,0 +1,37 @@
+# Shared by Fish and Neovim. Sources and previews use POSIX shell quoting.
+shell = "bash"
+default_channel = "files"
+# Fish/Atuin own command history; avoid a second store of picker query text.
+history_size = 0
+
+[keybindings]
+enter = "confirm_selection"
+"ctrl-/" = "toggle_preview"
+"ctrl-u" = "scroll_preview_half_page_up"
+"ctrl-d" = "scroll_preview_half_page_down"
+
+[ui]
+theme = "catppuccin"
+
+[ui.input_bar]
+prompt = "❯ "
+border_type = "rounded"
+
+[ui.results_panel]
+border_type = "rounded"
+
+[ui.preview_panel]
+size = 55
+border_type = "rounded"
+word_wrap = true
+scrollbar = true
+
+[shell_integration]
+fallback_channel = "files"
+
+[shell_integration.channel_triggers]
+files = ["cat", "bat", "less", "nvim", "vim", "v", "cp", "mv", "rm"]
+dirs = ["cd", "ls", "eza", "z"]
+git-branch = ["git switch", "git checkout", "git merge", "git rebase"]
+git-diff = ["git add", "git restore", "git diff"]
+git-log = ["git show", "git revert", "git cherry-pick"]

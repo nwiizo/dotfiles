@@ -38,18 +38,6 @@ return {
         -- Shell
         bashls = {},
         -- Go linting comes from the go extra (nvim-lint golangci-lint); golangci_lint_ls would duplicate it.
-        -- zls: keys checked against the zls 0.16 schema; schema defaults are omitted.
-        zls = {
-          settings = {
-            zls = {
-              inlay_hints_hide_redundant_param_names = true,
-              inlay_hints_hide_redundant_param_names_last_token = true,
-              warn_style = true,
-              highlight_global_var_declarations = true,
-              enable_build_on_save = true,
-            },
-          },
-        },
       },
     },
   },
@@ -67,7 +55,6 @@ return {
         bash = { "shfmt" },
         python = { "ruff_format", "ruff_organize_imports" },
         rust = { "rustfmt" },
-        zig = { "zigfmt" },
         yaml = { "prettier" },
         json = { "prettier" },
         markdown = { "prettier_markdown" },
