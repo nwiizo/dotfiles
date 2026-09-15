@@ -136,25 +136,46 @@ References: [shell integration](https://alexpasmantier.github.io/television/user
 
 ## Final TODO: upstream contributions
 
-- [ ] After the migration and feature review, prepare feature PRs suitable for
-  [alexpasmantier/tv.nvim](https://github.com/alexpasmantier/tv.nvim). Review its
-  latest code and existing issues/PRs before choosing the scope.
-- [ ] Evaluate per-picker cwd, structured selection capture independent of the
-  terminal screen, and list input/quickfix integration. Preserve cancellation,
-  originating-window handling and temporary-file cleanup; include focused tests.
-- [ ] Review a bulk-selection action for Television itself, so quickfix search
-  can toggle all matches without leaving the picker. Keep this separate from
-  tv.nvim changes and check existing issues and PRs before implementation.
-- [ ] Check Television's preview-cache configuration upstream: in 0.15.9 the
-  CLI's default `cache_preview = true` overrides a channel's `cached = false`.
-  Review existing reports before proposing a fix; the current bridge uses
-  content previews that remain valid when a cached entry is revisited.
-- [ ] Before creating each PR, apply
-  [`nwiizo-coding-style`](../.agents/skills/nwiizo-coding-style/SKILL.md) to the
-  final diff: reuse existing APIs, remove unnecessary abstractions, preserve
-  behavior and error handling, and complete the relevant checks. Review the
-  actual upstream implementation rather than copying the dotfiles bridge as-is.
-- [ ] Use the `nwiizo` Git/GitHub identity for commits and pushes, verifying the
-  author and destination first.
+Reviewed on 2026-09-16 against tv.nvim `4b156a2` and Television `8bcb997b`.
+The following independent PRs are submitted under `nwiizo`:
 
-These are follow-up tasks; no upstream PR has been published by this migration.
+| PR | Scope | Local validation |
+| --- | --- | --- |
+| [tv.nvim #12](https://github.com/alexpasmantier/tv.nvim/pull/12) | Capture selected stdout separately from terminal rendering; preserve whitespace, cancellation, origin window and cleanup | 33 tests; Television 0.15.9 with Fish and sh |
+| [tv.nvim #13](https://github.com/alexpasmantier/tv.nvim/pull/13) | Per-launch/per-channel cwd; resolve file and quickfix paths from the launch directory | 34 tests; Television 0.15.9 |
+| [Television #1144](https://github.com/alexpasmantier/television/pull/1144) | Respect channel `cached = false`, preserving the default and explicit CLI enable override | Full CI test command: 425 passed, 13 ignored; fmt and Clippy |
+
+Each PR includes focused regression coverage and follows
+[`nwiizo-coding-style`](../.agents/skills/nwiizo-coding-style/SKILL.md).
+The cache fix credits the existing proposal linked from
+[Issue #969](https://github.com/alexpasmantier/television/issues/969).
+All local validation was on macOS; upstream CI and review remain separate.
+
+### Next steps
+
+- [ ] Follow review and CI for the three submitted PRs. Keep #12 and #13
+  independently reviewable and resolve their shared-file conflicts when needed.
+- [ ] Build list input/quickfix examples on the existing
+  [tv.nvim #10](https://github.com/alexpasmantier/tv.nvim/pull/10) rather than
+  submitting another `pick(entries, opts)` API. Its head `610a264` has two
+  reproduced integration problems: a 190-byte entry becomes five terminal rows
+  in a 40-column picker; `--select-1 --input needle` with entries `needle` and
+  `other` exits without calling the handler. Carry #12's stdout handling into
+  the ad-hoc launch path and handle automatic selection after filtering before
+  relying on it. Use row IDs for quickfix entries so duplicate labels retain
+  their buffer, line and column; the example should not require Snacks.
+- [ ] Propose `toggle_selection_all` in Television as a separate feature. The
+  proposed scope is to invert each unique entry in the current matched snapshot,
+  including results outside the visible page, while preserving selected entries
+  outside the query. Keep the cursor in place and leave future streamed results
+  untouched. Restrict it to channel mode and provide a configurable binding
+  without assigning a new default key. Verify mixed selections, repeated toggles,
+  no matches, duplicate source rows, changed queries and streaming input. Reuse
+  the matcher snapshot and existing entry identity/selection set.
+- [ ] Consider a CLI cache-disable flag separately from #1144 if ad-hoc previews
+  need it; `--no-cache-preview` is not implemented in 0.15.9 or the reviewed main.
+- [ ] After the relevant changes are merged and released, update the pinned
+  revisions and replace the local bridge pieces that upstream now covers.
+  Re-run the migration checks before removing any fallback. #13's shell-command
+  and CodeDiff helpers still use Neovim's cwd; commands targeting another project
+  need handlers that explicitly use the supplied `config.cwd`.
