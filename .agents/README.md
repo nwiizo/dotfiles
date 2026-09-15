@@ -51,6 +51,12 @@ not a measured claim of better model performance. See also
 [Codex instruction discovery](https://learn.chatgpt.com/docs/agent-configuration/agents-md)
 and [Claude instruction loading](https://code.claude.com/docs/en/memory).
 
+Skill triggers were also reviewed against
+[Rethinking skills and prompts for GPT-6 Astra](https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra)
+on 2026-09-15. Descriptions identify the task; optional commands and local
+investigation notes stay in their bodies. FinOps notes supplement the selected
+investigation workflow rather than starting a second investigation.
+
 ## Skills by Purpose
 
 | Skill | Use |

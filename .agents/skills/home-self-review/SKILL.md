@@ -3,7 +3,8 @@ name: home-self-review
 description: 独立レビューの依頼や具体的な懸念がある変更を、実装に使ったホストとは異なるAI CLIでレビューする。通常の編集ごとには起動せず、修正も依頼されている場合は妥当な指摘を反映・検証する。
 ---
 
-以下の手順を順番に実行してください。
+指定された対象を、実装側と異なるAI CLIで独立レビューする。
+対象の取得、読み取り専用のレビュー、指摘の照合を行い、修正も依頼された場合は検証まで進める。
 
 ## 委譲済みguard
 
@@ -11,7 +12,7 @@ promptが `This is a delegated peer review.` で始まるか、`HOME_SELF_REVIEW
 
 ## ステップ1: 引数の解釈
 
-$ARGUMENTS を以下のルールで解釈してください：
+$ARGUMENTS を以下のルールで解釈する。渡されない環境では依頼文から対象と担当観点を読む。
 - 第一引数: レビュー対象（省略時は `diff` = 現在のunstaged changes + untracked files）
 - 第二引数: reviewer名（省略時は差分の種類とリスクから必要なreviewerだけを選ぶ）
 

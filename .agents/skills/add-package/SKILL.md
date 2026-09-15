@@ -1,11 +1,6 @@
 ---
 name: add-package
-description: |
-  Add a package to this macOS dotfiles repo. Use when the user asks to
-  install, add, or migrate a CLI package or GUI app, for example "add jq",
-  "ripgrep を入れて", "lazygit 入れたい", "brew install foo を repo 管理に",
-  "kubectl 追加して". Homebrew owns binaries here; update Brewfile, validate
-  with brew bundle, apply with brew bundle, and verify the executable.
+description: Install a CLI tool or macOS app and track it in this dotfiles repo's Brewfile. Use for package installation or migration requests.
 ---
 
 # add-package

@@ -1,6 +1,6 @@
 ---
 name: nwiizo-coding-style
-description: nwiizoの方針でコードを実装・修正・簡素化する。強度の切替、過剰設計の差分レビュー・全体監査、先送りした制限の一覧、効果表示、ヘルプを提供する。Rustではsimilarity-rsとcargo-couplingで重複・結合度を確認する。最小実装・YAGNIにも使い、一般的な執筆や質問には適用しない。
+description: nwiizoの方針でコードを実装・修正し、過剰設計をレビューする。最小実装・YAGNIの依頼にも使う。モード切替やRustの重複・結合度診断を含む。
 argument-hint: "[lite|full|ultra|off|review|audit|debt|gain|help|default <mode>] [対象・依頼]"
 license: MIT
 ---

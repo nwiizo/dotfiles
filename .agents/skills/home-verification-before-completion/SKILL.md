@@ -1,6 +1,6 @@
 ---
 name: home-verification-before-completion
-description: Ground progress and completion claims in fresh tool evidence. Use before reporting work complete, fixed, passing, ready to commit, or ready to publish, especially after agent delegation.
+description: Check completion claims against tests and artifacts when verification evidence is missing, uncertain, or supplied by another agent.
 ---
 
 # Verification Before Completion

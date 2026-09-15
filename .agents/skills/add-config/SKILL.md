@@ -1,10 +1,6 @@
 ---
 name: add-config
-description: |
-  Add config to this macOS dotfiles repo. Use for env vars, fish
-  abbreviations/functions/plugins, direct symlinked config files, tool
-  integrations, shared agent config, and app config such as Neovim, Ghostty,
-  Git, Bat, Atuin, tealdeer, and gh.
+description: Add or update configuration managed by this macOS dotfiles repo, including shell, app, and shared agent settings.
 ---
 
 # add-config
