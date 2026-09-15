@@ -23,12 +23,49 @@ chmod +x "$UPDATE_ALL_TEST_DIR/command"
 for name in fish mktemp date brew mise codex nvim pipx
     ln -s "$UPDATE_ALL_TEST_DIR/command" "$UPDATE_ALL_TEST_DIR/bin/$name"
 end
+ln -s (command -s jq) "$UPDATE_ALL_TEST_DIR/bin/jq"
 set -gx PATH "$UPDATE_ALL_TEST_DIR/bin" /usr/bin /bin /usr/sbin /sbin
 set -gx TMPDIR "$UPDATE_ALL_TEST_DIR/tmp"
 set -g fish_function_path "$fish_dir/functions" $fish_function_path
 set -e UPDATE_ALL_CODEX_ACTIVE
 
 set -l skips --no-claude --no-rust --no-nvim --no-mason --no-fisher --no-npm --no-cargo --no-go --no-uv --no-pipx --no-gem --no-mas
+
+for mode in default --non-interactive --parallel
+    set -l mode_args $mode
+    if test "$mode" = default
+        set mode_args
+    end
+    set -gx UPDATE_ALL_TEST_BREW_UNLINKED 1
+    rm -f "$UPDATE_ALL_TEST_DIR/unlinked-updated" "$UPDATE_ALL_TEST_DIR/brew.calls"
+    update_all $mode_args --no-codex --no-mise $skips >"$UPDATE_ALL_TEST_DIR/output" 2>&1
+    check "$mode upgrades unlinked formulae without replacing npm binaries" test $status -eq 0
+    check "$mode updates only outdated unpinned non-keg-only unlinked formulae" test -f "$UPDATE_ALL_TEST_DIR/unlinked-updated"
+    check "$mode still upgrades other packages" grep -qx upgrade "$UPDATE_ALL_TEST_DIR/brew.calls"
+
+    set -gx UPDATE_ALL_TEST_BREW_INSTALL_EXIT 5
+    rm -f "$UPDATE_ALL_TEST_DIR/unlinked-updated" "$UPDATE_ALL_TEST_DIR/brew.calls"
+    update_all $mode_args --no-codex --no-mise $skips >"$UPDATE_ALL_TEST_DIR/output" 2>&1
+    check "$mode preserves unlinked install failure" grep -qx 5 "$TMPDIR"/*/homebrew.status
+    check "$mode does not upgrade after failed unlinked install" test (count (grep '^upgrade' "$UPDATE_ALL_TEST_DIR/brew.calls")) -eq 0
+    set -e UPDATE_ALL_TEST_BREW_INSTALL_EXIT UPDATE_ALL_TEST_BREW_UNLINKED
+    rm -rf "$TMPDIR"/*
+
+    for metadata in fail malformed
+        set -gx UPDATE_ALL_TEST_BREW_INFO $metadata
+        rm -f "$UPDATE_ALL_TEST_DIR/brew.calls"
+        update_all $mode_args --no-codex --no-mise $skips >"$UPDATE_ALL_TEST_DIR/output" 2>&1
+        check "$mode rejects $metadata formula metadata" test $status -eq 1
+        check "$mode does not upgrade with $metadata formula metadata" test (count (grep '^upgrade' "$UPDATE_ALL_TEST_DIR/brew.calls")) -eq 0
+        rm -rf "$TMPDIR"/*
+    end
+    set -e UPDATE_ALL_TEST_BREW_INFO
+    rm -f "$UPDATE_ALL_TEST_DIR/brew.calls"
+    update_all $mode_args --no-codex --no-mise $skips >"$UPDATE_ALL_TEST_DIR/output" 2>&1
+    check "$mode handles no unlinked updates" test $status -eq 0
+    check "$mode skips empty install" test (count (grep '^install' "$UPDATE_ALL_TEST_DIR/brew.calls")) -eq 0
+    echo "PASS: $mode preserves unlinked formulae and preflight failures"
+end
 
 set -l pipx_skips --no-brew --no-mise (string match -v -- --no-pipx $skips)
 printf '%s\n' 'caller input must not reach a non-interactive updater' >"$UPDATE_ALL_TEST_DIR/input"

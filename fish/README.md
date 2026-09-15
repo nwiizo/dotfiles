@@ -129,6 +129,13 @@ Atuin, zoxide, Fisher, and fzf.fish integrations already cover their workflows.
 share the same job definitions and result handling; `--parallel` also retains
 the Neovim and Mason timeouts. Each run has its own log directory.
 
+Homebrew updates preserve unlinked, non-keg-only formulae such as TypeScript
+(`Brewfile` uses `link: false` so npm can own `tsc`). Before the regular upgrade,
+`brew info` and `jq` select outdated, unpinned formulae in that state and update
+them with `brew install --formula --skip-link`. Plain `brew upgrade` tries to
+link them again, even when they were previously unlinked. A failed metadata
+check or unlinked update stops the Homebrew job before the regular upgrade.
+
 Prompts are enabled only when both stdin and stdout are terminals, checked
 at startup and again before each sequential job. Parallel
 jobs and other non-interactive runs read from `/dev/null`, so they do not

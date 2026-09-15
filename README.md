@@ -152,6 +152,16 @@ Most edits happen in the repo, then the owning app or shell is restarted.
 
 The `update_all` Fish function updates common tools sequentially by default and streams updater output so confirmation prompts are visible. Use `--parallel` or `--non-interactive` when prompts should be disabled. Mac App Store updates are skipped by default.
 
+`tbls` uses Homebrew core because its old `k1low/tap` formula is deprecated.
+
+If bundle checks report a `libtiff`/`webp` dependency cycle, compare the installed
+receipts with `brew info --json=v2 libtiff webp` and check `brew linkage webp`.
+The `webp` 1.6.0 macOS bottle still links to `libtiff`, while the
+[current formula](https://github.com/Homebrew/homebrew-core/blob/HEAD/Formula/w/webp.rb)
+disables TIFF input to avoid that cycle. In this case, rebuild just `webp` with
+`rtk proxy brew reinstall --build-from-source webp`, then verify with
+`rtk proxy brew bundle check --file Brewfile`.
+
 ```bash
 update_all
 update_all --parallel

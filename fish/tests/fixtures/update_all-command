@@ -20,6 +20,44 @@ case "${0##*/}" in
         fi
         ;;
     brew)
+        printf '%s\n' "$*" >> "$UPDATE_ALL_TEST_DIR/brew.calls"
+        case "$1" in
+            info)
+                if [ "${UPDATE_ALL_TEST_BREW_INFO:-}" = fail ]; then
+                    echo 'formula metadata unavailable' >&2
+                    exit 6
+                elif [ "${UPDATE_ALL_TEST_BREW_INFO:-}" = malformed ]; then
+                    echo 'invalid JSON'
+                    exit 0
+                elif [ "${UPDATE_ALL_TEST_BREW_UNLINKED:-0}" = 1 ]; then
+                    cat <<'JSON'
+{"formulae":[
+  {"full_name":"typescript","outdated":true,"pinned":false,"keg_only":false,"linked_keg":null},
+  {"full_name":"minorole/tap/gpane","outdated":true,"pinned":false,"keg_only":false,"linked_keg":null},
+  {"full_name":"linked-tool","outdated":true,"pinned":false,"keg_only":false,"linked_keg":"1.0"},
+  {"full_name":"current-tool","outdated":false,"pinned":false,"keg_only":false,"linked_keg":null},
+  {"full_name":"pinned-tool","outdated":true,"pinned":true,"keg_only":false,"linked_keg":null},
+  {"full_name":"keg-only-tool","outdated":true,"pinned":false,"keg_only":true,"linked_keg":null}
+]}
+JSON
+                else
+                    echo '{"formulae":[]}'
+                fi
+                exit 0
+                ;;
+            install)
+                [ "$*" = 'install --formula --skip-link typescript minorole/tap/gpane' ] || exit 11
+                [ "${UPDATE_ALL_TEST_BREW_INSTALL_EXIT:-0}" = 0 ] || exit "$UPDATE_ALL_TEST_BREW_INSTALL_EXIT"
+                touch "$UPDATE_ALL_TEST_DIR/unlinked-updated"
+                exit 0
+                ;;
+            upgrade)
+                if [ "${UPDATE_ALL_TEST_BREW_UNLINKED:-0}" = 1 ] && [ ! -f "$UPDATE_ALL_TEST_DIR/unlinked-updated" ]; then
+                    echo 'Error: Could not symlink bin/tsc; npm target already exists' >&2
+                    exit 1
+                fi
+                ;;
+        esac
         if [ "$1" = cleanup ]; then
             echo 'cleanup output'
             exit "${UPDATE_ALL_TEST_CLEANUP_EXIT:-0}"

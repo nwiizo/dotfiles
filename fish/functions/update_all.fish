@@ -204,8 +204,28 @@ function update_all -d "Update tools with their native managers"
         set -l script '
                 echo "Homebrew..."
                 brew update
-                and brew upgrade
                 set -l code $status
+                if test $code -eq 0
+                    # Plain upgrade relinks non-keg-only formulae, ignoring Brewfile link: false.
+                    set -l formula_info (brew info --json=v2 --installed --formula)
+                    set code $status
+                    if test $code -eq 0
+                        set -l unlinked (printf "%s\n" $formula_info | jq -r \'
+                            .formulae[]
+                            | select(.outdated and (.pinned | not) and (.keg_only | not) and .linked_keg == null)
+                            | .full_name
+                        \')
+                        set code $status
+                        if test $code -eq 0; and test (count $unlinked) -gt 0
+                            brew install --formula --skip-link $unlinked
+                            set code $status
+                        end
+                    end
+                end
+                if test $code -eq 0
+                    brew upgrade
+                    set code $status
+                end
                 if test $code -eq 0
                     if test "$UPDATE_ALL_INTERACTIVE" -eq 1
                         brew upgrade --cask --greedy
