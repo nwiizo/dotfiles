@@ -99,6 +99,12 @@ multiline history, cancellation, operation arguments, and literal-path previews.
 
 ## Agent-assisted workflow
 
+`cctx --account secondary` selects the second Claude login for this shell;
+`cctx --account default` returns to the original login. cctx's Fish integration
+only changes `CLAUDE_CONFIG_DIR`; start `claude` separately. Login/status commands
+remain available as `cctx --account secondary --login` and `--status`.
+The local cctx checkout is installed with Cargo from `~/ghq/github.com/nwiizo/cctx`.
+
 The short aliases intentionally start unrestricted sessions: `c` expands to
 `claude --dangerously-skip-permissions`, and `cx` expands to
 `codex --dangerously-bypass-approvals-and-sandbox`. This is a local exception

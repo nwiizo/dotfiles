@@ -141,6 +141,11 @@ abbr --add -- csafe 'claude --safe-mode'
 abbr --add -- cdoc 'claude doctor'
 abbr --add -- cagents 'claude agents'
 abbr --add -- cultra 'claude ultrareview'
+
+# cctx changes the account for the next plain `claude` invocation.
+if command -sq cctx
+    command cctx --shell-init fish | source
+end
 abbr --add -- cx 'codex --dangerously-bypass-approvals-and-sandbox'
 abbr --add -- cxq 'codex exec'
 abbr --add -- cxs 'codex --sandbox workspace-write --ask-for-approval on-request'
