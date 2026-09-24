@@ -614,6 +614,13 @@ rtk proxy nvim
 
 設定変更は新しく起動したNeovimに反映される。リポジトリのルートで検証する。
 
+Avante のネイティブライブラリは `target/lua` にビルドしてから `lua/` へ移す。
+使用済みの `.so` へ直接上書きすると、macOS の署名キャッシュと不整合が生じ、
+起動直後に `Code Signature Invalid` で終了することがあるため。
+再ビルドには、この設定を読み込んだ Neovim で `:Lazy build avante.nvim` を使う。
+この置き換え方は [Apple の更新手順](https://developer.apple.com/documentation/security/updating-mac-software)に沿い、
+[Avante の Makefile](https://github.com/avante-corp/avante.nvim/blob/main/Makefile)の `BUILD_DIR` を指定している。
+
 ```sh
 rtk proxy stylua --check nvim/lua
 rtk proxy jq empty nvim/lazy-lock.json

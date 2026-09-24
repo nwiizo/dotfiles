@@ -204,7 +204,8 @@ return {
       { "<leader>a2", "<cmd>AvanteSwitchProvider claude-code<cr>", desc = "Avante: Claude Code ACP" },
       { "<leader>a3", "<cmd>AvanteSwitchProvider copilot<cr>", desc = "Avante: Copilot" },
     },
-    build = "make",
+    -- Replace library files instead of overwriting loaded inodes (macOS caches code signatures).
+    build = "make BUILD_DIR=target/lua && mv -f target/lua/*.so lua/",
     dependencies = {
       "nvim-treesitter/nvim-treesitter",
       "nvim-lua/plenary.nvim",
