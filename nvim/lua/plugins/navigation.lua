@@ -127,13 +127,14 @@ return {
       columns = { "icon", "permissions", "size", "mtime" },
       delete_to_trash = true,
       skip_confirm_for_simple_edits = true,
-      view_options = { show_hidden = true, natural_order = true },
+      watch_for_changes = true,
+      view_options = { show_hidden = true, natural_order = "fast" },
       float = { padding = 2, max_width = 120, max_height = 40, border = "rounded" },
       keymaps = {
         ["g?"] = "actions.show_help",
         ["<CR>"] = "actions.select",
-        ["<C-v>"] = "actions.select_vsplit",
-        ["<C-s>"] = "actions.select_split",
+        ["<C-v>"] = { "actions.select", opts = { vertical = true } },
+        ["<C-s>"] = { "actions.select", opts = { horizontal = true } },
         ["-"] = "actions.parent",
         ["g."] = "actions.toggle_hidden",
       },
@@ -177,60 +178,67 @@ return {
       {
         "<leader>pd",
         function()
-          require("overlook").open_definition()
+          require("overlook.api").peek_definition()
         end,
         desc = "Peek Definition",
       },
       {
+        "<leader>pp",
+        function()
+          require("overlook.api").peek_cursor()
+        end,
+        desc = "Peek Cursor",
+      },
+      {
         "<leader>pc",
         function()
-          require("overlook").close_all()
+          require("overlook.api").close_all()
         end,
         desc = "Close All Popups",
       },
       {
         "<leader>pu",
         function()
-          require("overlook").restore_one()
+          require("overlook.api").restore_popup()
         end,
         desc = "Restore Last Popup",
       },
       {
         "<leader>pU",
         function()
-          require("overlook").restore_all()
+          require("overlook.api").restore_all_popups()
         end,
         desc = "Restore All Popups",
       },
       {
         "<leader>pf",
         function()
-          require("overlook").toggle_focus()
+          require("overlook.api").switch_focus()
         end,
         desc = "Toggle Focus",
       },
       {
         "<leader>ps",
         function()
-          require("overlook").open_in_split()
+          require("overlook.api").open_in_split()
         end,
         desc = "Open in Split",
       },
       {
         "<leader>pv",
         function()
-          require("overlook").open_in_vsplit()
+          require("overlook.api").open_in_vsplit()
         end,
         desc = "Open in VSplit",
       },
       {
         "<leader>po",
         function()
-          require("overlook").open_in_original()
+          require("overlook.api").open_in_original_window()
         end,
         desc = "Open in Original",
       },
     },
-    opts = { border = "rounded", max_width = 100, max_height = 20 },
+    opts = {},
   },
 }

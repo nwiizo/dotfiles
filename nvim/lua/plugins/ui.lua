@@ -164,7 +164,8 @@ return {
   -- better-escape.nvim: jk/jj to escape
   {
     "max397574/better-escape.nvim",
-    event = { "InsertEnter", "CmdlineEnter", "TermEnter" },
+    -- Install after LazyVim's j/k mappings, including before the first InsertEnter.
+    event = "User LazyVimKeymaps",
     opts = {
       timeout = vim.o.timeoutlen,
       default_mappings = false,
@@ -172,7 +173,7 @@ return {
         i = { j = { k = "<Esc>", j = "<Esc>" } },
         c = { j = { k = "<Esc>", j = "<Esc>" } },
         t = { j = { k = "<C-\\><C-n>", j = "<C-\\><C-n>" } },
-        v = { j = { k = "<Esc>" } },
+        x = { j = { k = "<Esc>" } },
         s = { j = { k = "<Esc>" } },
       },
     },

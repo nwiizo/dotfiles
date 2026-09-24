@@ -161,6 +161,9 @@ Other custom integrations live in feature files under `lua/plugins/`:
 
 2026-09-08の[人気・開発状況の調査](plugin-research.md)では、Snacks・Blink・Oilの継続を選んだ。入力ミスを許容する検索のfffと、変更に追従するレビュー画面のCodeDiffを導入した。SidekickとQuickerは追加候補として調査メモに残している。
 
+2026-09-24の[公式設定の確認](plugin-config-review.md)では、Overlook の API と
+better-escape の読み込み順を修正し、Oil の外部変更への追従を有効にした。
+
 2026-09-15に通常のファイル・本文検索とquickfixの絞り込みをTelevisionへ移行した。設定はFishと共通で、接続処理は `lua/config/television.lua` に置く。Smart Picker、ステージ操作付き変更一覧、LSPなどの検索はSnacks、入力ミス補正とplain・regex・fuzzy検索はfffを元のキーで使える。[操作・機能差・検証方法](../television/README.md)を参照。
 
 CodeDiffは `<leader>gR` で作業中の変更、`<leader>gV` でステージ済みの変更を表示する。画面内の `t` で左右分割とインラインを切り替え、`q` で閉じる。Diffviewのキーも使える。ネイティブライブラリとCodeDiffの変更監視バイナリはリリースから取得し、プラグインのリビジョンは `lazy-lock.json` で管理する。
@@ -180,6 +183,7 @@ CodeDiffは `<leader>gR` で作業中の変更、`<leader>gV` でステージ済
 | ----------- | ------ | ------------------ | --------------- |
 | `;`         | n      | コマンドモード     | C               |
 | `jk` / `jj` | i,c,t  | ESC（遅延なし）    | P better-escape |
+| `jk` | x,s | 選択モードを終了 | P better-escape |
 | `<C-s>`     | n,i,x  | 保存               | L               |
 | `<Esc>`     | n      | 検索ハイライト消去 | L               |
 
@@ -313,6 +317,7 @@ Git差分の色付きプレビューも公式の既定動作を引き継ぐ。Te
 | キー         | モード | 説明                           | 出典       |
 | ------------ | ------ | ------------------------------ | ---------- |
 | `<leader>pd` | n      | 定義をピーク（floating popup） | P overlook |
+| `<leader>pp` | n      | 現在位置をピーク（LSP不要）    | P overlook |
 | `<leader>pc` | n      | 全popupを閉じる                | P overlook |
 | `<leader>pu` | n      | 最後のpopupを復元              | P overlook |
 | `<leader>pU` | n      | 全popupを復元                  | P overlook |
@@ -646,6 +651,12 @@ Ruff による import 整理・整形と2回目の整形で差分が出ないこ
 設定のコピーとインストール済みプラグイン・Masonへの参照を用意してから、
 `rtk proxy nvim --headless -i NONE '+lua dofile("nvim/tests/plugin_config.lua")'` を実行する。
 認証済みのAIサービスへのリクエストは行わない。
+
+同じ分離環境で `nvim/tests/navigation_plugins.lua` と `nvim/tests/escape_modes.lua` も
+それぞれ `+lua dofile(...)` で実行する。前者は Overlook のプレビュー・復元・分割と、
+Oil の外部変更への追従・未保存編集の保持を検証する。定義の LSP 応答だけをテスト用に置き換える。
+後者は起動後最初の Visual 選択、Select・Insert モードでの `jk` を検証する。
+両テストは headless 起動で発生しない `UIEnter` を再現し、通常の遅延読み込みも実行する。
 
 Codexの操作は `rtk proxy nvim --headless -u nvim/init.lua '+lua dofile("nvim/tests/codex_workflow.lua")'` で検証する。選択からEdit・送信・回答・追加依頼・CodeDiff・編集への復帰まで、インストール済みプラグインとテスト用ターミナルで操作する。同じコマンドの `nvim` の前に `env CODEX_NVIM_REAL_CLI=1` を入れると、認証済みCodex CLIを使い、一時リポジトリ内のファイル変更と追加依頼の2ターンを実行する。
 
