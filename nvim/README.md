@@ -621,6 +621,17 @@ Avante のネイティブライブラリは `target/lua` にビルドしてか�
 この置き換え方は [Apple の更新手順](https://developer.apple.com/documentation/security/updating-mac-software)に沿い、
 [Avante の Makefile](https://github.com/avante-corp/avante.nvim/blob/main/Makefile)の `BUILD_DIR` を指定している。
 
+Avante のログレベルは、モジュールを読み込む前に `WARN` の文字列で指定する。
+[上流のログ処理](https://github.com/avante-corp/avante.nvim/blob/main/lua/avante/utils/log.lua)は対応表を走査しながら数値キーを追加しており、
+[Lua の仕様](https://www.lua.org/manual/5.1/manual.html#pdf-next)ではこの走査結果が保証されない。
+文字列での指定は、警告の出力を保ったまま `Invalid log level: 3` を回避する。
+上流で対応表の作り方が修正されたら、この指定を見直す。
+
+Python は [Ruff の推奨順序](https://docs.astral.sh/ruff/formatter/#sorting-imports)に合わせ、
+import 整理の後に整形する。Incline の診断件数は
+[`vim.diagnostic.count()`](https://neovim.io/doc/user/diagnostic/#vim.diagnostic.count())で取得し、
+描画のたびにエラー・警告の診断一覧をそれぞれコピーしない。
+
 ```sh
 rtk proxy stylua --check nvim/lua
 rtk proxy jq empty nvim/lazy-lock.json
@@ -628,6 +639,13 @@ rtk proxy nvim --headless '+lua print("nvim-config-ok")' +qa
 ```
 
 遅延読み込みの設定を変えた場合は対象プラグインを読み込み、操作も確認する。外部変更と未保存編集のマージを変更した場合は `rtk proxy nvim --headless -u NONE -l nvim/tests/external_changes.lua` で空行、末尾改行、競合時の内容保持、Undoを検証する。
+
+`nvim/tests/plugin_config.lua` は Avante のログとライブラリ読み込み、Incline の診断件数、
+Ruff による import 整理・整形と2回目の整形で差分が出ないことを検証する。
+`HOME` と XDG の設定・データ・状態・キャッシュを一時ディレクトリへ分離し、
+設定のコピーとインストール済みプラグイン・Masonへの参照を用意してから、
+`rtk proxy nvim --headless -i NONE '+lua dofile("nvim/tests/plugin_config.lua")'` を実行する。
+認証済みのAIサービスへのリクエストは行わない。
 
 Codexの操作は `rtk proxy nvim --headless -u nvim/init.lua '+lua dofile("nvim/tests/codex_workflow.lua")'` で検証する。選択からEdit・送信・回答・追加依頼・CodeDiff・編集への復帰まで、インストール済みプラグインとテスト用ターミナルで操作する。同じコマンドの `nvim` の前に `env CODEX_NVIM_REAL_CLI=1` を入れると、認証済みCodex CLIを使い、一時リポジトリ内のファイル変更と追加依頼の2ターンを実行する。
 

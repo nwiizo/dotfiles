@@ -149,6 +149,12 @@ return {
     "yetone/avante.nvim",
     event = "VeryLazy",
     version = false,
+    init = function()
+      -- Upstream builds numeric log-level keys while iterating the same table.
+      -- Use the supported name before any Avante module loads to avoid missing numeric keys.
+      -- Remove when upstream builds that reverse lookup without mutating the iterated table.
+      vim.g.avante = vim.tbl_extend("force", vim.g.avante or {}, { log_level = "WARN" })
+    end,
     opts = {
       instructions_file = "CLAUDE.md",
       provider = "codex",

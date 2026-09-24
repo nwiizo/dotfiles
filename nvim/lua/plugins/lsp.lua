@@ -53,7 +53,7 @@ return {
         typescriptreact = js_formatters,
         javascriptreact = js_formatters,
         bash = { "shfmt" },
-        python = { "ruff_format", "ruff_organize_imports" },
+        python = { "ruff_organize_imports", "ruff_format" },
         rust = { "rustfmt" },
         yaml = { "prettier" },
         json = { "prettier" },

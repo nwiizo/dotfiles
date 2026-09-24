@@ -39,9 +39,10 @@ return {
 
           -- Diagnostics
           local diagnostics = {}
+          local counts = vim.diagnostic.count(props.buf, { severity = { min = vim.diagnostic.severity.WARN } })
           local diag_counts = {
-            error = #vim.diagnostic.get(props.buf, { severity = vim.diagnostic.severity.ERROR }),
-            warn = #vim.diagnostic.get(props.buf, { severity = vim.diagnostic.severity.WARN }),
+            error = counts[vim.diagnostic.severity.ERROR] or 0,
+            warn = counts[vim.diagnostic.severity.WARN] or 0,
           }
 
           local has_diagnostics = diag_counts.error > 0 or diag_counts.warn > 0
