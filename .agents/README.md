@@ -76,7 +76,7 @@ investigation workflow rather than starting a second investigation.
 | `home-history-distill` | Reusable guidance from bounded local history through `nippo` |
 | `home-empirical-prompt-tuning` | Behavioral comparison of instructions |
 | `home-validate-on-oss` | Explicitly requested validation on real projects |
-| `home-rust-code-explainer` | Beginner-oriented explanations of Rust syntax, arguments, types, and control flow |
+| [`learn-rust` (external plugin)](https://github.com/nwiizo/rust-learning-lab) | Rust syntax, rationale, practice, and debugging; install Rust Learning Lab through each client's plugin marketplace |
 | `home-marp-slide-editing` | Marp layout and rendered-output checks |
 | `home-translation-quality` | Technical translation conventions and consistency |
 | `home-incident-runbook-templates` | Service-specific response procedures |
