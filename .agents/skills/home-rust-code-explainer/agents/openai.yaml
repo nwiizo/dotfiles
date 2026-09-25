@@ -1,4 +1,4 @@
 interface:
   display_name: "Rust Code Explainer"
-  short_description: "Rustの構文・引数・戻り値・型と所有権を小さな例で読み解く"
-  default_prompt: "$home-rust-code-explainer を使い、このRustコードや疑問を初学者向けに説明してください。理解に必要な構文、引数の対応と順序の理由、戻り値、型と所有権の動きを小さな例で示し、設計理由は事実と推測を分けてください。"
+  short_description: "Rustの構文・型・所有権を読み解き、小さな練習で理解と定着を支える"
+  default_prompt: "$home-rust-code-explainer を使い、このRustコードや疑問を初学者向けに説明してください。構文、引数の対応と順序の理由、戻り値、型と所有権を必要な範囲で読み解き、設計理由は事実と推測を分けてください。『プログラマー脳』を意識し、つまずきに応じて状態の追跡や小さな想起・応用問題を選び、理解と定着を助けてください。"
