@@ -8,6 +8,10 @@ For Fish changes, also follow [fish/AGENTS.md](fish/AGENTS.md).
 ## Where to Edit
 
 Edit repository sources, not linked targets under `~/.config` or agent homes.
+Edit shared project guidance in `AGENTS.md`; `CLAUDE.md` is a relative symlink
+to it. Keep shared instructions usable by both clients: use ordinary Markdown
+links with a condition for reading them, and keep Claude-specific imports in
+Claude-only files.
 
 | Area | Source |
 |---|---|

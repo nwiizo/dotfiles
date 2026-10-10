@@ -25,9 +25,10 @@ part of dotfiles maintenance.
 | Information | Maintained in |
 |---|---|
 | Repository layout, apply commands, checks | Root `AGENTS.md`; root `CLAUDE.md` is a symlink to it |
+| Directory-specific project guidance | Nested `AGENTS.md`; a sibling `CLAUDE.md` symlink shares it with Claude |
 | Codex user preferences | `codex/AGENTS.md` |
 | Claude user preferences | `rules/coding.md`, `rules/security.md`, `rules/github-comments.md` |
-| Path-specific preferences | `rules/*.md` with `paths` |
+| Claude path-specific preferences | `rules/*.md` with `paths` |
 | Task-specific judgment and procedures | `skills/<name>/SKILL.md` |
 | Specialized reviewer or planner role | Same-named files in `agents/` and `codex/agents/` |
 | Deterministic enforcement | Existing hooks, config, or validation scripts |
@@ -42,20 +43,38 @@ rules or expand `@path` imports. Claude's global entrypoint points to its loaded
 rules; the root `CLAUDE.md` is a symlink to `AGENTS.md`.
 Keep overlapping user preferences aligned across the two clients.
 
-The entrypoints follow [GPT-6 Astra's prompting guidance](https://developers.openai.com/api/docs/guides/latest-model#prompting-best-practices),
-reviewed on 2026-09-08: finish authorized work, resolve conflicting skill guidance,
-use concise prose, define delegation explicitly, and scale verification to the
-change. Parallel agents remain opt-in for this environment. Repository-specific
-checks and safety boundaries remain in place. This is an instruction cleanup,
-not a measured claim of better model performance. See also
-[Codex instruction discovery](https://learn.chatgpt.com/docs/agent-configuration/agents-md)
-and [Claude instruction loading](https://code.claude.com/docs/en/memory).
+## Shared Project Instructions
 
-Skill triggers were also reviewed against
-[Rethinking skills and prompts for GPT-6 Astra](https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra)
-on 2026-09-15. Descriptions identify the task; optional commands and local
-investigation notes stay in their bodies. FinOps notes supplement the selected
-investigation workflow rather than starting a second investigation.
+Reviewed against official documentation on **2026-10-10**; installed clients
+were Claude Code **2.1.294** and Codex CLI **0.162.1**.
+
+Keep `AGENTS.md` as the file to edit and `CLAUDE.md` as a tracked relative symlink.
+This macOS repository needs no separate Claude project content. Claude supports
+this arrangement, including deduplication when both filenames are discovered.
+Its native `AGENTS.md` loading, available since 2.1.277, depends on project
+instruction settings and other instruction files; retaining the link avoids
+depending on that fallback. See [Claude's sharing guidance](https://code.claude.com/docs/en/memory#share-one-file-with-other-coding-tools).
+
+Codex discovers instructions from the project root down to its launch directory,
+choosing one file per directory: `AGENTS.override.md`, then `AGENTS.md`, then a
+configured fallback. A root-started task should explicitly read nested guidance
+before changing that area; keep conditional links in the root guide. Shared
+files use ordinary Markdown links, since Codex does not expand Claude imports.
+See [Codex instruction discovery](https://learn.chatgpt.com/docs/agent-configuration/agents-md).
+
+Keep entrypoints focused on commands, verification, environment-specific pitfalls,
+and decisions the agent cannot infer reliably. Put detailed explanations in the
+area README and occasional workflows in skills. Add guidance for repeated
+mistakes and remove obsolete rules instead of accumulating incident history.
+These are maintenance choices informed by
+[Codex best practices](https://learn.chatgpt.com/guides/best-practices#make-guidance-reusable-with-agentsmd)
+and [Claude best practices](https://code.claude.com/docs/en/best-practices#write-an-effective-claudemd).
+
+After changing instruction loading, run the repository audit, then use `/context`
+in a fresh Claude session to inspect Memory files. Start a fresh Codex session
+in the intended directory and ask it to list the active instruction sources;
+check the listed files against the repository. File and link checks establish
+the layout, not actual client loading or improved model behavior.
 
 ## Skills by Purpose
 

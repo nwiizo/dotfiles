@@ -13,8 +13,10 @@ paths:
 # Agent Instruction Authoring
 
 - Write what changes a capable model's decisions: user preferences, environment facts, domain-specific pitfalls, and real safety boundaries. Remove generic tutorials, repeated warnings, and workarounds whose purpose no longer applies.
-- Keep shared defaults in entrypoints, path-specific preferences in rules, and task-specific judgment or procedures in skills. Delete redundant content instead of moving it into a new file.
+- Keep personal defaults in user-level instructions, shared repository guidance in project entrypoints, directory-specific guidance near the affected files, and task procedures in skills. Claude path-scoped rules do not automatically apply to Codex.
+- Keep shared `AGENTS.md` files client-neutral. Use ordinary Markdown links with an explicit reading condition for supporting documents; keep Claude `@path` imports in Claude-only files. When a root-started task needs nested instructions, explicitly direct the agent to read them before editing that area.
 - Describe the intended outcome and constraints. Fix step order, approval gates, output formats, or numeric limits only when the task or user requires them.
+- Add durable instructions for observed, recurring mistakes. Keep concrete commands and exceptions that change a decision; leave changing inventories and detailed explanations in the relevant README. Remove superseded guidance when updating a rule.
 - Preserve user authorization. Do not turn a past incident or one project's convention into a universal restriction.
 - Reusable personal workflows and personas use the `home-` prefix; preserve established names and external skills.
 - Keep shared Claude/Codex personas paired by name. Read-only roles use Claude `permissionMode: plan` and Codex `sandbox_mode = "read-only"`; diagnostic Bash access is not permission to mutate.

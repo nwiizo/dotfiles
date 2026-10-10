@@ -33,12 +33,22 @@ Read this file for the overall model. Use the subdirectory docs when changing a 
 | Television | `television/README.md` | `television/config.toml`, `television/cable/` |
 | Git / GitHub CLI | `git/README.md` | `git/config`, `git/power_pull.sh`, `gh/config.yml` |
 | Small CLI configs | this README | `bat/`, `atuin/`, `tealdeer/` |
-| Agent config | `.agents/README.md` | reusable agents, rules, docs, and skills |
-| Claude Code entrypoints | `.claude/README.md` | symlinks into `.agents/` |
-| Codex entrypoints | `.codex/README.md` | symlinks into `.agents/codex/` |
+| Agent config | [`.agents/README.md`](.agents/README.md) | sources under `.agents/` for reusable agents, rules, docs, and skills |
+| Claude Code entrypoints | [`.claude/README.md`](.claude/README.md) | linked sources under `.agents/`; local plugins under `.claude/plugins/` |
+| Codex entrypoints | [`.codex/README.md`](.codex/README.md) | linked sources under `.agents/codex/` |
 | Releases | `releases/` | versioned release notes |
 
-Contributor and agent-facing repository rules are in `AGENTS.md`. `CLAUDE.md` is a symlink to that guide so Claude Code and Codex share the base rules. Global preferences describe how to work; this repository's guide describes where to edit and how to verify the result. Conditional procedures live in skills; see the [agent config guide](.agents/README.md#instruction-ownership).
+Read [`AGENTS.md`](AGENTS.md) for repository editing rules, apply commands, and
+required checks. Edit that file directly: `CLAUDE.md` is a tracked relative
+symlink to it, so Claude Code and Codex share the same project guidance.
+Directory-specific instructions live in nested `AGENTS.md` files; read the
+relevant guide before editing that area.
+
+Personal preferences and reusable workflows live under `.agents/`. Keep detailed
+tool documentation in each area's README and task procedures in skills. See
+[instruction ownership](.agents/README.md#instruction-ownership) for editing
+locations and [shared project instructions](.agents/README.md#shared-project-instructions)
+for the official references, client loading differences, and verification steps.
 
 ## Managed Stack
 
@@ -58,6 +68,8 @@ Contributor and agent-facing repository rules are in `AGENTS.md`. `CLAUDE.md` is
 ```text
 dotfiles/
 ├── Brewfile                 # Homebrew formulae and casks
+├── AGENTS.md                # Shared project instructions; edit this file
+├── CLAUDE.md -> AGENTS.md    # Claude Code reads the same instructions
 ├── scripts/
 │   ├── bootstrap.sh         # brew bundle + symlink + fish plugin install
 │   ├── link.sh              # symlink repo config into target locations
@@ -138,6 +150,10 @@ fish scripts/install-fish-plugins.fish
 
 `~/.agents` is reserved for cross-client assets. This repository currently publishes only Agent Skills there; Claude Code and Codex subagents, rules, and tool-specific documentation stay in their product-specific home directories.
 
+Project instruction symlinks such as `CLAUDE.md -> AGENTS.md` are tracked by Git.
+They are part of the checkout; `scripts/link.sh` manages installation into home
+directories. Editing an already linked source file requires no relinking.
+
 ## Daily Workflow
 
 Most edits happen in the repo, then the owning app or shell is restarted.
@@ -150,7 +166,7 @@ Most edits happen in the repo, then the owning app or shell is restarted.
 | Neovim config | Restart Neovim |
 | Ghostty, Git, gh, bat, atuin, tealdeer config | Restart the app or open a new shell |
 | Homebrew packages | Edit `Brewfile`, then run `brew bundle --file Brewfile` |
-| Agent assets | Edit `.agents/`, `.claude/`, `.codex/`, then run `./scripts/link.sh` and `./scripts/audit-agent-config.sh` |
+| Agent instructions and assets | Edit the source, run `rtk proxy ./scripts/audit-agent-config.sh`, then start a fresh client session. Run `scripts/link.sh` only when installation paths change. |
 
 The `update_all` Fish function updates common tools sequentially by default and streams updater output so confirmation prompts are visible. Use `--parallel` or `--non-interactive` when prompts should be disabled. Mac App Store updates are skipped by default.
 
@@ -181,7 +197,8 @@ update_all --help
 | Ghostty / AI notifications | `ghostty/`, `scripts/apply-ghostty-ai-notifications.sh` | `./scripts/link.sh`, then reload Ghostty |
 | Git / gh | `git/config`, `gh/config.yml` | new shell or next command invocation |
 | Homebrew package | `Brewfile` | `brew bundle --file Brewfile` |
-| Shared agent config | `.agents/`, `.claude/`, `.codex/` | `./scripts/link.sh` |
+| Project agent guidance | Root or nested `AGENTS.md` | agent audit, then a fresh client session |
+| Reusable agent config | `.agents/` | agent audit; `./scripts/link.sh` only when installation paths change |
 
 ## Fish
 
@@ -268,11 +285,13 @@ Warp settings are preserved in [`archive/warp/`](archive/warp/README.md). Bootst
 Run the checks that match the files you changed.
 
 ```bash
-./scripts/link.sh
-fish scripts/install-fish-plugins.fish
-brew bundle check --file Brewfile
-./scripts/audit-agent-config.sh
+rtk proxy brew bundle check --file Brewfile
+rtk proxy ./scripts/audit-agent-config.sh
 ```
+
+The agent audit checks file layout and metadata. To verify which instructions
+the clients load, follow the [client checks](.agents/README.md#shared-project-instructions).
+Installation and plugin application commands are listed under [Setup](#setup).
 
 For AI-history-derived changes, start with a bounded local aggregate from the installed Rust `nippo` CLI. Follow [`home-history-distill`](.agents/skills/home-history-distill/SKILL.md) for redaction and evidence review; do not commit raw logs.
 
