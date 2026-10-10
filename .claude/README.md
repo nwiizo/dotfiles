@@ -15,8 +15,8 @@ manifest. Edit these files here, then update the installed plugin with the CLI.
 
 Use `.agents/` for edits to the symlinked assets. These links expose them as
 project-scoped Claude Code configuration while `scripts/link.sh` also links
-them into `~/.claude`. Keep `CLAUDE.md` thin; durable shared guidance belongs
-in `AGENTS.md`.
+them into `~/.claude`. The root `CLAUDE.md` is a symlink to `AGENTS.md`;
+edit `AGENTS.md` for shared repository guidance.
 
 ## Personal configuration
 

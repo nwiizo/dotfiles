@@ -24,7 +24,7 @@ part of dotfiles maintenance.
 
 | Information | Maintained in |
 |---|---|
-| Repository layout, apply commands, checks | Root `AGENTS.md`; root `CLAUDE.md` imports it |
+| Repository layout, apply commands, checks | Root `AGENTS.md`; root `CLAUDE.md` is a symlink to it |
 | Codex user preferences | `codex/AGENTS.md` |
 | Claude user preferences | `rules/coding.md`, `rules/security.md`, `rules/github-comments.md` |
 | Path-specific preferences | `rules/*.md` with `paths` |
@@ -39,7 +39,7 @@ boundaries. Details for maintenance are in `rules/authoring.md`.
 
 Codex global preferences are self-contained because Codex does not load Claude's
 rules or expand `@path` imports. Claude's global entrypoint points to its loaded
-rules; the root `CLAUDE.md` imports `AGENTS.md` without repeating project guidance.
+rules; the root `CLAUDE.md` is a symlink to `AGENTS.md`.
 Keep overlapping user preferences aligned across the two clients.
 
 The entrypoints follow [GPT-6 Astra's prompting guidance](https://developers.openai.com/api/docs/guides/latest-model#prompting-best-practices),

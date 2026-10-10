@@ -38,6 +38,7 @@ check_absent() {
   fi
 }
 
+check_link "CLAUDE.md" "AGENTS.md"
 check_link ".claude/agents" "../.agents/agents"
 check_link ".claude/rules" "../.agents/rules"
 check_link ".claude/skills" "../.agents/skills"

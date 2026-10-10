@@ -1,6 +1,6 @@
 # Claude Code
 
-Project `CLAUDE.md` supplies repository guidance; in dotfiles it imports
+Project `CLAUDE.md` supplies repository guidance; in dotfiles it is a symlink to
 `AGENTS.md` for source paths, apply commands, and required checks.
 
 User preferences are maintained in [coding](rules/coding.md),

@@ -38,7 +38,7 @@ Read this file for the overall model. Use the subdirectory docs when changing a 
 | Codex entrypoints | `.codex/README.md` | symlinks into `.agents/codex/` |
 | Releases | `releases/` | versioned release notes |
 
-Contributor and agent-facing repository rules are in `AGENTS.md`. `CLAUDE.md` imports the same guide so Claude Code and Codex share the base rules. Global preferences describe how to work; this repository's guide describes where to edit and how to verify the result. Conditional procedures live in skills; see the [agent config guide](.agents/README.md#instruction-ownership).
+Contributor and agent-facing repository rules are in `AGENTS.md`. `CLAUDE.md` is a symlink to that guide so Claude Code and Codex share the base rules. Global preferences describe how to work; this repository's guide describes where to edit and how to verify the result. Conditional procedures live in skills; see the [agent config guide](.agents/README.md#instruction-ownership).
 
 ## Managed Stack
 
