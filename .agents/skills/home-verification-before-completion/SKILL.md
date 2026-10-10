@@ -19,5 +19,17 @@ Match each material claim to current evidence and the risk of the change.
 - Separate completed edits from unresolved verification. Repeat a blocked check
   only after something relevant changes.
 
+For CLI installation or shell-integration work, check the executable resolved by
+the user's PATH and exercise the affected function in the actual shell. A build
+in `target/` does not establish that the installed command was updated, and a
+shell parser check does not establish that a selection reaches the next process.
+
+For explicitly requested account E2E, distinguish forwarding to a fake executable,
+checking a real login identity, and obtaining a real service response. Verify the
+requested switching/return path without exposing tokens or persisting identities
+in fixtures. If user login is needed, provide the exact local command and leave
+codes in the user's terminal. Report the level actually tested; authentication
+status alone is not evidence of a successful model response.
+
 Use a safe red/green comparison when it adds meaningful confidence. Do not
 revert user work or manufacture a failure merely to claim the sequence occurred.

@@ -17,6 +17,7 @@ repository behavior or commands need clarification:
 | Area | Read |
 |---|---|
 | Fish | [references/fish.md](references/fish.md), then the relevant section of `fish/README.md` |
+| Claude account switching with cctx | [references/claude-accounts.md](references/claude-accounts.md); also read the Fish reference when changing shell setup |
 | Neovim / LazyVim | [references/neovim.md](references/neovim.md), then the relevant section of `nvim/README.md` |
 | Shared agent config | `.agents/rules/authoring.md`, then the relevant section of `.agents/README.md` |
 | Other apps | the app README when present, then its source config and checks |

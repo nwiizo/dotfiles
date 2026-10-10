@@ -121,6 +121,7 @@ done
 
 nippo_claude_skill="$HOME/ghq/github.com/nwiizo/nippo/.claude/skills/nippo"
 nippo_codex_skill="$HOME/ghq/github.com/nwiizo/nippo/.agents/skills/nippo"
+suiko_skill="$HOME/ghq/github.com/nwiizo/suiko/skills/suiko"
 
 link_path "$repo/.agents/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
 link_path "$repo/.agents/RTK.md" "$HOME/.claude/RTK.md"
@@ -130,6 +131,8 @@ link_path "$repo/.agents/docs" "$HOME/.claude/docs"
 link_path "$repo/.agents/rules" "$HOME/.claude/rules"
 link_dir_children "$repo/.agents/skills" "$HOME/.claude/skills"
 [[ -d "$nippo_claude_skill" ]] && link_path "$nippo_claude_skill" "$HOME/.claude/skills/nippo"
+# Codex keeps its own customized copy at ~/.codex/skills/home-suiko.
+[[ -d "$suiko_skill" ]] && link_path "$suiko_skill" "$HOME/.claude/skills/suiko"
 
 # ~/.agents is the cross-client Agent Skills location. Product-specific
 # agents, rules, and docs stay under ~/.claude or ~/.codex.

@@ -20,6 +20,20 @@ Refactor within scope while the tests remain green.
 - Assert call order only when that interaction is itself required behavior.
 - Do not add dependencies or production APIs solely to enable a test.
 
+## User Configuration and Authentication
+
+Before the first RED run of a CLI that writes user files, inspect how the existing
+code resolves its home and configuration paths. A new configuration override may
+be the behavior under test and cannot be the test's only isolation boundary.
+Set the child process's platform home and relevant configuration variables to a
+temporary directory, and remove inherited authentication overrides. Do not change
+the test runner's global environment when tests can run concurrently.
+
+OS credential stores may live outside that directory. Use a controlled child
+executable for ordinary login-command tests; do not assume a temporary HOME also
+isolates Keychain. Keep real-login tests opt-in, outside the default suite, and
+separate from the regression test that reproduces a bug.
+
 ## Existing Work and Exceptions
 
 - Do not manufacture RED for an implementation that already exists. Use a safe

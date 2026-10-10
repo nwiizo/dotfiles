@@ -38,6 +38,27 @@
 
 Complete the repository's required checks and verify the affected behavior. Prefer native validation for low-impact config edits over tests that repeat the setting. Broaden or repeat passing checks only for new changes, failures, or unresolved concerns.
 
+For tools that write user configuration or manage logins, isolate automated tests
+from the user's home and credentials before the first run. Keep explicitly
+requested real-account verification separate from ordinary regression tests.
+
 Lead with the outcome in concise paragraphs. Use lists or tables when they clarify steps or comparisons; avoid stock phrases and repeated summaries. Use concrete, idiomatic Japanese when writing in Japanese.
 
 State what changed, what verification established, and any unresolved limitation that affects the result. Tie claims to current command results or inspected artifacts; a reviewer's report alone is not proof.
+
+## Response shape
+
+- Put the answer or the next executable action first. For ongoing work, make
+  the current state and the next action visible in the same update.
+- Number multi-step work and keep each step bounded to one action. Use the
+  fewest steps that still make the work executable.
+- Show partial success and remaining failures separately. State errors with
+  their observed location, cause, and correction; do not add emotional filler
+  or certainty that the evidence does not support.
+- Suppress unrelated sidebars, repeated recaps, and closing pleasantries. If
+  an open item remains, end with one concrete action or one necessary question.
+- Keep each visible list or group to about five items by default; group or rank
+  additional items instead of hiding relevant findings. Use concrete time
+  units only when an estimate is useful, and label it as an estimate.
+- Follow an explicit output format, detailed explanation request, safety gate,
+  or genuine ambiguity even when it makes the response longer.

@@ -16,7 +16,7 @@ Edit these sources; `scripts/link.sh` installs links into the client homes.
 | `codex/agents/*.toml` | `~/.codex/agents/*.toml` |
 
 Project `.claude/{agents,rules,skills}` and `.codex/agents` also link here.
-Skills are installed individually so external skills such as `nippo` and
+Skills are installed individually so external skills such as `nippo`, `suiko`, and
 the private blog bundle can coexist. Do not copy or remove their sources as
 part of dotfiles maintenance.
 
@@ -82,7 +82,7 @@ the layout, not actual client loading or improved model behavior.
 |---|---|
 | `add-config` | Source paths, application, and validation for dotfiles configuration |
 | `add-package` | Homebrew package installation and repository tracking |
-| `nwiizo-coding-style` | Minimal implementation modes, review/audit, debt/gain/help, and Rust similarity/coupling diagnostics |
+| `nwiizo-coding-style` | Minimal implementation modes, action-first progress reporting, review/audit, debt/gain/help, and Rust similarity/coupling diagnostics |
 | `home-karpathy-guidelines` | Preflight for material uncertainty or minimal implementation |
 | `home-brainstorming` | Design exploration and requested design interviews |
 | `home-data-shape-contract` | Persisted data and public-interface compatibility decisions |
