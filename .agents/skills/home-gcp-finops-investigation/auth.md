@@ -51,3 +51,14 @@
   - `roles/recommender.viewer`（Active Assist）
   - `roles/bigquery.dataViewer` + `roles/bigquery.jobUser`（Billing Export 分析）
 - より粒度細かくするなら Custom Role を作成
+
+## PAM 経由の一時権限（2026-09 追記）
+
+- entitlement（申請可能な設定）と grant（申請・承認・有効化を管理する単位）は別。grant の ACTIVE と対象 API の成功をそれぞれ確認する。反映待ちの PERMISSION_DENIED は間隔を置いて再確認し、続く場合は対象とロールを調べる。固定の待ち時間で有効化を保証しない
+- 既存 grant の状態と期限を確認してから、entitlement の上限内で調査に必要な期間を申請する。SCHEDULED は予約時刻待ちの状態で、すべての grant が通る有効化待ちではない
+- `roles/bigquery.resourceViewer` は `bigquery.jobs.listAll` を含み、`INFORMATION_SCHEMA.JOBS.query`（他者の SQL 本文）に到達できる。集計は hash・真偽値・件数に限定し、本文閲覧は利用者の明示判断があるときだけ、保存せずに行う
+- 非対話では `Reauthentication failed. cannot prompt during non-interactive execution.` が毎セッション起き得る。`gcloud auth list` の ACTIVE 表示は API 認証の有効性を示さない。最初に軽い実 API を叩いて確かめ、失敗したら利用者に `gcloud auth login` を依頼する
+- Cloud Billing Catalog API は quota project で API 有効化が必要（403）。調査で API を有効化しない
+
+参照: [PAM のアクセス申請](https://docs.cloud.google.com/iam/docs/pam-request-temporary-elevated-access)、
+[JOBS の必要権限](https://docs.cloud.google.com/bigquery/docs/information-schema-jobs)。

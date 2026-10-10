@@ -84,3 +84,27 @@ AWS の `EC2 - Other` と同様、Disk / Snapshot / Public IP が VM 本体と�
 - 自プロジェクトだけ Billing Export を確認できて、組織全体が見えない → 組織レベル Billing Account Viewer を依頼
 - BigQuery にデータセットはあるが `SELECT` できない → `roles/bigquery.dataViewer` + `roles/bigquery.jobUser` の2つが必要
 - Recommender API が叩けない → `roles/recommender.viewer` が別途必要（`roles/viewer` には含まれない）
+
+## BigQuery Editions 予約の読み方（2026-09 追記）
+
+- autoscale は使用した slot ではなく割り当て容量で課金される。通常は 50 slot 単位・最低 60 秒だが、fluid scaling では最低期間が異なる。対象予約の設定と期間中の料金体系を確認する
+- 割り当て時間は `RESERVATIONS_TIMELINE_BY_PROJECT.per_second_details.autoscale_current_slots` を秒単位で合計して 3,600 で割る。分単位の `autoscale.current_slots` だけでは分内の変化を落とす。baseline を別に計上し、秒配列が空の区間を欠落させず、Billing Export の同期間・予約・SKU と突き合わせる
+- 実使用は `JOBS_TIMELINE_BY_PROJECT.period_slot_ms` を 3,600,000 で割って slot 時間にする。予約を使う全 project を対象にし、割り当てと同じ期間・範囲で比べる。平均利用率が低いだけでは、上限を下げた場合の削減額は確定しない
+- `Σ(max(alloc − cap, 0) × 区間秒数) / 3,600 × slot 時間単価` は、観測した容量の上限超過分を切り取る参考試算。上限変更で実行時間や待ち時間が延びるため、これを実現可能な削減額と扱わない。単価は同じ SKU・期間・credit 条件の請求と使用量から求める
+- 上限を下げる前に、開始待ち（`start_time − creation_time` の p95）、実行時間、完了期限、同時実行数を確認する。実際の削減額は変更後も同じ処理量を完了した期間の請求と比較する
+- SCRIPT 親ジョブは子の使用量を集計した値を含む。親と子の二重計上を防ぐため、使用量集計では親を除く
+- 同じ処理の識別は `query_info.query_hashes.normalized_literals`。生成 SQL は hash が多数になるので参照テーブルの組み合わせで束ねる
+- 月次の急増は「月 × ワークロード種別（job_id 接頭辞）」の slot と件数を比べる。実行件数が減っても slot が増える場合は、生成 SQL と入力データ量の変化を調べる
+- 結果キャッシュはコメント・空白を含む本文一致が必要。毎回変わる実行 ID は label へ移す候補だが、参照テーブルの更新や非決定的関数など、ほかの不使用条件も確認する。特定のヒット率を保証しない
+
+2026-10-10 に集計方法を再確認:
+[slot と autoscaling](https://docs.cloud.google.com/bigquery/docs/slots)、
+[予約の秒単位データ](https://docs.cloud.google.com/bigquery/docs/information-schema-reservation-timeline)、
+[キャッシュの条件](https://docs.cloud.google.com/bigquery/docs/cached-results)。
+
+## 請求の追加確認（2026-09 追記）
+
+- promotional credit で全額相殺の SKU（Network Intelligence Center 等）は cost と credit を分けて記録し、credit 終了時の増加として注記する
+- 非本番 project の on-demand Analysis が単月で数十倍になる事故がある。12 か月の単月の山を探し、custom quota を提案する
+- 配賦可能な net の割合を測り、credit で net がゼロ・負になる範囲は別に示す。予約の課金ラベルと job label は別物なので、予約費用をワークロードへ按分する場合は JOBS の label と使用 slot 時間を用い、未使用分・ラベル欠落分の扱いを明記する
+- 調査クエリの課金バイト合計を証跡に残す
