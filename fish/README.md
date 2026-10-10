@@ -153,6 +153,13 @@ abbreviations include descriptions in the completion pager via
 [`abbr --description`](https://fishshell.com/docs/current/cmds/abbr.html).
 For example, type `rep` and press Tab to see what `repo` does.
 
+Git, Docker, and Kubernetes abbreviations also include descriptions. Type `gc`,
+`dc`, or `kg` and press Tab to compare the available shortcuts.
+Typing `gcm` followed by Space expands to `git commit -m ''` and places the
+cursor between the quotes using `abbr --set-cursor`. Enter the message there;
+the quotes are already present. Other abbreviations keep their existing
+expansions and accept arguments after the command as before.
+
 Television uses rounded borders and Catppuccin colors shared with Ghostty.
 File previews use bat; directory previews use eza's tree view. Reviewed channels
 live in [`television/cable/`](../television/cable/), shared with Neovim.
@@ -186,6 +193,9 @@ commands and pipelines, and duration formatting. Also exercise the interactive
 completion descriptions and Television previews after changing their settings.
 Run `rtk proxy fish --no-config fish/tests/television.fish` for insertion,
 multiline history, cancellation, operation arguments, and literal-path previews.
+Run `rtk proxy fish --no-config fish/tests/repo_picker.fish` for repository
+ranking, unvisited candidates, empty history, and cancellation. It uses real
+ghq, zoxide, Git, and Television with temporary repositories and an isolated home.
 
 ## Agent-assisted workflow
 
@@ -292,6 +302,22 @@ Television replaced the fzf pickers on 2026-09-15. Starship and Tide would repla
 the native prompt, which remains intentionally small. Atuin records history,
 zoxide ranks directories, and Fisher manages the editing plugins.
 
+## Copying images to the clipboard
+
+`imgcopy IMAGE` copies JPEG or PNG image data to the macOS clipboard for
+pasting into apps. It accepts relative paths and paths containing spaces,
+detects the format from the file contents, and rejects unreadable files or
+unsupported formats before changing the clipboard. It uses macOS `file` and
+`osascript`; no additional package is needed.
+
+```fish
+imgcopy ./images/diagram.jpg
+imgcopy './images/screen shot.png'
+```
+
+The function is autoloaded from `functions/imgcopy.fish`. After adding it,
+run `scripts/link.sh` from the repository root to make it available in Fish.
+
 ## Database browsing with rainfrog
 
 Run `rainfrog` for a Rust-based database TUI with Vim-style navigation, a query
@@ -364,7 +390,7 @@ rtk proxy script -q /dev/null fish --no-config fish/tests/update_all.fish
 
 | Shortcut | Action |
 |---|---|
-| `repo` / `Alt-J` / `Ctrl-G` | Select a ghq repository with Television and change directory |
+| `repo` / `Alt-J` / `Ctrl-G` | Select a ghq repository ranked by directory visits and change directory |
 | `gb` / `Ctrl-B` | Select a local Git branch and switch without forcing away changes |
 | `kc` | Select a context from the local kubeconfig and make it current |
 | `de [command...]` | Select a running Docker container and run the command, or `sh` by default |
@@ -390,6 +416,14 @@ jumps to the chosen directory. `zi` opens that selection directly.
 `kubectl_tv_ctx`, and `docker_tv_exec`. Their descriptions remain visible in
 Fish completion. `fgl`, `fgs`, `fp`, and `fv` insert commits, changed paths,
 process IDs, and variable names into the command buffer.
+
+The `repo` helper orders repository roots using
+[zoxide's frequency and recency ranking](https://github.com/ajeetdsouza/zoxide/wiki/Algorithm).
+Only paths also listed by ghq are promoted; other ghq repositories follow in
+their original order. Visits to a repository's subdirectories are not aggregated
+into its root's score. Without zoxide or usable history, all ghq repositories
+remain available. Typing filters the candidates while preserving this order.
+The helper supplies this ranked input to the shared `git-repos` channel.
 
 The Fish helpers merge other sessions' history outside private mode, then feed
 the current shell's timestamped history to Television with NUL entry separators.

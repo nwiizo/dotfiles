@@ -33,6 +33,11 @@ ignore rules remain active. Previews quote embedded apostrophes before passing
 paths to bash. Query history is disabled because Fish and Atuin already manage
 command history. No community channel download is required.
 
+Fish's `repo` / `Alt-J` / `Ctrl-G` helper supplies ghq repository roots in
+zoxide's frequency/recency order, followed by unvisited roots in ghq order.
+It preserves that order while filtering. Standalone `tv git-repos` uses the
+channel's ordinary ghq source.
+
 ## Neovim
 
 The native bridge in `nvim/lua/config/television.lua` runs Television in a
@@ -113,6 +118,7 @@ also expects the usual `file:line:column` format without colons in file names.
 ```sh
 rtk proxy tv --config-file television/config.toml --cable-dir television/cable list-channels
 rtk proxy fish --no-config fish/tests/television.fish
+rtk proxy fish --no-config fish/tests/repo_picker.fish
 rtk proxy nvim --headless -u NONE -l nvim/tests/television.lua
 rtk proxy nvim --headless -u NONE -l nvim/tests/television_quickfix.lua
 rtk proxy brew bundle check --file Brewfile

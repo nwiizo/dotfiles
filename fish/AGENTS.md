@@ -72,7 +72,7 @@ Run these checks from the repository root, selecting the affected behavior:
 | Fish source | `rtk proxy fish -n` on each changed `.fish` file |
 | Plugin installer | `rtk proxy fish --no-config fish/tests/install_plugins.fish` |
 | Prompt | `rtk proxy fish --no-config fish/tests/prompt.fish` |
-| Television helpers | `rtk proxy fish --no-config fish/tests/television.fish` |
+| Television helpers | `rtk proxy fish --no-config fish/tests/television.fish`; for repository ranking, also `rtk proxy fish --no-config fish/tests/repo_picker.fish` |
 | Tool updater | `rtk proxy fish --no-config fish/tests/update_all.fish` |
 
 The installer check uses the installed Fisher, local fixture plugins, and an
