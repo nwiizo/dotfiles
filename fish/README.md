@@ -1,12 +1,16 @@
 # Fish Shell
 
 This directory holds the Fish configuration. `scripts/link.sh`
-symlinks `config.fish`, `conf.d/`, and custom functions into
+symlinks `config.fish` and individual snippets and custom functions into
 `~/.config/fish/`. `fish_plugins` is the repo-managed desired plugin list;
 Fisher writes `~/.config/fish/fish_plugins` when
 `scripts/install-fish-plugins.fish` runs. The installer bootstraps Fisher from
-a reviewed commit with a pinned SHA-256 checksum; Sponge is fixed at `1.1.0`
-because the repo carries a Fish 4.x compatibility override for that release.
+a reviewed commit with a pinned SHA-256 checksum. Plugins use reviewed tags or
+commits; Sponge stays at `1.1.0` with a Fish 4.x compatibility override.
+
+Editing and verification instructions are in [`AGENTS.md`](AGENTS.md).
+`CLAUDE.md` is a relative symlink to that file; maintain the instructions in
+`AGENTS.md`.
 
 ## Layout
 
@@ -23,6 +27,92 @@ because the repo carries a Fish 4.x compatibility override for that release.
 2. Run `../scripts/link.sh` when adding/removing files.
 3. Run `fish ../scripts/install-fish-plugins.fish` when changing plugins.
 4. New shells pick up changes; reload the shell with `exec fish`.
+
+## Plugin policy and review (2026-10-10)
+
+The reviewed setup uses Fish `4.9.3` and Fisher `4.4.8`, with four plugins plus
+Fisher itself. Keep Fish's built-in autosuggestions, syntax highlighting, and
+completion; these already work without extra plugins. See the
+[Fish interactive guide](https://fishshell.com/docs/current/interactive.html).
+
+| Plugin | Reviewed ref | Purpose and decision |
+|---|---|---|
+| [Fisher](https://github.com/jorgebucaran/fisher) | `4.4.8` | Keep one plugin manager; reconcile the repo's desired list with the installed set. |
+| [autopair.fish](https://github.com/jorgebucaran/autopair.fish) | `1.0.4` | Keep paired brackets/quotes and paired backspace. This tag has the same Fish code as the reviewed main branch. |
+| [puffer-fish](https://github.com/nickeb96/puffer-fish) | `83174b07de60` | Keep `...` → `../../`, `!!` for the previous command, and `!$` for its last argument. Full commit is in `fish_plugins`. |
+| [Sponge](https://github.com/meaningful-ooo/sponge) | `1.1.0` | Keep failed-command cleanup for Fish history and the matching local compatibility snippet. |
+| [fish-abbreviation-tips](https://github.com/gazorby/fish-abbreviation-tips) | `v0.7.0` | Keep reminders for existing abbreviations; initialize its index after the first command. |
+
+All five upstream repositories were non-archived at review time, but some have
+infrequent releases. Pinning makes upgrades deliberate; it does not establish
+compatibility by itself. Inspect upstream changes, edit the ref, apply the
+installer, and exercise the affected interaction before keeping an upgrade.
+Routine `update_all` runs retain these refs instead of advancing them to HEAD.
+
+### Ownership and loading
+
+- Television owns `Ctrl-R`, `Ctrl-T`, `Ctrl-F`, and empty-line Tab. Atuin records
+  history and supplies `fh`; its competing search bindings are disabled. Tab
+  on nonempty input uses native completion, overriding autopair's Tab handler.
+- Sponge cleans Fish history only. It does not clean Atuin's database, and
+  `fish_should_add_to_history` also filters only Fish history. Sponge retains
+  the last two entries before purging by default, so failed commands can still
+  be recalled immediately. These filters are not a substitute for avoiding
+  secrets in command arguments.
+- zoxide owns directory ranking, mise owns tool versions, and direnv owns
+  project environments. They use their native integrations, not Fisher plugins.
+- The repo's `functions/` files autoload on demand. `conf.d` runs before
+  `config.fish`, including in non-interactive shells; UI hooks need an interactive
+  guard. Same-named user snippets replace vendor snippets, which is why mise and
+  direnv use the upstream basename. See [Fish's loading order](https://fishshell.com/docs/current/language.html#configuration-files).
+- Keep Fisher's installed files and universal variables outside Git. Link
+  individual repo files so Fisher can own neighboring files. Never edit
+  `_fisher_plugins` or plugin file inventories manually.
+
+### Applying and checking plugins
+
+Run from the repository root:
+
+```fish
+rtk proxy fish scripts/install-fish-plugins.fish
+rtk proxy fish -c 'fisher list'
+```
+
+The installer strips comments from the desired list, writes a regular live
+manifest in Fish's actual config directory, and delegates reconciliation to
+[`fisher update`](https://github.com/jorgebucaran/fisher#using-your-fish_plugins-file).
+It detaches a legacy manifest symlink before writing and checks the resulting
+registrations. This handles ref changes without leaving old files registered
+and reports incomplete installs instead of recording missing plugins as present.
+After a failure, resolve the reported cause and rerun the installer; the repo
+list remains the desired state. Fisher does not provide an atomic update or a
+lockfile with archive checksums; tag pins can also be moved upstream.
+
+Use the installer as a separate Fish process, then `reload` in existing terminals.
+An in-process `fisher update` reloads upstream functions and can temporarily
+replace the Sponge compatibility definitions until the next shell startup.
+
+The offline regression check uses the installed Fisher with local fixture
+plugins, a temporary home, and isolated XDG directories. It covers ref changes,
+removal, manifest symlinks, and partial installation failure:
+
+```fish
+rtk proxy fish --no-config fish/tests/install_plugins.fish
+```
+
+### Additional plugins considered
+
+Popularity is context, not a reason to duplicate an existing integration.
+The approximate GitHub star counts below were checked on 2026-10-10. No new
+plugin is added in this review because the current workflows already have owners
+or the candidate needs a concrete use case or compatibility fix.
+
+| Candidate | Popularity | Decision for this setup |
+|---|---|---|
+| [fzf.fish](https://github.com/PatrickF1/fzf.fish) | 2.7k | Television already covers files, history, Git, processes, and variables; avoid another picker and its bindings. |
+| [done](https://github.com/franciscolourenco/done) | 970 | Ghostty already handles long-command notifications. |
+| [fish-async-prompt](https://github.com/acomagu/fish-async-prompt) | 550 | Revisit if Git prompt latency is measured; [transient prompt support remains an open PR](https://github.com/acomagu/fish-async-prompt/pull/95). |
+| [bass](https://github.com/edc/bass) / [replay.fish](https://github.com/jorgebucaran/replay.fish) | 2.5k / 480 | Useful for importing Bash environment changes, but the configured tools already have Fish integrations. Revisit for a Bash-only SDK setup script. |
 
 ## Development setup (2026-09-15)
 

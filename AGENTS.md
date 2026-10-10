@@ -3,6 +3,7 @@
 Manage this macOS environment through repository sources and direct symlinks.
 Homebrew owns binaries in `Brewfile`; `scripts/` applies and validates config.
 Read the affected area's README for its current behavior and maintenance notes.
+For Fish changes, also follow [fish/AGENTS.md](fish/AGENTS.md).
 
 ## Where to Edit
 
@@ -11,7 +12,7 @@ Edit repository sources, not linked targets under `~/.config` or agent homes.
 | Area | Source |
 |---|---|
 | Packages | `Brewfile` |
-| Fish | `fish/config.fish`, autoloaded `fish/functions/<name>.fish`; vendor overrides in `fish/conf.d/` use the upstream basename |
+| Fish | `fish/config.fish`, `fish/fish_plugins`, autoloaded `fish/functions/<name>.fish`; vendor overrides in `fish/conf.d/` use the upstream basename |
 | Neovim | `nvim/lua/config/` and feature-grouped `nvim/lua/plugins/` |
 | Terminals and CLI apps | `ghostty/`, `gpane/`, `git/`, `gh/`, `bat/`, `atuin/`, `tealdeer/` |
 | Agent preferences and workflows | `.agents/`; project `.claude/` entrypoints and `.codex/agents` link there |

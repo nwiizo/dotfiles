@@ -27,7 +27,7 @@ Read this file for the overall model. Use the subdirectory docs when changing a 
 | --- | --- | --- |
 | Packages | `Brewfile` | `Brewfile` |
 | Linking/bootstrap | `scripts/link.sh`, `scripts/bootstrap.sh` | `scripts/` |
-| Fish | `fish/README.md` | `fish/config.fish`, `fish/functions/`, `fish/fish_plugins` |
+| Fish | [`fish/README.md`](fish/README.md), [`fish/AGENTS.md`](fish/AGENTS.md) | `fish/config.fish`, `fish/functions/`, `fish/fish_plugins` |
 | Neovim | `nvim/README.md` | `nvim/lua/config/`, `nvim/lua/plugins/` |
 | Ghostty | `ghostty/README.md` | `ghostty/config` |
 | Television | `television/README.md` | `television/config.toml`, `television/cable/` |
@@ -185,7 +185,13 @@ update_all --help
 
 ## Fish
 
-`fish/config.fish` defines XDG paths, Homebrew paths, language tool paths, environment variables, abbreviations, and integrations for Television, zoxide, mise, carapace, atuin, and direnv.
+`fish/config.fish` defines environment variables, abbreviations, and interactive tool integrations. Early PATH setup and mise/direnv hooks live in `fish/conf.d/`; custom commands autoload from `fish/functions/`.
+
+Fisher manages four plugins: autopair for paired brackets and quotes, puffer-fish for input expansions, Sponge for failed-command cleanup in Fish history, and abbreviation-tips for shortcut reminders. All plugins, including Fisher, use reviewed tags or commits in `fish/fish_plugins`. Television owns interactive pickers, Atuin records history, and zoxide ranks directories.
+
+Edit the desired plugin list, run `rtk proxy fish scripts/install-fish-plugins.fish`, then `reload` in existing terminals. The installer reconciles exact refs through Fisher and checks for incomplete installations; keep the live manifest and Fisher's internal variables outside Git. Routine `update_all` runs preserve the selected refs. The [Fish plugin guide](fish/README.md#plugin-policy-and-review-2026-10-10) records maintenance decisions and additional candidates.
+
+Fish-specific editing and verification rules live in [`fish/AGENTS.md`](fish/AGENTS.md); `fish/CLAUDE.md` is a relative symlink to it.
 
 Notable bindings:
 
@@ -277,6 +283,14 @@ rtk proxy nippo collect --days 7 --stats-only
 ```bash
 fish -n fish/config.fish
 for f in fish/functions/*.fish; do fish -n "$f" || exit 1; done
+```
+
+When changing the Fish plugin installer, run its offline regression check. It
+uses the installed Fisher with local fixture plugins and a temporary home:
+
+```bash
+rtk proxy fish -n scripts/install-fish-plugins.fish
+rtk proxy fish --no-config fish/tests/install_plugins.fish
 ```
 
 ```bash

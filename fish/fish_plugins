@@ -2,9 +2,9 @@
 jorgebucaran/fisher@4.4.8
 
 # Editing ergonomics
-jorgebucaran/autopair.fish
-nickeb96/puffer-fish
+jorgebucaran/autopair.fish@1.0.4
+nickeb96/puffer-fish@83174b07de60078be79985ef6123d903329622b8
 
 # History and feedback
 meaningful-ooo/sponge@1.1.0
-gazorby/fish-abbreviation-tips
+gazorby/fish-abbreviation-tips@v0.7.0

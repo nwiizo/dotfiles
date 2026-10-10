@@ -1,10 +1,16 @@
 #!/usr/bin/env fish
 set -l repo (dirname (status --current-filename))/..
 set -l plugin_file "$repo/fish/fish_plugins"
-set -l live_plugin_file "$HOME/.config/fish/fish_plugins"
+set -l live_plugin_file "$__fish_config_dir/fish_plugins"
 
 if not test -f "$plugin_file"
     echo "fish_plugins not found: $plugin_file" >&2
+    exit 1
+end
+
+set -l plugins (string trim <"$plugin_file" | string match -rv '^(#|$)')
+if not set -q plugins[1]
+    echo "No plugins listed in $plugin_file" >&2
     exit 1
 end
 
@@ -32,53 +38,22 @@ if not functions -q fisher
 end
 
 if test -L "$live_plugin_file"
-    rm -f "$live_plugin_file"
+    rm -f "$live_plugin_file"; or exit 1
 end
 
-set -l plugins (string match -rv '^\s*(#|$)' <"$plugin_file")
-set -l wanted_base_norm
+# Fisher reconciles exact refs through its manifest, including removal of an
+# old ref before installing the replacement's files. Keep its state private.
+mkdir -p "$__fish_config_dir"; or exit 1
+printf '%s\n' $plugins >"$live_plugin_file"; or exit 1
+fisher update </dev/null; or exit $status
 
-for plugin in $plugins
-    set -l plugin_base (string replace -r '@[^/]+$' '' -- $plugin)
-    set -a wanted_base_norm (string lower -- $plugin_base)
+# Fisher can return success after a partial install (for example, one plugin's
+# files conflict while another updates). Do not register missing plugins by hand.
+set -l expected (string lower -- $plugins | sort -u)
+set -l installed (fisher list | string lower | sort -u)
+if test "$expected" != "$installed"
+    echo "Fish plugin installation incomplete. Resolve the Fisher errors and rerun this script." >&2
+    exit 1
 end
-
-for plugin in (fisher list 2>/dev/null)
-    set -l plugin_base (string replace -r '@[^/]+$' '' -- $plugin)
-    set -l base_norm (string lower -- $plugin_base)
-    contains -- $base_norm $wanted_base_norm; and continue
-    fisher remove $plugin
-end
-
-set -l installed_plugins
-if test -f "$live_plugin_file"
-    set installed_plugins (string match -rv '^\s*(#|$)' <"$live_plugin_file")
-end
-
-for plugin in $installed_plugins
-    set -l plugin_base (string replace -r '@[^/]+$' '' -- $plugin)
-    set -l base_norm (string lower -- $plugin_base)
-
-    if not contains -- $base_norm $wanted_base_norm
-        fisher remove $plugin
-        continue
-    end
-end
-
-fisher install $plugins
-set -l install_status $status
-if test $install_status -ne 0
-    exit $install_status
-end
-
-set -l normalized_plugins
-set -l seen_norm
-for plugin in $plugins
-    set -l norm (string lower -- $plugin)
-    contains -- $norm $seen_norm; and continue
-    set -a seen_norm $norm
-    set -a normalized_plugins $norm
-end
-set -U _fisher_plugins $normalized_plugins
 
 exit 0
