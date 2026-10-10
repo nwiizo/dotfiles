@@ -79,6 +79,7 @@ keybind = cmd+zero=reset_font_size
 # ─── Pane Management (vim-style) ─────────────────────────────────────────────
 
 keybind = cmd+d=new_split:right
+keybind = cmd+|=new_split:right
 keybind = cmd+shift+d=new_split:down
 keybind = cmd+shift+minus=new_split:down
 
