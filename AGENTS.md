@@ -4,6 +4,7 @@ Manage this macOS environment through repository sources and direct symlinks.
 Homebrew owns binaries in `Brewfile`; `scripts/` applies and validates config.
 Read the affected area's README for its current behavior and maintenance notes.
 For Fish changes, also follow [fish/AGENTS.md](fish/AGENTS.md).
+For Neovim changes, also follow [nvim/AGENTS.md](nvim/AGENTS.md).
 
 ## Where to Edit
 

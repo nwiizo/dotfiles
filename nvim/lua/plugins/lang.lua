@@ -1,14 +1,8 @@
 -- Language-specific plugins
 -- LazyVim manages: rustaceanvim, crates, neotest, nvim-dap (via extras)
 -- Rust debugging uses rustaceanvim with the mason codelldb adapter; no manual nvim-dap config.
+-- HTML/JSX tag completion comes from LazyVim's nvim-ts-autotag spec.
 return {
-  -- nvim-ts-autotag: Auto-close and auto-rename HTML/JSX/TSX tags
-  {
-    "windwp/nvim-ts-autotag",
-    event = "InsertEnter",
-    opts = {},
-  },
-
   -- rustaceanvim: Override, preserve LazyVim on_attach
   {
     "mrcjkb/rustaceanvim",
@@ -231,8 +225,7 @@ return {
     build = "cargo build --locked --release",
     ft = { "rust", "toml" },
     cmd = { "CargoBuild", "CargoRun", "CargoTest", "CargoCheck", "CargoClippy" },
-    opts = { float_window = true, window_width = 0.8, window_height = 0.8 },
-    config = true,
+    opts = { window_width = 0.8, window_height = 0.8 },
   },
 
   -- marp.nvim: Markdown presentations

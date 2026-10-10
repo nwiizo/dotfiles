@@ -1,6 +1,31 @@
 -- Diagnostics & Code Quality plugins
 -- LazyVim manages: trouble.nvim, todo-comments.nvim
 return {
+  -- Edit search results in quickfix; review source buffers before saving them.
+  {
+    "stevearc/quicker.nvim",
+    ft = "qf",
+    opts = {
+      edit = { autosave = false },
+      keys = {
+        {
+          ">",
+          function()
+            require("quicker").expand({ before = 2, after = 2, add_to_existing = true })
+          end,
+          desc = "Expand Quickfix Context",
+        },
+        {
+          "<",
+          function()
+            require("quicker").collapse()
+          end,
+          desc = "Collapse Quickfix Context",
+        },
+      },
+    },
+  },
+
   -- nvim-bqf: Better quickfix preview and filtering
   {
     "kevinhwang91/nvim-bqf",

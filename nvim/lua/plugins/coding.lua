@@ -1,16 +1,89 @@
 -- Coding enhancements
+-- LazyVim manages: mini.ai, yanky (via extra)
 return {
+  -- better-escape.nvim: jk/jj to escape
+  {
+    "max397574/better-escape.nvim",
+    -- Install after LazyVim's j/k mappings, including before the first InsertEnter.
+    event = "User LazyVimKeymaps",
+    opts = {
+      timeout = vim.o.timeoutlen,
+      default_mappings = false,
+      mappings = {
+        i = { j = { k = "<Esc>", j = "<Esc>" } },
+        c = { j = { k = "<Esc>", j = "<Esc>" } },
+        t = { j = { k = "<C-\\><C-n>", j = "<C-\\><C-n>" } },
+        x = { j = { k = "<Esc>" } },
+        s = { j = { k = "<Esc>" } },
+      },
+    },
+  },
+
+  -- nvim-surround (replaces mini.surround)
+  {
+    "kylechui/nvim-surround",
+    version = "*",
+    event = "VeryLazy",
+    opts = {},
+  },
+
+  -- mini.ai: Add an argument text object; LazyVim already defines o/f/c/t/d/e/g/u/U and n_lines
+  {
+    "nvim-mini/mini.ai",
+    opts = function(_, opts)
+      local ai = require("mini.ai")
+      opts.custom_textobjects = opts.custom_textobjects or {}
+      opts.custom_textobjects.a = ai.gen_spec.treesitter({ a = "@parameter.outer", i = "@parameter.inner" })
+      return opts
+    end,
+  },
+
+  -- vim-matchup: Enhanced % matching with treesitter (replaces disabled matchit/matchparen)
+  {
+    "andymass/vim-matchup",
+    event = "BufReadPost",
+    init = function()
+      vim.g.matchup_matchparen_offscreen = { method = "popup" }
+      vim.g.matchup_treesitter_enabled = 1
+    end,
+  },
+
+  -- nvim-autopairs
+  {
+    "windwp/nvim-autopairs",
+    event = "InsertEnter",
+    opts = {
+      check_ts = true,
+      ts_config = {
+        lua = { "string" },
+        rust = { "string", "raw_string_literal" },
+      },
+      fast_wrap = {
+        map = "<M-e>",
+        chars = { "{", "[", "(", '"', "'" },
+        pattern = [=[[%'%"%>%]%)%}%,]]=],
+        end_key = "$",
+        before_key = "h",
+        after_key = "l",
+        keys = "qwertyuiopzxcvbnmasdfghjkl",
+        highlight = "PmenuSel",
+        highlight_grey = "LineNr",
+      },
+    },
+  },
+
   -- yanky.nvim: Disable <leader>p (conflicts with Peek group), use <leader>sy for yank history
   {
     "gbprod/yanky.nvim",
     keys = {
-      { "<leader>p", false },
+      { "<leader>p", false, mode = { "n", "x" } },
       {
         "<leader>sy",
         function()
           Snacks.picker.yanky()
         end,
         desc = "Yank History",
+        mode = { "n", "x" },
       },
     },
   },
@@ -91,6 +164,7 @@ return {
         end,
         desc = "Debug Cleanup",
         expr = true,
+        remap = true, -- Expand mini.ai's `ag` mapping after the operator.
       },
       {
         "<leader>Rs",

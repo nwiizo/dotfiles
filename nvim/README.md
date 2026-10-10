@@ -6,13 +6,18 @@ LazyVimベースのNeovim設定。Rust、Go、TypeScript、Python開発とAI支�
 
 ## 概要
 
-- **ベース**: [LazyVim](https://github.com/LazyVim/LazyVim)
+- **ベース**: [LazyVim v16.0.1](https://github.com/LazyVim/LazyVim/releases/tag/v16.0.1)（2026-10-10確認）
 - **テーマ**: catppuccin mocha
 - **補完**: blink.cmp
 - **要件**: Neovim 0.12+
 - **UI哲学**: 最小限のUI、最大限の編集領域
 
 ## 読み方
+
+この README は操作・構成・検証の案内。[AGENTS.md](AGENTS.md) には設定変更時の
+判断基準と、この環境で保つ動作をまとめている。`CLAUDE.md` は `AGENTS.md` への
+相対シンボリックリンクなので、ルールの更新は `AGENTS.md` に行う。
+[AGENTS.md の公式案内](https://agents.md/)に沿って、Neovim 固有の指示をこのディレクトリへまとめている。
 
 | 目的 | セクション |
 | --- | --- |
@@ -40,6 +45,24 @@ LazyVimでは設定ファイルの配置場所が役割で決まっている。
 `lazy.lua` の `{ import = "plugins" }` が、機能別の定義を読み込む。通常は `opts = { ... }` で必要な値だけ指定し、LazyVimの設定にマージする。コールバックなどを扱う場合は `opts = function(_, opts)` で受け取った設定を変更する。新しいテーブルだけを返すと元の設定が置き換わるため、検索やキーマップの連携も失われる。既存の `on_attach` は呼び出しを引き継ぐ。無効化は `enabled = false` を使う。
 
 詳細は [lazy.nvimの設定仕様](https://lazy.folke.io/spec#spec-setup) と [LazyVimのカスタマイズ](https://www.lazyvim.org/configuration/plugins) を参照。Neovim本体のオプションは `config/options.lua` に差分だけを置く。
+
+`setup(opts)` だけなら `config` は書かず、lazy.nvim に任せる。Incline のイベント連携や
+Codex の独自コマンドのように、初期化後の処理が必要なものだけ `config` を残す。
+編集操作は `coding.lua`、表示は `ui.lua` にまとめる。
+
+### 読み込みと依存の方針
+
+| 対象 | 方針 |
+| --- | --- |
+| LazyVim / Extras の標準機能 | 変更する値だけを指定する。HTML/JSX のタグ補完は標準の nvim-ts-autotag に任せる。 |
+| キー・コマンドで使う機能 | `keys` / `cmd` で読み込む。これらがあれば通常 `lazy = true` の追加は不要。 |
+| 常時使う表示・連携 | UI は `VeryLazy`、better-escape は `User LazyVimKeymaps`。選択ヒントや外部接続を持つ AI 連携も初期化順を保つ。 |
+| 起動時に必要な機能 | テーマと Oil は先に読み込む。Oil はディレクトリを直接開く動作のため、公式推奨どおり `lazy = false`。 |
+| バージョンとローカル開発 | 通常のプラグインは `lazy-lock.json` で管理する。`dir` 指定の codex・signalbox・cargo・marp は `~/ghq/github.com/nwiizo/` の作業ツリーを使い、lockfile の復元対象には含まれない。 |
+
+読み込み条件は [lazy.nvim の説明](https://lazy.folke.io/spec/lazy_loading)、
+Oil の例外は [公式の導入手順](https://github.com/stevearc/oil.nvim#installation)を参照。
+ローカル開発の4リポジトリは別途配置しておく。
 
 ### LazyVim Extras の有効化
 
@@ -81,23 +104,28 @@ nvim/
 ├── .stylua.toml                # Luaフォーマッター設定
 ├── lazy-lock.json              # lazy.nvim plugin revision lockfile
 ├── lazyvim.json                # LazyVim metadata
+├── README.md                   # 操作・構成・検証
+├── AGENTS.md                   # 設定変更時の方針
+├── CLAUDE.md -> AGENTS.md       # Claude向けの共通入口
+├── tests/                      # headlessで実操作を検証
 └── lua/
     ├── config/
     │   ├── lazy.lua            # lazy.nvim bootstrap + Extras
     │   ├── options.lua         # Vimオプション
     │   ├── keymaps.lua         # カスタムキーマップ
-    │   └── autocmds.lua        # カスタムautocmd
+    │   ├── autocmds.lua        # カスタムautocmd
+    │   └── television.lua     # Televisionとの接続、quickfix変換
     └── plugins/
         ├── disabled.lua        # LazyVimデフォルト無効化
         ├── colorscheme.lua     # catppuccin mocha
-        ├── ui.lua              # incline, modes, vimade, better-escape, noice override
-        ├── navigation.lua      # Television, Snacks override, oil, overlook, hbac
+        ├── ui.lua              # incline, modes, vimade, noice, which-key
+        ├── navigation.lua      # Television, Snacks, Telescope, fff, oil, overlook, treewalker, hbac
         ├── git.lua             # gitsigns override, codediff, diffview
-        ├── diagnostics.lua     # trouble override, todo-comments override, nvim-bqf
+        ├── diagnostics.lua     # trouble, todo-comments, quicker, nvim-bqf
         ├── lsp.lua             # lspconfig, conform, mason, treesitter override
         ├── completion.lua      # blink.cmp override
-        ├── coding.lua          # yanky, refactoring.nvim, treesj
-        ├── ai.lua              # copilot-chat, avante, codex, claudecode
+        ├── coding.lua          # escape, surround, pairs, textobjects, matchup, yanky, refactoring, treesj
+        ├── ai.lua              # copilot, copilot-chat, avante, codex, claudecode, signalbox
         └── lang.lua            # rustaceanvim, crates, neotest, dap, cargo, marp
 ```
 
@@ -107,14 +135,17 @@ nvim/
 
 | Extra             | 内容                                            |
 | ----------------- | ----------------------------------------------- |
-| `lang.rust`       | rustaceanvim + crates.nvim + neotest-rust + DAP |
+| `lang.rust`       | rustaceanvim + crates.nvim + rustaceanvim.neotest + DAP |
 | `lang.go`         | gopls + neotest-golang                          |
 | `lang.python`     | pyright + ruff                                  |
-| `lang.typescript` | typescript-language-server                      |
+| `lang.typescript` | vtsls                                           |
 | `lang.json`       | jsonls + schemastore                            |
 | `lang.yaml`       | yamlls + schemastore                            |
-| `lang.markdown`   | markdownlint + render-markdown                  |
+| `lang.markdown`   | render-markdown（markdownlint は無効化）          |
 | `lang.terraform`  | terraform-ls                                    |
+| `lang.docker`     | dockerls + Compose LSP + hadolint                |
+| `lang.toml`       | taplo                                           |
+| `lang.git`        | Git関連ファイルのTreesitter構文解析              |
 
 Go の補完・定義ジャンプ・参照検索・整形・テスト・デバッグは [`lang.go` の公式設定](https://www.lazyvim.org/extras/lang/go)を使う。gopls・整形ツール・テストアダプターの既定値は個別設定にコピーせず、Extra の更新を引き継ぐ。gopls の設定を追加するときは、[現行版の設定一覧](https://go.dev/gopls/settings)で対応を確認する。
 
@@ -159,10 +190,12 @@ Other custom integrations live in feature files under `lua/plugins/`:
 
 既存の LazyVim / Snacks / Oil / Blink / Noice 構成を基準に、不足する操作を補う。機能が重なる候補は専用キーに割り当て、既存の操作と比較できるようにする。
 
-2026-09-08の[人気・開発状況の調査](plugin-research.md)では、Snacks・Blink・Oilの継続を選んだ。入力ミスを許容する検索のfffと、変更に追従するレビュー画面のCodeDiffを導入した。SidekickとQuickerは追加候補として調査メモに残している。
+2026-09-08の[人気・開発状況の調査](plugin-research.md)では、Snacks・Blink・Oilの継続を選んだ。入力ミスを許容する検索のfffと、変更に追従するレビュー画面のCodeDiffを導入した。2026-09-29にはQuickerを追加し、新作プラグインの調査結果も同じメモに追記した。
 
-2026-09-24の[公式設定の確認](plugin-config-review.md)では、Overlook の API と
-better-escape の読み込み順を修正し、Oil の外部変更への追従を有効にした。
+2026-10-10の[設定整理](plugin-config-review.md)では、公式の読み込み方と実際の設定を照合し、
+編集系の配置・`opts` の使い方・標準設定との重複を整理した。
+さらに Star 数と既存構成への適性を比較し、専用の入口から使う Telescope を追加した。
+同じメモに、2026-09-24の Overlook・better-escape・Oil の修正記録も残している。
 
 2026-09-15に通常のファイル・本文検索とquickfixの絞り込みをTelevisionへ移行した。設定はFishと共通で、接続処理は `lua/config/television.lua` に置く。Smart Picker、ステージ操作付き変更一覧、LSPなどの検索はSnacks、入力ミス補正とplain・regex・fuzzy検索はfffを元のキーで使える。[操作・機能差・検証方法](../television/README.md)を参照。
 
@@ -219,6 +252,7 @@ CodeDiffは `<leader>gR` で作業中の変更、`<leader>gV` でステージ済
 | `<leader>fn` | n | 新規ファイル | L |
 | `<C-p>` | n | ファイル検索（ルート） | C Television |
 | `<leader>fP` | n | 入力ミスを許容するファイル検索（ルート） | C fff |
+| `<leader>fT` | n | Telescopeの検索メニュー | P telescope |
 | `-` | n | Oil ファイルエクスプローラ | P oil |
 | `<leader>e` | n | Oil ファイルエクスプローラ | P oil |
 
@@ -243,7 +277,7 @@ CodeDiffは `<leader>gR` で作業中の変更、`<leader>gV` でステージ済
 | `<leader>sP` | n | Snacksの検索機能一覧 | C Snacks |
 | `<leader>su` | n | Undo履歴のプレビューと復元 | L Snacks |
 | `<leader>st` / `<leader>sT` | n | TODO検索（全て / TODO・FIX・FIXME） | L todo-comments |
-| `<leader>sy` | n | ヤンク履歴 | P yanky |
+| `<leader>sy` | n,x | ヤンク履歴 | P yanky |
 
 #### Snacks Pickerの標準機能と使い分け
 
@@ -281,6 +315,7 @@ Git差分の色付きプレビューも公式の既定動作を引き継ぐ。Te
 | ------------ | ------ | ------------------ | -------- |
 | `<leader>bd` | n      | バッファ削除       | L Snacks |
 | `<leader>bo` | n      | 他のバッファを削除 | L Snacks |
+| `<leader>bi` | n      | 表示していないバッファを削除 | L Snacks |
 | `<leader>bb` | n      | バッファ切替       | L        |
 
 ### LSP
@@ -403,9 +438,18 @@ Git差分の色付きプレビューも公式の既定動作を引き継ぐ。Te
 | `<leader>yl` | n,x | `path:line` / `path:start-end` をコピー | C |
 | `<leader>cx` | n | 現在ファイルに実行権限を付与 | C |
 | `zf` | qf | quickfixをTelevisionで絞り込み | C Television |
+| `>` / `<` | qf | 検索結果の前後2行を追加表示 / 折りたたむ | P quicker |
 | `<C-x>` / `<C-v>` | qf | quickfix項目を水平/垂直分割で開く | P nvim-bqf |
 | `<C-a>` / `<C-x>` | n | インクリメント/デクリメント (dial拡張) | P dial |
 | `[y` / `]y` | n | ペースト後にヤンク履歴サイクル | P yanky |
+
+Televisionで検索結果を `Ctrl-Q` で送ると、quickfix上で本文を編集できる。
+閉じた一覧は `:copen` で開く。quickfix内の `:w` は変更を元バッファへ反映し、
+ファイルの保存は行わない。`<leader>fm` で変更バッファを確認してから保存する。
+ファイル名や行の並びは変えず、本文だけを編集する。
+
+`:%s/旧/新/g` や `<leader>cw` による置換では、入力中に別ウィンドウにも
+変更候補を表示する（`inccommand=split`）。Enterで確定、Escで取り消す。
 
 ### ターミナル
 
@@ -435,9 +479,15 @@ Neovim側にも未保存の変更がある場合は、バッファを開いた�
 
 | キー | モード | 説明 | 出典 |
 | --- | --- | --- | --- |
-| `<leader>aa` | n | AI質問 (avante) | P avante |
-| `<leader>aE` | n | AIでコード編集 (avante) | P avante |
+| `<leader>aa` | n,x | AI質問 (avante) | P avante |
+| `<leader>aN` | n,x | Avanteの新規チャット | P avante |
+| `<leader>aE` | x | 選択範囲をAIで編集 (avante) | P avante |
 | `<leader>aS` | n | Avante更新 | P avante |
+| `<leader>aX` | n | Avante停止 | P avante |
+| `<leader>az` | n,x | Avante Zenモード | P avante |
+| `<leader>ah` / `<leader>a?` | n | Avanteの履歴 / モデル選択 | P avante |
+| `<leader>aB` / `<leader>aC` | n | 全バッファをAvanteへ追加 / 選択ヒントの切り替え | P avante |
+| `<leader>as` | n | Avante自動提案の切り替え（初期状態は無効） | P avante |
 | `<leader>a1` | n | Avante provider: Codex ACP | P avante |
 | `<leader>a2` | n | Avante provider: Claude Code ACP | P avante |
 | `<leader>a3` | n | Avante provider: Copilot | P avante |
@@ -467,6 +517,12 @@ Neovim側にも未保存の変更がある場合は、バッファを開いた�
 | `<leader>aT` | n | ツリーからファイル追加 | P claudecode |
 | `<leader>ay` | n | Claude diff accept | P claudecode |
 | `<leader>an` | n | Claude diff deny | P claudecode |
+
+AI 共通のキーは `ai.lua` の `keys` で管理し、Avante の自動キー登録は無効にしている。
+読み込み順による上書きを避けるため、Claude の差分拒否は `an`、Avante の新規チャットは
+`aN` に分ける。Avante の更新 `aS` と停止 `aX` も別のキーを使う。
+Insert モードの `Alt-j` / `Alt-k` は Copilot の行単位 / 単語単位の補完確定に使う。
+Normal・Visual モードでは LazyVim の行移動を維持する。
 
 ### Codex (`<leader>o` prefix)
 
@@ -619,6 +675,35 @@ rtk proxy nvim
 
 設定変更は新しく起動したNeovimに反映される。リポジトリのルートで検証する。
 
+Telescope は `<leader>fT` または `:Telescope` から使う。通常のファイル・本文検索は
+Television、構造化した一覧は Snacks のまま、Telescope の検索メニューと拡張機能を
+必要に応じて選べる。公式推奨の native sorter を併用し、最新のリリースタグを
+`version = "*"` で選び、取得したリビジョンを lockfile に記録する。
+既存の Terraform Extra により、Terraform/HCL を開くとドキュメント検索と state 一覧の
+Telescope 拡張も読み込まれる。例えば `:Telescope terraform_doc full_name=hashicorp/aws`
+で AWS provider の資料を検索できる。導入判断と Star 数は [調査記録](plugin-research.md)を参照。
+
+### バージョン更新
+
+2026-10-10 時点で、lockfile と導入済み LazyVim はともに v16.0.1
+（`999700997f72227187d49d8b92667183dc7fc809`）。
+[v16.0.0](https://github.com/LazyVim/LazyVim/releases/tag/v16.0.0) の refactoring.nvim v2 対応に合わせ、
+`coding.lua` は操作別 API と `refactoring.debug` を使う。
+[v16.0.1](https://github.com/LazyVim/LazyVim/releases/tag/v16.0.1) の修正は nvim-lint の
+`prepend_args` と TypeScript の `tsc` への変更。該当処理は LazyVim に任せ、
+TypeScript の LSP は引き続き vtsls を使う。
+
+更新前に対象リリースの変更履歴と導入済みの設定を照合し、必要なプラグインだけを更新する。
+`lazy-lock.json` の差分も設定と一緒に確認する。`:Lazy restore` は記録されたリビジョンを
+復元するが、`dir` 指定のローカルプラグインは別途管理する。
+詳細は [lazy.nvim の lockfile 管理](https://lazy.folke.io/usage/lockfile)を参照。
+
+### ネイティブライブラリと既存の調整
+
+Cargo のローカルプラグインはネイティブライブラリが必要。
+初回配置後やライブラリが見つからない場合は `:Lazy build cargo.nvim` で
+`cargo build --locked --release` を実行してから Neovim を再起動する。
+
 Avante のネイティブライブラリは `target/lua` にビルドしてから `lua/` へ移す。
 使用済みの `.so` へ直接上書きすると、macOS の署名キャッシュと不整合が生じ、
 起動直後に `Code Signature Invalid` で終了することがあるため。
@@ -637,6 +722,8 @@ import 整理の後に整形する。Incline の診断件数は
 [`vim.diagnostic.count()`](https://neovim.io/doc/user/diagnostic/#vim.diagnostic.count())で取得し、
 描画のたびにエラー・警告の診断一覧をそれぞれコピーしない。
 
+### 検証
+
 ```sh
 rtk proxy stylua --check nvim/lua
 rtk proxy jq empty nvim/lazy-lock.json
@@ -645,12 +732,38 @@ rtk proxy nvim --headless '+lua print("nvim-config-ok")' +qa
 
 遅延読み込みの設定を変えた場合は対象プラグインを読み込み、操作も確認する。外部変更と未保存編集のマージを変更した場合は `rtk proxy nvim --headless -u NONE -l nvim/tests/external_changes.lua` で空行、末尾改行、競合時の内容保持、Undoを検証する。
 
-`nvim/tests/plugin_config.lua` は Avante のログとライブラリ読み込み、Incline の診断件数、
+`nvim/tests/plugin_config.lua` は `UIEnter` から通常の遅延読み込みを実行し、Avante の
+コマンド登録・ヘルプ実行・ログ・ライブラリ読み込み、Incline の診断件数、
 Ruff による import 整理・整形と2回目の整形で差分が出ないことを検証する。
-`HOME` と XDG の設定・データ・状態・キャッシュを一時ディレクトリへ分離し、
-設定のコピーとインストール済みプラグイン・Masonへの参照を用意してから、
-`rtk proxy nvim --headless -i NONE '+lua dofile("nvim/tests/plugin_config.lua")'` を実行する。
-認証済みのAIサービスへのリクエストは行わない。
+次の例は `HOME` と XDG ディレクトリを分離して実行する。設定はコピーし、導入済みの
+プラグイン・Mason・パーサーとローカル開発リポジトリを参照する。
+この環境ではプラグインの更新・ビルドを実行せず、認証済みAIへのリクエストも行わない。
+
+```sh
+nvim_test_dir=$(rtk proxy mktemp -d)
+nvim_data_dir="${XDG_DATA_HOME:-$HOME/.local/share}/nvim"
+rtk proxy mkdir -p "$nvim_test_dir/config" "$nvim_test_dir/data/nvim" \
+  "$nvim_test_dir/state" "$nvim_test_dir/cache" \
+  "$nvim_test_dir/home/ghq/github.com/nwiizo"
+rtk proxy cp -R nvim "$nvim_test_dir/config/nvim"
+for component in lazy mason site; do
+  rtk proxy ln -s "$nvim_data_dir/$component" "$nvim_test_dir/data/nvim/$component"
+done
+for plugin in codex.nvim signalbox.nvim cargo.nvim marp.nvim; do
+  rtk proxy ln -s "$HOME/ghq/github.com/nwiizo/$plugin" \
+    "$nvim_test_dir/home/ghq/github.com/nwiizo/$plugin"
+done
+rtk proxy env HOME="$nvim_test_dir/home" \
+  XDG_CONFIG_HOME="$nvim_test_dir/config" XDG_DATA_HOME="$nvim_test_dir/data" \
+  XDG_STATE_HOME="$nvim_test_dir/state" XDG_CACHE_HOME="$nvim_test_dir/cache" \
+  nvim --headless -i NONE '+lua dofile("nvim/tests/plugin_config.lua")'
+```
+
+以下のテストも、最後のコマンドのファイル名を変えて同じ分離環境で実行する。
+AI 共通キーと Yanky の変更では `tests/keymap_conflicts.lua` を使う。
+Claude Code・CopilotChat を先に読み込み、Avante が他のキーを上書きしないこと、
+停止と更新の呼び分け、Visual モードのヤンク履歴を検証する。AI の実処理だけを置き換え、
+実際のキー入力を通す。
 
 同じ分離環境で `nvim/tests/navigation_plugins.lua` と `nvim/tests/escape_modes.lua` も
 それぞれ `+lua dofile(...)` で実行する。前者は Overlook のプレビュー・復元・分割と、
@@ -658,7 +771,25 @@ Oil の外部変更への追従・未保存編集の保持を検証する。定�
 後者は起動後最初の Visual 選択、Select・Insert モードでの `jk` を検証する。
 両テストは headless 起動で発生しない `UIEnter` を再現し、通常の遅延読み込みも実行する。
 
-Codexの操作は `rtk proxy nvim --headless -u nvim/init.lua '+lua dofile("nvim/tests/codex_workflow.lua")'` で検証する。選択からEdit・送信・回答・追加依頼・CodeDiff・編集への復帰まで、インストール済みプラグインとテスト用ターミナルで操作する。同じコマンドの `nvim` の前に `env CODEX_NVIM_REAL_CLI=1` を入れると、認証済みCodex CLIを使い、一時リポジトリ内のファイル変更と追加依頼の2ターンを実行する。
+`nvim/tests/refactoring.lua` は Normal・Visual モードでデバッグ出力を追加し、
+`<leader>Rc` で元のコードや既存の `print` を残して削除できることを検証する。
+このキーは mini.ai のバッファ全体の範囲 `ag` を使うため、`remap = true` が必要。
+
+`nvim/tests/quickfix_editing.lua` も同じ分離環境で実行する。quickfixを開いてからの
+遅延読み込み、前後行の展開・折りたたみ、既存キーの共存、複数バッファへの編集反映、
+既存の未保存編集とディスク上の内容が保持されることを検証する。
+
+`nvim/tests/codex_workflow.lua` も通常は上記の分離環境で実行する。
+選択からEdit・送信・回答・追加依頼・CodeDiff・編集への復帰まで、
+インストール済みプラグインとテスト用ターミナルで操作する。
+実サービスの確認を明示的に依頼された場合だけ、通常の認証環境で
+`rtk proxy env CODEX_NVIM_REAL_CLI=1 nvim --headless -i NONE -u nvim/init.lua '+lua dofile("nvim/tests/codex_workflow.lua")'`
+を使う。一時リポジトリ内でファイル変更と追加依頼の2ターンを実行するため、通常の回帰テストとは分ける。
+
+API の移行時は対象操作を実行した後の `:checkhealth vim.deprecated`、Treesitter の
+更新時は `:checkhealth nvim-treesitter` も確認する。`:checkhealth which-key` はキーの
+重複確認を補助するが、同じキーの上書きは残らないため、読み込み順の回帰テストも使う。
+ルールを編集した場合は `rtk proxy ./scripts/audit-agent-config.sh` で参照とリンクを検証する。
 
 ```vim
 :Lazy update        " プラグインとlockfileを更新

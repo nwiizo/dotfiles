@@ -22,7 +22,7 @@ return {
         -- Two-key hunk shortcuts; LazyVim's <leader>gh* group stays available.
         local gs = package.loaded.gitsigns
         local function map(mode, lhs, rhs, desc)
-          vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, desc = desc })
+          vim.keymap.set(mode, lhs, rhs, { buf = bufnr, desc = desc })
         end
         map("n", "<leader>hs", gs.stage_hunk, "Stage/Unstage Hunk")
         map("v", "<leader>hs", function()
@@ -74,9 +74,9 @@ return {
       { "<leader>gs", "<cmd>DiffviewOpen --staged<cr>", desc = "Staged changes" },
       { "<leader>gt", "<cmd>DiffviewToggleFiles<cr>", desc = "Toggle file panel" },
     },
-    config = function()
+    opts = function()
       local actions = require("diffview.actions")
-      require("diffview").setup({
+      return {
         enhanced_diff_hl = true,
         use_icons = true,
         view = {
@@ -114,7 +114,7 @@ return {
             { "n", "g?", actions.help("file_panel"), { desc = "Help" } },
           },
         },
-      })
+      }
     end,
   },
 }

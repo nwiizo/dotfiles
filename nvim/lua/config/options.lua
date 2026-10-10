@@ -21,6 +21,9 @@ o.swapfile = false
 o.wrap = true
 o.breakindent = true
 
+-- Preview substitutions, including matches outside the visible window.
+o.inccommand = "split"
+
 -- Copilot: inline ghost text only. LazyVim would otherwise add copilot as a
 -- blink.cmp source that outranks LSP items; inline keeps <Tab>/<M-l> accept.
 vim.g.ai_cmp = false

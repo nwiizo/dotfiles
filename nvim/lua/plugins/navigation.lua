@@ -83,6 +83,26 @@ return {
     },
   },
 
+  -- Optional picker entrypoint; keep Television and Snacks as the daily defaults.
+  {
+    "nvim-telescope/telescope.nvim",
+    version = "*",
+    cmd = "Telescope",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
+    },
+    keys = {
+      { "<leader>fT", "<cmd>Telescope builtin<cr>", desc = "Telescope Pickers" },
+    },
+    opts = {},
+    config = function(_, opts)
+      local telescope = require("telescope")
+      telescope.setup(opts)
+      telescope.load_extension("fzf")
+    end,
+  },
+
   -- hbac.nvim: Auto close unused buffers
   {
     "axkirillov/hbac.nvim",

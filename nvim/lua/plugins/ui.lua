@@ -1,15 +1,15 @@
 -- UI plugins: Custom UI components for minimal UI workflow
--- LazyVim manages: noice, which-key, mini.ai
+-- LazyVim manages: noice, which-key
 return {
   -- incline.nvim: Floating statusline (replaces lualine)
   {
     "b0o/incline.nvim",
     event = "VeryLazy",
     dependencies = { "nvim-tree/nvim-web-devicons" },
-    config = function()
+    opts = function()
       local devicons = require("nvim-web-devicons")
 
-      require("incline").setup({
+      return {
         window = {
           padding = 0,
           margin = { horizontal = 0, vertical = 0 },
@@ -85,8 +85,10 @@ return {
           table.insert(res, { " " })
           return res
         end,
-      })
-
+      }
+    end,
+    config = function(_, opts)
+      require("incline").setup(opts)
       vim.api.nvim_create_autocmd("User", {
         group = vim.api.nvim_create_augroup("InclineSignalbox", { clear = true }),
         pattern = "SignalboxUpdated",
@@ -101,22 +103,20 @@ return {
   {
     "mvllow/modes.nvim",
     event = "VeryLazy",
-    config = function()
-      require("modes").setup({
-        colors = {
-          bg = "",
-          copy = "#f5c359",
-          delete = "#c75c6a",
-          insert = "#78ccc5",
-          visual = "#9745be",
-        },
-        line_opacity = 0.25,
-        set_cursor = true,
-        set_cursorline = true,
-        set_number = true,
-        ignore = { "oil", "lazy", "Avante", "AvanteInput", "snacks_dashboard" },
-      })
-    end,
+    opts = {
+      colors = {
+        bg = "",
+        copy = "#f5c359",
+        delete = "#c75c6a",
+        insert = "#78ccc5",
+        visual = "#9745be",
+      },
+      line_opacity = 0.25,
+      set_cursor = true,
+      set_cursorline = true,
+      set_number = true,
+      ignore = { "oil", "lazy", "Avante", "AvanteInput", "snacks_dashboard" },
+    },
   },
 
   -- noice.nvim: Override LazyVim defaults for centered cmdline (command_palette and long_message_to_split stay on)
@@ -152,30 +152,10 @@ return {
   {
     "TaDaa/vimade",
     event = "VeryLazy",
-    config = function()
-      require("vimade").setup({
-        fadelevel = 0.5,
-        basebg = "#11111b",
-        blocklist = { default = { buf_opts = { buftype = { "terminal" } } } },
-      })
-    end,
-  },
-
-  -- better-escape.nvim: jk/jj to escape
-  {
-    "max397574/better-escape.nvim",
-    -- Install after LazyVim's j/k mappings, including before the first InsertEnter.
-    event = "User LazyVimKeymaps",
     opts = {
-      timeout = vim.o.timeoutlen,
-      default_mappings = false,
-      mappings = {
-        i = { j = { k = "<Esc>", j = "<Esc>" } },
-        c = { j = { k = "<Esc>", j = "<Esc>" } },
-        t = { j = { k = "<C-\\><C-n>", j = "<C-\\><C-n>" } },
-        x = { j = { k = "<Esc>" } },
-        s = { j = { k = "<Esc>" } },
-      },
+      fadelevel = 0.5,
+      basebg = "#11111b",
+      blocklist = { default = { buf_opts = { buftype = { "terminal" } } } },
     },
   },
 
@@ -191,59 +171,6 @@ return {
         { "<leader>p", group = "Peek", icon = "" },
         { "<leader>r", group = "Rust", icon = "" },
         { "<leader>R", group = "Refactoring", icon = "" },
-      },
-    },
-  },
-
-  -- nvim-surround (replaces mini.surround)
-  {
-    "kylechui/nvim-surround",
-    version = "*",
-    event = "VeryLazy",
-    opts = {},
-  },
-
-  -- mini.ai: Add an argument text object; LazyVim already defines o/f/c/t/d/e/g/u/U and n_lines
-  {
-    "nvim-mini/mini.ai",
-    opts = function(_, opts)
-      local ai = require("mini.ai")
-      opts.custom_textobjects = opts.custom_textobjects or {}
-      opts.custom_textobjects.a = ai.gen_spec.treesitter({ a = "@parameter.outer", i = "@parameter.inner" })
-      return opts
-    end,
-  },
-
-  -- vim-matchup: Enhanced % matching with treesitter (replaces disabled matchit/matchparen)
-  {
-    "andymass/vim-matchup",
-    event = "BufReadPost",
-    init = function()
-      vim.g.matchup_matchparen_offscreen = { method = "popup" }
-      vim.g.matchup_treesitter_enabled = 1
-    end,
-  },
-
-  -- nvim-autopairs
-  {
-    "windwp/nvim-autopairs",
-    event = "InsertEnter",
-    opts = {
-      check_ts = true,
-      ts_config = {
-        lua = { "string" },
-        rust = { "string", "raw_string_literal" },
-      },
-      fast_wrap = {
-        map = "<M-e>",
-        chars = { "{", "[", "(", '"', "'" },
-        pattern = [=[[%'%"%>%]%)%}%,]]=],
-        end_key = "$",
-        before_key = "h",
-        after_key = "l",
-        keys = "qwertyuiopzxcvbnmasdfghjkl",
-        highlight = "PmenuSel",
-        highlight_grey = "LineNr",
       },
     },
   },

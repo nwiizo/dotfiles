@@ -74,23 +74,11 @@ return {
   {
     "mason-org/mason.nvim",
     opts = function(_, opts)
-      local tools = {
+      opts.ensure_installed = LazyVim.dedup(vim.list_extend(opts.ensure_installed or {}, {
         "prettier",
         "deno",
         "shellcheck",
-      }
-
-      opts.ensure_installed = opts.ensure_installed or {}
-      vim.list_extend(opts.ensure_installed, tools)
-
-      local seen = {}
-      opts.ensure_installed = vim.tbl_filter(function(tool)
-        if seen[tool] then
-          return false
-        end
-        seen[tool] = true
-        return true
-      end, opts.ensure_installed)
+      }))
     end,
   },
 

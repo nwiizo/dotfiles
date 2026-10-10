@@ -1,10 +1,96 @@
-# プラグイン設定の確認（2026-09-24）
+# プラグイン設定の確認
+
+## 2026-10-10: LazyVim v16・キー競合・保守ルール
+
+lockfile と導入済み LazyVim は、確認開始時から
+[v16.0.1](https://github.com/LazyVim/LazyVim/releases/tag/v16.0.1)
+（`999700997f72227187d49d8b92667183dc7fc809`）だった。
+v16.0.1 の nvim-lint / TypeScript 修正は上流の設定を利用する。
+[v16.0.0](https://github.com/LazyVim/LazyVim/releases/tag/v16.0.0) の refactoring.nvim v2 対応は
+既存設定に入っていたが、実際のキー入力から追加の問題を見つけた。
+
+| 対象 | 再現した問題と修正 |
+| --- | --- |
+| Avante | 更新と停止が `aS` を共有し、読み込み順によって `an` が Claude の差分拒否から Avante の新規質問に上書きされた。自動登録を止めて lazy.nvim の `keys` に集約。更新 `aS`、停止 `aX`、新規質問 `aN` を分けた。 |
+| Yanky | 旧 `<leader>p` の無効化が Normal のみで、Visual に残っていた。`n` / `x` の両方で無効にし、履歴 `<leader>sy` も両モードから使えるようにした。 |
+| Refactoring | `<leader>Rc` が返す `g@ag` で mini.ai の `ag` が展開されず、出力を削除できなかった。`remap = true` を加え、バッファ全体を対象にする。 |
+| 文書・ルール | `AGENTS.md` に編集方針と環境固有の制約を集約し、`CLAUDE.md` は相対シンボリックリンクにした。README は操作・検証を説明し、ルートの AGENTS と add-config の参照先も統一した。 |
+
+Star 数とこの環境への適性を調べる依頼に合わせ、Telescope v0.2.2 を追加した。
+native sorter と、既存の Terraform Extra から有効になる2つの拡張も導入している。
+`<leader>fT` / `:Telescope` を専用の入口にし、Television のキーと Snacks の標準 picker を維持。
+この確認での lockfile 変更は Telescope 関連の4件の追加だけで、既存リビジョンは維持した。
+比較の対象・Star 数・採用理由は [プラグイン調査](plugin-research.md)に記録した。
+
+### 検証
+
+HOME と XDG を分離し、導入済みプラグインを使って実行した。
+`keymap_conflicts.lua` と `refactoring.lua` は修正前の失敗を再現してから修正を確認した。
+後者では、変数・位置・Visual 選択のデバッグ出力を追加し、元のコードと既存の `print` を
+残したまま全体削除できることを確認している。
+
+Telescope はファイルの選択・実際のファイル表示、`fT` のメニュー、native sorter と
+Terraform 拡張の読み込み、既存の検索キーを確認した。
+Telescope・Treesitter・which-key のヘルスチェックと、使用した経路の非推奨 API チェックが成功。
+StyLua、lockfile の JSON 検査、headless 起動、`git diff --check`、エージェント設定の監査も成功。
+`plugin_config.lua` と、テスト用ターミナルを使う `codex_workflow.lua` の回帰確認も通った。
+Terraform の実 state 操作、全プラグインの全操作、認証済み AI リクエストは対象外。
+
+## 2026-10-10: 配置と標準設定の整理
+
+Neovim 0.12.5 の設定を読み、導入済みの LazyVim / lazy.nvim と公式資料を照合した。
+有効なプラグイン定義は、整理前後とも依存とローカル開発分を含めて80件。
+用途と設定箇所を追いやすくする変更を選び、プラグインのリビジョンは維持した。
+
+| 対象 | 変更と根拠 |
+| --- | --- |
+| 設定の配置 | better-escape・surround・mini.ai・matchup・autopairs を `ui.lua` から `coding.lua` へ移動。読み込み条件とキーは維持。[LazyVim は機能別の spec 分割をサポートする](https://www.lazyvim.org/configuration/plugins)。 |
+| プラグインの初期化 | modes・vimade・Diffview は `opts` から初期化。Incline も設定値を `opts` へ分け、`config` には初期化と Signalbox の更新イベントを残す。Cargo の冗長な `config = true` と、現行実装で使われない `float_window` を削除。[lazy.nvim が `opts` を `setup()` に渡す](https://lazy.folke.io/spec#spec-setup)。 |
+| 標準機能との重複 | nvim-ts-autotag の追加 spec を削除し、[LazyVim 標準の `LazyFile` 読み込み](https://www.lazyvim.org/plugins/treesitter#nvim-ts-autotag)を使用。Mason の追加ツールは既存のリストへ結合し、重複除去を導入済みの `LazyVim.dedup()` に任せる。 |
+| Neovim API | Gitsigns のバッファ限定キーを `buffer` から `buf` へ変更。導入済み Neovim の `:help deprecated-0.12` と[非推奨 API 一覧](https://neovim.io/doc/user/deprecated.html)に合わせた。 |
+| README | Docker・TOML・Git Extras の記載漏れを補完。TypeScript は vtsls、Rust テストは rustaceanvim.neotest と実態に合わせ、読み込み方とローカル開発プラグインの配置条件を追記。 |
+
+### 重なりがある機能の判断
+
+| 機能 | 現在の使い分け |
+| --- | --- |
+| 検索 | Television は通常のファイル・本文・quickfix検索、Snacks は LSP・Git・プロジェクト一覧、fff は入力ミスを許容する検索。用途別の既存キーを保つ。 |
+| Git | CodeDiff は作業中の変更確認、Diffview は履歴と競合処理、Gitsigns は編集中の hunk 操作。 |
+| quickfix | Quicker は検索結果の編集、bqf はプレビューと分割表示、Trouble は診断の一覧表示。Quicker の自動保存無効を保つ。 |
+| AI | Copilot の補完、チャット・ACP・CLI の各入口、Signalbox の稼働状況表示を保つ。利用頻度のデータがないため、似た画面という理由で削除しない。 |
+| アイコン | LazyVim の mini.icons と各プラグインの devicons 依存がある。互換レイヤーの読み込み順と表示への影響があるため、依存削除を今回の整理には含めない。 |
+
+Oil の起動時読み込みは[公式推奨](https://github.com/stevearc/oil.nvim#installation)に従う。
+AI 連携には選択ヒント、外部接続、状態監視の初期化があるため、キーの指定だけを根拠に
+`VeryLazy` を除去しない。`dir` で参照する4つのローカルプラグインは各リポジトリで管理する。
+
+### 検証
+
+HOME と XDG ディレクトリを分離し、設定のコピーと導入済みプラグインで確認した。
+
+- StyLua、lockfile の JSON 検査、headless 起動、`git diff --check` が成功。
+  Mason の導入対象は整理前の一覧と一致し、lockfile の内容も作業開始時から変わっていない。
+- 既存の `plugin_config.lua`、`escape_modes.lua`、`navigation_plugins.lua`、
+  `quickfix_editing.lua` が成功。Avante の初期化、診断件数、Ruff 整形、Escape、
+  Oil / Overlook、quickfix 編集と未保存内容の保持を確認した。
+- キー入力で Surround の囲み操作、括弧補完、新規 HTML バッファの閉じタグ補完を確認。
+  modes / Vimade の読み込み・再描画と Signalbox 更新時の Incline 再描画も実行した。
+- Gitsigns のバッファ限定キーと hunk プレビュー、Diffview の開閉を確認。
+  `:checkhealth vim.deprecated` では、この検証で使った経路に非推奨 API の警告はなかった。
+- Cargo はローカルのネイティブライブラリが未ビルドだったため、既存の
+  `cargo build --locked --release` を実行。ライブラリの読み込みとコマンド登録が成功した。
+  Cargo プラグインのソースや依存バージョンは変更していない。
+
+全プラグインの全操作や、AI サービスへの認証済みリクエストは検証対象に含めていない。
+変更は新しく起動した Neovim に反映される。
+
+## 2026-09-24: 操作と公開 API の確認
 
 独自設定を加えているプラグインについて、公式ドキュメントと導入済みの実装を照合した。
 以下は設定項目・公開 API の確認結果であり、全プラグインの全操作を検証したものではない。
 プラグインの一括更新は行っていない。
 
-## 修正・追加
+### 修正・追加
 
 | 対象と公式資料 | 変更と理由 |
 | --- | --- |
@@ -20,7 +106,7 @@ better-escape は Visual 専用の `x` と Select 専用の `s` を指定した�
 以前の `v` は両方に適用されるため `s` と重複していた。
 このモードの区別は [Neovim のマッピング一覧](https://neovim.io/doc/user/map/#map-table)に従う。
 
-## 検索・移動・Git
+### 検索・移動・Git
 
 | 公式資料 | 確認した設定と判断 |
 | --- | --- |
@@ -30,7 +116,7 @@ better-escape は Visual 専用の `x` と Select 専用の `s` を指定した�
 | [Gitsigns](https://github.com/lewis6991/gitsigns.nvim#readme) | `on_attach`、行 blame、hunk 操作の設定を確認。変更不要。 |
 | [Diffview](https://github.com/sindrets/diffview.nvim/blob/main/doc/diffview.txt) / [CodeDiff](https://github.com/esmuellert/codediff.nvim#readme) | ファイル履歴、競合移動、staged diff のコマンドを確認。変更不要。 |
 
-## 補完・編集・言語
+### 補完・編集・言語
 
 | 公式資料 | 確認した設定と判断 |
 | --- | --- |
@@ -40,7 +126,7 @@ better-escape は Visual 専用の `x` と Select 専用の `s` を指定した�
 | [rustaceanvim](https://github.com/mrcjkb/rustaceanvim#readme) / [crates](https://github.com/Saecki/crates.nvim/wiki/Documentation-unstable) | Rust の tools 設定、crates の LSP と補完設定を確認。変更不要。 |
 | [Neotest](https://github.com/nvim-neotest/neotest/blob/master/doc/neotest.txt) | 出力表示と quickfix の open 設定を確認。Trouble への接続を維持。 |
 
-## 表示・診断
+### 表示・診断
 
 | 公式資料 | 確認した設定と判断 |
 | --- | --- |
@@ -48,7 +134,7 @@ better-escape は Visual 専用の `x` と Select 専用の `s` を指定した�
 | [modes](https://github.com/mvllow/modes.nvim#readme) / [Vimade](https://github.com/TaDaa/vimade#readme) | ignore と terminal の対象除外を確認。変更不要。 |
 | [nvim-bqf](https://github.com/kevinhwang91/nvim-bqf#readme) / [Trouble](https://github.com/folke/trouble.nvim#configuration) | プレビュー枠と自動表示・終了の設定を確認。変更不要。 |
 
-## 検証
+### 検証
 
 Neovim 0.12.5 と導入済みプラグインを使用し、HOME と XDG ディレクトリを分離した。
 追加したテストは、修正前に Overlook の存在しない関数呼び出しと Visual の `jk` 失敗を再現する。

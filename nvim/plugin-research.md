@@ -1,12 +1,79 @@
 # Neovimプラグイン調査
 
-調査日: 2026-09-08。対象環境はNeovim 0.12.5、LazyVim 16.0.0。
+初回調査: 2026-09-08。最新の確認: 2026-10-10、Neovim 0.12.5 / LazyVim 16.0.1。
 
-この構成ではSnacks・Blink・Oilを継続し、`fff`と`codediff.nvim`を追加した。
-AIとの並行作業で不足する機能と、既存の操作を保てるかを判断基準にした。
-`sidekick.nvim`と`quicker.nvim`は資料調査までの追加候補。
+現在は Snacks・Blink・Oil・fff・CodeDiff・Quicker を使用し、Telescope を追加している。
+以下の過去の調査は、その日時点の判断と数値を残したもの。
 
-## 人気と開発状況
+## 2026-10-10: Star 数とこの環境への適性
+
+GitHub REST API の `topic:neovim-plugin archived:false` を Star 数順に検索し、
+`neovim in:name,description stars:>19812 archived:false` でも上位を確認した。
+Neovim 本体・設定一式・リンク集を除き、未導入候補を比較した。
+topicや説明文に含まれないプラグインまで網羅した世界順位ではない。
+
+| 候補 | 累計 Stars | この構成での判断 |
+| --- | ---: | --- |
+| [coc.nvim](https://github.com/neoclide/coc.nvim) | 25,159 | 調査した未導入候補では最多。ただし補完・診断・LSP が Blink と Neovim LSP に重なるため、現在の LazyVim 構成への追加は見送る。 |
+| [lazy.nvim](https://github.com/folke/lazy.nvim) | 21,637 | 導入済みのプラグイン管理基盤。 |
+| [Telescope](https://github.com/nvim-telescope/telescope.nvim) | 19,812 | Star 数と既存構成との相性を合わせて追加。`<leader>fT` / `:Telescope` から使い、通常の検索キーは維持する。 |
+
+Telescope は公式推奨のリリースタグと native sorter を使用する。
+既存の Terraform Extra が提供するドキュメント検索と state 一覧の拡張も有効になる。
+日常のファイル・本文検索は Television、構造化した一覧は Snacks、入力ミスを許容する
+検索は fff と、使う入口を分けている。
+
+### 2026年の注目候補をどう見るか
+
+2026年の年間 Star 獲得数は取得していないため、累計だけで「今年最もバズった」とは
+判断しない。下表の増分は、この文書の9月8日の記録と10月10日の API 値の差。
+Neovim 全体の順位や、年間の増加数ではない。
+
+| プラグイン | 累計 Stars / 9月8日からの増分 | nwiizo の構成での評価 |
+| --- | ---: | --- |
+| [fff](https://github.com/dmtrKovalenko/fff) | 11,054 / +529 | この比較では伸びが最大。導入済みで `<leader>fP` / `<leader>sF` から使える。Neovim以外のSDKも含む数値。 |
+| [99](https://github.com/ThePrimeagen/99) | 4,749 / +1 | AIによる検索・作業支援。2026年1月にも[利用方法の議論](https://www.reddit.com/r/theprimeagen/comments/1qs403e/didnt_get_the_idea_behind_99_prompt_plugin/)がある。既存のAI入口と重なり、公式にAPI変更の注意書きがあるため追加しない。 |
+| [Sidekick](https://github.com/folke/sidekick.nvim) | 2,786 / +34 | 次の編集箇所を提案する NES は検討価値がある。現在の Copilot LSP と Tab の役割を調整する必要があり、今回は未導入。 |
+| [CodeDiff](https://github.com/esmuellert/codediff.nvim) | 1,587 / +38 | 導入済み。AIが保存した差分を確認する日常操作に適している。 |
+| [Quicker](https://github.com/stevearc/quicker.nvim) | 1,030 / +3 | 導入済み。Televisionの検索結果を編集し、確認して保存する流れに適している。 |
+
+2026年作成の新作も別に調べた。`nvim in:name created:2026-01-01..2026-10-10
+stars:>100 archived:false` の検索では、
+[tree-sitter-manager.nvim](https://github.com/romus204/tree-sitter-manager.nvim) が879 Stars、
+[haunt.nvim](https://github.com/TheNoeTrevino/haunt.nvim) が322 Stars。
+前者は既存の Treesitter 管理と役割が重なる。後者はコードにメモ付きブックマークを
+残す用途の候補だが、どちらも今回は導入していない。
+
+## 2026-09-29の追跡調査
+
+GitHub APIで現在のStar数と作成日を取得し、各公式READMEで機能を確認した。
+増分はこの文書の9月8日の記録との差で、利用者数やNeovim全体の順位ではない。
+新作の探索は `topic:neovim-plugin created:>=2026-08-29 stars:>10` を
+Star数順に検索した。topic未設定のリポジトリは含まれない。
+
+| 候補 | 確認できた動き | この構成での判断 |
+| --- | --- | --- |
+| [fff](https://github.com/dmtrKovalenko/fff) | 10,887 stars、前回から+362 | 導入済み。`<leader>fP` / `<leader>sF` で利用できる |
+| [sidekick.nvim](https://github.com/folke/sidekick.nvim) | 2,778 stars、+26。次の編集箇所を提案するNESとAI CLI連携 | NESが候補。既存のCopilot設定・Tab操作と接続を検証してから導入する |
+| [review.nvim](https://github.com/georgeguimaraes/review.nvim) | 128 stars。CodeDiffへのコメントをMarkdownとして出力 | AIへレビュー結果を渡す用途に合う。今回は資料調査まで |
+| [sqmeow.nvim](https://github.com/2giosangmitom/sqmeow.nvim) | 9月10日作成、136 stars。Rust製エンジンによるSQL実行・結果表示 | 今月の新作として注目。DB接続をエディタ内で扱う必要が生じたら検討 |
+| [autodap.nvim](https://github.com/JarnDev/autodap.nvim) | 9月17日作成、23 stars。Node/Python/C/C++のDAP設定を補助 | 新作で検証例が少なく、既存の言語別DAP設定とも重なるため保留 |
+
+CodeDiffも1,579 stars（+30）で、引き続き使用する。
+この比較で増加が最も大きかったfffは、Neovim以外のSDK・MCPも含むため、
+Star増加のすべてをNeovim利用の増加とは解釈できない。
+
+実際に追加したのは、以前から候補にしていた
+[Quicker](https://github.com/stevearc/quicker.nvim)（v1.5.1相当）。
+急増中という判断ではなく、既存のTelevision→quickfixの操作に、前後行の表示と
+本文編集を追加できる点を評価した。`edit.autosave=false` とし、`:w` で元バッファへ
+反映した後に確認して保存する。nvim-bqfのプレビューとTelevisionの絞り込みは併用する。
+Neovim標準の `inccommand=split` も有効にし、置換の入力中に画面外の候補を確認できるようにした。
+
+`tests/quickfix_editing.lua` で前後行の展開・折りたたみ、複数バッファへの編集反映、
+未保存編集とディスク内容の保持を確認する。新作候補の実行やDB接続は行っていない。
+
+## 2026-09-08: 人気と開発状況
 
 [GitHub TrendingのLua月間欄](https://github.com/trending/lua?since=monthly)では、
 取得時点でLazyVim、lazy.nvim、nvim-lspconfig、conform.nvimが掲載されていた。
@@ -96,7 +163,7 @@ quickfixバッファを編集して `:w` で複数ファイルへ反映する機
 検索結果を通常のバッファ操作で直す使い方が必要なら追加する価値がある。
 試用時は、複数ファイルへの書き戻しと、同時にエージェントが保存した場合の扱いを確認する。
 
-## 今回の設定への反映と検証
+## 2026-09-08の設定への反映と検証
 
 fffとCodeDiffは専用キーで利用でき、TelescopeとDiffviewの操作は継続できる。
 Telescopeの設定をLazyVimへマージするよう修正し、Trouble・Flash連携を復旧した。
