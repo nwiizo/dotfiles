@@ -1,12 +1,12 @@
 # dotfiles
 
-Personal macOS development environment. Homebrew owns binaries; this repo owns config files through direct symlinks.
+Personal macOS development environment. Homebrew owns most binaries; Aside CLI uses its official installer. This repo owns config files through direct symlinks.
 
 ## Start Here
 
 This repo has three responsibilities:
 
-1. Install binaries with Homebrew via `Brewfile`.
+1. Install binaries with Homebrew via `Brewfile`, and Aside CLI with its official installer.
 2. Keep app and CLI config in repo-owned source files.
 3. Link those source files into macOS config locations.
 
@@ -55,6 +55,7 @@ for the official references, client loading differences, and verification steps.
 | Layer | Owner | Files |
 | --- | --- | --- |
 | Packages | Homebrew | `Brewfile` |
+| Aside CLI | Official installer | `scripts/install-aside.sh` |
 | Shell | Fish + Fisher | `fish/config.fish`, `fish/functions/`, `fish/fish_plugins` |
 | Editor | Neovim + LazyVim | `nvim/` |
 | Terminal | Ghostty | `ghostty/config` |
@@ -71,8 +72,9 @@ dotfiles/
 ├── AGENTS.md                # Shared project instructions; edit this file
 ├── CLAUDE.md -> AGENTS.md    # Claude Code reads the same instructions
 ├── scripts/
-│   ├── bootstrap.sh         # brew bundle + symlink + fish plugin install
+│   ├── bootstrap.sh         # Homebrew + symlinks + Aside CLI + Fish plugins
 │   ├── link.sh              # symlink repo config into target locations
+│   ├── install-aside.sh     # official Aside CLI installer
 │   └── install-fish-plugins.fish
 ├── fish/                    # Fish init, functions, plugins, conf.d patch
 ├── nvim/                    # LazyVim based Neovim config
@@ -103,6 +105,7 @@ The bootstrap script runs:
 ```bash
 brew bundle --file Brewfile
 ./scripts/link.sh
+bash scripts/install-aside.sh
 fish scripts/install-fish-plugins.fish
 ```
 
@@ -111,8 +114,32 @@ Run individual steps when you only need one layer:
 ```bash
 brew bundle --file Brewfile
 ./scripts/link.sh
+bash scripts/install-aside.sh
 fish scripts/install-fish-plugins.fish
 ```
+
+### Aside CLI
+
+Aside CLI is installed from the [official installer](https://docs.aside.com/help/developers)
+into `~/.aside/cli`, with the `aside` command in `~/.local/bin` (already on Fish's
+PATH). `scripts/install-aside.sh` reuses an existing installation; run
+`aside --update` to update it. Verify with `aside --version` and `aside --help`.
+The browser app is separate. Credentials and browser data stay outside this repo.
+
+Use natural-language prompts for browser tasks, `repl` for scripted page inspection,
+screenshots and downloads, or `mcp` to expose browser tools to a compatible AI client:
+
+```bash
+aside "Summarize the current page in Japanese"
+aside "Open localhost:3000 and check the page and links"
+aside repl "const page = await openTab('https://example.com'); console.log(await page.title())"
+aside mcp
+```
+
+Check sign-in separately with `aside account status`. If sign-in is required, run
+`aside login --email you@example.com` with your email and approve the code in
+Aside Settings > Account > Devices. Starting `aside mcp` alone does not configure
+an AI client; that client's MCP settings must use command `aside` with args `["mcp"]`.
 
 ## Linked Paths
 
