@@ -120,6 +120,12 @@ fish scripts/install-fish-plugins.fish
 
 ### Aside CLI
 
+The primary browser has moved from Arc to Aside.
+
+The [`aside-browser` skill](.agents/skills/aside-browser/SKILL.md) is shared by
+Claude Code and Codex through `scripts/link.sh`. It loads the current usage
+instructions with `aside guide` before using Aside.
+
 Aside CLI is installed from the [official installer](https://docs.aside.com/help/developers)
 into `~/.aside/cli`, with the `aside` command in `~/.local/bin` (already on Fish's
 PATH). `scripts/install-aside.sh` reuses an existing installation; run
