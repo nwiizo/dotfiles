@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agent Work Queue"
+  short_description: "エージェントの継続作業を検証・レビュー待ち・再開条件から整える"
+  default_prompt: "$home-agent-work-queue を使い、Issueを継続処理する運用の着手範囲、担当、検証、レビュー待ち、再開条件を整理してください。"

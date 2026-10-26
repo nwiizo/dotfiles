@@ -51,3 +51,4 @@ actually prevents progress; the number of attempts alone is not a stopping rule.
 - [root-cause-tracing.md](root-cause-tracing.md): a failure originating deep in a call chain.
 - [condition-based-waiting.md](condition-based-waiting.md): timing and polling failures.
 - [defense-in-depth.md](defense-in-depth.md): additional validation boundaries justified by the diagnosed cause.
+- [web-performance-evidence.md](web-performance-evidence.md): browser performance findings where field data, lab runs, and source inspection disagree.

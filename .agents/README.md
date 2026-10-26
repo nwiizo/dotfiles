@@ -94,6 +94,7 @@ the layout, not actual client loading or improved model behavior.
 | `home-docs-curator` | Documentation and instruction cleanup |
 | `home-history-distill` | Reusable guidance from bounded local history through `nippo` |
 | `home-empirical-prompt-tuning` | Behavioral comparison of instructions |
+| `home-agent-work-queue` | Bounded issue processing, ownership, review capacity, and restartable handoffs |
 | `home-ci-efficiency` | CI feedback time, total execution, and reliability measured separately |
 | `home-terraform-change-review` | Terraform plan changes tied to access, availability, data migration, and recovery |
 | `home-observability-design` | Question-driven signals, SLI/SLOs, missing telemetry, alert actions, and measurement costs |

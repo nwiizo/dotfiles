@@ -18,6 +18,10 @@ Match each material claim to current evidence and the risk of the change.
   Do not treat an empty output, a skipped check, or a blocked environment as a pass.
 - Separate completed edits from unresolved verification. Repeat a blocked check
   only after something relevant changes.
+- Check which required checks actually ran against which revision. A green
+  workflow or a successful agent process can contain skipped or absent checks.
+  Distinguish a missing check configuration from a failing product test; repair
+  configuration within scope instead of dropping the requirement to obtain green.
 
 For CLI installation or shell-integration work, check the executable resolved by
 the user's PATH and exercise the affected function in the actual shell. A build

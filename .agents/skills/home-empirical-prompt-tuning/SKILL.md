@@ -38,3 +38,7 @@ For static cleanup, inspect scope, metadata, references, and representative task
 routing. If execution is unavailable, report that limit and finish the useful
 static work; do not call it behavioral validation. A small evaluation supports
 only the tested cases, not a general claim about a newer model's capability.
+
+When the question concerns agent cost, latency, retries, or repeated tool use,
+read [trace-efficiency.md](references/trace-efficiency.md). Preserve task quality
+while distinguishing measured outcomes from profiler suggestions.
