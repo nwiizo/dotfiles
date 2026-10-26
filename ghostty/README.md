@@ -19,7 +19,12 @@ rtk proxy ghostty +validate-config --config-file=ghostty/config
 rtk proxy ghostty +validate-config
 rtk proxy ghostty +show-config --changes-only
 rtk proxy ghostty +list-keybinds
+rtk proxy ghostty +explain-config keybind
 ```
+
+`+validate-config` は構文を検査する。キー入力との一致は保証しないため、
+`+list-keybinds` と実際のキー操作も確認する。tip の仕様は、導入済みバイナリの
+`+explain-config <設定名またはアクション名>` を優先して確認する。
 
 ## 現行環境
 
@@ -33,18 +38,18 @@ rtk proxy ghostty +list-keybinds
 - Quick terminal: configured but default global hotkey is unbound
 - AI notifications: macOS banner + sound + transient `🔔` tab marker
 
-## 更新確認（2026-09-15）
+## 更新確認（2026-10-10）
 
-導入済みビルドは `1.3.2-main-+7aab0a039`。公式サイトで案内されている
-安定版は [1.3.1](https://ghostty.org/docs/install/release-notes/1-3-1) で、
-この環境の tip には次期版向けの機能も含まれる。対応する設定は
-`ghostty +show-config --default --docs` と `ghostty +list-actions --docs` で確認する。
+導入済みビルドは `1.3.2-main+b699ea79f`。Codex CLI `0.162.1`、
+Claude Code `2.1.294`、Neovim `0.12.5` と組み合わせる。
+tip には次期版向けの機能も含まれるため、同梱ドキュメントと
+[前回の確認ビルドからの差分](https://github.com/ghostty-org/ghostty/compare/7aab0a039...b699ea79f)
+を照合した。既存の設定に廃止された項目はなく、文字選択・プロンプトのクリック移動・
+ウィンドウ復元などの修正は本体の更新で入る。
 
-- [1.3.0](https://ghostty.org/docs/install/release-notes/1-3-0) のスクロールバック検索、
-  ネイティブスクロールバー、プロンプトのクリック移動、完了通知を利用する。
-- [9月15日時点の main との差分](https://github.com/ghostty-org/ghostty/compare/7aab0a039...d4c88d806)
-  も確認した。タイトル表示やIME描画などの修正は本体の更新で入る。
-  今回の設定は導入済みビルドで検証する。
+- 修飾付きEnterをアプリへ渡し、Neovimの操作とAIへの複数行入力を両立する。
+- `Cmd+|` はShiftを含む物理キー指定にし、US/JIS配列に対応する。
+- 閉じたタブ・ペインの復元猶予を15秒にし、独自操作をコマンドパレットへ追加する。
 
 開発中の入力と出力を読みやすくするため、アプリ用の `Ctrl` キーを空け、
 出力中もスクロール位置を保つ。背景の不透明度は `0.95`、非選択ペインは
@@ -63,7 +68,7 @@ Ghosttyの再起動が必要で、ネイティブフルスクリーン中は常�
 | キー | 機能 |
 |---|---|
 | `Cmd+D` | 右に分割 |
-| `Cmd+\|` | 右に分割（縦分割） |
+| `Cmd+Shift+\`（US） / `Cmd+Shift+¥`（JIS） | 右に分割（`Cmd+\|` の操作） |
 | `Cmd+Shift+D` | 下に分割 |
 | `Cmd+Shift+-` | 下に分割 |
 | `Cmd+Alt+H/J/K/L` | ペイン間移動 |
@@ -75,6 +80,8 @@ Ghosttyの再起動が必要で、ネイティブフルスクリーン中は常�
 | resize mode `Esc` / `Ctrl+C` | resize key table を終了 |
 
 `Ctrl+H/J/K/L` と `Ctrl+W` はFish・Neovimでそのまま使える。
+`Cmd+|` の `|` だけを設定しても、Shiftを押したキー入力には一致しない。
+設定では `cmd+shift+backslash` / `cmd+shift+intl_yen` を使う。
 Ghosttyの `performable:` は端末側で操作できるかを判断するもので、
 実行中アプリのキーバインドとの競合は判定しない。
 
@@ -87,8 +94,42 @@ Ghosttyの `performable:` は端末側で操作できるかを判断するもの
 | `Cmd+W` | surface を閉じる |
 | `Cmd+Shift+]` / `Cmd+Shift+[` | 次/前のタブ |
 | `Cmd+Shift+Right` / `Cmd+Shift+Left` | 次/前のウィンドウ |
-| `Cmd+Shift+T` | 閉じたタブなど直前の操作を取り消す（標準・時間制限あり） |
+| `Cmd+Shift+T` | 閉じたタブ・ペインなど直前の操作を取り消す（15秒以内） |
 | `Cmd+Shift+P` | コマンドパレット（標準） |
+
+`undo-timeout = 15s` の間は閉じたセッションも保持され、プロセスが動き続ける。
+処理を止めたい場合は、閉じる前にアプリ側で中断・終了する。
+
+### Codex・Claude Code・Neovimの入力
+
+`Shift+Enter` と `Ctrl+Enter` はGhostty側で改行文字に変換せず、アプリへ渡す。
+[Neovimの拡張キー入力](https://neovim.io/doc/user/tui.html#tui-csiu)を保つことで、
+Snacks pickerの `Shift+Enter`（表示先ウィンドウの選択）などが使える。
+[Claude CodeはGhosttyで追加設定なしにShift+Enterへ対応する](https://code.claude.com/docs/en/terminal-config#enter-multiline-prompts)。
+また、導入済みClaude Codeの `Ctrl+Enter` は
+[待機中のメッセージを今すぐ送る操作](https://code.claude.com/docs/en/interactive-mode#general-controls)として使える。
+`Cmd+Enter` は従来どおり改行文字（`Ctrl+J`相当）を送る。
+
+長いプロンプトは `Ctrl+G` でNeovimへ渡して編集できる。
+Fishで `VISUAL=nvim` と `EDITOR=nvim` を設定済み。
+[Codexの外部エディタ](https://learn.chatgpt.com/docs/cli-customization#prompt-editor)では、
+保存して終了すると入力欄へ戻る。Claude Codeも `Ctrl+G` で外部エディタを開ける。
+AI側のキー変更はCodexの `/keymap`、
+Claude Codeの `/keybindings` で行う。
+`macos-option-as-alt = true` により、`Alt` を使うアプリの操作も送れる。
+
+### コマンドパレット
+
+`Cmd+Shift+P` から次の独自操作を検索できる。標準の項目もそのまま残す。
+
+| 検索する名前 | 用途 |
+|---|---|
+| `Resize Panes` | `h/j/k/l` でペイン調整、`Esc` / `Ctrl+C` で終了 |
+| `Restore Automatic Tab Title` | 手動のタブ名を解除し、Codex・Claude Code・Fishの動的タイトルへ戻す |
+
+タブに名前を付ける操作は標準の `Change Tab Title` を使う。
+現在画面の保存は標準の `Copy Screen to Temporary File and Copy Path` からも実行できる。
+画面より前のログを保存する場合は `Cmd+Ctrl+L` を使う。
 
 ### フォントサイズ
 

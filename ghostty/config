@@ -40,6 +40,9 @@ window-padding-balance = true
 window-padding-color = extend
 window-theme = auto
 window-save-state = always
+# Allow time to recover an accidentally closed AI/editor pane with Cmd+Shift+T.
+# Closed sessions remain alive during this grace period.
+undo-timeout = 15s
 window-new-tab-position = current
 window-inherit-font-size = true
 fullscreen = true
@@ -61,8 +64,9 @@ focus-follows-mouse = false
 # ─── Keyboard ─────────────────────────────────────────────────────────────────
 
 mouse-hide-while-typing = true
-keybind = shift+enter=text:\n
-keybind = ctrl+enter=text:\n
+# Let apps distinguish Shift/Ctrl+Enter through the keyboard protocol.
+# In particular, Snacks uses Shift+Enter to choose the target window.
+# Keep Cmd+Enter as an explicit Ctrl+J/newline shortcut for AI prompts.
 keybind = cmd+enter=text:\n
 keybind = ctrl+shift+equal=equalize_splits
 
@@ -79,7 +83,9 @@ keybind = cmd+zero=reset_font_size
 # ─── Pane Management (vim-style) ─────────────────────────────────────────────
 
 keybind = cmd+d=new_split:right
-keybind = cmd+|=new_split:right
+# Cmd+| requires Shift; bind the physical pipe key on US and JIS keyboards.
+keybind = cmd+shift+backslash=new_split:right
+keybind = cmd+shift+intl_yen=new_split:right
 keybind = cmd+shift+d=new_split:down
 keybind = cmd+shift+minus=new_split:down
 
@@ -170,6 +176,10 @@ keybind = cmd+shift+r=toggle_readonly
 
 # Toggle mouse reporting for TUI apps
 keybind = cmd+shift+m=toggle_mouse_reporting
+
+# Add the repo-specific actions to the native Cmd+Shift+P palette.
+command-palette-entry = title:Resize Panes (Vim Keys),description:Use h/j/k/l to resize; Esc or Ctrl+C exits.,action:activate_key_table:resize
+command-palette-entry = title:Restore Automatic Tab Title,description:Clear a manual tab name so the active app can update it.,action:set_tab_title:
 
 # ─── Notifications & Misc ────────────────────────────────────────────────────
 
