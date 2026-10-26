@@ -48,11 +48,12 @@ PR作成を繰り返さない。担当が古いだけで他の実行を停止・
 - 受け渡しには利用者に見える変更、検証の証拠、残る判断だけを示す。通常の編集に新しい
   承認段階を足さず、許可済みの作業は続ける。
 
-## 参考にした考え方
+## 運用の境界
 
-2026-10-27確認。[Factoryの2026-08-18版](https://github.com/addyosmani/factory/blob/e340d991f152c0549c0f4c88e99a3319d3b8241a/template/.claude/skills/factory-implement/SKILL.md)
-から、レビュー待ちによる着手制限、再開可能な記録、必須検証の欠損を失敗として扱う考えを採用した。
-件数・変更量・再試行数の固定値、既存テストの編集禁止、専用の常駐基盤は導入しない。
+処理件数や変更量の上限は、対象の影響とレビューできる量から決める。
+新しい項目を増やすより、検証漏れや修正待ちを解消した方が完了へ近づく場合がある。
 強制的な公開制限が必要なら、プロンプトだけに頼らず、利用環境に対応する
 [GitHubの保護設定](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches)
 と実際の権限・bypass対象を確認する。
+
+運用方針の由来を確認するときは、[設計方針の参考資料](../../docs/engineering-sources.md)を参照する。

@@ -35,10 +35,6 @@ If independent spec review is requested or otherwise authorized and useful, use
 [spec-document-reviewer-prompt.md](spec-document-reviewer-prompt.md) for the review
 criteria. A reviewer verdict does not replace a user's unresolved decision.
 
-Adapted from [The Good Spec (2026-01-13)](https://addyosmani.com/blog/good-spec/),
-reviewed 2026-10-27: keep outcomes testable and context scoped to the task, without
-requiring a separate document or approval at every phase.
-
 ## Requested Design Interview
 
 When the user asks to challenge an existing plan, follow its dependent
@@ -52,3 +48,6 @@ Use the optional browser companion only when a visual choice would benefit
 from it and the user requests or has accepted it; do not ask again for existing
 authorization. Then read [visual-companion.md](visual-companion.md).
 A small inline diagram does not require starting the companion.
+
+For provenance and adaptation decisions when maintaining this workflow, see
+[engineering sources](../../docs/engineering-sources.md).

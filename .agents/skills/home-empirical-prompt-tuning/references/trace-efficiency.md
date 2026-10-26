@@ -37,13 +37,8 @@ Change one causal theme, repeat comparable cases, and report measured before/aft
 values with the quality result. Treat estimated savings as a hypothesis until
 rerun evidence supports them. A profiler score does not establish correctness.
 
-## Concept Sources
-
-Reviewed 2026-10-27: [agent-house's June 20 implementation](https://github.com/addyosmani/agent-house/blob/dc29aa52b40d1830ba11212e333e7dacd3622257/src/audit/audits/parallelizable.ts)
-motivated trace-based optimization and inspecting the elapsed critical path.
-Its sibling-span heuristic is not an independence guarantee; the checks above
-are required before applying that suggestion. [Agent Engineer, lesson 9](https://github.com/addyosmani/agent-engineer/blob/57522790c1c3d8120d376791f1610ffe7682e027/09-evaluating-and-testing-agents/README.md)
-(substantive chapter added 2026-03-19, updated 2026-07-16) motivates examining both
-outcomes and trajectories without requiring an exact sequence. Use the current
+Use the current
 [OpenTelemetry trace model](https://opentelemetry.io/docs/concepts/signals/traces/)
 to interpret span relationships; parentage alone does not establish safe concurrency.
+For provenance and adaptation decisions when maintaining this guide, see
+[engineering sources](../../../docs/engineering-sources.md).
