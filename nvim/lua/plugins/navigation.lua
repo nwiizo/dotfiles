@@ -1,9 +1,8 @@
 -- Navigation & Search plugins
 -- LazyVim manages: Snacks.nvim (picker included), flash.nvim, persistence.nvim
-local function television(channel, cwd)
+local function telescope(builtin, cwd)
   return function()
-    require("config.television").open({
-      channel = channel,
+    require("telescope.builtin")[builtin]({
       cwd = cwd == "config" and vim.fn.stdpath("config") or cwd == "cwd" and vim.fn.getcwd() or LazyVim.root(),
     })
   end
@@ -30,14 +29,15 @@ return {
       },
     },
     keys = {
-      { "<leader><leader>", LazyVim.pick("smart"), desc = "Smart Picker (Root)" },
-      { "<C-p>", television("files"), desc = "Find Files (Television, Root)" },
-      { "<leader>ff", television("files"), desc = "Find Files (Television, Root)" },
-      { "<leader>fF", television("files", "cwd"), desc = "Find Files (Television, cwd)" },
-      { "<leader>fc", television("files", "config"), desc = "Find Config File (Television)" },
-      { "<leader>/", television("text"), desc = "Search Text (Television, Root)" },
-      { "<leader>sg", television("text"), desc = "Search Text (Television, Root)" },
-      { "<leader>sG", television("text", "cwd"), desc = "Search Text (Television, cwd)" },
+      -- Telescope owns daily file/text search; Snacks keeps structured editor lists.
+      { "<leader><leader>", false },
+      { "<leader>ff", false },
+      { "<leader>fF", false },
+      { "<leader>fc", false },
+      { "<leader>/", false },
+      { "<leader>sg", false },
+      { "<leader>sG", false },
+      { "<leader>sR", false },
       {
         "<leader>fm",
         function()
@@ -83,7 +83,7 @@ return {
     },
   },
 
-  -- Optional picker entrypoint; keep Television and Snacks as the daily defaults.
+  -- Daily file and text search, without replacing Snacks' structured pickers.
   {
     "nvim-telescope/telescope.nvim",
     version = "*",
@@ -93,9 +93,23 @@ return {
       { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
     },
     keys = {
+      { "<leader><leader>", telescope("find_files"), desc = "Find Files (Telescope, Root)" },
+      { "<C-p>", telescope("find_files"), desc = "Find Files (Telescope, Root)" },
+      { "<leader>ff", telescope("find_files"), desc = "Find Files (Telescope, Root)" },
+      { "<leader>fF", telescope("find_files", "cwd"), desc = "Find Files (Telescope, cwd)" },
+      { "<leader>fc", telescope("find_files", "config"), desc = "Find Config File (Telescope)" },
+      { "<leader>/", telescope("live_grep"), desc = "Live Grep (Telescope, Root)" },
+      { "<leader>sg", telescope("live_grep"), desc = "Live Grep (Telescope, Root)" },
+      { "<leader>sG", telescope("live_grep", "cwd"), desc = "Live Grep (Telescope, cwd)" },
+      { "<leader>sR", "<cmd>Telescope resume<cr>", desc = "Resume Telescope Search" },
       { "<leader>fT", "<cmd>Telescope builtin<cr>", desc = "Telescope Pickers" },
     },
-    opts = {},
+    opts = {
+      pickers = {
+        find_files = { hidden = true, file_ignore_patterns = { "%.git/" } },
+        live_grep = { additional_args = { "--hidden", "--glob", "!.git" } },
+      },
+    },
     config = function(_, opts)
       local telescope = require("telescope")
       telescope.setup(opts)

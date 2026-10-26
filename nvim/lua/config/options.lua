@@ -4,22 +4,21 @@
 
 local o = vim.o
 
+-- File lifecycle: commands and navigation must not publish unsaved edits to agents.
+-- Keep LazyVim's persistent undo, save confirmation and format-on-save.
+o.autowrite = false -- LazyVim: true; autowriteall already defaults to false.
+o.swapfile = false
+
 -- Statusline-less UI leaves more room for code and agent terminals.
 o.cmdheight = 0 -- LazyVim: 1
 o.laststatus = 0 -- LazyVim: 3
 
--- Scrolling (LazyVim: scrolloff=4)
+-- Reading: keep code unwrapped (LazyVim default); prose is handled in autocmds.lua.
 o.scrolloff = 8
+o.breakindent = true
 
 -- Floating windows
 o.winborder = "rounded"
-
--- Files (not in LazyVim defaults)
-o.swapfile = false
-
--- Word wrap (LazyVim: wrap=false)
-o.wrap = true
-o.breakindent = true
 
 -- Preview substitutions, including matches outside the visible window.
 o.inccommand = "split"

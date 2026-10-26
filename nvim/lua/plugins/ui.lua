@@ -50,11 +50,11 @@ return {
             or (props.focused and "Normal" or "Comment")
 
           if diag_counts.error > 0 then
-            table.insert(diagnostics, { "  ", guifg = "#f38ba8" })
+            table.insert(diagnostics, { " E", guifg = "#f38ba8" })
             table.insert(diagnostics, { tostring(diag_counts.error), guifg = "#f38ba8" })
           end
           if diag_counts.warn > 0 then
-            table.insert(diagnostics, { "  ", guifg = "#f9e2af" })
+            table.insert(diagnostics, { " W", guifg = "#f9e2af" })
             table.insert(diagnostics, { tostring(diag_counts.warn), guifg = "#f9e2af" })
           end
 
@@ -68,7 +68,7 @@ return {
           table.insert(res, { display_name, gui = modified and "bold,italic" or "bold", group = text_hl })
 
           if modified then
-            table.insert(res, { " ", guifg = "#fab387" })
+            table.insert(res, { " ●", guifg = "#fab387" })
           end
 
           for _, diag in ipairs(diagnostics) do

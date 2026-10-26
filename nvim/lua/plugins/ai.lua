@@ -1,14 +1,70 @@
 -- AI Integration plugins
 -- LazyVim manages: copilot, copilot-chat (via extras)
-local function codex_changes()
+local function codex_cwd()
   local status = require("codex").status()
   local cwd = status.cwd or status.resolved_cwd
   if not cwd then
-    vim.notify("Codex: cannot determine which directory to review", vim.log.levels.WARN)
+    vim.notify("Codex: cannot determine the project directory", vim.log.levels.WARN)
+  end
+  return cwd
+end
+
+local function codex_changes()
+  local cwd = codex_cwd()
+  if not cwd then
     return
   end
   -- Use the session's project even when invoked from its terminal or another tab.
   vim.cmd.CodeDiff({ args = { "--repo", cwd } })
+end
+
+local function codex_buffers()
+  local cwd = codex_cwd()
+  if cwd then
+    Snacks.picker.buffers({
+      title = "Unsaved files: " .. cwd,
+      cwd = cwd,
+      filter = { cwd = true },
+      modified = true,
+      current = true,
+    })
+  end
+end
+
+local function codex_verify()
+  -- Capture before opening input: its scratch buffer has no project root.
+  local cwd = codex_cwd()
+  if not cwd then
+    return
+  end
+  vim.ui.input({ prompt = "Verify saved files in " .. cwd .. ": " }, function(command)
+    if not command or vim.trim(command) == "" then
+      return
+    end
+    local title = ("Verify  " .. cwd .. "  |  " .. command):gsub("%%", "%%%%")
+    -- Each run gets fresh output; status describes this run, not the current tree.
+    Snacks.terminal.open(command, {
+      cwd = cwd,
+      start_insert = false,
+      auto_insert = false,
+      auto_close = false,
+      win = {
+        position = "bottom",
+        height = 0.35,
+        bo = { buflisted = true },
+        wo = { winbar = "Running  |  " .. title },
+        on_buf = function(terminal)
+          terminal:on("TermClose", function()
+            local result = "Exit " .. vim.v.event.status .. "  |  " .. title
+            terminal.opts.wo.winbar = result
+            if terminal:win_valid() then
+              vim.wo[terminal.win].winbar = result
+            end
+          end, { buf = true })
+        end,
+      },
+    })
+  end)
 end
 
 local function codex_review()
@@ -25,14 +81,8 @@ end
 local function codex_actions()
   local codex = require("codex")
   local running = codex.status().running
-  local actions = {
-    {
-      label = running and "Write a follow-up (same conversation, Ctrl-S to send)"
-        or "Write a request about the current file",
-      run = running and codex.follow_up or codex.ask,
-    },
+  local more = {
     { label = "Open the conversation", run = codex.open },
-    { label = "Review changes (CodeDiff, q to return)", run = codex_changes },
     { label = "Write a review request for the changes", run = codex_review },
     { label = "Back to editing (conversation keeps running)", run = codex.close },
     {
@@ -54,16 +104,35 @@ local function codex_actions()
       end,
     },
   }
-  vim.ui.select(actions, {
-    prompt = "Codex: next action",
-    format_item = function(action)
-      return action.label
-    end,
-  }, function(action)
-    if action then
-      action.run()
-    end
-  end)
+  local cwd = codex_cwd()
+  local function select(actions)
+    vim.ui.select(actions, {
+      prompt = "Codex: " .. (cwd or "project unavailable"),
+      format_item = function(action)
+        return action.label
+      end,
+    }, function(action)
+      if action then
+        action.run()
+      end
+    end)
+  end
+  select({
+    {
+      label = running and "Write a follow-up (same conversation, Ctrl-S to send)"
+        or "Write a request about the current file",
+      run = running and codex.follow_up or codex.ask,
+    },
+    { label = "Review changes (CodeDiff, q to return)", run = codex_changes },
+    { label = "Inspect unsaved files in this project", run = codex_buffers },
+    { label = "Run a verification command on saved files", run = codex_verify },
+    {
+      label = "Conversation, review request, and help",
+      run = function()
+        select(more)
+      end,
+    },
+  })
 end
 
 return {
@@ -314,6 +383,8 @@ return {
       "CodexEdit",
       "CodexActions",
       "CodexChanges",
+      "CodexBuffers",
+      "CodexVerify",
       "CodexSend",
       "CodexSendVisual",
       "CodexAddVisual",
@@ -352,6 +423,8 @@ return {
       local codex = require("codex").setup(opts)
       vim.api.nvim_create_user_command("CodexActions", codex_actions, { desc = "Choose the next Codex action" })
       vim.api.nvim_create_user_command("CodexChanges", codex_changes, { desc = "Review the Codex project's changes" })
+      vim.api.nvim_create_user_command("CodexBuffers", codex_buffers, { desc = "Inspect the project's unsaved files" })
+      vim.api.nvim_create_user_command("CodexVerify", codex_verify, { desc = "Run verification in the Codex project" })
       local function decorate(status)
         if status.backend ~= "terminal" or not status.bufnr or not vim.api.nvim_buf_is_valid(status.bufnr) then
           return
@@ -390,6 +463,8 @@ return {
       { "<leader>om", "<cmd>CodexActions<cr>", desc = "Codex: Next action" },
       { "<leader>ou", "<cmd>CodexFollowUp<cr>", desc = "Codex: Follow up in this conversation" },
       { "<leader>od", "<cmd>CodexChanges<cr>", desc = "Codex: Review project changes" },
+      { "<leader>oi", "<cmd>CodexBuffers<cr>", desc = "Codex: Inspect unsaved project files" },
+      { "<leader>ov", "<cmd>CodexVerify<cr>", desc = "Codex: Verify saved project files" },
       { "<leader>oh", "<cmd>CodexClose<cr>", desc = "Codex: Hide and return to editor" },
       -- Visual Ask/Edit mappings and their hints are installed by selection.keymaps.
       { "<leader>oa", "<cmd>CodexAsk<cr>", desc = "Codex: Ask with file context" },

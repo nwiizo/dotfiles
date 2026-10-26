@@ -274,6 +274,20 @@ vim.api.nvim_create_autocmd("FileChangedShellPost", {
   desc = "Refresh the common base after an external reload",
 })
 
--- Disable spell check for markdown (Japanese text causes false positives)
--- LazyVim enables spell via lazyvim_wrap_spell autocmd group
+-- Replace LazyVim's prose policy: wrap text, but keep Japanese free of spell warnings.
 pcall(vim.api.nvim_del_augroup_by_name, "lazyvim_wrap_spell")
+vim.api.nvim_create_autocmd("FileType", {
+  group = vim.api.nvim_create_augroup("nwiizo_prose", { clear = true }),
+  callback = function(event)
+    if vim.bo[event.buf].buftype ~= "" then
+      return
+    end
+    local prose = vim.tbl_contains({ "text", "plaintex", "typst", "gitcommit", "markdown" }, vim.bo[event.buf].filetype)
+    -- New code buffers must not inherit wrapping from the previous prose buffer.
+    vim.opt_local.wrap = prose
+    if prose then
+      vim.opt_local.spell = false
+    end
+  end,
+  desc = "Wrap prose without enabling spell check; leave code unwrapped",
+})

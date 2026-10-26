@@ -28,7 +28,7 @@ Read this file for the overall model. Use the subdirectory docs when changing a 
 | Packages | `Brewfile` | `Brewfile` |
 | Linking/bootstrap | `scripts/link.sh`, `scripts/bootstrap.sh` | `scripts/` |
 | Fish | [`fish/README.md`](fish/README.md), [`fish/AGENTS.md`](fish/AGENTS.md) | `fish/config.fish`, `fish/functions/`, `fish/fish_plugins` |
-| Neovim | `nvim/README.md` | `nvim/lua/config/`, `nvim/lua/plugins/` |
+| Neovim | [Design and daily review](nvim/README.md), [keymaps](nvim/keymaps.md), [maintenance](nvim/maintenance.md) | `nvim/lua/config/`, `nvim/lua/plugins/` |
 | Ghostty | `ghostty/README.md` | `ghostty/config` |
 | Television | `television/README.md` | `television/config.toml`, `television/cable/` |
 | Git / GitHub CLI | `git/README.md` | `git/config`, `git/power_pull.sh`, `gh/config.yml` |
@@ -267,7 +267,7 @@ cat=bat      grep=rg                 ls='eza --icons --group-directories-first'
 find=fd      du=dust
 sed=sd       ps=procs                top=btm       ping=gping
 http=xh      hex=hexyl               bench=hyperfine
-c='claude --dangerously-skip-permissions'  cc=claude
+c='claude --dangerously-skip-permissions'  cl=claude
 cbare='claude --bare'                csafe='claude --safe-mode'
 cdoc='claude doctor'                 cagents='claude agents'
 cx='codex --dangerously-bypass-approvals-and-sandbox'
@@ -281,11 +281,14 @@ actx=ai_context                      actxc='ai_context | pbcopy'
 
 `c` and `cx` intentionally start unrestricted sessions. Use `cl` for normal Claude Code permissions, or `cxs` / `cxro` for constrained Codex sessions.
 
-See `fish/README.md` for configuration and workflow details.
+See [Fish's workflow guide](fish/README.md#agent-assisted-workflow) for worktrees,
+agent commands, and repeated verification.
 
 ## Neovim
 
-`nvim/` is a LazyVim based configuration for Rust, Go, TypeScript, Python, Terraform, Lua, Bash, Zig, HTML/CSS, and AI-assisted coding.
+`nvim/` is a LazyVim configuration for understanding, reviewing, and correcting
+agent-produced code. The agent implements; Neovim brings source navigation,
+diffs, local edits, and verification output together.
 
 Configuration layout:
 
@@ -294,11 +297,19 @@ Configuration layout:
 - UI: catppuccin mocha, no statusline, `incline.nvim`, `noice.nvim`, `snacks.nvim`, `oil.nvim`, `overlook.nvim`
 - Completion: `blink.cmp`
 - AI: CopilotChat, Avante, Signalbox, Codex, Claude Code
-- Search: Television for files/text/quickfix, Snacks for editor-specific lists, fff for typo-tolerant search
+- Search: Telescope for files/text, Snacks for editor-specific lists, Television for quickfix filtering, fff for typo-tolerant search
 - Git: gitsigns, CodeDiff, Diffview, LazyGit, Snacks gitbrowse
 - Rust: rustaceanvim, crates.nvim, neotest, DAP
 
-See `nvim/README.md` for plugin layout, LazyVim Extras, and keymaps.
+Start with the [daily review workflow and architecture](nvim/README.md).
+The Codex action menu (`<leader>om`) connects project diffs, unsaved files,
+verification commands, and follow-up requests. Commands run against saved files
+in the agent's working directory; success describes that run, not later edits.
+Use separate Git worktrees for concurrent tasks.
+
+See [keymaps](nvim/keymaps.md) for operations and [maintenance](nvim/maintenance.md)
+for dependency updates, native builds, and isolated tests. Restart Neovim after
+configuration changes.
 
 ## Terminals
 
@@ -345,16 +356,10 @@ rtk proxy fish -n scripts/install-fish-plugins.fish
 rtk proxy fish --no-config fish/tests/install_plugins.fish
 ```
 
-```bash
-stylua --check nvim/lua
-nvim --headless '+lua print("nvim-config-ok")' +qa
-```
-
-```bash
-rtk proxy nvim --headless '+lua require("lazy").load({ plugins = { "CopilotChat.nvim", "avante.nvim", "signalbox.nvim", "codex.nvim", "claudecode.nvim" } }); print("ai-plugins-loaded")' +qa
-```
-
-Loading plugins checks their setup, not provider authentication or live AI requests.
+For Neovim, follow [the required checks and isolated integration tests](nvim/maintenance.md#検証).
+AI integration tests use a separate HOME and XDG directories, with installed
+plugins referenced from the test environment. Loading plugins alone does not
+verify their operations, provider authentication, or live AI requests.
 
 ## Local State
 

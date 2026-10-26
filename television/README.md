@@ -40,6 +40,10 @@ channel's ordinary ghq source.
 
 ## Neovim
 
+Daily file search and live grep use Telescope; see the
+[Neovim keymap guide](../nvim/keymaps.md). Television remains the quickfix filter
+and the explicit Git changed-file view below. Fish's search bindings are unchanged.
+
 The native bridge in `nvim/lua/config/television.lua` runs Television in a
 floating terminal. It keeps stdout in a temporary file, restores the originating
 window, and deletes temporary files on exit. This avoids parsing terminal screen
@@ -48,18 +52,14 @@ editor's cwd stays unchanged. No additional Neovim plugin is needed.
 
 | Key | Action |
 |---|---|
-| `Ctrl-P`, `<leader>ff` | Project files |
-| `<leader>fF` | Files in the editor cwd |
-| `<leader>fc` | Neovim config files |
-| `<leader>/`, `<leader>sg` | Project text |
-| `<leader>sG` | Text in the editor cwd |
 | `<leader>gT` | Staged, unstaged, and untracked paths |
 | `zf` in quickfix/location list | Filter that list |
 
-Inside a file/text picker, Enter opens the first selection and adds other selections as
+The bridge still supports file/text channels through `require("config.television").open(...)`
+for explicit use. Enter opens the first selection and adds other selections as
 buffers; `Ctrl-S`/`Ctrl-V` open a split and `Ctrl-Q` sends selections to quickfix.
-Text search filters streamed ripgrep matches using Television's search syntax.
-It is not a live regex query passed back to ripgrep.
+Its text channel filters streamed ripgrep matches using Television's search syntax,
+while the default Telescope live grep sends the query to ripgrep.
 
 Quickfix/location-list search previews buffer contents through Television and
 bat. Loaded buffers are captured when the picker opens, including unsaved text;
@@ -98,7 +98,7 @@ original keys:
 | Fish history | Session merge outside private mode, timestamps, multiline preview and multiple selection; selection does not execute it |
 | Variables | Caller-scope names, full values and scope/export details; `$` prefixes retained |
 | `zi` / `z` completion | Ranked Television selection and directory preview; `z` completes paths or jumps interactively after keywords |
-| `<leader><leader>` | Snacks Smart Picker retains buffers/recent files alongside project files |
+| `<leader><leader>` | Telescope project files; Snacks Smart Picker remains available through `<leader>sP` |
 | `<leader>fP`, `<leader>sF` | fff retains typo tolerance, frecency and live plain/regex/fuzzy search |
 | `<leader>gC` | Snacks retains staging/restore actions; `<leader>gT` adds the Television view |
 | `<leader>sq` | Snacks retains quickfix browsing; `zf` is the Television filter |

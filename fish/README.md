@@ -206,6 +206,26 @@ ghq, zoxide, Git, and Television with temporary repositories and an isolated hom
 
 ## Agent-assisted workflow
 
+Fish handles project selection, agent startup, and command execution.
+[Neovim's review workflow](../nvim/README.md#日常のレビュー) handles source
+navigation, diffs, local corrections, and inspection of verification output.
+
+1. Use `repo` to enter a repository and `gwl` to inspect its worktrees.
+2. For parallel tasks, create a worktree with `gwa -b agent/task ../project-agent`
+   and enter that directory before starting the agent or Neovim.
+3. Review changes in Neovim and explicitly save corrections before running tests.
+4. Run the project's documented verification command; use `awatch` for repeated
+   checks while files change, or Neovim's `<leader>ov` for a single Codex-project run.
+5. After the agent finishes writing, inspect the final diff and verification output
+   before committing. A previous successful run does not cover later changes.
+
+Git keeps each worktree's checkout and index separate. The abbreviations use
+standard [Git worktree](https://git-scm.com/docs/git-worktree) behavior, including
+its checks for branches already checked out elsewhere. Verification watches
+saved files; unsaved Neovim edits need an explicit save.
+
+### Accounts and entrypoints
+
 `cctx --account secondary` selects the second Claude login for this shell;
 `cctx --account default` returns to the original login. cctx's Fish integration
 only changes `CLAUDE_CONFIG_DIR`; start `claude` separately. Login/status commands
@@ -232,12 +252,6 @@ approval prompts, or `cxro` for read-only Codex.
 | `gwl` | List Git worktrees and their branches |
 | `gwa -b <branch> <path>` | Create a separate working directory for an agent task |
 | `gwt` | Direct `git worktree` access |
-
-For concurrent work, `gwa -b agent/task ../project-agent` creates a new branch
-and worktree; then open a shell or Neovim in that directory. Git keeps each
-worktree's checkout and index separate. These abbreviations use standard
-[Git worktree](https://git-scm.com/docs/git-worktree) behavior, including its
-checks for branches already checked out elsewhere.
 
 Interactive command lines visibly expand `cat`, `grep`, `ls`, `find`, and `du`
 to the Rust-powered `bat`, `rg`, `eza`, `fd`, and `dust`. These are

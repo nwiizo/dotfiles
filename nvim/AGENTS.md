@@ -2,8 +2,9 @@
 
 This directory manages a LazyVim-based Neovim 0.12+ environment.
 These instructions apply under `nvim/` and supplement the repository's AGENTS.md.
-Read [README.md](README.md) for the current layout, keymaps, local plugin
-requirements, and verification commands. `CLAUDE.md` links to this file;
+Read [README.md](README.md) for the architecture and local plugin requirements,
+[keymaps.md](keymaps.md) for operations, and [maintenance.md](maintenance.md)
+for updates and verification commands. `CLAUDE.md` links to this file;
 edit these instructions here. Keep user-facing instructions in the README.
 
 ## Configuration boundaries
@@ -34,11 +35,12 @@ edit these instructions here. Keep user-facing instructions in the README.
   provide file, mode, and command information. Oil must load at startup so
   opening a directory works. better-escape loads after `User LazyVimKeymaps`
   so the first Visual selection can use `jk`.
-- Television owns the usual file/text search and quickfix filtering. Snacks
-  handles structured pickers; fff remains the typo-tolerant alternative.
-  Telescope is available through its command and `<leader>fT`; importing the
-  Telescope Extra would change the default picker and shared keys.
-  Do not consolidate them without checking the operations each supplies.
+- Telescope owns daily file/text search and `<leader>sR` resume. Snacks handles
+  structured pickers, including the agent action menu and unsaved files; fff
+  remains the typo-tolerant alternative. Television handles quickfix filtering
+  and the explicit `<leader>gT` view, and remains Fish's picker.
+  Importing the Telescope Extra would also change structured picker and LSP keys;
+  keep the targeted mappings unless that wider migration is requested.
 - Copilot supplies inline completion (`vim.g.ai_cmp = false`), while Blink
   handles LSP completion and snippets. Avante automatic suggestions stay off
   initially. Leave format-on-save to LazyVim so `<leader>uf` keeps working;
@@ -73,7 +75,7 @@ from mini.ai and requires `remap = true`.
 
 ## Verification
 
-Run the README's required StyLua, lockfile JSON, and headless startup checks
+Run maintenance.md's required StyLua, lockfile JSON, and headless startup checks
 from the repository root. Check modified test files with StyLua as well.
 Startup alone does not exercise deferred plugins: load each affected integration
 and execute its changed command, module, or mapping. For API changes, also run
@@ -81,11 +83,12 @@ and execute its changed command, module, or mapping. For API changes, also run
 
 Before tests that load AI integrations, isolate the child process's HOME and
 XDG config/data/state/cache directories. Copy the config and reference installed
-plugins, parsers, Mason, and the four local repositories as described in the
-README. Keep authenticated AI requests out of ordinary regression tests.
+plugins, parsers, Mason, and the four local repositories as described in
+maintenance.md. Keep authenticated AI requests out of ordinary regression tests.
 
-Use `tests/keymap_conflicts.lua` for shared AI and Yanky key changes; the test
-dispatches real keys while replacing only the external AI action. Use the
+Use `tests/search_workflow.lua` for Telescope mappings, search roots, hidden and
+ignored files, selection, and resume. Use `tests/keymap_conflicts.lua` for shared
+AI and Yanky key changes; it dispatches real keys while replacing only the external AI action. Use the
 `tests/refactoring.lua` test for debug print operators and whole-buffer cleanup.
 Use the other existing tests for the affected behavior, especially
 `tests/external_changes.lua` for external-edit merging. Report which operations

@@ -1,5 +1,9 @@
 # Neovimプラグイン調査
 
+この文書は調査日の人気・開発状況と採用理由を残す。現在の構成は
+[README](README.md)、操作は [キーマップ](keymaps.md)、更新手順は
+[メンテナンス](maintenance.md)を参照。過去のStar数や候補一覧は継続的な推薦を意味しない。
+
 初回調査: 2026-09-08。最新の確認: 2026-10-27、Neovim 0.12.6。
 
 現在は Snacks・Blink・Oil・fff・CodeDiff・Quicker を使用し、Telescope を追加している。

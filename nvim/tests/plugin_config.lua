@@ -13,8 +13,9 @@ vim.defer_fn(function()
     assert(log.warn(), "Avante warnings are disabled")
     assert(not log.info(), "Avante informational logging was enabled")
 
-    require("lazy").load({ plugins = { "incline.nvim", "conform.nvim" } })
+    require("lazy").load({ plugins = { "incline.nvim", "conform.nvim", "nvim-lspconfig" } })
     local buf = vim.api.nvim_create_buf(false, true)
+    vim.bo[buf].buftype = "" -- Exercise modified state on a normal file buffer.
     vim.api.nvim_buf_set_name(buf, vim.fn.tempname() .. ".py")
     local ns = vim.api.nvim_create_namespace("plugin_config_test")
     local severity = vim.diagnostic.severity
@@ -36,6 +37,26 @@ vim.defer_fn(function()
       { lnum = 0, col = 0, message = "hint", severity = severity.HINT },
     })
     assert(vim.deep_equal(displayed_counts(), { "2", "1" }), "Error/warning counts changed")
+    local visible_sign = false
+    for _, mark in ipairs(vim.api.nvim_buf_get_extmarks(buf, -1, 0, -1, { details = true })) do
+      visible_sign = visible_sign or (mark[4].sign_text or ""):find("%S") ~= nil
+    end
+    assert(visible_sign, "Diagnostics have no visible severity sign")
+
+    local function label()
+      local parts = {}
+      for _, part in ipairs(require("incline.config").render({ buf = buf, focused = false })) do
+        if type(part) == "table" and type(part[1]) == "string" then
+          parts[#parts + 1] = part[1]
+        end
+      end
+      return table.concat(parts)
+    end
+    assert(label():find("E2", 1, true) and label():find("W1", 1, true), "Diagnostic counts lack severity labels")
+    vim.bo[buf].modified = true
+    assert(label():find("●", 1, true), "Unsaved edits have no visible marker")
+    vim.bo[buf].modified = false
+    assert(not label():find("●", 1, true), "Saved buffer still shows the unsaved marker")
     vim.diagnostic.reset(ns, buf)
     assert(vim.deep_equal(displayed_counts(), {}), "Cleared diagnostics remain visible")
 

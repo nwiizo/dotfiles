@@ -1,5 +1,5 @@
--- Run with the installed plugins and full config, from the dotfiles root:
--- nvim --headless -u nvim/init.lua '+lua dofile("nvim/tests/codex_workflow.lua")'
+-- Run from the dotfiles root, with isolated HOME/XDG as in nvim/maintenance.md:
+-- nvim --headless -i NONE '+lua dofile("nvim/tests/codex_workflow.lua")'
 -- CODEX_NVIM_REAL_CLI=1 uses the authenticated CLI for two turns in a temp repo.
 vim.o.swapfile = false
 vim.o.undofile = false
@@ -142,6 +142,7 @@ local ok, err = xpcall(function()
   wait_for("next-action picker opens", function()
     return #Snacks.picker.get() > 0
   end)
+  assert(Snacks.picker.get()[1].opts.title:find(project, 1, true), "actions hide the project directory")
   keys("<CR>")
   wait_for("picker opens a follow-up in the same conversation", function()
     return vim.api.nvim_buf_get_name(0) == "codex://ask"
@@ -190,6 +191,70 @@ local ok, err = xpcall(function()
   assert(review:find("Do not modify files", 1, true))
   assert(codex.status().jobid == jobid, "review replaced the running conversation")
   require("codex.ask").reset()
+
+  -- Review helpers must stay in the agent's project, not the editor's cwd.
+  vim.api.nvim_buf_set_lines(source_buf, 0, -1, false, { "unsaved correction" })
+  local unrelated = vim.api.nvim_create_buf(true, false)
+  vim.api.nvim_buf_set_name(unrelated, root .. "/unrelated.txt")
+  vim.api.nvim_buf_set_lines(unrelated, 0, -1, false, { "other work" })
+  keys("<leader>oi")
+  wait_for("project's unsaved files picker opens", function()
+    local picker = Snacks.picker.get()[1]
+    return picker and #picker:items() == 1 and picker:items()[1].buf == source_buf
+  end)
+  keys("<CR>")
+  wait_for("unsaved file can be opened for correction", function()
+    return vim.api.nvim_get_current_buf() == source_buf
+  end)
+
+  local input = vim.ui.input
+  vim.ui.input = function(opts, callback)
+    assert(opts.prompt:find(project, 1, true), "verification input hides its working directory")
+    callback("pwd; exit 7")
+  end
+  keys("<leader>ov")
+  vim.ui.input = input
+  local terminal = vim.api.nvim_get_current_buf()
+  assert(vim.bo[terminal].buftype == "terminal", "verification did not open a terminal")
+  assert(vim.bo[terminal].buflisted, "verification output is missing from the buffer list")
+  assert(vim.b[terminal].snacks_terminal.cwd == project)
+  wait_for("failed verification retains output and exit status", function()
+    local output = table.concat(vim.api.nvim_buf_get_lines(terminal, 0, -1, false), "\n")
+    return output:find(project, 1, true) and vim.wo.winbar:find("Exit 7", 1, true)
+  end)
+  assert(vim.bo[source_buf].modified, "verification cleared unsaved edits")
+  assert(vim.deep_equal(vim.fn.readfile(path), { "after" }), "verification silently saved edits")
+  assert(vim.fn.getcwd() == dotfiles, "verification changed the editor cwd")
+  keys("q")
+  vim.ui.input = function(_, callback)
+    callback("pwd; exit 0")
+  end
+  keys("<leader>ov")
+  vim.ui.input = input
+  local success = vim.api.nvim_get_current_buf()
+  assert(success ~= terminal, "verification reused stale output")
+  wait_for("successful verification also retains its output", function()
+    local output = table.concat(vim.api.nvim_buf_get_lines(success, 0, -1, false), "\n")
+    return output:find(project, 1, true) and vim.wo.winbar:find("Exit 0", 1, true)
+  end)
+  keys("q")
+  vim.ui.input = function(_, callback)
+    callback("pwd; exit 0")
+  end
+  keys("<leader>ov")
+  vim.ui.input = input
+  assert(vim.api.nvim_get_current_buf() ~= success, "repeated command reused the previous run")
+  wait_for("repeated verification finishes in a fresh terminal", function()
+    return vim.wo.winbar:find("Exit 0", 1, true)
+  end)
+  keys("q")
+  local before_cancel = vim.api.nvim_get_current_buf()
+  vim.ui.input = function(_, callback)
+    callback(nil)
+  end
+  keys("<leader>ov")
+  vim.ui.input = input
+  assert(vim.api.nvim_get_current_buf() == before_cancel, "cancel opened a verification terminal")
   print("codex-workflow-ok (" .. (real_cli and "real CLI" or "terminal fixture") .. ")")
 end, debug.traceback)
 

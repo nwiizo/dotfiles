@@ -1,4 +1,4 @@
--- Run with isolated HOME/XDG directories, as documented in README.md.
+-- Run with isolated HOME/XDG directories, as documented in nvim/maintenance.md.
 vim.api.nvim_exec_autocmds("UIEnter", { modeline = false })
 local test
 local function resume()
