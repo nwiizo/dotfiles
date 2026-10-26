@@ -4,7 +4,7 @@ function git_tv_ghq -d "Pick a Git repository managed by ghq with Television, th
     set -l repositories (ghq list --full-path); or return $status
     set -q repositories[1]; or return 0
 
-    # Reuse zoxide's frequency/recency ranking, restricted to ghq roots.
+    # Start with zoxide's frequency/recency ranking, restricted to ghq roots.
     # Remove matches before appending the unvisited repositories in ghq order.
     set -l ranked
     if type -q zoxide
@@ -16,7 +16,8 @@ function git_tv_ghq -d "Pick a Git repository managed by ghq with Television, th
         end
     end
 
-    set -l selected (printf '%s\n' $ranked $repositories | tv git-repos --no-sort --inline --no-remote \
+    # Let Television rank matches once the user types a query.
+    set -l selected (printf '%s\n' $ranked $repositories | tv git-repos --inline --no-remote \
         --keybindings 'tab="select_next_entry";backtab="select_prev_entry"')
     test $status -eq 0; or return 0
 

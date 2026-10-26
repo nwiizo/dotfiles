@@ -201,8 +201,9 @@ completion descriptions and Television previews after changing their settings.
 Run `rtk proxy fish --no-config fish/tests/television.fish` for insertion,
 multiline history, cancellation, operation arguments, and literal-path previews.
 Run `rtk proxy fish --no-config fish/tests/repo_picker.fish` for repository
-ranking, unvisited candidates, empty history, and cancellation. It uses real
-ghq, zoxide, Git, and Television with temporary repositories and an isolated home.
+visit ordering, search-match priority, unvisited candidates, empty history, and
+cancellation. It uses real ghq, zoxide, Git, and Television with temporary
+repositories and an isolated home.
 
 ## Agent-assisted workflow
 
@@ -411,7 +412,7 @@ rtk proxy script -q /dev/null fish --no-config fish/tests/update_all.fish
 
 | Shortcut | Action |
 |---|---|
-| `repo` / `Alt-J` / `Ctrl-G` | Select a ghq repository ranked by directory visits and change directory |
+| `repo` / `Alt-J` / `Ctrl-G` | Select a ghq repository: visits initially, match quality while searching |
 | `gb` / `Ctrl-B` | Select a local Git branch and switch without forcing away changes |
 | `kc` | Select a context from the local kubeconfig and make it current |
 | `de [command...]` | Select a running Docker container and run the command, or `sh` by default |
@@ -443,7 +444,9 @@ The `repo` helper orders repository roots using
 Only paths also listed by ghq are promoted; other ghq repositories follow in
 their original order. Visits to a repository's subdirectories are not aggregated
 into its root's score. Without zoxide or usable history, all ghq repositories
-remain available. Typing filters the candidates while preserving this order.
+remain available. With an empty query, the picker preserves this visit order.
+Typing sorts candidates by Television's fuzzy-match quality, so a close name
+match can outrank a frequently visited repository with only a scattered match.
 The helper supplies this ranked input to the shared `git-repos` channel.
 
 The Fish helpers merge other sessions' history outside private mode, then feed

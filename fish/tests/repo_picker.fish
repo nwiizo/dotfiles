@@ -53,6 +53,19 @@ set -g repo_picker_query a-unused
 git_tv_ghq </dev/null; or fail 'searching an unvisited repository'
 test "$PWD" = "$unused"; or fail 'unvisited repository missing from candidates'
 
+# Search quality must outrank visit history once a query is entered.
+set -l exact "$GHQ_ROOT/example.test/owner/needle"
+set -l partial "$GHQ_ROOT/example.test/owner/needle-tools"
+set -l scattered "$GHQ_ROOT/example.test/owner/n-e-e-d-l-e-history"
+for repository in "$exact" "$partial" "$scattered"
+    command git init --quiet "$repository"; or fail 'search fixture creation'
+end
+command zoxide add -- "$partial" "$partial" "$scattered" "$scattered" "$scattered"
+or fail 'search ranking fixture creation'
+set -g repo_picker_query needle
+git_tv_ghq </dev/null; or fail 'match-quality repository selection'
+test "$PWD" = "$exact"; or fail 'exact repository name should outrank frequent partial and scattered matches'
+
 # Empty/unavailable ranking data must still show every ghq repository.
 set -g repo_picker_query ''
 set -gx _ZO_DATA_DIR "$REPO_PICKER_TEST_DIR/empty-zoxide"
