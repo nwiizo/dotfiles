@@ -13,6 +13,10 @@ ceremony before every edit.
   assumptions that affect the outcome; ask about choices evidence cannot settle.
 - Identify the observable result and how to verify it. For dependent work, give
   a short plan whose steps lead to that result.
+- Separate a user priority from a technical assumption. Investigate the latter
+  with the smallest useful source check or experiment; do not turn uncertainty
+  that code can resolve into another user interview. Record only decisions whose
+  reasons matter to future changes, using the coding-style guidance below.
 - Use [nwiizo-coding-style](../nwiizo-coding-style/SKILL.md) for implementation
   choices, reuse, simplification boundaries, and verification. Keep this
   preflight focused on unresolved assumptions and the observable result.

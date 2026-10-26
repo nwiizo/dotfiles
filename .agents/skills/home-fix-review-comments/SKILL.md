@@ -9,6 +9,13 @@ Use the review in the conversation or the user's specified review target.
 Check each finding against the actual code, requirements, and relevant evidence;
 a reviewer label or severity is not proof that the change is necessary.
 
+For a disputed finding, identify the requirement, triggering input or state,
+and observable consequence, then inspect the relevant path or run a targeted
+check. Separate a misread requirement, a demonstrated defect, an accepted
+tradeoff, and an unsupported concern. Neither majority agreement nor a confident
+rebuttal settles the issue. Preserve contrary evidence and unresolved findings;
+do not demand every review produce a fix or rerun unchanged reviews until they agree.
+
 Apply valid findings within the requested scope, consolidating duplicates.
 For style-only suggestions, prefer consistency with the surrounding code.
 Do not turn a rejected finding into an unrelated refactor.

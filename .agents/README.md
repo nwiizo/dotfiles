@@ -84,14 +84,14 @@ the layout, not actual client loading or improved model behavior.
 | `add-package` | Homebrew package installation and repository tracking |
 | `nwiizo-coding-style` | Minimal implementation modes, action-first progress reporting, review/audit, debt/gain/help, and Rust similarity/coupling diagnostics |
 | `home-karpathy-guidelines` | Preflight for material uncertainty or minimal implementation |
-| `home-brainstorming` | Design exploration and requested design interviews |
+| `home-brainstorming` | Outcome-based design, bounded feasibility experiments, and requested decision interviews |
 | `home-data-shape-contract` | Persisted data and public-interface compatibility decisions |
 | `home-test-driven-development` | Meaningful red/green behavior checks |
 | `home-systematic-debugging` | Evidence-driven diagnosis when the cause is unknown |
 | `home-verification-before-completion` | Evidence supporting completion claims |
 | `home-self-review` | Independent review through the opposite AI CLI |
-| `home-fix-review-comments` | Evaluate and apply review findings |
-| `home-docs-curator` | Documentation and instruction cleanup |
+| `home-fix-review-comments` | Resolve disputed findings against requirements and evidence, then apply valid fixes |
+| `home-docs-curator` | Documentation cleanup preserving consequential decisions and their reasons |
 | `home-history-distill` | Reusable guidance from bounded local history through `nippo` |
 | `home-empirical-prompt-tuning` | Behavioral comparison of instructions |
 | `home-agent-work-queue` | Bounded issue processing, ownership, review capacity, and restartable handoffs |
@@ -109,6 +109,11 @@ the layout, not actual client loading or improved model behavior.
 
 Choose personas by their descriptions; do not automatically run a fixed reviewer
 set. `home-self-review` selects the other AI product; a persona name alone does not.
+
+For uncertain design intent, conflicting technical sources, or task handoffs,
+`nwiizo-coding-style` routes to its [decision evidence guide](skills/nwiizo-coding-style/references/decision-evidence.md).
+General quality reviewers in both clients share its [review checks](skills/nwiizo-coding-style/references/review-checks.md).
+Keep those checks in one place instead of copying them into every persona.
 
 ## Validation and Local State
 
