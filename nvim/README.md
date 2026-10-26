@@ -197,6 +197,9 @@ Other custom integrations live in feature files under `lua/plugins/`:
 さらに Star 数と既存構成への適性を比較し、専用の入口から使う Telescope を追加した。
 同じメモに、2026-09-24の Overlook・better-escape・Oil の修正記録も残している。
 
+2026-10-27には [mini.align と multicursor.nvim](plugin-research.md#2026-10-27-整列と複数箇所の編集) を追加した。
+表や代入文の整列と、選んだ単語だけの同時編集を補う。どちらも初回のキー操作で読み込む。
+
 2026-09-15に通常のファイル・本文検索とquickfixの絞り込みをTelevisionへ移行した。設定はFishと共通で、接続処理は `lua/config/television.lua` に置く。Smart Picker、ステージ操作付き変更一覧、LSPなどの検索はSnacks、入力ミス補正とplain・regex・fuzzy検索はfffを元のキーで使える。[操作・機能差・検証方法](../television/README.md)を参照。
 
 CodeDiffは `<leader>gR` で作業中の変更、`<leader>gV` でステージ済みの変更を表示する。画面内の `t` で左右分割とインラインを切り替え、`q` で閉じる。Diffviewのキーも使える。ネイティブライブラリとCodeDiffの変更監視バイナリはリリースから取得し、プラグインのリビジョンは `lazy-lock.json` で管理する。
@@ -442,6 +445,18 @@ Git差分の色付きプレビューも公式の既定動作を引き継ぐ。Te
 | `<C-x>` / `<C-v>` | qf | quickfix項目を水平/垂直分割で開く | P nvim-bqf |
 | `<C-a>` / `<C-x>` | n | インクリメント/デクリメント (dial拡張) | P dial |
 | `[y` / `]y` | n | ペースト後にヤンク履歴サイクル | P yanky |
+| `gA` | n,x | 範囲を整列してプレビュー。区切り文字を入力しEnterで確定、Escで取消 | P mini.align |
+| `<C-n>` | n,x | 次の同じ単語・選択文字列にカーソルを追加 | P multicursor |
+| `<leader>cN` | n,x | 次の一致箇所をスキップ | P multicursor |
+| `<Esc>` | n | 複数カーソルを解除（複数カーソルの使用中のみ） | P multicursor |
+
+整列は `V` で複数行を選び、`gA` → `=` → Enter と押すと代入文の `=` が揃う。
+Markdownの表は区切り文字に `|` を使う。Normalモードでは `gAip` で段落を対象にできる。
+Vim標準の `ga`（文字コード表示）は維持する。
+
+複数箇所の編集は単語にカーソルを置き、`Ctrl-N` で編集対象を増やしてから `ciw` で書き換える。
+InsertモードからEscで戻り、もう一度Escで複数カーソルを解除する。
+Insertモードの `Ctrl-N` は既存の補完候補選択のまま。
 
 Televisionで検索結果を `Ctrl-Q` で送ると、quickfix上で本文を編集できる。
 閉じた一覧は `:copen` で開く。quickfix内の `:w` は変更を元バッファへ反映し、
@@ -760,6 +775,8 @@ rtk proxy env HOME="$nvim_test_dir/home" \
 ```
 
 以下のテストも、最後のコマンドのファイル名を変えて同じ分離環境で実行する。
+`nvim/tests/editing_plugins.lua` は実際のキー入力で初回読み込み、整列と取消、
+複数箇所の編集とスキップ、Escによる解除と元のキー設定への復帰、Undoを確認する。
 AI 共通キーと Yanky の変更では `tests/keymap_conflicts.lua` を使う。
 Claude Code・CopilotChat を先に読み込み、Avante が他のキーを上書きしないこと、
 停止と更新の呼び分け、Visual モードのヤンク履歴を検証する。AI の実処理だけを置き換え、

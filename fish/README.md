@@ -114,6 +114,13 @@ or the candidate needs a concrete use case or compatibility fix.
 | [fish-async-prompt](https://github.com/acomagu/fish-async-prompt) | 550 | Revisit if Git prompt latency is measured; [transient prompt support remains an open PR](https://github.com/acomagu/fish-async-prompt/pull/95). |
 | [bass](https://github.com/edc/bass) / [replay.fish](https://github.com/jorgebucaran/replay.fish) | 2.5k / 480 | Useful for importing Bash environment changes, but the configured tools already have Fish integrations. Revisit for a Bash-only SDK setup script. |
 
+Rechecked on 2026-10-27 with Fish `4.9.3`: `fisher list` matches all five
+desired refs. GitHub's API reports 2,706 stars for fzf.fish, 967 for done,
+and 485 for replay.fish; none is archived. Their latest pushes are respectively
+2026-06-18, 2026-06-14, and 2024-07-01. The same overlap decisions still apply,
+so this review adds no Fish plugin. Native suggestions/completion, Television,
+Atuin, and the existing editing plugins remain the daily setup.
+
 ## Development setup (2026-09-15)
 
 Validated with Fish `4.9.3`, the current release listed in the

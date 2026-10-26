@@ -1,9 +1,60 @@
 # Neovimプラグイン調査
 
-初回調査: 2026-09-08。最新の確認: 2026-10-10、Neovim 0.12.5 / LazyVim 16.0.1。
+初回調査: 2026-09-08。最新の確認: 2026-10-27、Neovim 0.12.6。
 
 現在は Snacks・Blink・Oil・fff・CodeDiff・Quicker を使用し、Telescope を追加している。
 以下の過去の調査は、その日時点の判断と数値を残したもの。
+
+## 2026-10-27: 整列と複数箇所の編集
+
+公式README、GitHub REST APIの累計Star数・更新日・未解決issueを確認した。
+既存の検索、補完、Git、Undo履歴は揃っているため、編集操作を補う2つを導入した。
+
+| 候補 | 累計 Stars | 判断 |
+| --- | ---: | --- |
+| [mini.align](https://github.com/nvim-mini/mini.align) | 182 | 整列のプレビュー用に追加。既存のmini.aiと同じmini.nvim系列で、系列全体は9,604 Stars。単体の人気と混同しない。 |
+| [multicursor.nvim](https://github.com/jake-stewart/multicursor.nvim) | 1,542 | 一致箇所を選んで同時編集するために追加。上流の推奨どおり `1.0` ブランチを使用。 |
+
+両方とも非アーカイブ。mini.alignは安定版 `v0.18.0`、multicursor.nvimは
+`c574bfc1f7e63dfea3e64b8453c9f7c660127238`（10月15日の修正）を導入し、
+リビジョンを `lazy-lock.json` に記録した。今回のインストール対象はこの2つに限定した。
+mini.alignのissueは親リポジトリで管理されており、検索時に整列の互換性を妨げる
+未解決issueは見つからなかった。multicursorの未解決issueはnative cursorの提案1件だった。
+分離したHOME/XDG環境で、初回キー入力から整列・プレビュー取消・選択した一致箇所の
+同時編集・スキップ・Escによる元のキー設定への復帰・Undoが動くことも確認した。
+
+`gA` は整列、Normal/Visualの `Ctrl-N` はカーソル追加、`<leader>cN` は一致箇所の
+スキップに割り当てる。標準の `ga` とInsertの `Ctrl-N` は維持する。
+上流サンプルの `<leader>s` などは既存グループと衝突するため採用しない。
+Undo履歴は既存の Snacks `<leader>su` を使い、別のUndoプラグインは追加しない。
+
+Fishも同時に再調査した。[Fishの選定記録](../fish/README.md#additional-plugins-considered)の
+とおり、fzf.fish・doneは既存機能と重なり、replay.fishを必要とするBash専用の設定も
+見つからなかったため、導入済みの構成を維持する。
+
+### 人気の伸び
+
+この文書に残っている過去の値と、10月27日にGitHub APIから取得した値を比較した。
+累計Star数は利用者数ではなく、増分もNeovim全体のランキングではない。
+
+| 候補 | 比較期間 | Starsの変化 | この環境での位置づけ |
+| --- | --- | --- | --- |
+| [fff](https://github.com/dmtrKovalenko/fff) | 10月10日→27日 | 11,054→11,180（+126、約1.1%） | 導入済み。`<leader>fP` でファイル検索。Neovim以外のSDKへの関心も含む。 |
+| [CodeDiff](https://github.com/esmuellert/codediff.nvim) | 10月10日→27日 | 1,587→1,607（+20、約1.3%） | 導入済み。`<leader>gR` で変更をレビュー。 |
+| [Sidekick](https://github.com/folke/sidekick.nvim) | 10月10日→27日 | 2,786→2,801（+15、約0.5%） | 次の編集箇所の提案が候補。既存AI操作とTabの調整が必要。 |
+| [sqmeow.nvim](https://github.com/2giosangmitom/sqmeow.nvim) | 9月29日→10月27日 | 136→159（+23、約16.9%） | 未導入。エディタ内でDBを扱いたい場合の候補。CLI側にはrainfrogがある。 |
+
+新作は `topic:neovim-plugin created:>=2026-09-01 stars:>50 archived:false` と
+`nvim in:name created:>=2026-09-01 stars:>50 archived:false` の両方で検索した。
+[servery.nvim](https://github.com/wurli/servery.nvim) は9月25日作成で74 Stars。
+起動中のNeovimセッションをSnacksなどから切り替え、端末を閉じてもセッションを維持する。
+Neovim 0.12以上が必要で、稼働時間の表示のみ0.13以上。保存したセッションを復元する
+既存のPersistenceとは役割が違うが、常駐するNeovimを管理する使い方は未導入。
+過去のStar数がないため、直近の伸び率は断定しない。Star付与日時のAPIは404で取得できなかった。
+
+Fishは `topic:fish-plugin created:>=2026-01-01 stars:>20 archived:false` の検索では
+該当なし。topic未設定の候補は含まれず、Fish全体に新作がないという意味ではない。
+既存メモのStar数は概数のため、少数の増減を正確な伸びとして扱わない。
 
 ## 2026-10-10: Star 数とこの環境への適性
 

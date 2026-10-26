@@ -1,6 +1,49 @@
 -- Coding enhancements
 -- LazyVim manages: mini.ai, yanky (via extra)
 return {
+  -- Preview alignment without replacing Vim's ga character information.
+  {
+    "nvim-mini/mini.align",
+    version = "*",
+    keys = {
+      { "gA", mode = { "n", "x" }, desc = "Align with Preview" },
+    },
+    opts = { mappings = { start = "", start_with_preview = "gA" } },
+  },
+
+  -- Select individual matches for simultaneous editing; keep Insert-mode C-n.
+  {
+    "jake-stewart/multicursor.nvim",
+    branch = "1.0",
+    keys = {
+      {
+        "<C-n>",
+        function()
+          require("multicursor-nvim").matchAddCursor(1)
+        end,
+        mode = { "n", "x" },
+        desc = "Add Cursor at Next Match",
+      },
+      {
+        "<leader>cN",
+        function()
+          require("multicursor-nvim").matchSkipCursor(1)
+        end,
+        mode = { "n", "x" },
+        desc = "Skip Cursor Match",
+      },
+    },
+    opts = {},
+    config = function(_, opts)
+      local mc = require("multicursor-nvim")
+      mc.setup(opts)
+      -- Restore the existing Escape mapping when the last extra cursor is gone.
+      mc.addKeymapLayer(function(set)
+        set("n", "<Esc>", mc.clearCursors)
+      end)
+    end,
+  },
+
   -- better-escape.nvim: jk/jj to escape
   {
     "max397574/better-escape.nvim",
