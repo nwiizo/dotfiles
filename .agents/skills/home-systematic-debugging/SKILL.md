@@ -1,6 +1,6 @@
 ---
 name: home-systematic-debugging
-description: Diagnose bugs, test failures, performance regressions, build failures, and unexpected behavior from evidence before proposing or implementing a fix. Use when the cause is unknown or prior fixes failed.
+description: Diagnose bugs, test failures, performance regressions, build failures, and unexpected behavior from evidence. Use when the cause is unknown, prior fixes failed, or a confirmed defect needs a search for other affected paths.
 ---
 
 # Systematic Debugging
@@ -19,6 +19,20 @@ than restarting discovery to satisfy a checklist.
   A diagnosis-only request ends with findings and supporting evidence.
 - Separate a confirmed cause from a hypothesis, and completed work from
   unresolved verification.
+
+When a defect is confirmed, describe the input, missing condition, and observable
+failure before searching for variants. First confirm the search finds the known
+instance, then widen identifiers or call patterns incrementally. Inspect callers,
+wrappers, and data flow before treating a match as another bug: validation may
+already occur at a different boundary. Keep confirmed cases, safe look-alikes,
+and unresolved candidates distinct. Repair within scope and preserve intentional
+differences; report searched boundaries rather than claiming repository-wide absence.
+
+For latency, locate sequential waits and the path determining completion before
+optimizing small local operations. Overlap only independent work; preserve
+authorization, ordering, cancellation, and resource limits. Check throughput,
+tail latency, and backend load under comparable inputs before calling a change
+faster. Removing a wait from one request can merely move work or contention elsewhere.
 
 For slow builds or CI, separate queueing, setup, compilation, tests, and artifact
 handling before choosing a fix. Compare equivalent inputs and cache conditions;

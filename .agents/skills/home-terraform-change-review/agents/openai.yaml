@@ -1,0 +1,4 @@
+interface:
+  display_name: "Terraform Change Review"
+  short_description: "Terraformの差分から再作成・権限・停止・データ復旧への影響を確認する"
+  default_prompt: "$home-terraform-change-review を使い、Terraformの差分とplanをレビューして、利用側への影響、必要な修正、未確認の検証を示してください。"

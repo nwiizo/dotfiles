@@ -95,6 +95,8 @@ the layout, not actual client loading or improved model behavior.
 | `home-history-distill` | Reusable guidance from bounded local history through `nippo` |
 | `home-empirical-prompt-tuning` | Behavioral comparison of instructions |
 | `home-ci-efficiency` | CI feedback time, total execution, and reliability measured separately |
+| `home-terraform-change-review` | Terraform plan changes tied to access, availability, data migration, and recovery |
+| `home-observability-design` | Question-driven signals, SLI/SLOs, missing telemetry, alert actions, and measurement costs |
 | `home-validate-on-oss` | Explicitly requested validation on real projects |
 | [`learn-rust` (external plugin)](https://github.com/nwiizo/rust-learning-lab) | Rust syntax, rationale, practice, and debugging; install Rust Learning Lab through each client's plugin marketplace |
 | `home-marp-slide-editing` | Marp layout and rendered-output checks |

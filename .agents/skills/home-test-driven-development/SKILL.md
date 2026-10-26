@@ -20,6 +20,30 @@ Refactor within scope while the tests remain green.
 - Assert call order only when that interaction is itself required behavior.
 - Do not add dependencies or production APIs solely to enable a test.
 
+## Input Domains and Persistent Regressions
+
+For parsers, normalization, serialization, and state transitions, identify a
+property justified by the intended behavior before generating inputs. Examples
+include normalization being idempotent and rejected operations preserving state.
+An encode/decode round trip preserves the original only for lossless formats;
+otherwise compare the specified canonical value. Pair such properties with
+independent expected examples: two functions can share the same wrong assumption.
+
+Exercise empty values, limits, invalid inputs, and relevant Unicode distinctions.
+Generate valid inputs directly where possible; excessive filtering can leave the
+important cases untested. Use existing test facilities first; table-driven cases
+may cover the risk without adding a property-testing dependency. Do not introduce
+production abstractions merely to enable generated tests.
+
+Reduce a failing generated input to a small counterexample and keep a deterministic
+regression with its expected result. Preserve the framework's replay seed when
+useful, but do not rely on the seed alone across generator or dependency changes.
+Check whether the property or input domain was wrong before changing production
+behavior. A passing random sample establishes only the cases exercised.
+
+See [Proptest's examples and failure persistence](https://github.com/proptest-rs/proptest/blob/main/proptest/README.md)
+when using that framework. The workflow here also applies to ordinary Rust or CLI tests.
+
 ## When Defect Detection Is Uncertain
 
 Use a targeted fault check when a regression test's ability to catch the original

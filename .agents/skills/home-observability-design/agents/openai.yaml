@@ -1,0 +1,4 @@
+interface:
+  display_name: "Observability Design"
+  short_description: "調査したい問いから計測を設計し、欠測・通知・運用費用を確認する"
+  default_prompt: "$home-observability-design を使い、利用者への影響を判断できる計測と通知を設計し、観測できない範囲と検証方法を示してください。"
