@@ -24,3 +24,37 @@ fish/local.fish
 # Nvim local overrides
 nvim/lua/custom/
 nvim/local.lua
+
+# Private editorial material is maintained outside this repository.
+/blog-agents/
+/contents/
+/.agents/docs/skills.md
+/.agents/docs/skill-maintenance.md
+/docs/codex/
+/.agents/rules/voice.md
+/.agents/rules/behavior.md
+/.agents/rules/publication-fit.md
+/.agents/rules/cybozu.md
+/.agents/skills/ai-humanity-check
+/.agents/skills/asai-ryo-rewrite
+/.agents/skills/beginner-feedback
+/.agents/skills/cognitive-rhythm-writing
+/.agents/skills/deepen
+/.agents/skills/emotional-impact-writing
+/.agents/skills/fact-check
+/.agents/skills/fiction-craft
+/.agents/skills/full-philosopher-insights
+/.agents/skills/full-review
+/.agents/skills/japanese-precision-check
+/.agents/skills/logic-proofreading
+/.agents/skills/logical-flow-check
+/.agents/skills/narrative-empathy-review
+/.agents/skills/nwiizo-style-review
+/.agents/skills/polish
+/.agents/skills/punchline-review
+/.agents/skills/redundancy-check
+/.agents/skills/review
+/.agents/skills/skills-sync
+/.agents/skills/title-workshop
+/.agents/skills/trend-insight-writing
+/.agents/skills/write

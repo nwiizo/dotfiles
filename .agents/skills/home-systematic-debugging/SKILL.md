@@ -20,6 +20,13 @@ than restarting discovery to satisfy a checklist.
 - Separate a confirmed cause from a hypothesis, and completed work from
   unresolved verification.
 
+For slow builds or CI, separate queueing, setup, compilation, tests, and artifact
+handling before choosing a fix. Compare equivalent inputs and cache conditions;
+total job time and elapsed workflow time answer different questions. Parallelism
+can duplicate setup or add contention. Preserve failing checks and missing-result
+signals when changing retries, caches, or report collection; a greener dashboard
+does not by itself establish that the original failure is fixed.
+
 Repeated failed hypotheses are a reason to revisit assumptions, shared state,
 or the test premise. Continue when a new discriminating check is available.
 Ask the user when missing input, a scope decision, or an unsafe next action

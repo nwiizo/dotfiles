@@ -1,0 +1,4 @@
+interface:
+  display_name: "CI Efficiency"
+  short_description: "CIの待ち時間と総実行量を測り、検証範囲を保って改善する"
+  default_prompt: "$home-ci-efficiency を使い、CIの実行記録から待ち時間・総実行量・失敗を分けて調べ、最小の改善と検証方法を示してください。"

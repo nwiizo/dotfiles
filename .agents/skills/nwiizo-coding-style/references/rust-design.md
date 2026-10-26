@@ -4,6 +4,15 @@
 Rust言語の必須規則ではない。対象リポジトリの規約と測定済みの要件を優先する。
 Edition・MSRV・新構文の選択は [rust-2024.md](rust-2024.md) を参照する。
 
+[Google Rust Style Guide](https://google.github.io/styleguide/rustguide.html)を
+2026-10-24に参照して補足した。ライブラリの汎用性とアプリケーションの単純さを
+分けて判断する。Chromiumのasync・スレッド制限、Fuchsiaの同期型、専用の
+ビルド・テスト規則は、対象基盤を使う場合に限って確認する。
+
+借用・後始末・`Send`要件の補足には
+[BeautifulRust](https://github.com/morganlinton/BeautifulRust/blob/4f1c0d1602bf75c9718ccea42879defb8bfe89f4/skills/rust-best-practices/SKILL.md)
+も参照し、以下の公式資料と対象の要件に合わせて取り込んだ。
+
 ## Rust と依存を選ぶ
 
 - Rust採用の判断では、メモリ安全性、実行性能、配布形態、必要なライブラリ、チームの保守能力を比較する。既存言語で要件を満たす箇所を、言語の統一だけで書き直さない。ユーザーがRustを指定している依頼では、その前提で実装する。
@@ -26,12 +35,23 @@ Edition・MSRV・新構文の選択は [rust-2024.md](rust-2024.md) を参照す
 | 借用と所有を使い分ける | 素直な借用型か所有型 | 借用で済む経路が実際にあり、APIの複雑さに見合う場合に`Cow`を検討する |
 
 - 借用エラーは、所有者と利用期間を確認して解く。無理なライフタイム指定、`'static`化、`Arc<Mutex<_>>`化を初手にしない。境界で所有する設計の方が明瞭なら、小さな値の`clone`も選択肢にする。
+- 借用が衝突するときは、一時値を変数に束縛する、ブロックで借用期間を短くする、独立したフィールドを別々に借りる方法を検討する。`&mut`から値を取り出すなら`mem::take`・`mem::replace`・`Option::take`を使えるか確認する。置換後の空値や`None`が妥当で、途中のエラーやpanicでも必要な状態を失わない場合に選ぶ。
 - `clone`の意味とコストを型ごとに見る。`Arc::clone(&value)`は参照カウントの共有を明示できるが、深いコピーではない。`Arc`自体は内部データをスレッド安全にしない。
 - CLI出力やスナップショットに順序が必要なら明示的にsortするか順序を保証する構造を選ぶ。`HashMap`の反復順序に依存しない。
 - パスを内部処理のために文字列化しない。文字列の長さはbytes・Unicode scalar values・表示上の文字のどれが必要かを区別する。整数の縮小変換は失敗を扱う`TryFrom`を基本とし、`as`を入力検証の代わりにしない。
 
 資料: [標準コレクションの選び方](https://doc.rust-lang.org/std/collections/index.html)、
-[`Arc`の保証と制限](https://doc.rust-lang.org/std/sync/struct.Arc.html)。
+[`Arc`の保証と制限](https://doc.rust-lang.org/std/sync/struct.Arc.html)、
+[`mem::take`による値の移動](https://doc.rust-lang.org/std/mem/fn.take.html)。
+
+### 資源の後始末
+
+- 早期returnやunwindでも必要な資源解放には、既存のRAII型やガードを使う。ガードを返す式は`let _guard = ...`などで保持し、必要なスコープまで生存させる。`let _ = acquire_guard()`では返されたガードを保持できない。`process::exit`やabort時の後始末を`Drop`に頼らない。
+- 呼び出し側が失敗を扱う必要のある終了処理は、`close`・`finish`など`Result`を返す明示的な操作にする。`Drop`は失敗を返せないため、残った資源の解放を担わせ、panicによるエラー報告や非同期処理の完了待ちを持ち込まない。
+
+資料: [`Drop`の動作](https://doc.rust-lang.org/std/ops/trait.Drop.html)、
+[`let_underscore_drop`](https://doc.rust-lang.org/rustc/lints/listing/allowed-by-default.html#let-underscore-drop)、
+[デストラクタが実行されない場合](https://doc.rust-lang.org/reference/destructors.html#not-running-destructors)。
 
 ## 不正な状態とエラーを表す
 
@@ -40,6 +60,7 @@ Edition・MSRV・新構文の選択は [rust-2024.md](rust-2024.md) を参照す
 - 検証済みの型は必要に応じてフィールドを非公開にし、生成経路で条件を保つ。`Deserialize`、`Default`、公開フィールドが検証を迂回しないか確認する。境界では未検証の入力型から検証済みの型へ変換する方法も選べる。
 - 呼び出し側が分岐する失敗には判別できるエラー型を用意する。アプリケーションの最上位では、既存のエラー集約手段を使ってよい。`anyhow`や`thiserror`を全crateに必須とはしない。原因を保持し、処理・対象が分かる文脈を加え、表示文字列による分岐や秘密情報の混入を避ける。
 - 外部入力や通常のI/O失敗を`unwrap` / `expect`で処理しない。テストや、成立根拠が明らかな内部条件では使用できる。`expect`には成立すると考える理由を書く。`.ok()`や既定値への置換で、利用者が知るべき失敗を消さない。
+- `is_some()`で確認してから`unwrap()`する処理は、`if let`・`match`・`let ... else`で値を取り出す。条件と取り出しを一つの分岐で表す。
 
 資料: [API Guidelinesの型安全性](https://rust-lang.github.io/api-guidelines/type-safety.html)、
 [panicとResultの使い分け](https://doc.rust-lang.org/book/ch09-03-to-panic-or-not-to-panic.html)。
@@ -47,13 +68,34 @@ Edition・MSRV・新構文の選択は [rust-2024.md](rust-2024.md) を参照す
 ## API と抽象化を選ぶ
 
 - 内部実装は具体的な型と関数から始める。genericsは共通操作を静的に扱う場合、`dyn Trait`は実行時の差し替えや異なる実装の保持が必要な場合、`enum`は候補が閉じている場合に検討する。速度・バイナリサイズ・コンパイル時間の優劣は測定なしに断定しない。
-- traitは責務の境界や共通操作を表すために使う。モックのためだけに全関数をtrait化せず、実装が一つという理由だけで有用な境界を削除しない。
+- traitは責務の境界や共通操作を表すために使う。コードの整理だけなら通常の`impl`に置く。モックのためだけに全関数をtrait化せず、実装が一つという理由だけで有用な境界を削除しない。
 - `pub`は利用者に提供する範囲に絞る。内部共有は非公開や`pub(crate)`を検討し、公開フィールド、型、trait boundの変更が利用側へ与える影響を確認する。
 - 引数の`impl AsRef<Path>`などは利用側の利便性に効果がある箇所で使う。内部ヘルパーまで一律にgeneric化しない。標準traitの実装も意味が自然に成立するときに加える。
-- `unsafe`はsafeな実装では満たせない具体的な理由がある場合に局所化する。必要な条件を記録し、safeな公開APIから条件を破れないようにする。速度向上は代表的な入力で測定する。
+- マクロを自作する前に関数・型・traitで表せるか確認する。必要なら`macro_rules!`で足りるか検討し、proc macroやコード生成は診断・IDE支援・ビルド負担に見合う場合に選ぶ。既存の有用なderiveまで排除しない。
+- `unsafe`はsafeな実装では満たせない具体的な理由がある場合に局所化する。`SAFETY:`コメントで安全条件を満たす根拠を記録し、safeな公開APIから条件を破れないようにする。速度向上は代表的な入力で測定する。
 
 資料: [APIの将来の変更に備える設計](https://rust-lang.github.io/api-guidelines/future-proofing.html)、
 [API Guidelinesチェックリスト](https://rust-lang.github.io/api-guidelines/checklist.html)。
+
+### 入出力と標準trait
+
+- 読むだけならコンテナに縛らず中身を借用する。`&Box<T>`より`&T`、`&Option<T>`より`Option<&T>`を検討する。内部で必ず所有するなら所有型を受け取り、借用した値の不要なcloneを避ける。
+- 再利用するAPIが入力を走査するだけなら`IntoIterator`、結果を順に生成できるならiteratorを検討する。添字アクセスや所有する列が必要な用途ではsliceや`Vec`が自然。既存の`Vec`を返す処理や内部ヘルパーを形式だけで変えない。
+- 標準traitと同じ意味の独自メソッドを増やさず、`FromStr`・`From`・`TryFrom`などを実装する。意味と必要な型境界が合えばderiveを使う。公開ライブラリでは利用者が追加できない標準traitも検討し、アプリ内部では必要に応じて加える。
+- `Default`は妥当な初期状態がある場合に実装する。必須入力を空値で埋めて成立させない。`Eq`・`Ord`・`Hash`は同値性・順序・ハッシュの整合を保ち、`Copy`・`Clone`は所有する資源の意味に合わせる。
+
+資料: [Googleの入出力指針](https://google.github.io/styleguide/rustguide.html#function-inputs-and-outputs)、
+[APIの柔軟性](https://rust-lang.github.io/api-guidelines/flexibility.html)、
+[標準traitとの相互運用](https://rust-lang.github.io/api-guidelines/interoperability.html)。
+
+### 公開APIの利用と変更
+
+- 外部crateへ公開するenumやstructは、拡張の必要性に応じて`#[non_exhaustive]`を検討する。enumの網羅的matchやstructリテラルによる生成を制限するため一律に付けず、公開後の追加も互換性を確認する。structでは外部向けの生成方法を用意する。
+- 戻り値を捨てると誤用になる関数や遅延処理の型には`#[must_use]`を検討する。`Result`など戻り値の型がすでに指定している場合は重ねない。公開`const fn`は、将来もconst呼び出しを維持できるか確認する。
+- 他crateの`#[doc(hidden)]`な項目を安定した公開APIとして使わない。依存更新で壊れる内部実装への依存を避ける。
+
+資料: [`non_exhaustive`の制限](https://doc.rust-lang.org/reference/attributes/type_system.html#the-non_exhaustive-attribute)、
+[Googleの公開APIに関する指針](https://google.github.io/styleguide/rustguide.html#other-rust-features)。
 
 ## 同期・非同期と共有状態を選ぶ
 
@@ -62,8 +104,12 @@ Edition・MSRV・新構文の選択は [rust-2024.md](rust-2024.md) を参照す
 - 短く競合が小さい区間をawaitなしで保護するなら、通常のmutexも選択肢になる。awaitをまたぐ必要がある場合はasync mutexを検討し、まずロック範囲を短くできないか確認する。共有状態が不要なら所有権の移動やメッセージ受け渡しを使う。
 - spawnした処理の終了、失敗、キャンセルを誰が扱うか決める。リクエスト数に比例して無制限にtaskやqueueを増やさず、必要な上限と待ち方を設ける。
 - timeoutやキャンセルで外部への書き込みが取り消されるとは限らない。再試行する処理では重複実行と途中状態を扱い、終了時に完了を待つべき処理を明確にする。
+- mutexのpoisonを無条件に無視しない。保護するデータの不変条件を回復できる根拠がなければ失敗を伝播する。poisonしないmutexやpoison未検出を、データが正常な証拠にしない。
+- スレッド間で使う公開型やfutureは、必要な`Send`・`Sync`要件をコンパイル時に検証する。型の`Send`だけではメソッドが返すfutureの`Send`は保証されないため、実際の返却futureも必要なtrait境界へ渡して確認する。awaitをまたいで保持する値を調べ、単一スレッド専用APIへ一律に`Send + Sync`を要求しない。
 
-資料: [Tokioの共有状態とmutexの選択](https://tokio.rs/tokio/tutorial/shared-state)。
+資料: [Tokioの共有状態とmutexの選択](https://tokio.rs/tokio/tutorial/shared-state)、
+[`std::sync::Mutex`のpoisonと限界](https://doc.rust-lang.org/std/sync/struct.Mutex.html#poisoning)。
+futureの`Send`要件: [Tokioのtask生成](https://tokio.rs/tokio/tutorial/spawning#send-bound)。
 
 ## 命名・書式・検証
 

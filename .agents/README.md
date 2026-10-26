@@ -94,6 +94,7 @@ the layout, not actual client loading or improved model behavior.
 | `home-docs-curator` | Documentation and instruction cleanup |
 | `home-history-distill` | Reusable guidance from bounded local history through `nippo` |
 | `home-empirical-prompt-tuning` | Behavioral comparison of instructions |
+| `home-ci-efficiency` | CI feedback time, total execution, and reliability measured separately |
 | `home-validate-on-oss` | Explicitly requested validation on real projects |
 | [`learn-rust` (external plugin)](https://github.com/nwiizo/rust-learning-lab) | Rust syntax, rationale, practice, and debugging; install Rust Learning Lab through each client's plugin marketplace |
 | `home-marp-slide-editing` | Marp layout and rendered-output checks |

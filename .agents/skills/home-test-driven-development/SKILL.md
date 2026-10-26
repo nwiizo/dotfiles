@@ -20,6 +20,29 @@ Refactor within scope while the tests remain green.
 - Assert call order only when that interaction is itself required behavior.
 - Do not add dependencies or production APIs solely to enable a test.
 
+## When Defect Detection Is Uncertain
+
+Use a targeted fault check when a regression test's ability to catch the original
+bug is unclear, or a consequential boundary remains unverified. A meaningful
+RED/GREEN result already demonstrating that behavior needs no extra mutation run.
+
+1. Confirm the focused test passes on the corrected code, reusing current
+   evidence when the tested state is unchanged.
+2. In an isolated copy, reintroduce one relevant defect: change a boundary
+   comparison, omit a permission check, or leave one caller on the old behavior.
+   Preserve the user's working tree and keep credentials and live services out
+   of the run, following the isolation rules below.
+3. Run the same focused test and inspect why it failed. The expected behavioral
+   assertion must catch the defect; a compile error, fixture failure, or timeout
+   does not prove detection. A mutation that changes no relevant behavior is
+   inconclusive, not a test failure.
+
+If the test stays green and the defect is reachable, improve the observable
+assertion or add the missing case. Verify the corrected version with the final
+test as well. Report the fault and result as a test-sensitivity check, not as
+evidence that the historical bug was reproduced. Do not impose a mutation-score
+threshold or a mutation run on every change.
+
 ## User Configuration and Authentication
 
 Before the first RED run of a CLI that writes user files, inspect how the existing

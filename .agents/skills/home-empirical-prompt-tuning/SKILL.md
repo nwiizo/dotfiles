@@ -14,6 +14,9 @@ consequences of failure.
 - Freeze representative requests, raw inputs, and observable acceptance criteria
   before comparing versions. Include the ordinary case and a meaningful boundary;
   reserve a separate case when testing generalization matters.
+- If an automated checker or model judge decides acceptance, first verify it
+  against a known-good result and a plausible result with the relevant defect.
+  Follow [evaluation.md](references/evaluation.md) before scoring candidates.
 - Use independent subagents for behavioral evaluation when delegation is allowed.
   Give them the task, relevant instruction version, and raw artifacts without
   the proposed fix, desired conclusion, or prior evaluator results.
@@ -27,7 +30,7 @@ consequences of failure.
   to change the decision. Do not require a fixed number of clean iterations or
   stable timing measurements to declare the editing task finished.
 
-Use [evaluation.md](references/evaluation.md) for evidence and stopping decisions,
+Use [evaluation.md](references/evaluation.md) for checker validation, evidence, and stopping decisions,
 [dispatch.md](references/dispatch.md) when setting up an evaluator, and
 [formats.md](references/formats.md) when reporting a comparison.
 

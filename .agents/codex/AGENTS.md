@@ -69,6 +69,8 @@
 
 - Do not use the Japanese words `契約` or `正本` in responses. Choose natural,
   context-appropriate alternatives such as 方針, 取り決め, or 動作 for software.
+- Do not use `本番コピー`. Use `本番相当のデータ` for data or `検証環境` for
+  the environment, making the intended meaning explicit.
 - Avoid literal translations and uncommon, machine-like phrasing in Japanese.
 - Lead with the outcome in concise paragraphs. Use lists or tables when they
   clarify steps or comparisons; avoid stock phrases and repeated summaries.
