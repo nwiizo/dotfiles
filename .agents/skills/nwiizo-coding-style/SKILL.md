@@ -64,6 +64,9 @@ license: MIT
 [decision-evidence.md](references/decision-evidence.md)で事実・判断・未確認事項を整理する。
 コードが動くことと、利用者の目的や重要な制約を満たすことを分けて確かめる。
 
+外部入力からコマンド実行、削除・上書き、認証付き操作へ進む経路を変更・レビューするときは、
+[trust-boundaries.md](references/trust-boundaries.md)で入力元と実行権限を照合する。
+
 ## 伝え方
 
 実装作業の更新と完了報告も、読者がそのまま動ける形にする。

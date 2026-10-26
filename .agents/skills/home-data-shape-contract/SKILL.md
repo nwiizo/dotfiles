@@ -1,6 +1,6 @@
 ---
 name: home-data-shape-contract
-description: DB・保存ファイル・API・イベント・CLIの構造化出力を設計・変更するとき、具体例と読み書きの互換性を確認する。未決の重要な選択を整理し、合意済みの形式や既存設定値だけの変更では再確認しない。
+description: DB・保存ファイル・API・イベント・CLIの構造化出力やMCP・エージェントツールの入出力を設計・変更するとき、具体例と互換性を確認する。合意済みの形式や既存設定値だけの変更では再確認しない。
 ---
 
 # Persisted Data and Public Interfaces
@@ -55,3 +55,5 @@ DB固有の動作は利用版の公式資料で確認する。PostgreSQLでは
 
 判断を説明する具体例は [samples.md](references/samples.md)、
 null・時刻・数値などの境界を扱うときは [pitfalls.md](references/pitfalls.md) を読む。
+MCP・エージェント向けツールでは [agent-tools.md](references/agent-tools.md) を読み、
+部分結果、認可、副作用、再試行を入出力へ対応させる。

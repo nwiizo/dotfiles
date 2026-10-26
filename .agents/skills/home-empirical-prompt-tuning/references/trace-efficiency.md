@@ -32,6 +32,13 @@ valid tool sequence is not a failure merely because it differs from a reference.
 - Consider a smaller model only after evaluating the same acceptance criteria,
   including difficult cases. A short response or low token count does not prove
   that the underlying decision is easy.
+- When evaluating caching or routing, include cache misses, stale results,
+  authorization changes, and fallback paths. Keep prompt-prefix caching separate
+  from reusing answers or tool results; a similar query does not establish the
+  same user, permissions, or current state.
+- Turn observed failures into small, sanitized regression cases while retaining
+  a separate hold-out set. Version the prompt, tools, model, and relevant retrieval
+  inputs together; do not attribute a gain to wording if another component changed.
 
 Change one causal theme, repeat comparable cases, and report measured before/after
 values with the quality result. Treat estimated savings as a hypothesis until

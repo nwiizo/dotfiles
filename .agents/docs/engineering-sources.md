@@ -38,6 +38,28 @@ Claude/Codex両方の計画役・レビュー役へ反映している。
 | [Code Reviewer（2026-10-13版）](https://github.com/addyosmani/agent-skills/blob/2bdbe1f5a69e97bed1bb2d37eec41230216313d3/agents/code-reviewer.md) | 要求と利用側からテストを読む。変更したテストの成功だけで回帰を見逃さず、影響と根拠で優先順位を付ける。定型の称賛や空の節は要求しない |
 | [Definition of Done（2026-06-22追加）](https://github.com/addyosmani/agent-skills/blob/b89a675b4d4c05a5ae83dbda46491dc99e6c7202/references/definition-of-done.md) | 個別の受入条件と共通の品質要件を区別する。重要な不足は総合点で相殺せず、未確認と不具合を分ける。すべての変更への固定テスト・再承認は追加しない |
 
+## 配布・操作権限・検証基準
+
+2026-10-27に以下の本文と2026年の実質的な改訂を確認した。CLI・Rust・インフラ運用へ
+適用範囲を絞り、既存スキルへ統合した。公開の準備と実行は `home-release-readiness` が受け持つ。
+
+| 参照資料 | この環境での使い方 |
+|---|---|
+| [Shipping and Launch（2026-10-03版）](https://github.com/addyosmani/agent-skills/blob/a31135a26d4adbfb0687544f0bd736a73163e78a/skills/shipping-and-launch/SKILL.md) | 検証した成果物と配布物の一致、公開先の状態、保存データを含む復旧を確認する。固定のcanary割合・待機時間・エラーバジェット基準、全機能へのflagは採用しない。10月2日の復旧コマンド訂正も確認 |
+| [Security and Hardening（2026-09-20版）](https://github.com/addyosmani/agent-skills/blob/d1463fd0d6675c6e145d9c57802d70faf84d1f51/skills/security-and-hardening/SKILL.md)と同skillの補助資料 | 値の入手経路より書ける主体を見て、削除対象・所有の証拠・確認後の競合を調べる。Rust APIの保護範囲は公式資料で照合。Web専用の固定設定や許可済み作業への再承認は追加しない |
+| [Constraint-Driven Development（2026-08-28改訂）](https://github.com/addyosmani/agent-skills/blob/4be4bb7c03e168a17903639f54c40b64ddc02e78/skills/constraint-driven-development/SKILL.md) | CI高速化では基準の変更も比較し、必要な検出能力を残す。固定のカバレッジ・所要秒数、CONSTRAINTS.md新設、ツールの一括導入は要求しない。測定値を合否基準へ移す前にばらつきを確認する |
+
+## 継続運用・Web品質・ツール設計の補足
+
+同日に次の箇所を追加で読み、既存手順との差分を確認した。資料全体やコード例を丸ごと
+導入せず、実際の操作・失敗・権限に結び付く部分を選んでいる。
+
+| 参照資料 | この環境での使い方 |
+|---|---|
+| [Factoryの共有手順（2026-08-18）](https://github.com/addyosmani/factory/blob/0863128ef838de316faca81b862aa553d8e9b9f9/template/docs/factory/CONTRACT.md)、[検証スクリプト](https://github.com/addyosmani/factory/blob/937b9fb70efceddfcf5e908044ae98656d7b54c0/template/.factory/scripts/prove-test.sh) | 実行ごとの記録と結果不明時の照合を作業キューへ追加。スクリプトは非ゼロ終了をPROVENとするため、その判定は採用しない。隔離した環境で意図した動作の失敗かを見る既存TDD方針を使う。既存テスト変更の一律禁止や固定人数の検証も導入しない |
+| [Web Quality Audit](https://github.com/addyosmani/web-quality-skills/blob/c6b06ad1285cd6b129b58455b2eec96ab6b67fa7/skills/web-quality-audit/SKILL.md)、[Accessibility（2026-08-24版）](https://github.com/addyosmani/web-quality-skills/blob/c6b06ad1285cd6b129b58455b2eec96ab6b67fa7/skills/accessibility/SKILL.md) | 操作・実表示・支援技術向け情報から該当ソースへたどる。自動点数を適合判定にせず、固定の重要度表やCSS数値を転記しない。dialogとフォームはWAI一次資料へ照合し、ログイン状態や入力を壊す再読込にも配慮する |
+| [Agent Engineer 第3章](https://github.com/addyosmani/agent-engineer/blob/57522790c1c3d8120d376791f1610ffe7682e027/03-tools-giving-agents-hands/README.md)、[第11章（2026-07-16版）](https://github.com/addyosmani/agent-engineer/blob/57522790c1c3d8120d376791f1610ffe7682e027/11-from-prototype-to-production/README.md) | ツールの選択、入力、結果、エラーを作業単位で設計する。空結果と部分結果・失敗、書き込み後の結果不明を区別する。キャッシュは権限と鮮度を含めて評価し、運用の失敗を回帰課題へ戻す。固定のツール数、費用・時間目標、モデル用途表、成功率による安全保証は採用しない |
+
 ## 応答と簡略化
 
 過去の独立した調査メモはここへ集約した。運用手順や測定結果は重複させない。
