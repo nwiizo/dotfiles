@@ -96,6 +96,10 @@ license: MIT
 固定し、manifestとlockfileを揃える。正式なリリースへ戻す条件を残し、無関係な依存更新や
 個人のローカルパスに頼る共有設定を避ける。
 
+公開API・CLIの動作を変えるときや依存を更新するときは、
+[compatibility-updates.md](references/compatibility-updates.md)で利用側の確認範囲を選ぶ。
+内部テストの成功や更新のバージョン番号だけで、利用者への影響がないとは判断しない。
+
 ## Rust の実装と構造診断
 
 Rust の採用、依存、型、所有権、エラー、APIの互換性、trait・マクロ、並行処理を選ぶときや規約を
