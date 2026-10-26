@@ -6,6 +6,7 @@ Project `CLAUDE.md` supplies repository guidance; in dotfiles it is a symlink to
 User preferences are maintained in [coding](rules/coding.md),
 [security](rules/security.md), and [GitHub comments](rules/github-comments.md),
 loaded through `~/.claude/rules/`. Path-scoped rules supply authoring, content,
-and language guidance. Read technical notes in `docs/` when the task needs them.
+and language guidance. Task-specific procedures and references live with their
+skills; `docs/engineering-sources.md` records provenance for instruction maintenance.
 
 @RTK.md

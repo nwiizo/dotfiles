@@ -27,6 +27,26 @@
 | [Agent Engineer 第9章（2026-07-16版）](https://github.com/addyosmani/agent-engineer/blob/57522790c1c3d8120d376791f1610ffe7682e027/09-evaluating-and-testing-agents/README.md) | 成果物と実行過程を分けて評価する。同じ結果に至る異なる有効な手順も認める。章の追加は2026-03-19 |
 | [Web Quality Skills（2026-08-24）](https://github.com/addyosmani/web-quality-skills/blob/c6b06ad1285cd6b129b58455b2eec96ab6b67fa7/skills/performance/SKILL.md) | 実ユーザー計測、検証環境での測定、ソースからの仮説を区別する。固定スコアや特定MCPの導入は要求しない |
 
+## 役割の分担とレビュー
+
+2026-10-27に本文とファイルの更新履歴を確認した。スキルの追加に限らず、共通ルールと
+Claude/Codex両方の計画役・レビュー役へ反映している。
+
+| 参照資料 | この環境での使い方 |
+|---|---|
+| [Orchestration Patterns（2026-04-20版）](https://github.com/addyosmani/agent-skills/blob/0bf7398e0d2d6180db4d7f6da916cd8f84c10cd1/references/orchestration-patterns.md) | 許可された委譲に担当範囲・依存・検証を渡す。ファイルが別でも共有状態を調べ、結果の統合は呼び出し側が担う。自動的な増員や役割からの再委譲は追加しない |
+| [Code Reviewer（2026-10-13版）](https://github.com/addyosmani/agent-skills/blob/2bdbe1f5a69e97bed1bb2d37eec41230216313d3/agents/code-reviewer.md) | 要求と利用側からテストを読む。変更したテストの成功だけで回帰を見逃さず、影響と根拠で優先順位を付ける。定型の称賛や空の節は要求しない |
+| [Definition of Done（2026-06-22追加）](https://github.com/addyosmani/agent-skills/blob/b89a675b4d4c05a5ae83dbda46491dc99e6c7202/references/definition-of-done.md) | 個別の受入条件と共通の品質要件を区別する。重要な不足は総合点で相殺せず、未確認と不具合を分ける。すべての変更への固定テスト・再承認は追加しない |
+
+## 応答と簡略化
+
+過去の独立した調査メモはここへ集約した。運用手順や測定結果は重複させない。
+
+| 参照資料 | この環境での使い方 |
+|---|---|
+| [i-have-adhd（2026-09-19確認版）](https://github.com/ayghri/i-have-adhd/tree/b15d0be58f55b33972ba3e39709e0e5208ef30cb) | 結果や次の操作を先に示し、成功と残る失敗を分ける。読者への診断、固定行数、常時フックは採用しない。上流評価には判定不能・退行・未達の項目があり、一般的な効果の証明とは扱わない |
+| [Ponytailの確認項目との対応](../skills/nwiizo-coding-style/references/ponytail-coverage.md) | 既存コードから調べ、小さく明瞭に変更する。最新の参照版と取り込み範囲は対応表、操作と測定条件は同スキルの `operations.md` で管理する。短さのために型・検証・要求された機能を落とさない |
+
 これらは設計の参考であり、この環境で効果が実証された普遍的な規則ではない。
 現在の技術仕様は対象版の公式資料と実行結果で確認する。出典を更新するときも、
 利用者に見える動作、理解・検証・運用の負担にどう影響するかで採否を決める。

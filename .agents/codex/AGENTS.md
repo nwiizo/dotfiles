@@ -41,6 +41,12 @@
 - Use subagents only when the user or applicable instructions explicitly request
   delegation or parallel agent work. Choose a specialist for a concrete subtask;
   do not add a fixed reviewer roster to every change.
+- For authorized delegation, pass the deliverable, owned paths, permitted
+  operations, dependencies, and verification. Parallelize only independent
+  work; separate files can still share state or depend on each other's output.
+- Keep synthesis with the caller: reconcile returned artifacts, current checks,
+  and unresolved evidence against the original request. Reviewer agreement or
+  a high total score cannot replace an unmet requirement.
 
 ## Verification
 

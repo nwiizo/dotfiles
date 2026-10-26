@@ -20,6 +20,8 @@
 - Apply skill procedures when their stated conditions match the task. Do not infer an extra approval step from general guidance.
 - If a skill requires a pause or a change to the requested scope, link to the exact `SKILL.md`, quote the relevant instruction, and explain why it applies.
 - Use subagents only when the user or applicable instructions explicitly request delegation or parallel agent work. Choose a specialist for a concrete subtask; do not add a fixed reviewer roster to every change.
+- For authorized delegation, pass the deliverable, owned paths, permitted operations, dependencies, and verification. Parallelize only independent work; separate files can still share state or depend on each other's output.
+- Keep synthesis with the caller: reconcile returned artifacts, current checks, and unresolved evidence against the original request. Reviewer agreement or a high total score cannot replace an unmet requirement.
 
 ## Local Tooling
 
