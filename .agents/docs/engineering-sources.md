@@ -60,6 +60,16 @@ Claude/Codex両方の計画役・レビュー役へ反映している。
 | [Web Quality Audit](https://github.com/addyosmani/web-quality-skills/blob/c6b06ad1285cd6b129b58455b2eec96ab6b67fa7/skills/web-quality-audit/SKILL.md)、[Accessibility（2026-08-24版）](https://github.com/addyosmani/web-quality-skills/blob/c6b06ad1285cd6b129b58455b2eec96ab6b67fa7/skills/accessibility/SKILL.md) | 操作・実表示・支援技術向け情報から該当ソースへたどる。自動点数を適合判定にせず、固定の重要度表やCSS数値を転記しない。dialogとフォームはWAI一次資料へ照合し、ログイン状態や入力を壊す再読込にも配慮する |
 | [Agent Engineer 第3章](https://github.com/addyosmani/agent-engineer/blob/57522790c1c3d8120d376791f1610ffe7682e027/03-tools-giving-agents-hands/README.md)、[第11章（2026-07-16版）](https://github.com/addyosmani/agent-engineer/blob/57522790c1c3d8120d376791f1610ffe7682e027/11-from-prototype-to-production/README.md) | ツールの選択、入力、結果、エラーを作業単位で設計する。空結果と部分結果・失敗、書き込み後の結果不明を区別する。キャッシュは権限と鮮度を含めて評価し、運用の失敗を回帰課題へ戻す。固定のツール数、費用・時間目標、モデル用途表、成功率による安全保証は採用しない |
 
+Web品質は2026-10-27に追加照合。上記と同じ2026-08-24版の
+[SEO](https://github.com/addyosmani/web-quality-skills/blob/c6b06ad1285cd6b129b58455b2eec96ab6b67fa7/skills/seo/SKILL.md)、
+[Best Practices](https://github.com/addyosmani/web-quality-skills/blob/c6b06ad1285cd6b129b58455b2eec96ab6b67fa7/skills/best-practices/SKILL.md)、
+[Core Web Vitals](https://github.com/addyosmani/web-quality-skills/blob/c6b06ad1285cd6b129b58455b2eec96ab6b67fa7/skills/core-web-vitals/SKILL.md)、
+[性能計測手順](https://github.com/addyosmani/web-quality-skills/blob/c6b06ad1285cd6b129b58455b2eec96ab6b67fa7/skills/performance/references/MEASUREMENT.md)を読み、
+既存Webレビューの条件付き参照と性能診断へ統合した。別スキル群の一括導入はしていない。
+ページ分割のcanonicalを先頭へ寄せる例、Permissions-Policyのmeta設定例、hidden source mapを
+非公開とみなす判断は採用せず、Google・MDN・Viteの公式資料で補正。固定の予算、
+全リンクの先読み、公開画面かを問わないSEO必須項目も採用しない。各参照に照合先を残した。
+
 ## 応答と簡略化
 
 過去の独立した調査メモはここへ集約した。運用手順や測定結果は重複させない。

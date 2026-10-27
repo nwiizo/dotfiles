@@ -1,6 +1,6 @@
 ---
 name: home-web-quality-review
-description: Web画面・HTML文書の品質やアクセシビリティをレビュー・改善するとき、実表示と主要操作から問題を確認する。キーボード、フォーカス、フォーム、性能の検証に使う。文章だけの校正やネイティブCLIの操作設計は対象外。
+description: Web画面・HTML文書の品質やアクセシビリティ、性能・Core Web Vitals、技術的SEO、ブラウザー上のエラーをレビュー・改善するとき、実表示と主要操作から問題を確認する。文章だけの校正やネイティブCLIの操作設計は対象外。
 ---
 
 # 画面の点数より操作の完了を確認する
@@ -14,6 +14,19 @@ description: Web画面・HTML文書の品質やアクセシビリティをレビ
 `rtk proxy aside guide` を実行する。実画面のDOM・focus・スクリーンショットを直接確かめる
 場合は [Asideでの確認手順](references/aside-checks.md) を読む。
 asideを使えない場合は、その理由と代替で確認できた範囲を分けて報告する。
+
+依頼に合わせて必要な経路を選ぶ。全項目を毎回実行しない。
+
+| 困っていること | 読む資料・確認手段 |
+|---|---|
+| 操作できない、見えない、focusが迷う | 下の操作表とAside手順。snapshot・実操作・画像を照合 |
+| 遅い、反応が遅れる、表示がずれる | [Web性能の証拠](../home-systematic-debugging/web-performance-evidence.md)。traceと実ユーザー計測を区別 |
+| 検索へ出したい、公開設定が不整合 | [公開URLと検索への伝わり方](references/search-visibility.md)。HTTP応答と描画後の情報を照合 |
+| 通信失敗、browser互換性、配信設定 | [ブラウザーと配信の確認](references/browser-delivery.md)。問題に関係するconsole・network・headerを確認 |
+
+ツール名から能力を推測せず、導入版のhelpや利用可能な機能を確認する。Asideでの操作確認、
+性能trace、Lighthouseの各カテゴリは別の確認である。使えない検査のためにMCPやAPI keyを
+必須にせず、既存手段で進め、未計測の値は埋めない。
 
 ## 画面から該当する実装へたどる
 

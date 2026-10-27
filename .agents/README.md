@@ -90,7 +90,7 @@ the layout, not actual client loading or improved model behavior.
 | `home-systematic-debugging` | Evidence-driven diagnosis when the cause is unknown |
 | `home-verification-before-completion` | Evidence supporting completion claims |
 | `home-release-readiness` | Release artifact identity, consumer checks, rollout decisions, and recoverable publication |
-| `home-web-quality-review` | Rendered-page evidence, keyboard and form flows, accessibility, and performance verification |
+| `home-web-quality-review` | Rendered-page evidence, keyboard and form flows, accessibility, Core Web Vitals, technical SEO, and browser delivery checks |
 | `home-self-review` | Independent review through the opposite AI CLI |
 | `home-fix-review-comments` | Resolve disputed findings against requirements and evidence, then apply valid fixes |
 | `home-docs-curator` | Documentation cleanup preserving consequential decisions and their reasons |
