@@ -85,7 +85,6 @@ the layout, not actual client loading or improved model behavior.
 | `nwiizo-coding-style` | Minimal implementation modes, action-first progress reporting, review/audit, debt/gain/help, and Rust similarity/coupling diagnostics |
 | `home-karpathy-guidelines` | Preflight for material uncertainty or minimal implementation |
 | `home-brainstorming` | Outcome-based design, bounded feasibility experiments, and requested decision interviews |
-| `home-jtbd-feature-scoping` | Feature decisions anchored on Jobs-to-be-Done and user needs, using As-Is flow constraints, value-chain dependencies, evolution, and user cognitive load |
 | `home-data-shape-contract` | Persisted data and public-interface compatibility decisions |
 | `home-test-driven-development` | Meaningful red/green behavior checks |
 | `home-systematic-debugging` | Evidence-driven diagnosis when the cause is unknown |

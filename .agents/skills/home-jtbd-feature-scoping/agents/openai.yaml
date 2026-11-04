@@ -1,4 +1,0 @@
-interface:
-  display_name: "JTBD Feature Scoping"
-  short_description: "ジョブ、流れの制約、依存関係、成熟度から、足す機能と足さない機能を判断する"
-  default_prompt: "$home-jtbd-feature-scoping を使い、利用者のジョブとAs-Isの流れから必要な機能を精査し、今回は足さない案の理由と次に行う最小の確認を添えた判断表にしてください。"
