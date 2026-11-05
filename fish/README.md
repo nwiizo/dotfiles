@@ -54,6 +54,12 @@ Routine `update_all` runs retain these refs instead of advancing them to HEAD.
 - Television owns `Ctrl-R`, `Ctrl-T`, `Ctrl-F`, and empty-line Tab. Fish records
   history and Television searches it with `Ctrl-R`. Tab
   on nonempty input uses native completion, overriding autopair's Tab handler.
+- Carapace supplies command-specific completion except for `git` and `herdr`.
+  Git uses Fish's native completion for non-ASCII paths; Herdr uses the
+  version-matched completion installed by Homebrew. Keep both exclusions in
+  `config.fish` and change the generated-init cache key when changing them.
+  Carapace's Herdr completer currently omits `--machine` and still offers the
+  removed `--no-session` flag (checked against Herdr 0.9.5).
 - Sponge cleans Fish history, and `fish_should_add_to_history` filters new
   entries. Sponge retains
   the last two entries before purging by default, so failed commands can still
@@ -68,6 +74,14 @@ Routine `update_all` runs retain these refs instead of advancing them to HEAD.
 - Keep Fisher's installed files and universal variables outside Git. Link
   individual repo files so Fisher can own neighboring files. Never edit
   `_fisher_plugins` or plugin file inventories manually.
+
+Herdr command, flag, and agent-kind completion can be checked with the installed
+Fish, Carapace, and Homebrew Herdr completion. The check starts Fish with an
+isolated home and cache, without loading personal settings or history:
+
+```fish
+rtk proxy fish --no-config fish/tests/herdr_completion.fish
+```
 
 ### Applying and checking plugins
 

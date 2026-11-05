@@ -297,6 +297,6 @@ if type -q zoxide
     complete --erase --command z
     complete --command z --no-files --arguments '(__tv_z_complete)'
 end
-# Keep Fish's native Git completion, which handles non-ASCII paths correctly.
-set -gx CARAPACE_EXCLUDES git
-type -q carapace; and __nwiizo_cached_init carapace-excluding-git carapace _carapace fish
+# Keep native Git completion for non-ASCII paths and Herdr's version-matched completion.
+set -gx CARAPACE_EXCLUDES git,herdr
+type -q carapace; and __nwiizo_cached_init carapace-excluding-git-herdr carapace _carapace fish

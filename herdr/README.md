@@ -56,6 +56,16 @@ Use Herdr's explicit stop command only when stopping those processes is intended
 Herdr owns the `Ctrl+B` prefix; use Fish's `gb` abbreviation for branch selection inside it.
 Ghostty's `Cmd` shortcuts and existing `c`/`cx` abbreviations retain their roles.
 
+Fish's Tab completes commands and arguments in Herdr panes. For example,
+`herdr --ma` completes to `herdr --machine`, and
+`herdr agent start --kind cod` completes to `codex`. Homebrew installs Herdr's
+version-matched Fish completion; `fish/config.fish` excludes Herdr from Carapace
+so its older definitions cannot replace that completion. No extra Fish plugin
+is needed. See [Fish completion](https://fishshell.com/docs/current/interactive.html#tab-completion).
+On an empty command line, Tab keeps the existing Television history picker;
+`Ctrl+T` opens Television's context picker. After changing Fish config, use a
+new pane or `exec fish` in an idle shell to load it.
+
 ## Selected Plugins
 
 ### Neovim: Signalbox
@@ -126,6 +136,7 @@ rtk proxy herdr config check
 rtk proxy herdr integration status
 rtk proxy herdr plugin list
 rtk proxy bash scripts/tests/herdr-integrations.sh
+rtk proxy fish --no-config fish/tests/herdr_completion.fish
 rtk proxy ./scripts/audit-agent-config.sh
 rtk proxy ghostty +validate-config --config-file=ghostty/config
 ```
