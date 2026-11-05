@@ -32,6 +32,12 @@ The server watches a directory for HTML files and serves the newest one to the b
 
 ## Starting a Session
 
+Options that take a value reject missing or empty values before creating session
+files. Errors use a JSON `error` field, including when an argument contains quotes
+or control characters. Run `rtk proxy node --test tests/start-server.test.cjs`
+from this skill's directory after changing argument handling; these checks do
+not start a server or open a browser.
+
 ```bash
 # Start when the user requests or has accepted the companion. --open opens their browser on
 # the first screen; --project-dir persists mockups and enables same-port restart.

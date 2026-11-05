@@ -38,6 +38,24 @@ check_absent() {
   fi
 }
 
+check_installed_children() {
+  local installed_dir="$1"
+  local source_dir="$2"
+  local path actual
+
+  for path in "$installed_dir"/*; do
+    [[ -L "$path" ]] || continue
+    actual="$(readlink "$path")"
+    if [[ "$actual" == "$repo/archive/"* ]]; then
+      echo "archived asset installed: $path -> $actual" >&2
+      fail=1
+    elif [[ "$actual" == "$source_dir/"* && ! -e "$path" ]]; then
+      echo "retired managed link: $path -> $actual" >&2
+      fail=1
+    fi
+  done
+}
+
 check_link "CLAUDE.md" "AGENTS.md"
 check_link "fish/CLAUDE.md" "AGENTS.md"
 check_link ".claude/agents" "../.agents/agents"
@@ -69,6 +87,10 @@ done
 for agent in "$repo"/.agents/codex/agents/*.toml; do
   check_link "$HOME/.codex/agents/$(basename "$agent")" "$agent"
 done
+
+check_installed_children "$HOME/.claude/skills" "$repo/.agents/skills"
+check_installed_children "$HOME/.agents/skills" "$repo/.agents/skills"
+check_installed_children "$HOME/.codex/agents" "$repo/.agents/codex/agents"
 
 for claude_agent in "$repo"/.agents/agents/*.md; do
   agent_name="$(basename "$claude_agent" .md)"

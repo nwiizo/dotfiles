@@ -48,6 +48,7 @@ Select checks for the affected area and complete its required validation:
 | Neovim external-change merging | Also run `rtk proxy nvim --headless -u NONE -l nvim/tests/external_changes.lua` |
 | Homebrew packages | `rtk proxy brew bundle check --file Brewfile` |
 | Agent instructions, skills, or personas | `rtk proxy ./scripts/audit-agent-config.sh` |
+| Agent audit implementation | Also run `rtk proxy bash scripts/tests/audit-agent-config.sh` |
 | Other app config | Use the app's native validation and the relevant checks in its README. |
 
 The agent audit checks links, metadata, persona pairs, invocation and read-only

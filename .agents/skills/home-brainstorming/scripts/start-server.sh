@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Start the brainstorm server and output connection info
-# Usage: start-server.sh [--project-dir <path>] [--host <bind-host>] [--url-host <display-host>] [--foreground] [--background]
+# Usage: start-server.sh [--project-dir <path>] [--host <bind-host>] [--url-host <display-host>] [--idle-timeout-minutes <n>] [--open] [--foreground] [--background]
 #
 # Starts server on a random high port, outputs JSON with URL.
 # Each session gets its own directory to avoid conflicts.
@@ -19,6 +19,11 @@
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
+json_error() {
+  node -e 'console.log(JSON.stringify({error: process.argv[1]}))' -- "$1"
+  exit 1
+}
+
 # Parse arguments
 PROJECT_DIR=""
 FOREGROUND="false"
@@ -28,20 +33,16 @@ URL_HOST=""
 IDLE_TIMEOUT_MINUTES=""
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --project-dir)
-      PROJECT_DIR="$2"
-      shift 2
-      ;;
-    --host)
-      BIND_HOST="$2"
-      shift 2
-      ;;
-    --url-host)
-      URL_HOST="$2"
-      shift 2
-      ;;
-    --idle-timeout-minutes)
-      IDLE_TIMEOUT_MINUTES="$2"
+    --project-dir|--host|--url-host|--idle-timeout-minutes)
+      if [[ $# -lt 2 || -z "$2" || "$2" == --* ]]; then
+        json_error "$1 requires a value"
+      fi
+      case "$1" in
+        --project-dir) PROJECT_DIR="$2" ;;
+        --host) BIND_HOST="$2" ;;
+        --url-host) URL_HOST="$2" ;;
+        --idle-timeout-minutes) IDLE_TIMEOUT_MINUTES="$2" ;;
+      esac
       shift 2
       ;;
     --open)
@@ -57,8 +58,7 @@ while [[ $# -gt 0 ]]; do
       shift
       ;;
     *)
-      echo "{\"error\": \"Unknown argument: $1\"}"
-      exit 1
+      json_error "Unknown argument: $1"
       ;;
   esac
 done
@@ -73,8 +73,7 @@ fi
 
 if [[ -n "$IDLE_TIMEOUT_MINUTES" ]]; then
   if ! [[ "$IDLE_TIMEOUT_MINUTES" =~ ^[0-9]+$ ]] || [[ "$IDLE_TIMEOUT_MINUTES" -lt 1 ]]; then
-    echo "{\"error\": \"--idle-timeout-minutes must be a positive integer\"}"
-    exit 1
+    json_error "--idle-timeout-minutes must be a positive integer"
   fi
   export BRAINSTORM_IDLE_TIMEOUT_MS=$(( IDLE_TIMEOUT_MINUTES * 60 * 1000 ))
 fi
@@ -195,8 +194,7 @@ for _ in {1..50}; do
       sleep 0.1
     done
     if [[ "$alive" != "true" ]]; then
-      echo "{\"error\": \"Server started but was killed. Retry in a persistent terminal with: $SCRIPT_DIR/start-server.sh${PROJECT_DIR:+ --project-dir $PROJECT_DIR} --host $BIND_HOST --url-host $URL_HOST --foreground\"}"
-      exit 1
+      json_error "Server started but was killed. Retry in a persistent terminal with: $SCRIPT_DIR/start-server.sh${PROJECT_DIR:+ --project-dir $PROJECT_DIR} --host $BIND_HOST --url-host $URL_HOST --foreground"
     fi
     grep "server-started" "$LOG_FILE" | head -1
     exit 0
@@ -205,5 +203,4 @@ for _ in {1..50}; do
 done
 
 # Timeout - server didn't start
-echo '{"error": "Server failed to start within 5 seconds"}'
-exit 1
+json_error "Server failed to start within 5 seconds"

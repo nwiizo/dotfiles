@@ -73,9 +73,15 @@ These design choices do not establish improved model performance.
 
 Run `rtk proxy ./scripts/audit-agent-config.sh`.
 It checks installation links, metadata, paired personas, invocation-policy parity,
-read-only role settings, generated state, and retired paths.
+read-only role settings, generated state, and retired paths. It also rejects stale
+managed skill/agent links and links into `archive/` in installed asset directories.
 Keep client-specific metadata and reference assets needed by actual tasks.
 Check affected local Markdown links and inspect the diff.
+
+When changing the audit, run
+`rtk proxy bash scripts/tests/audit-agent-config.sh` from the repository root.
+The regression check uses an isolated home to exercise valid links, stale managed
+links, archived assets, and independently maintained external links.
 
 Static checks establish file structure and references.
 Verify instruction discovery in a fresh client session after startup changes.
