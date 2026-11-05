@@ -28,6 +28,7 @@ brew "go"
 brew "gping"
 brew "minorole/tap/gpane", link: false, trusted: true
 brew "helm"
+brew "herdr"
 brew "hexyl"
 brew "hk"
 brew "hyperfine"

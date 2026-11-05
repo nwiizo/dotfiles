@@ -30,6 +30,7 @@ Read this file for the overall model. Use the subdirectory docs when changing a 
 | Fish | [`fish/README.md`](fish/README.md), [`fish/AGENTS.md`](fish/AGENTS.md) | `fish/config.fish`, `fish/functions/`, `fish/fish_plugins` |
 | Neovim | [Design and daily review](nvim/README.md), [keymaps](nvim/keymaps.md), [maintenance](nvim/maintenance.md) | `nvim/lua/config/`, `nvim/lua/plugins/` |
 | Ghostty | `ghostty/README.md` | `ghostty/config` |
+| Herdr | [`herdr/README.md`](herdr/README.md) | `herdr/config.toml`, `scripts/install-herdr.sh` |
 | Television | `television/README.md` | `television/config.toml`, `television/cable/` |
 | Git / GitHub CLI | `git/README.md` | `git/config`, `git/power_pull.sh`, `gh/config.yml` |
 | Small CLI configs | this README | `bat/`, `tealdeer/` |
@@ -60,6 +61,7 @@ discovery verification.
 | Shell | Fish + Fisher | `fish/config.fish`, `fish/functions/`, `fish/fish_plugins` |
 | Editor | Neovim + LazyVim | `nvim/` |
 | Terminal | Ghostty | `ghostty/config` |
+| Persistent agent workspaces | Herdr | `herdr/config.toml`, `.agents/skills/herdr/` |
 | GitHub / Git | gh, git-delta, lazygit | `gh/config.yml`, `git/config`, `git/power_pull.sh` |
 | CLI config | bat, tealdeer | `bat/config`, `tealdeer/config.toml` |
 | Linking / bootstrap | Shell scripts | `scripts/bootstrap.sh`, `scripts/link.sh` |
@@ -80,6 +82,7 @@ dotfiles/
 ├── fish/                    # Fish init, functions, plugins, conf.d patch
 ├── nvim/                    # LazyVim based Neovim config
 ├── ghostty/                 # Ghostty terminal config
+├── herdr/                   # Persistent workspaces, plugins, agent integrations
 ├── git/                     # Git config and helper scripts
 ├── gh/                      # GitHub CLI config
 ├── .agents/                 # Source for reusable agents, docs, and skills
@@ -105,6 +108,7 @@ The bootstrap script runs:
 ```bash
 brew bundle --file Brewfile
 ./scripts/link.sh
+bash scripts/install-herdr.sh
 bash scripts/install-aside.sh
 fish scripts/install-fish-plugins.fish
 ```
@@ -114,9 +118,21 @@ Run individual steps when you only need one layer:
 ```bash
 brew bundle --file Brewfile
 ./scripts/link.sh
+bash scripts/install-herdr.sh
 bash scripts/install-aside.sh
 fish scripts/install-fish-plugins.fish
 ```
+
+### Herdr and Ghostty
+
+Herdr is the default persistent workspace manager inside Ghostty. Homebrew owns
+the binary; `scripts/link.sh` installs its config and shared skill. The native
+installer refreshes Claude Code/Codex hooks and installs the selected file-viewer
+and GitHub-preview plugins. See [Herdr setup and controls](herdr/README.md) for
+startup, detaching back to Fish, plugin choices, and validation.
+Neovim's [Signalbox](https://github.com/nwiizo/signalbox.nvim) is another supported
+entrypoint through `<C-g>` or `:Signalbox`; existing agent entrypoints remain
+available.
 
 ### Aside CLI
 
@@ -158,6 +174,7 @@ an AI client; that client's MCP settings must use command `aside` with args `["m
 | `fish/functions/*.fish` | `~/.config/fish/functions/*.fish` |
 | `nvim/` | `~/.config/nvim` |
 | `ghostty/config` | `~/.config/ghostty/config` |
+| `herdr/config.toml` | `~/.config/herdr/config.toml` |
 | `ghostty/claude-notification.sh` | `~/.local/bin/ghostty-claude-notification` |
 | `bat/config` | `~/.config/bat/config` |
 | `television/config.toml`, `television/cable/*.toml` | `~/.config/television/config.toml`, `~/.config/television/cable/*.toml` |
@@ -310,7 +327,8 @@ configuration changes.
 
 ## Terminals
 
-Ghostty is the primary terminal config in `ghostty/config`.
+Ghostty is the primary terminal config in `ghostty/config`; Herdr manages the
+persistent workspaces inside it. See [their combined workflow](herdr/README.md#ghostty-and-fish).
 
 - Hack Nerd Font Mono, 24pt
 - Catppuccin Mocha palette

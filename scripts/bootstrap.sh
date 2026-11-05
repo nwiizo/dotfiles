@@ -10,6 +10,7 @@ fi
 
 brew bundle --file "$repo/Brewfile"
 "$repo/scripts/link.sh"
+bash "$repo/scripts/install-herdr.sh"
 bash "$repo/scripts/install-aside.sh"
 
 if command -v fish >/dev/null 2>&1; then

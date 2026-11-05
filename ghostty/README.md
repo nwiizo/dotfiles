@@ -38,6 +38,16 @@ rtk proxy ghostty +explain-config keybind
 - Quick terminal: configured but default global hotkey is unbound
 - AI notifications: macOS banner + sound + transient `🔔` tab marker
 
+## Herdrとの併用
+
+GhosttyはFishで開く。永続ワークスペースを使うときに、そのシェルで
+`rtk proxy herdr` を実行する。Ghosttyが画面・フォント・クリップボードを、
+Herdrが内部のペイン・タブ・エージェントの状態を扱う。
+
+Herdrの `Ctrl+B` に続けて `q` を押すと、内部の処理を残したまま元のFishへ戻る。
+`Cmd` を使う既存のGhostty操作は外側のウィンドウ・タブ・分割に作用する。
+設定・プラグイン・連携の導入と操作は [Herdrの案内](../herdr/README.md) を参照する。
+
 ## 更新確認（2026-10-10）
 
 導入済みビルドは `1.3.2-main+b699ea79f`。Codex CLI `0.162.1`、

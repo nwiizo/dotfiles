@@ -3,6 +3,10 @@
 Manage this macOS environment through repository sources and direct symlinks.
 Homebrew owns binaries in `Brewfile`; `scripts/` applies and validates config.
 Read the affected area's README for its current behavior and maintenance notes.
+Use Herdr for persistent terminal workspaces. For its configuration, plugins,
+or client integrations, read [herdr/README.md](herdr/README.md) and the
+[Herdr skill](.agents/skills/herdr/SKILL.md). Ghostty opens Fish; start Herdr
+when needed.
 For Fish changes, also follow [fish/AGENTS.md](fish/AGENTS.md).
 For Neovim changes, also follow [nvim/AGENTS.md](nvim/AGENTS.md).
 
@@ -19,7 +23,7 @@ Claude-only files.
 | Packages | `Brewfile` |
 | Fish | `fish/config.fish`, `fish/fish_plugins`, autoloaded `fish/functions/<name>.fish`; vendor overrides in `fish/conf.d/` use the upstream basename |
 | Neovim | `nvim/lua/config/` and feature-grouped `nvim/lua/plugins/` |
-| Terminals and CLI apps | `ghostty/`, `gpane/`, `git/`, `gh/`, `bat/`, `tealdeer/` |
+| Terminals and CLI apps | `ghostty/`, `herdr/`, `gpane/`, `git/`, `gh/`, `bat/`, `tealdeer/` |
 | Agent preferences and workflows | `.agents/`; project `.claude/` entrypoints and `.codex/agents` link there |
 | Skills and personas | `.agents/skills/<name>/SKILL.md`; same-named Claude Markdown and Codex TOML personas in `.agents/agents/` and `.agents/codex/agents/` |
 

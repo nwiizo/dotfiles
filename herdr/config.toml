@@ -1,0 +1,18 @@
+# Ghostty hosts Herdr; new Herdr panes keep the managed Fish environment.
+onboarding = false
+
+[terminal]
+default_shell = "/opt/homebrew/bin/fish"
+shell_mode = "login"
+
+[[keys.command]]
+key = "prefix+f"
+type = "plugin_action"
+command = "herdr-file-viewer.open-file-viewer"
+description = "open file viewer in a split"
+
+[[keys.command]]
+key = "prefix+shift+f"
+type = "plugin_action"
+command = "herdr-file-viewer.open-file-viewer-tab"
+description = "open file viewer in a tab"

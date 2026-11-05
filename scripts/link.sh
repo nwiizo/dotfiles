@@ -85,6 +85,7 @@ link_dir_children "$repo/fish/functions" "$HOME/.config/fish/functions"
 
 link_path "$repo/nvim" "$HOME/.config/nvim"
 link_path "$repo/ghostty/config" "$HOME/.config/ghostty/config"
+link_path "$repo/herdr/config.toml" "$HOME/.config/herdr/config.toml"
 link_path "$repo/gpane/config.yaml" "$HOME/.config/gpane/config.yaml"
 link_path "$repo/bat/config" "$HOME/.config/bat/config"
 # Atuin is retired. Leave any local configuration and history data alone.

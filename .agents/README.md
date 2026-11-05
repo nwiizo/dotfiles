@@ -47,6 +47,12 @@ The implementation skill includes conditional preflight, completion-evidence,
 and review-finding guidance. They share the implementation result rather than
 requiring separate skill selection.
 Local AWS and Google Cloud investigation notes use one provider-routed entrypoint.
+The [Herdr skill](skills/herdr/SKILL.md) uses the installed CLI guide for the
+default persistent workspace manager; [setup](../herdr/README.md) documents its
+client integrations and selected plugins.
+`home-herdr-operator` is the paired Claude Code/Codex operations role for scoped
+Herdr setup, diagnosis, and explicitly authorized coordination. It inherits the
+caller's execution policy and does not automatically start other agents.
 Design, diagnosis, tests, CI measurement, releases, translation, and incident
 documents retain distinct task entrypoints.
 

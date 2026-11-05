@@ -26,6 +26,13 @@ the source map and required checks.
 
 ## Local Tools
 
+Use Herdr by default for persistent terminal workspaces and authorized agent
+coordination. Read the `herdr` skill for setup and control; control existing panes
+only from inside their Herdr session. The delegation rule above still applies.
+Ghostty opens Fish; launch Herdr when needed rather than attaching at shell startup.
+Use either the Herdr CLI or Neovim's Signalbox; existing Codex/Claude entrypoints
+remain available. Choose the interface that fits the current work.
+
 Prefix shell commands with `rtk`; use `rtk proxy` for unwrapped commands.
 Use Git, preserve user changes, and inspect status and diff.
 Commit or push only when requested; verify the branch and remote before publication.
