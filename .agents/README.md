@@ -1,136 +1,87 @@
 # Agent Configuration
 
-This directory contains the reusable configuration managed by dotfiles.
-Edit these sources; `scripts/link.sh` installs links into the client homes.
+This directory holds dotfiles-managed agent assets.
+The root AGENTS.md remains the repository overview and lists apply/check commands.
 
-## Installation Map
+## Installation
 
 | Source | Installed path |
 |---|---|
-| `CLAUDE.md` | `~/.claude/CLAUDE.md` |
-| `RTK.md` | `~/.claude/RTK.md`, `~/.codex/RTK.md` |
-| `claudeignore` | `~/.claude/.claudeignore` |
-| `agents/`, `rules/`, `docs/` | Corresponding directories under `~/.claude/` |
-| `skills/<name>/` | `~/.claude/skills/<name>`, `~/.agents/skills/<name>` |
-| `codex/AGENTS.md` | `~/.codex/AGENTS.md` |
-| `codex/agents/*.toml` | `~/.codex/agents/*.toml` |
+| CLAUDE.md | ~/.claude/CLAUDE.md |
+| RTK.md | ~/.claude/RTK.md and ~/.codex/RTK.md |
+| claudeignore | ~/.claude/.claudeignore |
+| agents/ | ~/.claude/agents/ |
+| skills/NAME | ~/.claude/skills/NAME and ~/.agents/skills/NAME |
+| codex/AGENTS.md | ~/.codex/AGENTS.md |
+| codex/agents/*.toml | ~/.codex/agents/*.toml |
 
-Project `.claude/{agents,rules,skills}` and `.codex/agents` also link here.
-Skills are installed individually so external skills such as `nippo`, `suiko`, and
-the private blog bundle can coexist. Do not copy or remove their sources as
-part of dotfiles maintenance.
+Project .claude/agents and .claude/skills, plus .codex/agents, link here.
+The former rules directory is preserved under
+[`archive/agent-config/`](../archive/agent-config/README.md); its managed links
+have been removed.
+Historical investigation notes are not installed into client homes.
+Machine-local tool permissions and client settings stay under client control.
+External skills and the private blog bundle remain independently maintained.
 
-## Instruction Ownership
+Edit repository sources. Existing linked-file edits apply without relinking;
+changed installation paths use `rtk proxy ./scripts/link.sh`.
 
-| Information | Maintained in |
-|---|---|
-| Repository layout, apply commands, checks | Root `AGENTS.md`; root `CLAUDE.md` is a symlink to it |
-| Directory-specific project guidance | Nested `AGENTS.md`; a sibling `CLAUDE.md` symlink shares it with Claude |
-| Codex user preferences | `codex/AGENTS.md` |
-| Claude user preferences | `rules/coding.md`, `rules/security.md`, `rules/github-comments.md` |
-| Claude path-specific preferences | `rules/*.md` with `paths` |
-| Task-specific judgment and procedures | `skills/<name>/SKILL.md` |
-| Specialized reviewer or planner role | Same-named files in `agents/` and `codex/agents/` |
-| Deterministic enforcement | Existing hooks, config, or validation scripts |
+## Skill Design
 
-Keep information that changes the model's decisions. Remove redundant tutorials,
-fixed ceremonies, and obsolete workarounds rather than moving them into new
-references. Preserve environment facts, explicit user preferences, and safety
-boundaries. Details for maintenance are in `rules/authoring.md`.
+Each SKILL.md states its actual job, invocation conditions, result, and the
+boundaries specific to that job. Keep non-obvious commands and domain knowledge.
+Use supporting references when the task needs them; avoid loading all references
+or prescribing a fixed reviewer roster.
 
-Codex global preferences are self-contained because Codex does not load Claude's
-rules or expand `@path` imports. Claude's global entrypoint points to its loaded
-rules; the root `CLAUDE.md` is a symlink to `AGENTS.md`.
-Keep overlapping user preferences aligned across the two clients.
+Integration is appropriate when another skill can produce the same result from
+the same input without losing an important distinction.
+Different review questions can share general instructions while retaining their
+own domain checks. Preserve names, supported metadata, and manual-only invocation
+unless changing those interfaces is intentional.
 
-## Shared Project Instructions
+General preferences belong to the client entrypoint; repository facts belong
+to its overview. Actual permissions are controlled by client configuration,
+not by prose. Do not turn a skill's recommendation into another approval round.
 
-Reviewed against official documentation on **2026-10-10**; installed clients
-were Claude Code **2.1.294** and Codex CLI **0.162.1**.
+The implementation skill includes conditional preflight, completion-evidence,
+and review-finding guidance. They share the implementation result rather than
+requiring separate skill selection.
+Local AWS and Google Cloud investigation notes use one provider-routed entrypoint.
+Design, diagnosis, tests, CI measurement, releases, translation, and incident
+documents retain distinct task entrypoints.
 
-Keep `AGENTS.md` as the file to edit and `CLAUDE.md` as a tracked relative symlink.
-This macOS repository needs no separate Claude project content. Claude supports
-this arrangement, including deduplication when both filenames are discovered.
-Its native `AGENTS.md` loading, available since 2.1.277, depends on project
-instruction settings and other instruction files; retaining the link avoids
-depending on that fallback. See [Claude's sharing guidance](https://code.claude.com/docs/en/memory#share-one-file-with-other-coding-tools).
+## Model Guidance
 
-Codex discovers instructions from the project root down to its launch directory,
-choosing one file per directory: `AGENTS.override.md`, then `AGENTS.md`, then a
-configured fallback. A root-started task should explicitly read nested guidance
-before changing that area; keep conditional links in the root guide. Shared
-files use ordinary Markdown links, since Codex does not expand Claude imports.
-See [Codex instruction discovery](https://learn.chatgpt.com/docs/agent-configuration/agents-md).
+Reviewed 2026-11-05 for the configured gpt-6.1-sol workflow and shared Claude use.
 
-Keep entrypoints focused on commands, verification, environment-specific pitfalls,
-and decisions the agent cannot infer reliably. Put detailed explanations in the
-area README and occasional workflows in skills. Add guidance for repeated
-mistakes and remove obsolete rules instead of accumulating incident history.
-These are maintenance choices informed by
-[Codex best practices](https://learn.chatgpt.com/guides/best-practices#make-guidance-reusable-with-agentsmd)
-and [Claude best practices](https://code.claude.com/docs/en/best-practices#write-an-effective-claudemd).
+The [GPT-6 prompting guide](https://developers.openai.com/api/docs/guides/latest-model#prompting-best-practices)
+calls out initiative, sensitivity to conflicting skill instructions, writing
+style, delegation, and proportional verification.
+The [Codex workflow guide](https://learn.chatgpt.com/guides/best-practices)
+emphasizes a goal, relevant context, constraints, and observable completion.
+[Skill documentation](https://learn.chatgpt.com/docs/build-skills)
+describes progressive disclosure.
+[Claude guidance](https://code.claude.com/docs/en/best-practices#keep-claudemd-short)
+recommends keeping recurring context focused on information the model cannot infer.
 
-After changing instruction loading, run the repository audit, then use `/context`
-in a fresh Claude session to inspect Memory files. Start a fresh Codex session
-in the intended directory and ask it to list the active instruction sources;
-check the listed files against the repository. File and link checks establish
-the layout, not actual client loading or improved model behavior.
+This setup applies those ideas to local workflows: concise task entrypoints,
+conditional references, preserved user authorization, and checks tied to the
+affected result. Model IDs and reasoning settings remain local client settings.
+These design choices do not establish improved model performance.
 
-## Skills by Purpose
+## Validation
 
-| Skill | Use |
-|---|---|
-| `add-config` | Source paths, application, and validation for dotfiles configuration |
-| `add-package` | Homebrew package installation and repository tracking |
-| `nwiizo-coding-style` | Minimal implementation modes, action-first progress reporting, review/audit, debt/gain/help, and Rust similarity/coupling diagnostics |
-| `home-karpathy-guidelines` | Preflight for material uncertainty or minimal implementation |
-| `home-brainstorming` | Outcome-based design, bounded feasibility experiments, and requested decision interviews |
-| `home-data-shape-contract` | Persisted data and public-interface compatibility decisions |
-| `home-test-driven-development` | Meaningful red/green behavior checks |
-| `home-systematic-debugging` | Evidence-driven diagnosis when the cause is unknown |
-| `home-verification-before-completion` | Evidence supporting completion claims |
-| `home-release-readiness` | Release artifact identity, consumer checks, rollout decisions, and recoverable publication |
-| `home-web-quality-review` | Rendered-page evidence, keyboard and form flows, accessibility, Core Web Vitals, technical SEO, and browser delivery checks |
-| `home-self-review` | Independent review through the opposite AI CLI |
-| `home-fix-review-comments` | Resolve disputed findings against requirements and evidence, then apply valid fixes |
-| `home-docs-curator` | Documentation cleanup preserving consequential decisions and their reasons |
-| `home-history-distill` | Reusable guidance from bounded local history through `nippo` |
-| `home-empirical-prompt-tuning` | Behavioral comparison of instructions |
-| `home-agent-work-queue` | Bounded issue processing, ownership, review capacity, and restartable handoffs |
-| `home-ci-efficiency` | CI feedback time, total execution, and reliability measured separately |
-| `home-terraform-change-review` | Terraform plan changes tied to access, availability, data migration, and recovery |
-| `home-observability-design` | Question-driven signals, SLI/SLOs, missing telemetry, alert actions, and measurement costs |
-| `home-validate-on-oss` | Explicitly requested validation on real projects |
-| [`learn-rust` (external plugin)](https://github.com/nwiizo/rust-learning-lab) | Rust syntax, rationale, practice, and debugging; install Rust Learning Lab through each client's plugin marketplace |
-| `home-marp-slide-editing` | Marp layout and rendered-output checks |
-| `home-translation-quality` | Technical translation conventions and consistency |
-| `home-incident-runbook-templates` | Service-specific response procedures |
-| `home-postmortem-writing` | Evidence-based incident reviews |
-| `home-aws-finops-investigation` | Local AWS investigation notes |
-| `home-gcp-finops-investigation` | Local GCP investigation notes |
+Run `rtk proxy ./scripts/audit-agent-config.sh`.
+It checks installation links, metadata, paired personas, invocation-policy parity,
+read-only role settings, generated state, and retired paths.
+Keep client-specific metadata and reference assets needed by actual tasks.
+Check affected local Markdown links and inspect the diff.
 
-Choose personas by their descriptions; do not automatically run a fixed reviewer
-set. `home-self-review` selects the other AI product; a persona name alone does not.
-
-For uncertain design intent, conflicting technical sources, or task handoffs,
-`nwiizo-coding-style` routes to its [decision evidence guide](skills/nwiizo-coding-style/references/decision-evidence.md).
-General quality reviewers in both clients share its [review checks](skills/nwiizo-coding-style/references/review-checks.md).
-Keep those checks in one place instead of copying them into every persona.
-
-## Validation and Local State
-
-Run `./scripts/audit-agent-config.sh` after edits. It checks links, skill and agent
-metadata, same-named persona pairs, manual-only invocation parity, read-only
-permissions, stale tooling references, and generated state. Ruby/Psych, yq, and
-jq are the existing validators. It also scans secrets when git-secrets is installed.
-
-Preserve client-specific metadata: Claude extensions in skill frontmatter and
-Codex UI/invocation policy in `agents/openai.yaml`. Read-only personas pair
-Claude `permissionMode: plan` with Codex `sandbox_mode = "read-only"`.
-The memory editor and report writer retain the access their tasks need.
-
-Static checks do not establish model performance. Use representative behavioral
-evaluation when a change warrants it, and report its actual scope.
-
-Keep sessions, history, caches, credentials, machine-specific settings, plugin
-downloads, and runtime state outside this tree.
+Static checks establish file structure and references.
+Verify instruction discovery in a fresh client session after startup changes.
+Keep current instructions and task references here. Store historical investigation
+and adoption records under
+[`archive/agent-history/`](../archive/agent-history/engineering-sources.md);
+do not link them from task instructions. Consult them when the requested work
+concerns that history, and check old decisions against the current request and
+files.

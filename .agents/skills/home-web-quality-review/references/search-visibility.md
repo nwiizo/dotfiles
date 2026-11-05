@@ -32,5 +32,3 @@ llms.txtやWebMCPを点数のために追加しない。依頼や具体的な利
 2026-10-27に照合した一次資料:
 - [Googleのnoindex](https://developers.google.com/search/docs/crawling-indexing/block-indexing)
 - [ページ分割と段階的な読み込み](https://developers.google.com/search/docs/specialty/ecommerce/pagination-and-incremental-page-loading)
-
-由来と採用範囲は[設計方針の参考資料](../../../docs/engineering-sources.md)に残す。

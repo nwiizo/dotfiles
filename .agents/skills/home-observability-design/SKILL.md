@@ -1,72 +1,61 @@
 ---
 name: home-observability-design
-description: メトリクス・ログ・トレース・SLI/SLOを、利用者への影響と調査したい問いから設計・レビューする。監視で原因を切り分けられない、通知が多い、計測の費用や欠測が気になる依頼に使う。進行中の障害復旧や請求額だけの分析は対象外。
+description: 利用者の結果と調査したい問いから、メトリクス・ログ・トレース・SLI/SLOを設計、レビューする。
 ---
 
-# 判断に使える計測を設計する
+# Measure What Changes a Decision
 
-最初に「何が分かれば、誰が何を判断できるか」を定める。
-既存の計測と運用を読み、答えられない問いに必要な観測だけを足す。
-製品の導入やダッシュボードの数を成果にしない。レビューでは提案まで、実装依頼では
-指定範囲を編集・検証する。設計依頼から本番設定や通知先の変更へ進まない。
+Read existing instrumentation and operations.
+State what observation would let whom make which decision.
+Define success, events, exclusions, period, and observation boundaries.
+Separate acceptance, attempts, processing completion, and user-visible results.
+For GraphQL, inspect HTTP status and application outcomes, including combined
+data and errors.
 
-## 利用者の結果と観測点
+Use metrics for bounded aggregates, logs for individual state changes, and
+traces for causal paths and latency.
+Align numerator and denominator; zero traffic, missing data, and failures differ.
+Choose SLOs and alert actions from actual expectations, ownership, and evidence.
 
-- 成功の意味、対象となるイベント、除外条件、観測場所、期間を揃える。
-  受付、試行、処理完了、利用者が結果を取得できたことを混同しない。
-  非同期処理では再試行・重複・未完了をどう数えるかも決める。
-- 待ち時間を入口、キュー、実行、下流への通信などに分け、どの境界を観測すれば
-  仮説を区別できるか示す。今ない計測値や原因を確定事項にしない。
-- 割合は分子と分母の対象・期間を一致させる。低トラフィック、ゼロ件、欠測を
-  成功へ丸めない。リクエスト単位のエラーバジェットを停止時間へ機械的に換算しない。
+Bound metric labels by permitted values; avoid request IDs, user IDs, raw URLs,
+and email addresses. Check label combinations, histogram buckets, and instances.
+For logs and spans, consider purpose, secrecy, length, allowed characters, and
+cardinality. Authentication does not make self-reported headers trustworthy;
+a length limit does not bound the number of distinct values.
 
-## 信号の役割と制約
+Use parent spans and span links according to actual causality, including retries
+and batches. In Rust, check async span attachment across await boundaries.
+Sampling and exporter loss constrain observations: biased trace samples do not
+directly estimate all-request failure rates, and tail sampling cannot restore
+traces already discarded upstream.
 
-| 信号 | 使いどころと確認点 |
-| --- | --- |
-| メトリクス | 全体の頻度・量・分布。単位、集計範囲、ラベルの値の種類数を確認する |
-| ログ | 個別の状態変化や失敗理由。必要な項目だけを構造化し、秘密値や本文を無条件に保存しない |
-| トレース | 一つの処理の依存と時間。サービス・キューを跨ぐcontextと、採取されなかった経路を確認する |
+## Request and Cancellation Boundaries
 
-request ID、user ID、メールアドレス、生のURLなどをメトリクスのラベルにしない。
-routeのテンプレート、処理種別、制限された結果分類などで集計し、個別調査は
-必要な識別子を扱えるログやトレースへつなぐ。そこでも保存目的、秘匿、権限を確認する。
-ラベルの組合せ、histogramのバケット、instance数も時系列数と費用に影響する。
+Inspect failures before observation starts, including authentication, extraction,
+and resource waits. Name durations for what they actually include and preserve
+unreached stages rather than substituting zero.
+Synchronize timing tests with the stage and resource release being measured;
+sleep from request start is insufficient.
 
-トレースでは、処理の親子関係と複数の入力を関連付けるspan linkを使い分ける。
-メッセージ処理では[OpenTelemetryの対応する規約](https://opentelemetry.io/docs/specs/semconv/messaging/messaging-spans/)を確認する。
-再試行やbatchで一つのIDにまとめて因果関係を失わせない。Rustの非同期処理は、
-スレッド上に入れたspanがawaitを跨いで別タスクへ誤って付かないか、利用中の
-tracing/OpenTelemetryライブラリの対応方法で確認する。
-[tracingのasyncでのspanの扱い](https://docs.rs/tracing/latest/tracing/span/struct.Span.html#in-asynchronous-code)も参照する。
+Distinguish response creation, delivery, future drop, SQL completion, and resource
+return. A dropped-future test alone does not prove real disconnection or SQL
+cancellation. Started-minus-finished includes window edges, in-flight work,
+export loss, and process exit; correlate IDs before counting cancellations.
 
-採取率と位置、head/tail samplingの条件、exporter/collectorでの欠落を記録する。
-エラーや遅い処理を優先したトレースの単純な件数比を、全リクエストの障害率にしない。
-後段のtail samplingは前段で捨てたトレースを復元できない。SLO用の集計に必要な
-観測範囲と、調査用トレースの選別を分ける。
+Verify local record generation, shared-environment receipt, and dashboard
+aggregation and operations separately.
+Record sampling scope and mixed-version deployment periods.
+Do not claim useful aggregation over an attribute not yet received.
 
-## 通知と費用を判断する
+## Verify the Decision Path
 
-SLOは利用者の期待と現在の実績から選ぶ。未合意の目標値や通知閾値を、既定の運用として
-書き込まない。通知には担当、対応する行動、影響が続く時間を結び付け、即時対応と
-後日の調査を分ける。burn rateを使うなら、目標・窓・分母・低トラフィック時の扱いを示す。
-サービスの異常と計測基盤の欠測を区別し、回復後に通知が収束することも確認する。
+Exercise relevant normal, failure, slow, retry, empty, and telemetry-loss cases
+with isolated test data and notification targets.
+Confirm data arrives and supports the intended distinction.
+Compare retention, sampling, application overhead, collection, storage, and query
+cost against the lost diagnostic ability.
 
-収集量、保持期間、採取条件、アプリ側のCPU/メモリ/遅延、collectorの負荷、保管・検索の
-費用を、必要な調査能力と比較する。一律の採取率や負荷上限を押し付けず、削減により
-何が観測できなくなるかを示す。料金の見積りと実測した請求削減は区別する。
-
-## 検証と報告
-
-問い→観測点→集計や検索→判断→担当の対応を、小さな表や具体例でつなぐ。
-通常、失敗、遅延、再試行、ゼロ件、計測停止のうち変更に関係するケースで確かめる。
-設定の構文検査だけでなく、実際にデータが届き、目的の区別ができるかを見る。
-自動検証は隔離したデータと通知先を使い、実通知や障害注入は依頼範囲に従う。
-未実施の計測や未検証の検知能力は分けて報告する。
-
-## 仕様を確認するときの参照先
-
-- [Prometheusのラベルと単位](https://prometheus.io/docs/practices/naming/)
-- [OpenTelemetryのsampling](https://opentelemetry.io/docs/concepts/sampling/)
-- [Google SREのSLI/SLO設計](https://sre.google/workbook/implementing-slos/)
-- [Google SREのSLOに基づく通知](https://sre.google/workbook/alerting-on-slos/)
+Report observed capability and remaining blind spots.
+Read current [tracing async guidance](https://docs.rs/tracing/latest/tracing/span/struct.Span.html#in-asynchronous-code),
+[OpenTelemetry sampling](https://opentelemetry.io/docs/concepts/sampling/),
+or [SLO guidance](https://sre.google/workbook/implementing-slos/) when needed.

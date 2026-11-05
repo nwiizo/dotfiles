@@ -17,7 +17,7 @@ ceremony before every edit.
   with the smallest useful source check or experiment; do not turn uncertainty
   that code can resolve into another user interview. Record only decisions whose
   reasons matter to future changes, using the coding-style guidance below.
-- Use [nwiizo-coding-style](../nwiizo-coding-style/SKILL.md) for implementation
+- Use [nwiizo-coding-style](../../../../.agents/skills/nwiizo-coding-style/SKILL.md) for implementation
   choices, reuse, simplification boundaries, and verification. Keep this
   preflight focused on unresolved assumptions and the observable result.
 - Once the necessary choices are resolved, continue authorized implementation.

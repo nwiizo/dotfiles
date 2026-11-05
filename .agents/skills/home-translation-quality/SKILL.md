@@ -1,45 +1,24 @@
 ---
 name: home-translation-quality
-description: 技術文書の日本語翻訳で、原文の意味、用語、文体、図表や参照の整合を確認する。依頼先の翻訳方針を優先し、特定の書籍の書式を一律に適用しない。
+description: 技術文書の日本語翻訳を、原文の意味・用語・文体・図表・参照に照らして仕上げる。
 ---
 
-# Technical Translation Quality
+# Preserve Meaning in Natural Japanese
 
-原文の意味と技術的な区別を保ち、対象読者が読み進められる日本語にする。
-依頼で指定された文体・用語集・出力形式と、翻訳先の既存文書を確認して進める。
-既に決まった方針について再確認を求めない。
+Use the target project's glossary, voice, format, and agreed scope.
+Without an established style for learning material, prefer polite Japanese and
+English terms at first use. Preserve distinctions between different source concepts.
 
-## 用語と意味
+Read the action, cause, conditions, negation, and certainty before rephrasing.
+Reorder sentences for Japanese while retaining the full requested content.
+Clarify ambiguous references from source context or primary documentation;
+identify unresolved interpretations.
 
-- 同じ概念には同じ訳語を使い、原文で異なる概念を読みやすさのために混同しない。
-- 学習用の翻訳で指定がなければ「です・ます」調と初出用語の英語併記を既定にする。
-  既存の用語集や文体がある場合はそちらに合わせる。
-- 識別子、コマンド、API 名などはコードとの対応を保つ。説明文の翻訳と区別する。
-- 訳語によって意味が変わる曖昧さは、周辺の本文や一次資料で確認する。
-  解消できない場合は該当箇所と解釈を示す。
+Keep identifiers, API names, and commands aligned with code.
+Translate captions and alternative text, and check headings, numbering, notes,
+cross-references, and links.
+Use translator notes only for necessary context, clearly separate from the author.
 
-## 日本語として整える
-
-自然な日本語や口頭で伝わる説明、わかりやすい短文化を求められたら、原文が伝える
-動作・因果関係・条件を説明できる形に整理してから、重複や回りくどさを削る。
-専門用語と重要な条件を保ち、完成文だけで意味が伝わるか原文と照合する。
-全文翻訳を要約に変えず、段落や表の情報を落とさない。逐語訳そのものや誤字修正だけの
-依頼では、説明の組み直しを追加しない。
-
-- 英語の語順を引きずらず、主語、述語、修飾先が分かる文にする。
-- 長文は意味のまとまりで分ける。文字数だけを基準に分割しない。
-- 指示語の参照先が曖昧な場合は名詞を補う。主語や接続詞の追加は理解に必要な範囲にとどめる。
-- 訳注は文化的背景や技術的前提がないと理解しづらい箇所に限り、著者の本文と区別する。
-  原文にない体験、引用、根拠、主張を補わない。
-
-## 書式と参照
-
-- 見出し階層、章節番号、強調、注記の形式は翻訳先に合わせる。
-  比較した書籍に番号や表形式の注記があるだけでは、新しい書式を持ち込まない。
-- 図の代替テキストとキャプションも翻訳対象に含め、図番号と本文中の参照を揃える。
-  文末の形や配置は既存の方針に従う。
-- 章間リンク、脚注、コード内の名称を確認する。存在しない節番号や出典を作らない。
-
-修正後は対象箇所を原文と照合し、意味の脱落、用語の不一致、参照切れを確認する。
-比較資料がある場合は観察した書式と今回採用する方針を区別する。
-全文翻訳の依頼は全文を仕上げ、部分修正の依頼は必要な関連箇所までにとどめる。
+Compare the completed text with the source for omissions and terminology.
+A full translation needs full coverage; natural phrasing does not authorize
+summarizing or inventing facts.

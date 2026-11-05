@@ -20,7 +20,7 @@ end
 mkdir -p "$UPDATE_ALL_TEST_DIR/bin" "$UPDATE_ALL_TEST_DIR/tmp"
 cp "$fish_dir/tests/fixtures/update_all-command" "$UPDATE_ALL_TEST_DIR/command"
 chmod +x "$UPDATE_ALL_TEST_DIR/command"
-for name in fish mktemp date brew mise codex nvim pipx
+for name in fish mktemp date brew mise codex nvim pipx sudo
     ln -s "$UPDATE_ALL_TEST_DIR/command" "$UPDATE_ALL_TEST_DIR/bin/$name"
 end
 ln -s (command -s jq) "$UPDATE_ALL_TEST_DIR/bin/jq"
@@ -36,12 +36,36 @@ for mode in default --non-interactive --parallel
     if test "$mode" = default
         set mode_args
     end
+    set -gx UPDATE_ALL_TEST_BREW_CASK_PENDING 1
+    for sudo_exit in 1 0
+        set -gx UPDATE_ALL_TEST_SUDO_EXIT $sudo_exit
+        rm -f "$UPDATE_ALL_TEST_DIR/sudo-authorized" "$UPDATE_ALL_TEST_DIR/cask-updated" "$UPDATE_ALL_TEST_DIR/formulae-updated"
+        update_all $mode_args --verbose --no-codex --no-mise $skips >"$UPDATE_ALL_TEST_DIR/output" 2>&1
+        check "$mode upgrades formulae when sudo exits $sudo_exit" test $status -eq 0
+        check "$mode applies formula updates" test -f "$UPDATE_ALL_TEST_DIR/formulae-updated"
+        if test $sudo_exit -eq 0
+            check "$mode upgrades casks after sudo validation" test -f "$UPDATE_ALL_TEST_DIR/cask-updated"
+        else
+            check "$mode avoids cask updates without sudo" test ! -f "$UPDATE_ALL_TEST_DIR/cask-updated"
+            check "$mode identifies pending casks" grep -q 'casks skipped.*obs' "$UPDATE_ALL_TEST_DIR/output"
+        end
+    end
+    set -e UPDATE_ALL_TEST_BREW_CASK_PENDING UPDATE_ALL_TEST_SUDO_EXIT
+    rm -f "$UPDATE_ALL_TEST_DIR/sudo-authorized"
+    echo "PASS: $mode checks sudo before cask upgrades"
+end
+
+for mode in default --non-interactive --parallel
+    set -l mode_args $mode
+    if test "$mode" = default
+        set mode_args
+    end
     set -gx UPDATE_ALL_TEST_BREW_UNLINKED 1
-    rm -f "$UPDATE_ALL_TEST_DIR/unlinked-updated" "$UPDATE_ALL_TEST_DIR/brew.calls"
+    rm -f "$UPDATE_ALL_TEST_DIR/unlinked-updated" "$UPDATE_ALL_TEST_DIR/brew.calls" "$UPDATE_ALL_TEST_DIR/formulae-updated"
     update_all $mode_args --no-codex --no-mise $skips >"$UPDATE_ALL_TEST_DIR/output" 2>&1
     check "$mode upgrades unlinked formulae without replacing npm binaries" test $status -eq 0
     check "$mode updates only outdated unpinned non-keg-only unlinked formulae" test -f "$UPDATE_ALL_TEST_DIR/unlinked-updated"
-    check "$mode still upgrades other packages" grep -qx upgrade "$UPDATE_ALL_TEST_DIR/brew.calls"
+    check "$mode still upgrades other packages" test -f "$UPDATE_ALL_TEST_DIR/formulae-updated"
 
     set -gx UPDATE_ALL_TEST_BREW_INSTALL_EXIT 5
     rm -f "$UPDATE_ALL_TEST_DIR/unlinked-updated" "$UPDATE_ALL_TEST_DIR/brew.calls"
@@ -98,6 +122,15 @@ if isatty stdin; and isatty stdout
     check 'terminal updater keeps interactive stdin' test $status -eq 0
     check 'terminal updater enables prompts' grep -qx 1 "$UPDATE_ALL_TEST_DIR/pipx.interactive"
     echo 'PASS: terminal updater keeps interactive stdin'
+
+    set -gx UPDATE_ALL_TEST_BREW_CASK_PENDING 1
+    rm -f "$UPDATE_ALL_TEST_DIR/cask-updated" "$UPDATE_ALL_TEST_DIR/sudo.calls"
+    update_all --no-codex --no-mise $skips
+    check 'terminal updater allows cask authentication' test $status -eq 0
+    check 'terminal updater applies cask updates' test -f "$UPDATE_ALL_TEST_DIR/cask-updated"
+    check 'terminal updater does not require cached sudo credentials' test ! -f "$UPDATE_ALL_TEST_DIR/sudo.calls"
+    set -e UPDATE_ALL_TEST_BREW_CASK_PENDING
+    echo 'PASS: terminal updater allows cask authentication'
 end
 
 for mode in default --non-interactive --parallel

@@ -47,5 +47,3 @@ rerun evidence supports them. A profiler score does not establish correctness.
 Use the current
 [OpenTelemetry trace model](https://opentelemetry.io/docs/concepts/signals/traces/)
 to interpret span relationships; parentage alone does not establish safe concurrency.
-For provenance and adaptation decisions when maintaining this guide, see
-[engineering sources](../../../docs/engineering-sources.md).

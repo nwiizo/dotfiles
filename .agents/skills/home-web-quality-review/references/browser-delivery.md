@@ -26,5 +26,3 @@ console・networkの失敗、対応ブラウザー、配信設定が問題に関
 2026-10-27に照合した一次資料:
 - [Permissions-Policy header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Permissions-Policy)
 - [Vite build.sourcemap](https://vite.dev/config/build-options#build-sourcemap)
-
-由来と採用範囲は[設計方針の参考資料](../../../docs/engineering-sources.md)に残す。

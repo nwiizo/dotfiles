@@ -42,4 +42,3 @@ LLMの提案を実行するときも、プロンプトの注意書きで操作�
 
 - [Commandの引数とプラットフォーム差](https://doc.rust-lang.org/std/process/struct.Command.html)
 - [remove_dir_allのsymlink・競合保護と制限](https://doc.rust-lang.org/std/fs/fn.remove_dir_all.html)
-- 指示の由来は[設計方針の参考資料](../../../docs/engineering-sources.md)で管理する。

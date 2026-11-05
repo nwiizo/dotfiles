@@ -1,83 +1,23 @@
 ---
 name: add-package
-description: Install a CLI tool or macOS app and track it in this dotfiles repo's Brewfile. Use for package installation or migration requests.
+description: Install a CLI tool or macOS application and record it in this dotfiles repository's Brewfile.
 ---
 
-# add-package
+# Install and Track a Package
 
-Add packages through Homebrew. This repo's package management is the top-level
-`Brewfile`.
+Check the requested formula or cask with `rtk proxy brew search` and
+`rtk proxy brew info`; inspect the existing Brewfile for duplicates.
+Keep its grouping and record directly required binaries explicitly, even when
+currently installed as a transitive dependency.
 
-## Decision Flow
+Use `rtk proxy brew bundle check --file Brewfile` to identify missing packages.
+Apply the authorized installation with `rtk proxy brew bundle --file Brewfile`.
+A newly requested missing package is expected; distinguish unrelated failures.
 
-1. Identify the package name and whether it is a formula, cask, or non-brew
-   package.
+Verify the binary resolved on PATH and its version, or the installed cask,
+then confirm the bundle check. Reuse that result if nothing changed.
+Shell integration uses the affected `add-config` checks.
 
-2. Check Homebrew availability:
-
-```bash
-brew search <name>
-brew info <name>
-```
-
-3. Edit `Brewfile`:
-   - CLI tools: `brew "<formula>"`
-   - GUI apps: `cask "<cask>"`
-   - Keep existing grouping and simple alphabetical order where practical.
-   - Keep package changes in `Brewfile`.
-   - If a repo config, validation command, or agent rule requires the binary,
-     keep the Homebrew-owned package explicit even when it is already installed
-     transitively or outside the Brewfile.
-
-4. Check installed dependencies before applying:
-
-```bash
-brew bundle check --file Brewfile
-```
-
-If the check reports the newly requested package as missing, continue with its
-authorized installation. Distinguish that expected result from an invalid
-Brewfile or an unrelated dependency problem.
-
-5. Apply:
-
-```bash
-brew bundle --file Brewfile
-```
-
-6. Verify:
-
-```bash
-command -v <binary>
-<binary> --version
-brew bundle check --file Brewfile
-```
-
-For casks, verify with `brew list --cask <name>` or by checking the app
-exists in `/Applications`.
-
-## Non-Homebrew Packages
-
-Use non-brew installation only when Homebrew is unavailable or inappropriate,
-for example npm-only ACP adapters. In that case:
-
-- Install with the native package manager, e.g. `npm install -g <package>`.
-- Verify the exposed command with `command -v`.
-- State that it is not tracked by `Brewfile` unless a Homebrew formula/cask
-  exists.
-
-## Validation
-
-The install and verification results above cover package-only changes; do not
-run `brew bundle` again just to complete this section. If shell integration
-also changes, use the affected Fish checks in `add-config`.
-
-## Don't
-
-- Do not create unrelated package management files.
-- Do not run `brew uninstall` unless the user explicitly asks.
-- Do not use `brew cleanup` or uninstall unrelated local packages merely to
-  make the machine match the Brewfile; report that drift separately.
-- Do not add a package twice under different names.
-- Do not edit generated target files under `~/.config`; edit repo sources.
-- Do not reformat unrelated parts of `Brewfile`.
+If Homebrew cannot supply the requested package, use its supported installation
+method within the request and state how it is tracked.
+Uninstalling unrelated packages or running cleanup is outside an installation request.

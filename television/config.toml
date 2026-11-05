@@ -1,7 +1,7 @@
 # Shared by Fish and Neovim. Sources and previews use POSIX shell quoting.
 shell = "bash"
 default_channel = "files"
-# Fish/Atuin own command history; avoid a second store of picker query text.
+# Fish owns command history; avoid a second store of picker query text.
 history_size = 0
 
 [keybindings]

@@ -1,98 +1,33 @@
 ---
 name: home-test-driven-development
-description: Use for non-trivial behavior changes or reproducible bugs with a practical automated-test seam. Verify a meaningful failing test before the fix; use native validation for config and skip artificial tests for prose or trivial changes.
+description: Use a meaningful failing test for a reproducible bug or non-trivial behavior change with a practical test seam. Validate configuration natively.
 ---
 
-# Test-Driven Development
+# Demonstrate the Behavior Before Fixing It
 
-Use a focused test to demonstrate the missing or broken behavior, then implement
-the smallest change that passes it and run the relevant neighboring checks.
-Confirm RED is caused by the intended behavior, not a broken fixture or environment.
-Refactor within scope while the tests remain green.
+Choose an observable result and a realistic defect that should fail the test.
+Run the focused test before the fix and confirm the failure concerns that result.
+Implement the correction, rerun it, then run required neighboring checks.
 
-## Test Integrity
+Derive expected results independently. Keep real components where practical,
+mock external boundaries without removing the behavior being checked, and
+avoid production APIs introduced solely for tests.
 
-- Choose an observable outcome and a realistic bug that would make the test fail.
-  Avoid checks of source-text presence, private structure, or intentional constants.
-- Derive expected results independently of the implementation under test.
-- Use real components where practical. Mock external or slow boundaries without
-  removing the side effects or response shapes the behavior depends on.
-- Assert call order only when that interaction is itself required behavior.
-- Do not add dependencies or production APIs solely to enable a test.
+For generated cases, justify the property and input domain, pair them with known
+examples, and retain a minimized deterministic regression. Round trips prove
+identity only for lossless formats; a seed alone may not remain reproducible.
 
-## Input Domains and Persistent Regressions
+If detection remains uncertain, reintroduce one relevant defect in an isolated
+copy and run the same test. Compile errors, timeouts, and broken fixtures do not
+establish that the behavioral assertion caught it. A demonstrated RED/GREEN
+already supplies that evidence without another mutation run.
 
-For parsers, normalization, serialization, and state transitions, identify a
-property justified by the intended behavior before generating inputs. Examples
-include normalization being idempotent and rejected operations preserving state.
-An encode/decode round trip preserves the original only for lossless formats;
-otherwise compare the specified canonical value. Pair such properties with
-independent expected examples: two functions can share the same wrong assumption.
+Before testing a CLI that writes configuration or logs in, isolate the child
+process's platform home and configuration paths and remove inherited auth
+overrides. Keep concurrent tests' environments separate. A temporary home does
+not isolate OS credential stores; use a controlled executable for login tests.
+Real-account checks stay opt-in and separate.
 
-Exercise empty values, limits, invalid inputs, and relevant Unicode distinctions.
-Generate valid inputs directly where possible; excessive filtering can leave the
-important cases untested. Use existing test facilities first; table-driven cases
-may cover the risk without adding a property-testing dependency. Do not introduce
-production abstractions merely to enable generated tests.
-
-Reduce a failing generated input to a small counterexample and keep a deterministic
-regression with its expected result. Preserve the framework's replay seed when
-useful, but do not rely on the seed alone across generator or dependency changes.
-Check whether the property or input domain was wrong before changing production
-behavior. A passing random sample establishes only the cases exercised.
-
-See [Proptest's examples and failure persistence](https://github.com/proptest-rs/proptest/blob/main/proptest/README.md)
-when using that framework. The workflow here also applies to ordinary Rust or CLI tests.
-
-## When Defect Detection Is Uncertain
-
-Use a targeted fault check when a regression test's ability to catch the original
-bug is unclear, or a consequential boundary remains unverified. A meaningful
-RED/GREEN result already demonstrating that behavior needs no extra mutation run.
-
-1. Confirm the focused test passes on the corrected code, reusing current
-   evidence when the tested state is unchanged.
-2. In an isolated copy, reintroduce one relevant defect: change a boundary
-   comparison, omit a permission check, or leave one caller on the old behavior.
-   Preserve the user's working tree and keep credentials and live services out
-   of the run, following the isolation rules below.
-3. Run the same focused test and inspect why it failed. The expected behavioral
-   assertion must catch the defect; a compile error, fixture failure, or timeout
-   does not prove detection. A mutation that changes no relevant behavior is
-   inconclusive, not a test failure.
-
-If the test stays green and the defect is reachable, improve the observable
-assertion or add the missing case. Verify the corrected version with the final
-test as well. Report the fault and result as a test-sensitivity check, not as
-evidence that the historical bug was reproduced. Do not impose a mutation-score
-threshold or a mutation run on every change.
-
-## User Configuration and Authentication
-
-Before the first RED run of a CLI that writes user files, inspect how the existing
-code resolves its home and configuration paths. A new configuration override may
-be the behavior under test and cannot be the test's only isolation boundary.
-Set the child process's platform home and relevant configuration variables to a
-temporary directory, and remove inherited authentication overrides. Do not change
-the test runner's global environment when tests can run concurrently.
-
-OS credential stores may live outside that directory. Use a controlled child
-executable for ordinary login-command tests; do not assume a temporary HOME also
-isolates Keychain. Keep real-login tests opt-in, outside the default suite, and
-separate from the regression test that reproduces a bug.
-
-## Existing Work and Exceptions
-
-- Do not manufacture RED for an implementation that already exists. Use a safe
-  pre-change reproduction when available; otherwise add the strongest regression
-  check and state that the pre-change failure was not observed.
-- Respect an explicit user decision to skip tests and use available alternative
-  verification. Do not add an approval round for ordinary testing choices.
-- Validate config-only edits with the native parser, linter, or application check.
-  Do not test prose, generated text, or trivial pass-through code just for process.
-- For legacy code, use the nearest stable behavior boundary; do not redesign a
-  subsystem solely to test one small change.
-- Report the relevant command results and any verification limit.
-
-Adapted from obra/superpowers' test-driven-development and writing-good-tests
-guidance (MIT).
+For an existing implementation, use a safe pre-change reproduction if available;
+otherwise state that the prior failure was not observed.
+Use native parsers for configuration and skip artificial tests for prose.

@@ -32,8 +32,9 @@ Read this file for the overall model. Use the subdirectory docs when changing a 
 | Ghostty | `ghostty/README.md` | `ghostty/config` |
 | Television | `television/README.md` | `television/config.toml`, `television/cable/` |
 | Git / GitHub CLI | `git/README.md` | `git/config`, `git/power_pull.sh`, `gh/config.yml` |
-| Small CLI configs | this README | `bat/`, `atuin/`, `tealdeer/` |
-| Agent config | [`.agents/README.md`](.agents/README.md) | sources under `.agents/` for reusable agents, rules, docs, and skills |
+| Small CLI configs | this README | `bat/`, `tealdeer/` |
+| Agent config | [`.agents/README.md`](.agents/README.md) | sources under `.agents/` for reusable agents, docs, and skills |
+| Retired config and investigation history | [`archive/README.md`](archive/README.md) | archived sources and adoption records; not installed as instructions |
 | Claude Code entrypoints | [`.claude/README.md`](.claude/README.md) | linked sources under `.agents/`; local plugins under `.claude/plugins/` |
 | Codex entrypoints | [`.codex/README.md`](.codex/README.md) | linked sources under `.agents/codex/` |
 | Releases | `releases/` | versioned release notes |
@@ -46,9 +47,9 @@ relevant guide before editing that area.
 
 Personal preferences and reusable workflows live under `.agents/`. Keep detailed
 tool documentation in each area's README and task procedures in skills. See
-[instruction ownership](.agents/README.md#instruction-ownership) for editing
-locations and [shared project instructions](.agents/README.md#shared-project-instructions)
-for the official references, client loading differences, and verification steps.
+[agent installation](.agents/README.md#installation) for editing locations and
+[validation](.agents/README.md#validation) for structural checks and client
+discovery verification.
 
 ## Managed Stack
 
@@ -60,7 +61,7 @@ for the official references, client loading differences, and verification steps.
 | Editor | Neovim + LazyVim | `nvim/` |
 | Terminal | Ghostty | `ghostty/config` |
 | GitHub / Git | gh, git-delta, lazygit | `gh/config.yml`, `git/config`, `git/power_pull.sh` |
-| CLI config | bat, atuin, tealdeer | `bat/config`, `atuin/config.toml`, `tealdeer/config.toml` |
+| CLI config | bat, tealdeer | `bat/config`, `tealdeer/config.toml` |
 | Linking / bootstrap | Shell scripts | `scripts/bootstrap.sh`, `scripts/link.sh` |
 | Agent config | Claude Code, Codex, Agents | `.agents/`, `.claude/`, `.codex/` |
 
@@ -81,11 +82,10 @@ dotfiles/
 ├── ghostty/                 # Ghostty terminal config
 ├── git/                     # Git config and helper scripts
 ├── gh/                      # GitHub CLI config
-├── .agents/                 # Source for reusable agents, rules, docs, and skills
+├── .agents/                 # Source for reusable agents, docs, and skills
 ├── .claude/                 # Claude Code project entrypoint symlinks
 ├── .codex/                  # Codex project custom-agent symlinks
 ├── bat/                     # bat config
-├── atuin/                   # atuin config
 ├── tealdeer/                # tealdeer config
 ├── releases/                # versioned release notes
 └── archive/                 # retired configs, reference only
@@ -160,7 +160,6 @@ an AI client; that client's MCP settings must use command `aside` with args `["m
 | `ghostty/config` | `~/.config/ghostty/config` |
 | `ghostty/claude-notification.sh` | `~/.local/bin/ghostty-claude-notification` |
 | `bat/config` | `~/.config/bat/config` |
-| `atuin/config.toml` | `~/.config/atuin/config.toml` |
 | `television/config.toml`, `television/cable/*.toml` | `~/.config/television/config.toml`, `~/.config/television/cable/*.toml` |
 | `tealdeer/config.toml` | `~/.config/tealdeer/config.toml` |
 | `git/config` | `~/.config/git/config` |
@@ -173,12 +172,10 @@ an AI client; that client's MCP settings must use command `aside` with args `["m
 | `.agents/RTK.md` | `~/.claude/RTK.md`, `~/.codex/RTK.md` |
 | `.agents/claudeignore` | `~/.claude/.claudeignore` |
 | `.agents/agents/` | `~/.claude/agents` |
-| `.agents/docs/` | `~/.claude/docs` |
-| `.agents/rules/` | `~/.claude/rules` |
 | `.agents/skills/*` | `~/.claude/skills/*`, `~/.agents/skills/*` |
 | `.agents/codex/AGENTS.md` | `~/.codex/AGENTS.md` |
 | `.agents/codex/agents/*.toml` | `~/.codex/agents/*.toml` |
-| `.claude/agents`, `.claude/rules`, `.claude/skills` | project symlinks into `.agents/` |
+| `.claude/agents`, `.claude/skills` | project symlinks into `.agents/` |
 | `.codex/agents` | project symlink into `.agents/codex/agents` |
 
 `~/.agents` is reserved for cross-client assets. This repository currently publishes only Agent Skills there; Claude Code and Codex subagents, rules, and tool-specific documentation stay in their product-specific home directories.
@@ -197,7 +194,7 @@ Most edits happen in the repo, then the owning app or shell is restarted.
 | Add/remove `fish/functions/*.fish` | Run `./scripts/link.sh` |
 | Fish plugins | Edit `fish/fish_plugins`, then run `fish scripts/install-fish-plugins.fish` |
 | Neovim config | Restart Neovim |
-| Ghostty, Git, gh, bat, atuin, tealdeer config | Restart the app or open a new shell |
+| Ghostty, Git, gh, bat, tealdeer config | Restart the app or open a new shell |
 | Homebrew packages | Edit `Brewfile`, then run `brew bundle --file Brewfile` |
 | Agent instructions and assets | Edit the source, run `rtk proxy ./scripts/audit-agent-config.sh`, then start a fresh client session. Run `scripts/link.sh` only when installation paths change. |
 
@@ -237,7 +234,7 @@ update_all --help
 
 `fish/config.fish` defines environment variables, abbreviations, and interactive tool integrations. Early PATH setup and mise/direnv hooks live in `fish/conf.d/`; custom commands autoload from `fish/functions/`.
 
-Fisher manages four plugins: autopair for paired brackets and quotes, puffer-fish for input expansions, Sponge for failed-command cleanup in Fish history, and abbreviation-tips for shortcut reminders. All plugins, including Fisher, use reviewed tags or commits in `fish/fish_plugins`. Television owns interactive pickers, Atuin records history, and zoxide ranks directories.
+Fisher manages four plugins: autopair for paired brackets and quotes, puffer-fish for input expansions, Sponge for failed-command cleanup in Fish history, and abbreviation-tips for shortcut reminders. All plugins, including Fisher, use reviewed tags or commits in `fish/fish_plugins`. Television owns interactive pickers, Fish records history, and zoxide ranks directories. Atuin is retired; retained history data is not removed by linking dotfiles.
 
 Edit the desired plugin list, run `rtk proxy fish scripts/install-fish-plugins.fish`, then `reload` in existing terminals. The installer reconciles exact refs through Fisher and checks for incomplete installations; keep the live manifest and Fisher's internal variables outside Git. Routine `update_all` runs preserve the selected refs. The [Fish plugin guide](fish/README.md#plugin-policy-and-review-2026-10-10) records maintenance decisions and additional candidates.
 
@@ -334,7 +331,7 @@ rtk proxy ./scripts/audit-agent-config.sh
 ```
 
 The agent audit checks file layout and metadata. To verify which instructions
-the clients load, follow the [client checks](.agents/README.md#shared-project-instructions).
+the clients load, follow the [client checks](.agents/README.md#validation).
 Installation and plugin application commands are listed under [Setup](#setup).
 
 For AI-history-derived changes, start with a bounded local aggregate from the installed Rust `nippo` CLI. Follow [`home-history-distill`](.agents/skills/home-history-distill/SKILL.md) for redaction and evidence review; do not commit raw logs.

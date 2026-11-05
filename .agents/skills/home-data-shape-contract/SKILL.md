@@ -1,59 +1,30 @@
 ---
 name: home-data-shape-contract
-description: DB・保存ファイル・API・イベント・CLIの構造化出力やMCP・エージェントツールの入出力を設計・変更するとき、具体例と互換性を確認する。合意済みの形式や既存設定値だけの変更では再確認しない。
+description: DB・保存ファイル・API・イベント・CLI・MCPツールの入出力を設計するとき、具体例と読み書きの互換性を確認する。
 ---
 
 # Persisted Data and Public Interfaces
 
-対象は永続化形式とプロセス外へ公開するデータの構造。
-ローカル型、テスト用の中間表現、既存形式のまま設定値だけを変える作業には適用しない。
+Read existing readers, writers, stored data, and agreed requirements.
+For an unresolved structural choice, show concrete values before and after the
+change and explain which consumers remain compatible.
+Already specified shapes need implementation, not another approval.
 
-## 進め方
+Choose named fields when their meaning and evolution matter. Store derived
+values only with a reason and an update/recovery strategy.
+Check unknown fields and enum values, null versus absent values, and preservation
+of meaning across versions.
 
-- 現在の書き込み側、読み込み側、保存済みデータ、既に決まった要件を確認する。
-- 構造の判断が必要なら、違いが分かる具体値の before/after と互換性への影響を示す。
-  新規形式に架空の旧形式を作る必要はない。
-- ユーザーの判断が必要な未決の選択だけ確認する。依頼で指定された形式や合意済みの
-  方針に沿う可逆的な実装は進める。再承認のために migration や serializer の作成を止めない。
-- 本番データの書き換え・削除や公開は、実装作業とは別に、対象と実行権限を確認する。
+For migrations, map old/new readers and writers at each stage, including delayed
+workers and event replay. Handle partial dual writes, concurrent backfills,
+interruption and reruns. Inspect database-version-specific locks and rewrites.
+Remove old formats only after accounting for consumers and rollback compatibility.
 
-## 判断基準
+Verify representative old/new data, mixed versions, and failed migrations.
+Distinguish code rollback from recovery of removed data.
+Production data mutation needs authorization for that target.
 
-- 導出できる値の重複保存は理由がある場合に限る。時点の事実として保存する値と、
-  再計算するキャッシュを区別し、後者には更新・不整合の回復方法を持たせる。
-- 人が読む形式では意味の分かるキーを使う。短縮キーや `cols` + `rows` は、
-  データ量・処理負荷の要件があり、読みにくさと互換性の負担に見合う場合に選ぶ。
-- 固定長・固定順序の値は tuple が候補になる。拡張や項目名の意味が重要なら object。
-  既存形式を小さくする目的だけで変えない。
-- 独立した状態の軸は分け、不可能な組み合わせを許す分割は避ける。
-  永続化する enum の値は並べ替えで意味が変わらない表現にする。
-- 追加変更でも安全とは限らない。古い reader の未知フィールド・未知値の扱いと、
-  新しい reader が古いデータを読めるかを確認する。
-- フィールド名を別の意味に再利用しない。移行が必要なら読み書きの切替順序、
-  既存データの扱い、失敗時の復旧方法を決める。
-
-## 新旧が混在する移行
-
-読み書きする版と保存形式の組合せを並べ、各段階でどの利用者が動くかを確認する。
-rolling deploy、遅れて動くworker、保存済みイベントの再生も含める。拡張、データ移行、
-読み取り切替、旧形式の削除を分ける方法を検討し、停止を許容する小規模な移行へ
-不要な二重運用を持ち込まない。実装と本番の移行実行は区別する。
-
-二重書き込みでは、片側だけ成功した場合と旧版が片側しか更新しない期間の整合を扱う。
-backfillは同時更新された値を古い内容で上書きしない条件を設け、中断・再実行しても
-追跡できる単位と進捗を持たせる。追加DDLでも、対象DBの版・操作・テーブル規模による
-ロック、書き換え、負荷、レプリカ遅延を確認する。分割するだけで無停止とは判断しない。
-
-旧形式の削除は、利用箇所、観測期間、遅延処理・再生の範囲、切戻し先の互換性から判断する。
-検索結果や短期間の利用ゼロだけで削除を決めない。`down`が存在しても、削除されたデータや
-失われた情報を復元できるとは限らない。コードの切戻し、データ復元、修正を追加して
-前へ進める方法を比較し、戻せない境界を明示する。未検証のバックアップを復旧保証にしない。
-
-旧新の読み書き、移行中の更新、途中停止と再実行、残った保存データを使って検証する。
-DB固有の動作は利用版の公式資料で確認する。PostgreSQLでは
-[ALTER TABLEのロックと書き換え条件](https://www.postgresql.org/docs/current/sql-altertable.html)を参照する。
-
-判断を説明する具体例は [samples.md](references/samples.md)、
-null・時刻・数値などの境界を扱うときは [pitfalls.md](references/pitfalls.md) を読む。
-MCP・エージェント向けツールでは [agent-tools.md](references/agent-tools.md) を読み、
-部分結果、認可、副作用、再試行を入出力へ対応させる。
+Read [examples](references/samples.md) for design comparisons,
+[boundaries](references/pitfalls.md) for null/time/number cases, and
+[agent tools](references/agent-tools.md) for authorization, partial results,
+side effects, and retries.

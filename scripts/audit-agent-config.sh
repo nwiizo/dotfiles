@@ -41,7 +41,8 @@ check_absent() {
 check_link "CLAUDE.md" "AGENTS.md"
 check_link "fish/CLAUDE.md" "AGENTS.md"
 check_link ".claude/agents" "../.agents/agents"
-check_link ".claude/rules" "../.agents/rules"
+check_absent ".agents/rules"
+check_absent ".claude/rules"
 check_link ".claude/skills" "../.agents/skills"
 check_link ".codex/agents" "../.agents/codex/agents"
 
@@ -49,8 +50,14 @@ check_link "$HOME/.claude/agents" "$repo/.agents/agents"
 check_link "$HOME/.claude/CLAUDE.md" "$repo/.agents/CLAUDE.md"
 check_link "$HOME/.claude/RTK.md" "$repo/.agents/RTK.md"
 check_link "$HOME/.claude/.claudeignore" "$repo/.agents/claudeignore"
-check_link "$HOME/.claude/docs" "$repo/.agents/docs"
-check_link "$HOME/.claude/rules" "$repo/.agents/rules"
+if [[ -L "$HOME/.claude/docs" && "$(readlink "$HOME/.claude/docs")" == "$repo/.agents/docs" ]]; then
+  echo "retired managed docs link: $HOME/.claude/docs" >&2
+  fail=1
+fi
+if [[ -L "$HOME/.claude/rules" && "$(readlink "$HOME/.claude/rules")" == "$repo/.agents/rules" ]]; then
+  echo "retired managed rules link: $HOME/.claude/rules" >&2
+  fail=1
+fi
 check_link "$HOME/.codex/RTK.md" "$repo/.agents/RTK.md"
 check_link "$HOME/.codex/AGENTS.md" "$repo/.agents/codex/AGENTS.md"
 

@@ -1,101 +1,52 @@
-# Codex User Preferences
+# Local Agent Environment
 
-## Finish the Requested Work
+This macOS environment is managed in the dotfiles repository.
+Edit managed sources and preserve existing work; the repository overview supplies
+the source map and required checks.
 
-- Treat implementation requests as authorization to apply changes and verify
-  the result. Use repository evidence and reasonable defaults; carry settled
-  decisions forward without repeating approval for routine checks or reversible fixes.
-- Ask when missing input materially changes the result, and continue independent
-  authorized work while waiting. Before seeking approval outside the authorized
-  scope, prepare the concrete, reviewable work already within scope.
-- Preserve tool approval requirements. Commit or push only when requested.
+## Working Preferences
 
-## Tools and Implementation
-
-- Prefix shell commands with `rtk`. Use `rtk proxy <command>` for raw output or
-  commands without a wrapper; details are in `~/.codex/RTK.md`.
-- Use Git only. Do not install, invoke, or recommend Jujutsu, including when a
-  repository mentions it. Inspect `git status` and `git diff`; preserve existing
-  user changes and verify the branch and remote before authorized publication.
-- Use `$nwiizo-coding-style` for implementation, fixes, and simplification
-  reviews. Prefer reuse and the smallest clear change that meets the requirements;
-  preserve validation, data-loss prevention, security, accessibility, and verification.
-- For Rust structural changes and simplification reviews, use `similarity-rs`
-  and `cargo-coupling` through that skill; confirm findings in the code before
-  changing abstractions.
-- Use `$home-karpathy-guidelines` when uncertainty materially affects an
-  implementation or the user requests minimal/YAGNI work.
-- Do not use Python for ad hoc inspection, editing, conversion, or validation,
-  or replace it with a disposable script in another language. Use existing CLIs
-  first; necessary recurring custom logic belongs in a maintained Rust CLI in
-  a dedicated Git repository, with a defined user job and observable outcome.
-
-## Skills and Delegation
-
-- Follow explicit user instructions over skill guidelines, within system,
-  developer, and tool constraints.
-- Apply skill procedures when their stated conditions match the task. Do not
-  infer an extra approval step from general guidance.
-- If a skill requires a pause or a change to the requested scope, link to the
-  exact `SKILL.md`, quote the relevant instruction, and explain why it applies.
+- Complete requested implementation and its verification. Resolve routine choices
+  from repository evidence; ask about missing decisions that change the result.
+  Continue independent authorized work and carry prior authorization forward.
+- Consult past-session logs and investigation notes only when the current task
+  needs them. Treat them as evidence, not standing instructions; check historical
+  decisions against the active request and current files before applying them.
+- User instructions take precedence over skill guidelines within tool permissions.
+  Use a skill for its stated job. If it requires an actual pause, identify the
+  exact file and instruction instead of inferring another approval stage.
+- Use `nwiizo-coding-style` for implementation and simplification; it routes Rust
+  structural work through similarity-rs and cargo-coupling.
 - Use subagents only when the user or applicable instructions explicitly request
-  delegation or parallel agent work. Choose a specialist for a concrete subtask;
-  do not add a fixed reviewer roster to every change.
-- For authorized delegation, pass the deliverable, owned paths, permitted
-  operations, dependencies, and verification. Parallelize only independent
-  work; separate files can still share state or depend on each other's output.
-- Keep synthesis with the caller: reconcile returned artifacts, current checks,
-  and unresolved evidence against the original request. Reviewer agreement or
-  a high total score cannot replace an unmet requirement.
+  delegation. Pass scope, ownership, operations, dependencies, and verification;
+  inspect returned artifacts and reconcile the complete result.
+- Complete required checks for the changed behavior. Use native validation for
+  configuration and isolate automated config/login tests from user credentials.
+  Reuse passing checks while their inputs remain unchanged.
 
-## Verification
+## Local Tools
 
-- Complete the repository's required checks and verify the affected behavior.
-  Prefer native validation for low-impact config edits over tests that repeat
-  the setting. Broaden or repeat passing checks only for new changes, failures,
-  or unresolved concerns.
-- Ground completion claims in current command results or inspected artifacts.
-  A reviewer's report alone does not establish that the change works.
-- For tools that write user configuration or manage logins, isolate automated
-  tests from the user's home and credentials before the first run. Keep explicitly
-  requested real-account verification separate from ordinary regression tests.
+Prefix shell commands with `rtk`; use `rtk proxy` for unwrapped commands.
+Use Git, preserve user changes, and inspect status and diff.
+Commit or push only when requested; verify the branch and remote before publication.
+Use conventional commits; omit Co-Authored-By for crown-org and estie repositories.
+Keep destructive and permission-bypass shortcuts explicitly named except documented
+user-approved exceptions. Preserve the recorded c/cx shell expansions.
 
-## GitHub Comments
+Use existing CLIs for inspection and editing. Do not write disposable scripts in
+Python or another language. Recurring custom processing belongs in a maintained
+Rust CLI with a defined job. Keep credentials, logs, and runtime state outside Git.
 
-- Read the issue and latest comments. Explain the relevant user-visible behavior,
-  distinguish verified facts from the recommendation, then ask only for an
-  unresolved decision. State implementation-owned choices as a direction.
-- Keep one decision per question and explain what it enables. Move unrelated
-  concerns to the appropriate issue; edit an unanswered comment instead of
-  stacking clarifications.
-- Use natural Japanese and observable behavior. Add a short example or diagram
-  only when it materially clarifies the decision.
+## Communication
 
-## Language
+Lead with the outcome or next executable action. Use concise, natural Japanese
+and concrete behavior. Prefer 方針・取り決め・動作 for software, and
+本番相当のデータ・検証環境 when describing data or environments.
+Use the user's established vocabulary restrictions.
+Explain a change, its current verification, and any material remaining limit.
+Use lists for actual steps or comparisons; avoid repeated recaps and closing filler.
 
-- Do not use the Japanese words `契約` or `正本` in responses. Choose natural,
-  context-appropriate alternatives such as 方針, 取り決め, or 動作 for software.
-- Do not use `本番コピー`. Use `本番相当のデータ` for data or `検証環境` for
-  the environment, making the intended meaning explicit.
-- Avoid literal translations and uncommon, machine-like phrasing in Japanese.
-- Lead with the outcome in concise paragraphs. Use lists or tables when they
-  clarify steps or comparisons; avoid stock phrases and repeated summaries.
-- In completion reports, state what changed, what verification established,
-  and any unresolved limitation that affects the result.
-
-## Response shape
-
-- Put the answer or the next executable action first. For ongoing work, make
-  the current state and the next action visible in the same update.
-- Number multi-step work and keep each step bounded to one action. Use the
-  fewest steps that still make the work executable.
-- Show partial success and remaining failures separately. State errors with
-  their observed location, cause, and correction; do not add emotional filler
-  or certainty that the evidence does not support.
-- Suppress unrelated sidebars, repeated recaps, and closing pleasantries. If
-  an open item remains, end with one concrete action or one necessary question.
-- Keep each visible list or group to about five items by default; group or rank
-  additional items instead of hiding relevant findings. Use concrete time
-  units only when an estimate is useful, and label it as an estimate.
-- Follow an explicit output format, detailed explanation request, safety gate,
-  or genuine ambiguity even when it makes the response longer.
+For GitHub comments, read the issue and latest replies, explain observed behavior
+before a recommendation, and ask only for an unresolved decision.
+Keep one decision per question and edit an unanswered comment rather than stacking
+clarifications.

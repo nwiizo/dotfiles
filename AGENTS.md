@@ -19,7 +19,7 @@ Claude-only files.
 | Packages | `Brewfile` |
 | Fish | `fish/config.fish`, `fish/fish_plugins`, autoloaded `fish/functions/<name>.fish`; vendor overrides in `fish/conf.d/` use the upstream basename |
 | Neovim | `nvim/lua/config/` and feature-grouped `nvim/lua/plugins/` |
-| Terminals and CLI apps | `ghostty/`, `gpane/`, `git/`, `gh/`, `bat/`, `atuin/`, `tealdeer/` |
+| Terminals and CLI apps | `ghostty/`, `gpane/`, `git/`, `gh/`, `bat/`, `tealdeer/` |
 | Agent preferences and workflows | `.agents/`; project `.claude/` entrypoints and `.codex/agents` link there |
 | Skills and personas | `.agents/skills/<name>/SKILL.md`; same-named Claude Markdown and Codex TOML personas in `.agents/agents/` and `.agents/codex/agents/` |
 

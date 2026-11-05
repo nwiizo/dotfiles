@@ -49,19 +49,17 @@ set -gx HOMEBREW_UPGRADE_GREEDY 1
 # PATH
 # Remove the retired custom GOPATH bin inherited by already-running terminals.
 set -gx PATH (string match -v -- $HOME/gopath/bin $PATH)
+# Atuin is retired; drop the standalone path inherited from older shells.
+set -gx PATH (string match -v -- "$HOME/.atuin/bin" $PATH)
 fish_add_path --path $HOME/.cargo/bin
 fish_add_path --path $HOME/.krew/bin
 fish_add_path --path $HOME/go/bin
-fish_add_path --path /usr/local/kubebuilder/bin
-fish_add_path --path $HOME/.istioctl/bin
 
 set -q MANPATH; or set MANPATH ''
 set -gx MANPATH /opt/homebrew/share/man $MANPATH
 
 set -q INFOPATH; or set INFOPATH ''
 set -gx INFOPATH /opt/homebrew/share/info $INFOPATH
-
-test -f "$HOME/.cargo/env.fish"; and source "$HOME/.cargo/env.fish"
 
 # Machine-specific environment overrides must also apply to `fish -c` and Fish
 # scripts. Interactive-only work in this file must guard itself.
@@ -147,7 +145,6 @@ if command -sq cctx
     command cctx --shell-init fish | source
 end
 abbr --add -- cx 'codex --dangerously-bypass-approvals-and-sandbox'
-abbr --add -- cxq 'codex exec'
 abbr --add -- cxs 'codex --sandbox workspace-write --ask-for-approval on-request'
 abbr --add -- cxro 'codex --sandbox read-only'
 abbr --add -- cxe 'codex exec'
@@ -202,7 +199,6 @@ abbr --add --description='Browse Git commits with a diff preview' -- fgl '__tv_c
 abbr --add --description='Pick changed files with a diff preview' -- fgs '__tv_complete git-diff'
 abbr --add --description='Search running processes' -- fp '__tv_complete processes'
 abbr --add --description='Inspect shell variables' -- fv '__tv_variables (set --show | psub) (set --names | psub)'
-abbr --add --description='Search synced history with Atuin' -- fh 'atuin search -i'
 abbr --add --description='Select and switch a local Git branch' -- gb git_tv_branch
 abbr --add --description='Select a Kubernetes context' -- kc kubectl_tv_ctx
 abbr --add --description='Run a command in a selected container' -- de docker_tv_exec
@@ -260,7 +256,6 @@ if functions -q __abbr_tips_init
         '(^(\s?(\w-?)+){2}).*' \
         '(^(\s?(\w-?)+){1}).*'
     set -g ABBR_TIPS_PROMPT '\n💡 \e[1m{{ .abbr }}\e[0m => {{ .cmd }}'
-    set -g ABBR_TIPS_AUTO_UPDATE background
 
     function __nwiizo_abbr_tips_lazy_init --on-event fish_postexec
         functions --erase __nwiizo_abbr_tips_lazy_init
@@ -305,5 +300,3 @@ end
 # Keep Fish's native Git completion, which handles non-ASCII paths correctly.
 set -gx CARAPACE_EXCLUDES git
 type -q carapace; and __nwiizo_cached_init carapace-excluding-git carapace _carapace fish
-# Atuin records history and powers `fh`; Television owns Ctrl-R.
-type -q atuin; and __nwiizo_cached_init atuin atuin init fish --disable-up-arrow --disable-ctrl-r

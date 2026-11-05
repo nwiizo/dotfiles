@@ -1,30 +1,20 @@
 ---
 name: home-marp-slide-editing
-description: MarpのMarkdownを作成・編集し、HTMLやPDFでレイアウトと可読性を確認する。marp:trueの資料やMarpを使うスライド依頼が対象。
+description: MarpのMarkdownを作成・編集し、HTMLやPDFで収まりと可読性を確認する。marp:trueの資料を扱う。
 ---
 
-# Marp Slide Editing
+# Verify Slides in Their Rendered Form
 
-対象のテーマ・出力形式・既存のビルドコマンドを確認して編集する。
-スライドの内容と見た目は、実際のレンダリングで判断する。
+Read the theme, output format, existing build command, and requested edit scope.
+Keep meaning, technical distinctions, and conditions visible on the relevant slide.
+Layout-only work does not require rewriting the talk.
 
-説明文を自然に、口頭で伝わるように、またはわかりやすく短くする依頼では、
-まず何がどの条件で起きるかを説明できる形にし、話題を分けてから重複を削る。
-専門用語と重要な条件は保ち、条件を対応する文や表の近くに置く。短くするために
-ノートだけへ移さない。完成文だけで意味が伝わるか、元の資料と照合する。
-誤字修正・レイアウト調整・書き出しだけの依頼には、説明の組み直しを追加しない。
+Split overloaded content instead of shrinking it beyond readability.
+Give split slides meaningful titles and enough context.
+For HTML blocks that display Markdown literally, use suitable HTML locally.
+Check absolute positioning, overlap, clipping, and HTML/PDF differences.
 
-- HTML ブロック内で Markdown が文字のまま出る場合は、`<strong>` や `<img>` を使う。
-  通常の Markdown まで一律に HTML へ置き換えない。画像の説明も残す。
-- フォント・余白・表の行数に固定の基準を当てず、テーマと投影時の読みやすさを確認する。
-  読みにくい縮小で詰め込まず、要約や分割を検討する。
-- 分割したスライドには内容を示すタイトルと必要な文脈を持たせる。
-  `(1/2)` だけでタイトルを区別しない。
-- 絶対配置や Flexbox を使う場合は、重なり、切れ、HTML/PDF の差を確認する。
-  問題があれば通常の文書フローや分割を選ぶ。
-- 修正対象は依頼と現在の差分から判断する。不明だから全ファイルへ広げたり、
-  日常的なレイアウト調整ごとに複数案の選択を求めたりしない。
-- 内容整理を依頼されていないときは、パンチラインや行動提案のスライドを追加しない。
-
-既存のプレビュー・エクスポート手順で出力し、変更したスライドと分割前後を目視確認する。
-ビルド成功だけで、収まりや可読性まで確認済みと報告しない。
+Render with the existing preview/export procedure and visually inspect changed
+slides and their neighbors.
+A successful build alone does not establish fit or projected readability.
+Report output artifacts and actual visual verification.

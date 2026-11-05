@@ -30,7 +30,7 @@ consistent. Plain `tv` keeps the channel switcher available.
 
 Hidden files are included, `.git` and `node_modules` are excluded, and normal
 ignore rules remain active. Previews quote embedded apostrophes before passing
-paths to bash. Query history is disabled because Fish and Atuin already manage
+paths to bash. Query history is disabled because Fish already manages
 command history. No community channel download is required.
 
 Fish's `repo` / `Alt-J` / `Ctrl-G` helper supplies ghq repository roots in

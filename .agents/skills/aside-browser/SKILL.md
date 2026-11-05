@@ -1,15 +1,19 @@
 ---
 name: aside-browser
-version: 3
-description: Read when you need a browser, or have to work across user's logged-in websites (e.g. Gmail, Slack, cloud consoles, etc.), or have to refer personal contexts like memory and browsing history.
+version: 4
+description: Use Aside for browsing, online research, and testing websites in the user's signed-in browser. Read its current CLI guide before operating the browser.
 ---
 
-# Aside
+# Use the Installed Aside Guide
 
-This file is only an entry point. You MUST run `aside guide` to read this skill’s actual instructions before using Aside, then follow them.
+Run `rtk proxy aside guide` before using Aside. Its output supplies the current
+commands; do not guess flags or replace it with remembered browser APIs.
 
-- If `aside` is not installed, ask the user for permission to install Aside CLI. After the user approves, run the macOS/Linux installer `curl -fsSL https://releases.aside.com/install.sh | bash`, then run `aside guide`.
-- If `aside guide` is reported as an unknown command, your CLI is outdated. Run `aside --update`, then run `aside guide` again.
-- If a newer CLI version is available, the guide may be outdated. Always run `aside --update`, then run `aside guide` again before continuing.
+If the guide reports an outdated CLI or the guide command is unavailable,
+update with `rtk proxy aside --update` and read the guide again.
+If installation is missing, use the repository's installation guidance and
+the user's existing authorization; ask only when installation is outside scope.
+Report installation or update errors.
 
-If installation or an update fails, report the error instead of guessing the CLI usage.
+Browsing access does not authorize posting, purchases, or changing account data.
+Carry prior authorization forward and keep live credentials out of artifacts.

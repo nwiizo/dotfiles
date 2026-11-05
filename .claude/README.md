@@ -6,7 +6,6 @@ Edit the managed source rather than a copy under the home directory.
 | Path | Managed source |
 |---|---|
 | `agents/` | `../.agents/agents/` |
-| `rules/` | `../.agents/rules/` |
 | `skills/` | `../.agents/skills/` |
 | `plugins/` | Local integrations and marketplace manifest in this directory |
 

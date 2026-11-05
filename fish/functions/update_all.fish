@@ -223,7 +223,7 @@ function update_all -d "Update tools with their native managers"
                     end
                 end
                 if test $code -eq 0
-                    brew upgrade
+                    brew upgrade --formula
                     set code $status
                 end
                 if test $code -eq 0

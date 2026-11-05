@@ -40,4 +40,3 @@ read-only等の注釈は実装と一致させる。注釈やツール説明だ�
 
 仕様が関係する場合は[MCP Tools仕様](https://modelcontextprotocol.io/specification/2026-07-28/server/tools)
 と導入SDK・接続先の対応版を照合する（2026-10-27確認）。
-指示の由来は[設計方針の参考資料](../../../docs/engineering-sources.md)に残す。

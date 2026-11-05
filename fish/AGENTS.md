@@ -51,7 +51,7 @@ Keep Sponge and `conf.d/zz_sponge_compat.fish` compatible; in-process
 `fisher update` can replace the compatibility functions until a new shell starts.
 
 Before adding a plugin, compare Fish core and existing integrations: Television
-owns pickers and empty-line Tab, Atuin records history, zoxide ranks directories,
+owns pickers and empty-line Tab, Fish records history, zoxide ranks directories,
 mise manages tool versions, direnv manages project environments, and Ghostty
 handles long-command notifications. Check maintenance and open compatibility
 issues; add a plugin when it fills a concrete gap. For new CLI tools, follow the
@@ -61,7 +61,6 @@ Put user bindings in `functions/fish_user_key_bindings.fish` and prefer Fish's
 [named keys and input functions](https://fishshell.com/docs/current/cmds/bind.html).
 Check the effective binding after the first prompt, when Fish initializes the
 keymap. Preserve one owner per shortcut instead of loading overlapping hooks.
-Fish history filters and Sponge do not filter Atuin's separate database.
 
 ## Verify
 

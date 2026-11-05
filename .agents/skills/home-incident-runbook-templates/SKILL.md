@@ -1,33 +1,21 @@
 ---
 name: home-incident-runbook-templates
-description: Create service-specific incident runbooks with diagnosis, recovery, rollback, and escalation steps. Use for response-procedure authoring; an active incident does not require writing a full runbook first.
+description: Write service-specific incident procedures for diagnosis, mitigation, recovery, verification, and escalation.
 ---
 
-# Incident Runbooks
+# Write an Executable Service Runbook
 
-Write procedures an on-call engineer can use with the actual service, deployment
-environment, permissions, and team escalation policy. Resolve those facts from
-existing configuration and runbooks; identify missing operational decisions.
+Derive service, environment, commands, permissions, contacts, and thresholds from
+existing configuration and operations records.
+For each consequential step state its precondition, exact target, action,
+expected observation, and failure path.
 
-## Procedure Requirements
+Separate diagnosis from state-changing recovery.
+Before destructive recovery, identify impact, authorization, selected resources,
+and a recovery path. Rollback includes schema and data compatibility.
 
-For each consequential step, give the relevant precondition, exact target,
-action, expected observation, and what to do if it fails. Keep diagnosis and
-state-changing recovery distinguishable.
-
-- Derive commands, identifiers, dashboards, contacts, and thresholds from the
-  target environment. Do not substitute fictional production defaults.
-- Before destructive actions, specify the selected resources, impact, required
-  authorization, and recovery path. A count threshold alone is not a safe basis
-  for terminating sessions, deleting data, or failing over a database.
-- Rollback instructions must account for data and schema compatibility.
-- Verify recovery through affected user operations and relevant health metrics,
-  not merely a successful command or running process.
-- Use team-defined severity, escalation, and update intervals. If absent, mark
-  proposed policy as a decision rather than inventing an established practice.
-- Record ownership and actual validation status. Label unexecuted commands;
-  documentation work does not authorize testing recovery against production.
-
-A useful layout is: scope and impact, triage, conditional mitigation, verification
-and rollback, escalation, and communication. Omit sections that add no useful
-decision or action. Use `home-postmortem-writing` when an incident review is requested.
+Verify recovery through affected user operations and relevant health signals.
+Use actual escalation policy; mark proposed decisions and unexecuted commands.
+Document ownership and validation status.
+Writing a runbook does not authorize running recovery against a live service.
+During an active incident, prioritize restoration over producing a complete document.

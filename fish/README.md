@@ -51,11 +51,11 @@ Routine `update_all` runs retain these refs instead of advancing them to HEAD.
 
 ### Ownership and loading
 
-- Television owns `Ctrl-R`, `Ctrl-T`, `Ctrl-F`, and empty-line Tab. Atuin records
-  history and supplies `fh`; its competing search bindings are disabled. Tab
+- Television owns `Ctrl-R`, `Ctrl-T`, `Ctrl-F`, and empty-line Tab. Fish records
+  history and Television searches it with `Ctrl-R`. Tab
   on nonempty input uses native completion, overriding autopair's Tab handler.
-- Sponge cleans Fish history only. It does not clean Atuin's database, and
-  `fish_should_add_to_history` also filters only Fish history. Sponge retains
+- Sponge cleans Fish history, and `fish_should_add_to_history` filters new
+  entries. Sponge retains
   the last two entries before purging by default, so failed commands can still
   be recalled immediately. These filters are not a substitute for avoiding
   secrets in command arguments.
@@ -119,7 +119,7 @@ desired refs. GitHub's API reports 2,706 stars for fzf.fish, 967 for done,
 and 485 for replay.fish; none is archived. Their latest pushes are respectively
 2026-06-18, 2026-06-14, and 2024-07-01. The same overlap decisions still apply,
 so this review adds no Fish plugin. Native suggestions/completion, Television,
-Atuin, and the existing editing plugins remain the daily setup.
+and the existing editing plugins remain the daily setup.
 
 ## Development setup (2026-09-15)
 
@@ -155,7 +155,7 @@ variables without rewriting `fish_variables`.
 
 ### Discoverable shortcuts and previews
 
-`repo`, `gb`, `ff`, `fgl`, `fgs`, `fp`, `fh`, `gwl`, and other workflow
+`repo`, `gb`, `ff`, `fgl`, `fgs`, `fp`, `gwl`, and other workflow
 abbreviations include descriptions in the completion pager via
 [`abbr --description`](https://fishshell.com/docs/current/cmds/abbr.html).
 For example, type `rep` and press Tab to see what `repo` does.
@@ -240,8 +240,8 @@ that overrides the guarded-default convention for these two aliases. Use `cl`
 for normal Claude Code permissions, `cxs` for workspace-write Codex with
 approval prompts, or `cxro` for read-only Codex.
 
-`cxq` and `cxe` both expand to `codex exec` for non-interactive tasks. Codex
-0.153.4 no longer accepts the old `-q` flag. See the
+`cxe` expands to `codex exec` for non-interactive tasks. The duplicate legacy
+`cxq` abbreviation has been removed. See the
 [Codex configuration notes](../.codex/README.md) for current settings and checks.
 
 | Command | Purpose |
@@ -321,7 +321,7 @@ previews to the shell; Oil remains the Neovim file explorer. Yazi is under
 active development, so check release notes when updating.
 
 Television replaced the fzf pickers on 2026-09-15. Starship and Tide would replace
-the native prompt, which remains intentionally small. Atuin records history,
+the native prompt, which remains intentionally small. Fish records history,
 zoxide ranks directories, and Fisher manages the editing plugins.
 
 ## Copying images to the clipboard
@@ -367,6 +367,9 @@ Homebrew updates preserve unlinked, non-keg-only formulae such as TypeScript
 them with `brew install --formula --skip-link`. Plain `brew upgrade` tries to
 link them again, even when they were previously unlinked. A failed metadata
 check or unlinked update stops the Homebrew job before the regular upgrade.
+The regular upgrade uses `brew upgrade --formula`, so casks only run in the
+separate cask step. Non-interactive runs check cached sudo credentials before
+that step and report pending casks when authentication is unavailable.
 
 Prompts are enabled only when both stdin and stdout are terminals, checked
 at startup and again before each sequential job. Parallel
@@ -422,15 +425,14 @@ rtk proxy script -q /dev/null fish --no-config fish/tests/update_all.fish
 | `Ctrl-Alt-L` | Browse Git commits with a diff preview |
 | `Ctrl-Alt-S` | Pick changed files with a diff preview |
 | `Ctrl-Alt-P` | Search running processes |
-| `fh` | Search history with Atuin (synced, with stats) |
 | `zi [keywords...]` | Select a frequent directory from zoxide with Television |
 | Tab on an empty command line | Search history with Television |
 | `Ctrl-L` | Clear the screen and redraw the prompt with Fish's built-in `clear-screen` |
 
 Cancelling a picker leaves the branch or context unchanged and does not execute
 a container command. These pickers use the installed Git, kubectl, Docker,
-and Television commands. Atuin still records history and backs `fh`, but its
-own `Ctrl-R` and Up-arrow bindings are disabled. `z` keeps ordinary directory
+and Television commands. Fish records history and handles Up-arrow history
+navigation. `z` keeps ordinary directory
 completion; Tab after search keywords opens ranked Television selection and
 jumps to the chosen directory. `zi` opens that selection directly.
 
@@ -476,8 +478,13 @@ hooks and environment variables. Non-interactive agent commands add mise's
 shim directory directly, avoiding a startup subprocess while keeping project
 tools available.
 
+Atuin is retired. Fish startup does not initialize it and removes the legacy
+standalone installer's `~/.atuin/bin` PATH entry inherited from older shells.
+Use `Ctrl-R` for Fish history through Television. Existing Atuin history data
+is retained, and `scripts/link.sh` removes only its old repo-managed config link.
+
 Repo-managed `conf.d` entries take precedence over Homebrew's generated mise
-and direnv hooks. Their output, along with carapace, Atuin, and zoxide
+and direnv hooks. Their output, along with carapace and zoxide
 integration code, is cached under
 `${XDG_CACHE_HOME:-$HOME/.cache}/fish/generated/`. A changed executable path or
 modification time, or a changed init command line, regenerates its cache
@@ -494,7 +501,7 @@ the Fisher `done` plugin is intentionally not installed.
 
 - `fish_variables` — local Fish universal variables/runtime state.
 - `~/.config/fish/fish_plugins` — Fisher's normalized installed plugin file.
-- Tool caches and histories (`atuin`, `television`, shell history).
+- Tool caches and histories (`television`, shell history, retained Atuin data).
 
 ## Editing Rules
 

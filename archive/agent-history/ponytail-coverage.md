@@ -1,8 +1,9 @@
 # Ponytailの確認項目との対応
 
 2026-10-18に、上流のコミット `09c434ab73ca43761c5d8b0c5d341926c2fba710` を確認した。
-更新時は下の一次資料と実際の指示を照合する。この表は確認項目の配置を示すもので、
-エージェントが毎回正しく実行できることを実証するものではない。
+以下は当時の取り込み範囲と配置の記録であり、現在の見出しや構成との一致を保証しない。
+調査経緯を確認する依頼で参照し、現在の作業要件にはしない。現在の指示はスキル本体と
+その参照資料で確認する。
 
 - [本体][core]と[共通ルール][agents]: 実装前の調査、最小限の変更、検証、保持する動作
 - [review][review]と[audit][audit]: 変更・全体の品質確認、指摘の裏付けと優先順位
@@ -10,7 +11,7 @@
 
 ## 実装前の調査と変更
 
-配置先は [SKILL.md](../SKILL.md)。
+当時の配置先は [SKILL.md](../../.agents/skills/nwiizo-coding-style/SKILL.md)。
 
 | 上流の確認項目 | 配置先・適用方法 |
 |---|---|
@@ -30,8 +31,8 @@
 
 ## review・audit
 
-共通の確認観点は [review-checks.md](review-checks.md)、対象選択・監査の進め方・報告は
-[operations.md](operations.md) の `review` と `audit` に置く。独立した品質レビュアーも
+共通の確認観点は [review-checks.md](../../.agents/skills/nwiizo-coding-style/references/review-checks.md)、対象選択・監査の進め方・報告は
+[operations.md](../../.agents/skills/nwiizo-coding-style/references/operations.md) の `review` と `audit` に置く。独立した品質レビュアーも
 同じ確認観点を参照する。
 
 | 上流の確認項目 | 配置先・適用方法 |
@@ -55,7 +56,7 @@
 
 ## debt・gain・help
 
-配置先は [operations.md](operations.md) の各操作。
+当時の配置先は [operations.md](../../.agents/skills/nwiizo-coding-style/references/operations.md) の各操作。
 
 | 上流の確認項目 | 配置先・適用方法 |
 |---|---|

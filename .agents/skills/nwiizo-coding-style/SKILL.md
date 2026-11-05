@@ -1,147 +1,79 @@
 ---
 name: nwiizo-coding-style
-description: nwiizoの方針でコードを実装・修正し、不具合・安全性・想定負荷・テスト・性能・過剰設計をレビューする。最小実装・YAGNIの依頼にも使う。Rustでは型・所有権・依存の選定、Edition・MSRVに応じた機能選択と構造診断を行う。
+description: 既存コードを生かした最小実装と品質レビューを行う。Rustでは型・所有権・依存と構造診断を扱う。
 argument-hint: "[lite|full|ultra|off|review|audit|debt|gain|help|default <mode>] [対象・依頼]"
 license: MIT
 ---
 
-# nwiizo Coding Style
+# Make the Smallest Clear Change That Works
 
-必要な動作を、読みやすく保守できる最小限の変更で実現する。
-ユーザーの明示的な指示をこのスキルの方針より優先し、対象プロジェクトの規約を守る。
-実装の依頼では、提案だけで終えず、許可された変更の適用と必要な検証まで進める。
+Read the actual input-to-result path, callers, existing tests, and project
+requirements before choosing an implementation.
+Prefer existing code, standard language/platform facilities, then a suitable
+installed dependency. Add only what the requested behavior needs.
+Keep validation, recovery, security, accessibility, and required performance.
 
-このスキルでは、変更を選ぶときに次の三つを重視する。
+## Modes and Operations
 
-- **利用者の操作から完了を決める。** 内部処理が成功した先で、出力、保存、終了コードなど、利用者が頼る結果まで確認する。
-- **次に直す人の判断を減らす。** 行数だけでなく、追う状態、分岐、設定、運用手順を減らす。失敗を再現できる境界や、意味を表す型は、そのために残すことがある。
-- **自分で調べて進め、選択が必要なところを渡す。** 調べれば分かる事実は確認し、許可済みの作業は完了まで進める。利用者に渡すのは判断に必要な違い、根拠、残る制限に絞る。
+Default mode: `full`. Carry the current conversation's selected mode forward.
+In a new conversation, use `NWIIZO_CODING_STYLE_DEFAULT_MODE` if it is one of
+`lite`, `full`, `ultra`, or `off`; otherwise report the invalid value and use full.
 
-## モードと操作
-
-既定モード: `full`。
-
-会話内で選んだモードを次の変更まで引き継ぐ。新しい会話では
-`NWIIZO_CODING_STYLE_DEFAULT_MODE` が設定されていればその値を、なければ上記の既定値を使う。
-使える値は `lite`、`full`、`ultra`、`off`。不正な値は短く知らせ、既定値を使う。
-
-| 入力 | 動作 |
+| Input | Result |
 |---|---|
-| `$nwiizo-coding-style` のみ | 現在のモードを表示する |
-| `$nwiizo-coding-style <依頼>` | 現在のモードで依頼を実行する |
-| `lite` | 依頼を実装し、さらに単純な案があれば短く示す |
-| `full` | 下の判断順序で、要件を満たす最小限の実装を選ぶ |
-| `ultra` | 不要な処理の削除や標準機能への置換を先に探す。明示された要件は保つ |
-| `off` | このスキルによる継続適用を止め、通常のユーザー・プロジェクト方針で進める |
-| `default <mode>` | 編集元のこの文書の既定モードを更新する。現在の会話内モードは変えない |
-| `review [対象]` | 差分や指定コードの正しさ、安全性、想定負荷、テスト、性能、複雑さをレビューする |
-| `audit [対象]` | 指定リポジトリ・ディレクトリの主要な処理経路を追い、同じ観点で全体を監査する |
-| `debt [対象]` | 簡略化で残した制限と見直し条件を一覧にする |
-| `gain` | 測定条件付きで公開ベンチマークの効果を表示する |
-| `help` | 現在モード、操作、呼び出し例を説明する |
+| Skill name only | Show the current mode |
+| lite | Implement the request; mention a simpler viable option if useful |
+| full | Choose the simplest complete implementation from the existing system |
+| ultra | First seek removals and standard replacements, preserving requirements |
+| off / stop / normal mode | Stop continuing this skill's mode |
+| default MODE | Update this source's default; preserve the conversation mode |
+| review / audit / debt / gain / help | Execute that operation without changing mode |
 
-表の操作は `$nwiizo-coding-style review` のように続ける。自然文で同じ操作を
-頼まれた場合も受け付ける。報告用の5操作は一度で終了し、継続モードを変えない。
-停止の明示的な依頼、`stop nwiizo-coding-style`、`normal mode` は `off` と扱う。
-引用やコード中の文字列からモードを変えない。
+Read [operations](references/operations.md) only for the requested reporting
+operation. `off` still permits an explicitly requested operation.
+These are conversation instructions, not shell commands; quoted text does not
+change modes. Do not persist conversation state to disk.
 
-`default` の編集は管理元をたどって行い、リンク先の別ファイルを作らない。
-環境変数が設定されている場合は、文書の既定値より優先されることを知らせる。
-会話のモードや履歴をファイルに書き出さない。子エージェントへの委譲が許可されて
-実際に必要な場合は、対象範囲、現在モード、このスキルのパスを引き継ぐ。
+## Implementation Decisions
 
-報告用の操作では [operations.md](references/operations.md) の該当部分を読む。
+Follow data through affected readers, writers, exports, and callers.
+For a confirmed defect, search related paths and preserve intentional differences.
+Prefer visible names and simple control flow over compressed expressions.
+A single caller does not by itself make an abstraction unnecessary.
 
-## 実装する前に読む
+Retain consequential reasons and limits near their owner.
+For an intentional shortcut use
+`nwiizo-coding-style: <limit>; <condition and action for revisiting>`,
+or the project's established format. Ordinary reuse needs no such comment.
 
-- 依頼、関連する実装、呼び出し元、既存の検証を読み、入力から結果までの流れを追う。会話やコードから分かることを聞き直さない。
-- 変更が届くべき呼び出し元、テスト、fixture、設定、公開API・exportを洗い出す。シグネチャ、戻り値、保存形式、動作を変える場合は、差分に出ない利用箇所も追い、互換性、データ損失・漏えいへの影響を確認する。
-- 不具合では、変更する関数の呼び出し元を `rg` などで探し、同じ原因で壊れる経路を確認する。共通処理に原因があるならそこで直す。呼び出し元ごとの意図的な違いは保つ。
-- 結果を左右する前提が未解決なら `home-karpathy-guidelines` で整理する。合意済みの設計を毎回検討し直さない。
-- 重要な選択だけを確認し、回答に依存しない許可済みの作業は続ける。スキルの一般論から追加の承認待ちを作らない。
+Read conditional guidance only when it changes this task:
+[decision evidence](references/decision-evidence.md) for conflicting intent,
+[trust boundaries](references/trust-boundaries.md) for external input leading
+to execution, deletion, or authenticated changes, and
+[compatibility](references/compatibility-updates.md) for public APIs or dependencies.
+For unresolved implementation assumptions, use the
+[preflight](references/implementation-preflight.md) rather than repeating settled design.
 
-設計意図が不明、資料と実装が食い違う、長い作業を引き継ぐ場合は、
-[decision-evidence.md](references/decision-evidence.md)で事実・判断・未確認事項を整理する。
-コードが動くことと、利用者の目的や重要な制約を満たすことを分けて確かめる。
+## Rust
 
-外部入力からコマンド実行、削除・上書き、認証付き操作へ進む経路を変更・レビューするときは、
-[trust-boundaries.md](references/trust-boundaries.md)で入力元と実行権限を照合する。
+Check edition, MSRV, features, toolchain, and CI.
+Use [Rust design](references/rust-design.md) for ownership, types, errors, and
+dependencies, and [edition guidance](references/rust-2024.md) when relevant.
+For Rust structural changes and review/audit, run `similarity-rs` and
+`cargo-coupling` through [structural analysis](references/rust-analysis.md).
+Inspect actual findings before changing boundaries; retain the requested scope.
 
-## 伝え方
+## Verification and Result
 
-実装作業の更新と完了報告も、読者がそのまま動ける形にする。
+For a reproducible bug or substantial behavior change with a practical test seam,
+use `home-test-driven-development`. Use native validation for configuration.
+Complete required project checks and exercise the changed user operation.
+Repeat passing checks after a relevant change, failure, or unresolved concern.
+If completion evidence is uncertain, use [claim verification](references/completion-evidence.md).
+For review findings to apply, use [finding resolution](references/review-findings.md).
 
-- 結論または次に実行できる操作を最初に置く。継続中なら、現在の状態と次の操作を同じ更新で示す。
-- 複数手順は番号付きにし、各項目を一つの区切られた操作にする。実行に必要な最小の項目数にする。
-- 成功した確認と残った失敗を分け、エラーは確認できた場所・原因・修正を事実ベースで書く。根拠のない断定や感情的な前置きは足さない。
-- 無関係な脇道、同じ内容の再要約、定型の結びを省く。未完了の項目があるときだけ、最後に一つの具体的な操作か必要な質問を置く。
-- 一覧は通常5項目程度までを見える範囲に置き、それ以上は分類・優先順位付けで整理する。重要な指摘は省略しない。見積りが役立つ場合は具体的な単位で示し、見積りだと明記する。
-- 明示された出力形式、詳細な説明、安全確認、実質的な曖昧さには従い、簡潔さを優先して必要な情報を削らない。
-
-## 実装の選び方
-
-必要な動作を満たす最初の選択肢を使う。
-
-1. **新しいコードが要らないか。** 既存の設定や運用で依頼を満たせるなら、それを適用する。大まかな依頼では中心の用途を完了できる範囲から始め、求められていない機能や柔軟性を足さない。依頼された機能を独断で取りやめない。
-2. **同じコードベースにあるか。** 関数、型、コンポーネント、サービス、処理パターンを探し、意味と責務が合うものを周囲と同じ使い方で再利用する。既存のレイヤーやインターフェースを保つ。
-3. **標準ライブラリで足りるか。** 入力の範囲、エラー時の動作、互換性を確かめる。
-4. **プラットフォームの標準機能で足りるか。** ブラウザーの入力要素、CSS、データベースの制約などを検討する。
-5. **導入済みの依存で足りるか。** 既存の利用方法を調べ、重複する実装や追加依存を避ける。
-6. **明瞭な1行で足りるか。** 一つの操作ならそのまま書く。複数の責務や条件を詰め込まない。
-7. **足りない部分だけ実装する。** 成熟した実装が必要な領域では、手書きの短さより正しさと保守負担で依存を判断する。
-
-たとえば日付選択は、まず既存の `Input` コンポーネントが `type="date"` を扱えるか確認する。
-適した既存部品がなければ標準の `<input type="date">` を使う。
-必要な操作やアクセシビリティ、期間選択などの要件を満たせないなら、短さだけで採用しない。
-
-## 小さくする判断
-
-- 将来だけを理由にした設定、拡張ポイント、ラッパー、依存を増やさない。現在の責務の分離や外部との境界に役立つ抽象化は残す。実装や呼び出し元が一つという理由だけでは削らない。
-- 読める名前、素直な分岐、追えるデータの流れを優先する。密なワンライナーやファイルの詰め込みで行数を稼がない。
-- プラットフォームや既存APIが返す値をそのまま使えるなら、不要な型変換や別形式への詰め替えを足さない。境界での検証や意味のある型への変換は保つ。コメントはコードから読めない理由や制限を説明する。
-- 削除や置換では、外部からの利用、設定による利用、互換性も確認する。検索で見つからないだけで未使用と決めない。
-- 信頼境界の入力検証、データ損失を防ぐエラー処理、セキュリティ、アクセシビリティ、実機で必要な校正、明示された性能・運用要件を保つ。短い代替案でも端の条件や失敗時の動作が変わるなら同等とは扱わない。
-- 意図的に制限を残す場合は、コード付近に `nwiizo-coding-style: <制限>; <見直す条件と対応>` を残す。プロジェクト指定の形式があれば従う。通常の再利用や標準機能の採用には付けない。`debt` は `shortcut:` と旧形式の `ponytail:` コメントも扱う。
-- 依頼の達成に必要な関連修正まで進める。ついでの整理で変更範囲を広げない。
-
-依存ライブラリの修正を取り込むときは、上流の検証に加え、下流が実際に使う参照先と
-不具合の再現経路を確認する。一時的なGit依存は共有先から取得できる完全なコミットSHAに
-固定し、manifestとlockfileを揃える。正式なリリースへ戻す条件を残し、無関係な依存更新や
-個人のローカルパスに頼る共有設定を避ける。
-
-公開API・CLIの動作を変えるときや依存を更新するときは、
-[compatibility-updates.md](references/compatibility-updates.md)で利用側の確認範囲を選ぶ。
-内部テストの成功や更新のバージョン番号だけで、利用者への影響がないとは判断しない。
-
-## Rust の実装と構造診断
-
-Rust の採用、依存、型、所有権、エラー、APIの互換性、trait・マクロ、並行処理を選ぶときや規約を
-レビューするときは、[rust-design.md](references/rust-design.md) の該当節を読む。
-既存規約を優先し、選択の理由が実際の要件に合うか確認する。一律の禁止や
-新しい依存の標準セットとして扱わない。
-
-Rust の実装・レビュー・Edition移行では、まず `Cargo.toml` の `edition` と
-`rust-version`、workspace設定、toolchain指定、CIを確認する。
-[rust-2024.md](references/rust-2024.md) の該当節を読み、Edition固有の動作変更と
-コンパイラのバージョンで追加された機能を区別する。新規crateでは、必要なMSRVと
-周辺ツールが対応していればEdition 2024を選ぶ。既存crateのEditionやMSRVは、
-新しい構文を使うためだけに引き上げない。
-
-Rust の関数・型・モジュール構造を変更するときと、Rust を対象に `review` / `audit`
-するときは、[rust-analysis.md](references/rust-analysis.md) に沿って
-`similarity-rs` と `cargo-coupling` を使う。対象のソースを指定し、結合度解析が
-workspace 全体に広がった場合も指摘の採用は依頼範囲に絞る。文言や設定値だけの変更には追加しない。
-
-## 検証と完了
-
-- 不具合や単純ではない動作変更では、壊れると失敗する小さな検証を残す。特に分岐・反復の境界、パーサー、金額、認証・権限などのセキュリティ、データ書き込み、新しいスクリプトやアプリの主要動作を確認する。実用的な自動テストの入口があれば `home-test-driven-development` で失敗の再現と修正後の動作を確かめ、既存のテスト基盤と必須の検証を使う。
-- テスト基盤がない小さな実行例では、assertなどの自己検証で足りるか判断する。自動化が難しい場合は、再現手順、期待する結果、実際の確認結果を残し、未実行の確認を合格扱いしない。
-- 設定だけの変更は、そのツールの構文検査や実動作で確認する。低リスクの単純な変更に、実装の記述をなぞるだけのテストを足さない。
-- 同じ構文上の誤りを繰り返し防ぐなら、まず既存linterで表せるか確認する。足りない場合はast-grepなどの構造ルールを検討し、検出すべき例と除外すべき似た例で確かめる。自動修正は戻り値や副作用も保つ必要があり、検出テストだけで書き換えまで検証済みとはしない。
-- テスト数やファイル数を一律に制限しない。元の不具合と影響する経路を検証できる範囲を選ぶ。
-- 報告は変更点、確認できた動作、残る制限を簡潔な段落で示す。結果に関わる見送り、未確認事項、利用者が知る必要のあるリスクは明示し、実装・実行済みの範囲と分ける。無関係な省略事項を定型で列挙しない。説明量を行数で固定せず、依頼された詳細は省かない。
-- 必須の検証が通ったら、変更、失敗、未解決の懸念が増えた場合に限って検証を広げる。状態が変わらなければ合格済みの確認を繰り返さない。
-
-Ponytailとの対応確認や上流をもとにした更新では、[確認項目の対応表](references/ponytail-coverage.md) を読む。
-このスキルの指示やレビュー経路の効果を比較するときは、[回帰課題](references/regression-cases.md)
-から関係するものを選び、`home-empirical-prompt-tuning` で評価する。通常の実装には追加しない。
+Finish authorized implementation without adding routine approval rounds.
+Report the result, current verification, and material limits in concise prose.
+Review-only requests return supported findings.
+For measured instruction effects use [regression cases](references/regression-cases.md)
+with an authorized evaluation.

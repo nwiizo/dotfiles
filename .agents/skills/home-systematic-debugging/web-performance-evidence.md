@@ -50,5 +50,4 @@ For metric-specific diagnosis, see [LCP](https://web.dev/articles/optimize-lcp),
 [INP](https://web.dev/articles/optimize-inp), and [CLS](https://web.dev/articles/optimize-cls)
 (reviewed 2026-10-27).
 For measurement interpretation, use [Google's field/lab explanation](https://web.dev/articles/lab-and-field-data-differences)
-(reviewed 2026-10-27). For provenance and adaptation decisions when maintaining
-this guide, see [engineering sources](../../docs/engineering-sources.md).
+(reviewed 2026-10-27).

@@ -127,6 +127,7 @@ clipboard-write = allow
 clipboard-trim-trailing-spaces = true
 copy-on-select = clipboard
 clipboard-paste-protection = true
+keybind = cmd+c=copy_to_clipboard:plain
 keybind = cmd+shift+c=copy_to_clipboard:html
 
 # ─── Shell Integration ────────────────────────────────────────────────────────
@@ -191,7 +192,7 @@ desktop-notifications = true
 # Prepend 🔔 while an unfocused surface needs attention; focusing or typing
 # clears the marker. Desktop notification sound is handled by OSC 9/777.
 bell-features = title,attention
-minimum-contrast = 3
+minimum-contrast = 4.5
 title-report = false
 enquiry-response =
 image-storage-limit = 320000000

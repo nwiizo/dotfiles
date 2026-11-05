@@ -1,66 +1,30 @@
 ---
 name: home-web-quality-review
-description: Web画面・HTML文書の品質やアクセシビリティ、性能・Core Web Vitals、技術的SEO、ブラウザー上のエラーをレビュー・改善するとき、実表示と主要操作から問題を確認する。文章だけの校正やネイティブCLIの操作設計は対象外。
+description: Web画面の実表示と主要操作から、アクセシビリティ・性能・SEO・配信の問題をレビュー、改善する。
 ---
 
-# 画面の点数より操作の完了を確認する
+# Follow the User Operation to Its Source
 
-代表的なURL、利用者、重要な操作、ログイン状態、対象端末を依頼と実装から決める。
-レビューなら指摘まで、修正依頼なら編集と検証まで進める。既存のブラウザー・検査手段を使い、
-特定MCPや新規依存の導入を前提にしない。再読込や操作で失われる入力・外部への送信に注意し、
-検証用データと許可された操作範囲を使う。
+Resolve representative URLs, users, login states, devices, and key operations.
+Review requests return findings; improvement requests include edits and checks.
+Use authorized test data and avoid losing live form input.
 
-ブラウザー操作には導入済みのasideを優先する。使用前に `aside-browser` を読み、
-`rtk proxy aside guide` を実行する。実画面のDOM・focus・スクリーンショットを直接確かめる
-場合は [Asideでの確認手順](references/aside-checks.md) を読む。
-asideを使えない場合は、その理由と代替で確認できた範囲を分けて報告する。
+For browser work use `aside-browser` and its current guide.
+Read [Aside checks](references/aside-checks.md) for DOM, focus, and screenshots.
+For performance use [measurement evidence](../home-systematic-debugging/web-performance-evidence.md);
+for search visibility use [SEO checks](references/search-visibility.md);
+for browser/network issues use [delivery checks](references/browser-delivery.md).
+Select the relevant path rather than running every audit.
 
-依頼に合わせて必要な経路を選ぶ。全項目を毎回実行しない。
+Check keyboard reachability, semantic names and states, dialog focus and return,
+form errors and retained input, zoom/narrow screens, and reduced-motion behavior
+where they affect the requested operation.
+Prefer native elements and add ARIA only where needed.
 
-| 困っていること | 読む資料・確認手段 |
-|---|---|
-| 操作できない、見えない、focusが迷う | 下の操作表とAside手順。snapshot・実操作・画像を照合 |
-| 遅い、反応が遅れる、表示がずれる | [Web性能の証拠](../home-systematic-debugging/web-performance-evidence.md)。traceと実ユーザー計測を区別 |
-| 検索へ出したい、公開設定が不整合 | [公開URLと検索への伝わり方](references/search-visibility.md)。HTTP応答と描画後の情報を照合 |
-| 通信失敗、browser互換性、配信設定 | [ブラウザーと配信の確認](references/browser-delivery.md)。問題に関係するconsole・network・headerを確認 |
+Trace a demonstrated problem into the source.
+Scores, screenshots, and accessibility trees provide different evidence;
+automated scores alone do not establish WCAG conformance or actual usability.
+Keep private screens' intentional noindex settings.
 
-ツール名から能力を推測せず、導入版のhelpや利用可能な機能を確認する。Asideでの操作確認、
-性能trace、Lighthouseの各カテゴリは別の確認である。使えない検査のためにMCPやAPI keyを
-必須にせず、既存手段で進め、未計測の値は埋めない。
-
-## 画面から該当する実装へたどる
-
-実画面を使える場合は、主要操作と検査結果から問題の要素・状態を特定してソースを読む。
-自動診断、画面表示、accessibility tree、手動操作を組み合わせる。
-総合スコアが高くても操作できなければ問題であり、低いスコアだけで修正内容を決めない。
-ブラウザーを使えない場合もコードレビューを進め、静的に分かったことと未確認の操作を分ける。
-
-| 利用者の操作 | 確認する動作 |
-|---|---|
-| 開く・移動する | title・言語・見出し・リンク名で現在地と行き先が分かる。キーボードで必要な操作に到達できる |
-| 選ぶ・実行する | nativeなbutton・link・formを優先し、名前・role・stateが表示と一致する。buttonへ独自キー処理を足して二重実行させない |
-| ダイアログを開閉する | 開いた後のfocus、内部のTab移動、閉じる操作、閉じた後の適切な位置への復帰を確かめる。画面外や背面へfocusが消えない |
-| 入力・訂正する | labelと入力、エラーと対象欄の対応が分かる。色だけで失敗を示さず、内容を保って修正・再送でき、成功も認識できる |
-| 拡大・狭い画面で使う | 文字や操作が欠けず、固定ヘッダー等でfocusが隠れない。動きを減らす設定を尊重し、図の意味と装飾を区別して代替テキストを選ぶ |
-
-全ページへARIAやlive regionを機械的に追加しない。標準要素の動作と通知を先に使い、
-必要な追加だけにする。自動検査100点やスクリーンショットだけでWCAG適合・読み上げ確認済みとはしない。
-公開対象でない管理画面のnoindexをSEOエラーとして外さない。公開文書でも検索順位の改善を保証しない。
-
-## 性能と修正後の確認
-
-遅延や表示のずれを扱うときは[Web性能の証拠](../home-systematic-debugging/web-performance-evidence.md)を読む。
-実ユーザー計測、同条件でのブラウザー計測、コード上の仮説を区別する。
-見た目の速度のために必要な入力・エラー表示・操作を消さない。
-
-修正後は同じ画面状態と条件で、指摘した操作を再実行する。実行できなかった入力手段や
-端末は未確認として残す。報告は場所、再現操作、利用者への影響、修正、確認結果を結び付ける。
-チェックリストの全項目を埋めるために対象を拡大せず、依頼に関係する問題から扱う。
-
-## 必要なときの参照
-
-2026-10-27に次の一次資料を照合した。数値基準や例外を判断するときは対象基準の本文を確認する。
-
-- [WAI-ARIAのmodal dialog](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/)
-- [WAIのフォーム通知](https://www.w3.org/WAI/tutorials/forms/notifications/)
-- 由来と採用範囲は[設計方針の参考資料](../../docs/engineering-sources.md)で管理する。
+After a fix, repeat the affected operation under matching conditions.
+Report location, reproduction, impact, result, and untested input methods or devices.

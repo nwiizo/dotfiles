@@ -2,7 +2,6 @@ tap "minorole/tap"
 
 brew "argo"
 brew "ast-grep"
-brew "atuin"
 brew "bat"
 brew "bottom"
 brew "carapace"

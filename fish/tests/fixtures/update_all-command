@@ -2,7 +2,15 @@
 # Test double for updater subprocesses and Codex; never runs a real updater.
 case "${0##*/}" in
     fish)
-        exec "$UPDATE_ALL_TEST_FISH" --no-config "$@"
+        # Override the updater's sudo wrapper without touching real credentials.
+        exec "$UPDATE_ALL_TEST_FISH" --no-config -C 'function sudo; "$UPDATE_ALL_TEST_DIR/bin/sudo" $argv; end' "$@"
+        ;;
+    sudo)
+        printf '%s\n' "$*" >> "$UPDATE_ALL_TEST_DIR/sudo.calls"
+        if [ "${UPDATE_ALL_TEST_SUDO_EXIT:-1}" = 0 ]; then
+            touch "$UPDATE_ALL_TEST_DIR/sudo-authorized"
+        fi
+        exit "${UPDATE_ALL_TEST_SUDO_EXIT:-1}"
         ;;
     mktemp)
         exec /usr/bin/mktemp -d "$UPDATE_ALL_TEST_DIR/tmp/run.XXXXXX"
@@ -52,10 +60,26 @@ JSON
                 exit 0
                 ;;
             upgrade)
+                if [ "${UPDATE_ALL_TEST_BREW_CASK_PENDING:-0}" = 1 ] && [ "${2:-}" != --formula ]; then
+                    if [ "${UPDATE_ALL_INTERACTIVE:-0}" != 1 ] && [ ! -f "$UPDATE_ALL_TEST_DIR/sudo-authorized" ]; then
+                        echo 'sudo: a password is required' >&2
+                        exit 1
+                    fi
+                    touch "$UPDATE_ALL_TEST_DIR/cask-updated"
+                fi
                 if [ "${UPDATE_ALL_TEST_BREW_UNLINKED:-0}" = 1 ] && [ ! -f "$UPDATE_ALL_TEST_DIR/unlinked-updated" ]; then
                     echo 'Error: Could not symlink bin/tsc; npm target already exists' >&2
                     exit 1
                 fi
+                if [ "${2:-}" != --cask ]; then
+                    touch "$UPDATE_ALL_TEST_DIR/formulae-updated"
+                fi
+                ;;
+            outdated)
+                if [ "${UPDATE_ALL_TEST_BREW_CASK_PENDING:-0}" = 1 ]; then
+                    echo obs
+                fi
+                exit 0
                 ;;
         esac
         if [ "$1" = cleanup ]; then
