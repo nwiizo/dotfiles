@@ -66,6 +66,28 @@ On an empty command line, Tab keeps the existing Television history picker;
 `Ctrl+T` opens Television's context picker. After changing Fish config, use a
 new pane or `exec fish` in an idle shell to load it.
 
+## Settings
+
+`config.toml` sets only the values that differ from Herdr's defaults, following
+the [configuration guide](https://herdr.dev/docs/configuration/). Print the
+defaults with `rtk proxy herdr --default-config`.
+
+| Setting | Behavior |
+|---|---|
+| `terminal.default_shell`, `shell_mode = "login"` | New panes start Homebrew Fish as a login shell, matching Ghostty |
+| `ui.status_indicators = "symbols"` | Agent states differ by shape as well as color |
+| `ui.toast.delivery = "terminal"` | Ghostty shows a desktop notification when an agent in a background tab finishes or needs input; the active tab stays silent |
+| `experimental.switch_ascii_input_source_in_prefix` | After `Ctrl+B`, prefix keys are read as ASCII even while Japanese input is active; the input source returns afterwards |
+| `experimental.reveal_hidden_cursor_for_cjk_ime` with `cjk_ime_agents = ["claude", "codex"]` | The IME candidate window follows the prompt cursor in Claude Code and Codex panes; other apps keep their hidden cursor |
+
+Defaults kept on purpose:
+
+- `experimental.pane_history` stays off because saved pane output can contain
+  secrets. Detach/reattach keeps live screens, and Claude Code/Codex resume
+  through `session.resume_agents_on_restore` after a server restart.
+- The theme stays Herdr's default `catppuccin`, matching Ghostty's Catppuccin Mocha.
+- Updates come from Homebrew; `herdr update` is disabled for Homebrew installs.
+
 ## Selected Plugins
 
 ### Neovim: Signalbox

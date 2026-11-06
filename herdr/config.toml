@@ -1,9 +1,26 @@
 # Ghostty hosts Herdr; new Herdr panes keep the managed Fish environment.
+# Keys left out use Herdr's defaults; `herdr --default-config` prints them.
 onboarding = false
 
 [terminal]
 default_shell = "/opt/homebrew/bin/fish"
 shell_mode = "login"
+
+[ui]
+# Distinguish blocked, working, done, and idle agents by shape as well as color.
+status_indicators = "symbols"
+
+# Ask Ghostty for a desktop notification when an agent in a background tab
+# finishes or needs input; the active tab stays silent.
+[ui.toast]
+delivery = "terminal"
+
+# Japanese IME: read prefix keys as ASCII, and keep the candidate window at
+# the cursor of Claude Code and Codex, which hide the hardware cursor.
+[experimental]
+switch_ascii_input_source_in_prefix = true
+reveal_hidden_cursor_for_cjk_ime = true
+cjk_ime_agents = ["claude", "codex"]
 
 [[keys.command]]
 key = "prefix+f"
