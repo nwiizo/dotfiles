@@ -1,0 +1,4 @@
+# Open reviewr explicitly; creating a worktree must not add a review pane.
+auto_open = false
+# A deliberate review gets the full pane area without shrinking worker panes.
+toggle_placement = "overlay"

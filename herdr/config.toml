@@ -6,9 +6,33 @@ onboarding = false
 default_shell = "/opt/homebrew/bin/fish"
 shell_mode = "login"
 
+[keys]
+prefix = "ctrl+q"
+# Step through workspaces with brackets; keep copy mode on Shift+C.
+previous_workspace = "prefix+["
+next_workspace = "prefix+]"
+copy_mode = "prefix+shift+c"
+# tmux-style splits: | puts panes side by side, - stacks them (the default).
+split_vertical = ["prefix+v", "prefix+|"]
+split_horizontal = "prefix+minus"
+# Step through agents without opening the Goto picker.
+next_agent = "prefix+a"
+previous_agent = "prefix+shift+a"
+
 [ui]
 # Distinguish blocked, working, done, and idle agents by shape as well as color.
 status_indicators = "symbols"
+# List agents that need input first instead of grouping them by workspace.
+agent_panel_sort = "priority"
+# Name the agent in each split pane border unless the pane has a manual name.
+show_agent_labels_on_pane_borders = true
+# Show ZOOM while the active tab hides other panes behind a zoomed pane.
+tab_bar_right = [{ type = "zoom" }]
+
+# Claude Code and Codex put the current task in their terminal title.
+[ui.sidebar.agents.rows_by_agent]
+claude = [["state_icon", "machine", "workspace", "tab"], ["terminal_title_stripped"], ["agent"]]
+codex = [["state_icon", "machine", "workspace", "tab"], ["terminal_title_stripped"], ["agent"]]
 
 # Ask Ghostty for a desktop notification when an agent in a background tab
 # finishes or needs input; the active tab stays silent.
@@ -33,3 +57,51 @@ key = "prefix+shift+f"
 type = "plugin_action"
 command = "herdr-file-viewer.open-file-viewer-tab"
 description = "open file viewer in a tab"
+
+[[keys.command]]
+key = "prefix+ctrl+r"
+type = "plugin_action"
+command = "persiyanov.reviewr.open"
+description = "open diff review and comment to the agent"
+
+[[keys.command]]
+key = "prefix+d"
+type = "plugin_action"
+command = "annotate.open"
+description = "review documents in this folder"
+
+[[keys.command]]
+key = "prefix+shift+o"
+type = "plugin_action"
+command = "annotate.last"
+description = "review the agent's replies"
+
+[[keys.command]]
+key = "prefix+t"
+type = "plugin_action"
+command = "annotate.terminal"
+description = "review recent terminal output"
+
+[[keys.command]]
+key = "prefix+ctrl+a"
+type = "plugin_action"
+command = "annotate.capture"
+description = "comment on selected terminal text"
+
+[[keys.command]]
+key = "prefix+m"
+type = "plugin_action"
+command = "annotate.manage"
+description = "manage saved annotations"
+
+[[keys.command]]
+key = "prefix+ctrl+v"
+type = "plugin_action"
+command = "annotate.paste-archive"
+description = "paste annotations into the agent prompt"
+
+[[keys.command]]
+key = "prefix+ctrl+e"
+type = "plugin_action"
+command = "shibayu36.equalize-panes.equalize"
+description = "equalize pane sizes"
