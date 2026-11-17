@@ -310,7 +310,7 @@ Configuration layout:
 - `nvim/lua/plugins/`: feature-grouped plugin specs
 - UI: catppuccin mocha, no statusline, `incline.nvim`, `noice.nvim`, `snacks.nvim`, `oil.nvim`, `overlook.nvim`
 - Completion: `blink.cmp`
-- AI: CopilotChat, Avante, Signalbox, Codex, Claude Code
+- AI: CopilotChat, Signalbox, Codex, Claude Code
 - Search: Telescope for files/text, Snacks for editor-specific lists, Television for quickfix filtering, fff for typo-tolerant search
 - Git: gitsigns, CodeDiff, Diffview, LazyGit, Snacks gitbrowse
 - Rust: rustaceanvim, crates.nvim, neotest, DAP

@@ -4,15 +4,6 @@
 vim.api.nvim_exec_autocmds("UIEnter", { modeline = false })
 vim.defer_fn(function()
   local ok, err = pcall(function()
-    assert(vim.fn.exists(":Avante") == 2, "Avante command was not registered after VeryLazy")
-    vim.cmd("Avante --help")
-    -- Exercise both initial loading and setup; WARN must still emit warnings.
-    assert(require("avante.path").available(), "Avante native library did not load")
-    local log = require("avante.utils.log")
-    assert(log.level == vim.log.levels.WARN, "Avante warning threshold changed")
-    assert(log.warn(), "Avante warnings are disabled")
-    assert(not log.info(), "Avante informational logging was enabled")
-
     require("lazy").load({ plugins = { "incline.nvim", "conform.nvim", "nvim-lspconfig" } })
     local buf = vim.api.nvim_create_buf(false, true)
     vim.bo[buf].buftype = "" -- Exercise modified state on a normal file buffer.
@@ -81,6 +72,6 @@ vim.defer_fn(function()
     vim.cmd.cquit()
     return
   end
-  io.stdout:write("plugin-config-ok: Avante command and logging, diagnostic counts, Ruff formatting\n")
+  io.stdout:write("plugin-config-ok: diagnostic counts, Ruff formatting\n")
   vim.cmd("qa!")
 end, 2000)

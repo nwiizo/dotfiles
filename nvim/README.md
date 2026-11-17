@@ -206,7 +206,7 @@ nvim/
         ├── lsp.lua             # lspconfig, conform, mason, treesitter override
         ├── completion.lua      # blink.cmp override
         ├── coding.lua          # escape, surround, pairs, textobjects, matchup, yanky, refactoring, treesj
-        ├── ai.lua              # copilot, copilot-chat, avante, codex, claudecode, signalbox
+        ├── ai.lua              # copilot, copilot-chat, codex, claudecode, signalbox
         └── lang.lua            # rustaceanvim, crates, neotest, dap, cargo, marp
 ```
 
@@ -257,7 +257,6 @@ Custom AI integrations live in `lua/plugins/ai.lua`:
 
 | Plugin | Role |
 | --- | --- |
-| `yetone/avante.nvim` | agentic editing through Codex ACP, Claude Code ACP, or Copilot |
 | `nwiizo/codex.nvim` | Codex CLI side panel with terminal and app-server backends |
 | `coder/claudecode.nvim` | Claude Code side-panel terminal |
 | `nwiizo/signalbox.nvim` | Herdr persistent agents の attention board |

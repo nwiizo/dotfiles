@@ -194,9 +194,8 @@ return {
     },
     keys = {
       -- LazyVim copilot-chat extra binds <leader>aa (toggle) and <leader>ax (reset).
-      -- Avante owns <leader>aa and Codex owns <leader>ax; open with <leader>ao, reset with <leader>ar.
+      -- Codex owns <leader>ax, so reset with <leader>ar; <leader>ao also opens the chat.
       -- <leader>aq (Quick Chat) and <leader>ap (prompts) stay on LazyVim defaults; q closes the window.
-      { "<leader>aa", false, mode = { "n", "x" } },
       { "<leader>ax", false, mode = { "n", "x" } },
       { "<leader>ao", "<cmd>CopilotChatOpen<cr>", desc = "Open Chat" },
       { "<leader>ar", "<cmd>CopilotChatReset<cr>", desc = "Reset Chat" },
@@ -213,110 +212,16 @@ return {
     },
   },
 
-  -- Avante: Cursor-like IDE experience
-  {
-    "yetone/avante.nvim",
-    event = "VeryLazy",
-    version = false,
-    init = function()
-      -- Upstream builds numeric log-level keys while iterating the same table.
-      -- Use the supported name before any Avante module loads to avoid missing numeric keys.
-      -- Remove when upstream builds that reverse lookup without mutating the iterated table.
-      vim.g.avante = vim.tbl_extend("force", vim.g.avante or {}, { log_level = "WARN" })
-    end,
-    opts = {
-      instructions_file = "CLAUDE.md",
-      provider = "codex",
-      mode = "agentic",
-      input = { provider = "snacks" },
-      selector = { provider = "snacks" },
-      -- Show Avante actions alongside Codex's selection hints.
-      selection = { hint_display = "immediate" },
-      providers = {
-        copilot = {
-          endpoint = "https://api.githubcopilot.com",
-          model = "claude-opus-5",
-          timeout = 30000,
-        },
-      },
-      acp_providers = {
-        ["codex"] = {
-          command = "codex-acp",
-          args = { "-c", 'forced_login_method="chatgpt"', "-c", 'model="gpt-6-astra"' },
-          env = {
-            NODE_NO_WARNINGS = "1",
-            HOME = os.getenv("HOME"),
-            PATH = os.getenv("PATH"),
-          },
-        },
-        ["claude-code"] = {
-          command = "claude-agent-acp",
-          args = {},
-          env = {
-            NODE_NO_WARNINGS = "1",
-            ACP_PATH_TO_CLAUDE_CODE_EXECUTABLE = vim.fn.exepath("claude"),
-            ANTHROPIC_MODEL = "best",
-            ACP_PERMISSION_MODE = "bypassPermissions",
-          },
-        },
-      },
-      mappings = {
-        ask = "<leader>aa",
-        new_ask = "<leader>aN",
-        edit = "<leader>aE",
-        refresh = "<leader>aS",
-        stop = "<leader>aX",
-      },
-      behaviour = {
-        auto_suggestions = false,
-        -- Own shared AI keys in lazy.nvim, independent of plugin load order.
-        auto_set_keymaps = false,
-        auto_apply_diff_after_generation = false,
-        auto_approve_tool_permissions = false,
-      },
-      windows = { position = "right", width = 35 },
-    },
-    keys = {
-      { "<leader>aa", "<Plug>(AvanteAsk)", desc = "Avante: Ask", mode = { "n", "x" } },
-      { "<leader>aN", "<Plug>(AvanteAskNew)", desc = "Avante: New Chat", mode = { "n", "x" } },
-      { "<leader>aE", "<Plug>(AvanteEdit)", desc = "Avante: Edit Selection", mode = "x" },
-      { "<leader>aS", "<Plug>(AvanteRefresh)", desc = "Avante: Refresh" },
-      { "<leader>aX", "<Plug>(AvanteStop)", desc = "Avante: Stop" },
-      { "<leader>az", "<Plug>(AvanteZenMode)", desc = "Avante: Zen Mode", mode = { "n", "x" } },
-      { "<leader>ah", "<Plug>(AvanteSelectHistory)", desc = "Avante: History" },
-      { "<leader>a?", "<Plug>(AvanteSelectModel)", desc = "Avante: Select Model" },
-      { "<leader>aB", "<Plug>(AvanteAddAllBuffers)", desc = "Avante: Add All Buffers" },
-      { "<leader>aC", "<Plug>(AvanteToggleSelection)", desc = "Avante: Toggle Selection Hints" },
-      { "<leader>as", "<Plug>(AvanteToggleSuggestion)", desc = "Avante: Toggle Suggestions" },
-      -- Provider switches use free digit keys so they stay at two keys after <leader>.
-      { "<leader>a1", "<cmd>AvanteSwitchProvider codex<cr>", desc = "Avante: Codex ACP" },
-      { "<leader>a2", "<cmd>AvanteSwitchProvider claude-code<cr>", desc = "Avante: Claude Code ACP" },
-      { "<leader>a3", "<cmd>AvanteSwitchProvider copilot<cr>", desc = "Avante: Copilot" },
-    },
-    -- Replace library files instead of overwriting loaded inodes (macOS caches code signatures).
-    build = "make BUILD_DIR=target/lua && mv -f target/lua/*.so lua/",
-    dependencies = {
-      "nvim-treesitter/nvim-treesitter",
-      "nvim-lua/plenary.nvim",
-      "MunifTanjim/nui.nvim",
-      { "ColinKennedy/mega.cmdparse", dependencies = { "ColinKennedy/mega.logging" } },
-      "nvim-tree/nvim-web-devicons",
-      "zbirenbaum/copilot.lua",
-      { "HakonHarnes/img-clip.nvim", event = "VeryLazy", opts = {} },
-    },
-  },
-
   -- render-markdown: pretty-print markdown output from AI plugins
   {
     "MeanderingProgrammer/render-markdown.nvim",
     opts = {
       file_types = {
         "markdown",
-        "Avante",
         "copilot-chat",
       },
     },
-    ft = { "markdown", "Avante", "copilot-chat" },
+    ft = { "markdown", "copilot-chat" },
   },
 
   -- Signalbox: attention-first control surface for persistent Herdr agents.

@@ -51,10 +51,9 @@ local ok, err = xpcall(function()
   assert(vim.system({ "git", "init", "-q", project }):wait().code == 0)
   assert(vim.fn.writefile({ "before" }, path) == 0)
   assert(vim.system({ "git", "-C", project, "add", "example.txt" }):wait().code == 0)
-  require("lazy").load({ plugins = { "codex.nvim", "avante.nvim", "codediff.nvim" } })
+  require("lazy").load({ plugins = { "codex.nvim", "codediff.nvim" } })
   -- Snacks normally binds this on UIEnter, which headless mode does not emit.
   vim.ui.select = Snacks.picker.select
-  vim.wait(1500) -- Avante installs its visual selection handler on a scheduled callback.
   codex = require("codex")
   local opts = vim.deepcopy(require("codex.config").get())
   if real_cli then
@@ -73,10 +72,8 @@ local ok, err = xpcall(function()
   local source_win = vim.api.nvim_get_current_win()
   local source_tab = vim.api.nvim_get_current_tabpage()
   keys("ggV")
-  for _, name in ipairs({ "codex_nvim_selection", "avante_selection" }) do
-    local ns = assert(vim.api.nvim_get_namespaces()[name], name .. " missing")
-    assert(#vim.api.nvim_buf_get_extmarks(source_buf, ns, 0, -1, {}) > 0, name .. " hint not visible")
-  end
+  local ns = assert(vim.api.nvim_get_namespaces().codex_nvim_selection, "codex_nvim_selection missing")
+  assert(#vim.api.nvim_buf_get_extmarks(source_buf, ns, 0, -1, {}) > 0, "codex_nvim_selection hint not visible")
   keys(
     "<leader>oeChange example.txt to contain exactly after followed by a newline. "
       .. "Do not modify any other files. Reply with exactly WORKFLOW_EDIT_OK.<Esc>"

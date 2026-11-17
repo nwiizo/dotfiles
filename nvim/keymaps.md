@@ -299,18 +299,7 @@ Neovim側にも未保存の変更がある場合は、バッファを開いた�
 
 | キー | モード | 説明 | 出典 |
 | --- | --- | --- | --- |
-| `<leader>aa` | n,x | AI質問 (avante) | P avante |
-| `<leader>aN` | n,x | Avanteの新規チャット | P avante |
-| `<leader>aE` | x | 選択範囲をAIで編集 (avante) | P avante |
-| `<leader>aS` | n | Avante更新 | P avante |
-| `<leader>aX` | n | Avante停止 | P avante |
-| `<leader>az` | n,x | Avante Zenモード | P avante |
-| `<leader>ah` / `<leader>a?` | n | Avanteの履歴 / モデル選択 | P avante |
-| `<leader>aB` / `<leader>aC` | n | 全バッファをAvanteへ追加 / 選択ヒントの切り替え | P avante |
-| `<leader>as` | n | Avante自動提案の切り替え（初期状態は無効） | P avante |
-| `<leader>a1` | n | Avante provider: Codex ACP | P avante |
-| `<leader>a2` | n | Avante provider: Claude Code ACP | P avante |
-| `<leader>a3` | n | Avante provider: Copilot | P avante |
+| `<leader>aa` | n,x | CopilotChatの表示切り替え | L copilot-chat |
 | `<leader>ax` | n | Codexを起動・フォーカス・非表示 | P codex.nvim |
 | `<C-g>` | n,t | Herdr agent attention board / attachから戻る | P signalbox.nvim |
 | `<leader>ao` | n | CopilotChat開く | P copilot-chat |
@@ -338,17 +327,15 @@ Neovim側にも未保存の変更がある場合は、バッファを開いた�
 | `<leader>ay` | n | Claude diff accept | P claudecode |
 | `<leader>an` | n | Claude diff deny | P claudecode |
 
-AI 共通のキーは `ai.lua` の `keys` で管理し、Avante の自動キー登録は無効にしている。
-読み込み順による上書きを避けるため、Claude の差分拒否は `an`、Avante の新規チャットは
-`aN` に分ける。Avante の更新 `aS` と停止 `aX` も別のキーを使う。
+AI 共通のキーは `ai.lua` の `keys` で管理し、読み込み順による上書きを避ける。
+Claude の差分拒否は `an` を使う。
 Insert モードの `Alt-j` / `Alt-k` は Copilot の行単位 / 単語単位の補完確定に使う。
 Normal・Visual モードでは LazyVim の行移動を維持する。
 
 ## Codex (`<leader>o` prefix)
 
-CodexとAvanteのCodex ACPは `gpt-6-astra`、CopilotChatとAvanteのCopilotは
-`claude-opus-5` を使う。Claude CodeとAvanteのClaude Code ACPは `best` を指定し、
-利用できる最新のFable、対象外ならOpusを使う。
+Codexは `gpt-6-astra`、CopilotChatは `claude-opus-5` を使う。
+Claude Codeは `best` を指定し、利用できる最新のFable、対象外ならOpusを使う。
 
 | キー | モード | 説明 | 出典 |
 |---|---|---|---|
@@ -374,7 +361,6 @@ CodexとAvanteのCodex ACPは `gpt-6-astra`、CopilotChatとAvanteのCopilotは
 `Ctrl-P` で説明・修正・テスト追加・リファクタの指示を選び、`Ctrl-D` で診断、
 `Ctrl-F` でファイルを追加できる。Normal mode の `q` で下書きを残して閉じ、
 `<leader>oa` で再表示する。破棄する場合は依頼画面で `:bdelete!` を使う。
-Avanteの `aa: ask / aE: edit` も同時に表示し、依頼先を選べる。
 
 送信すると依頼画面が閉じ、右側のCodexで起動状態・承認要求・回答を確認できる。
 送信に失敗した場合は下書きを再表示する。回答画面の上部には
@@ -400,7 +386,7 @@ Avanteの `aa: ask / aE: edit` も同時に表示し、依頼先を選べる。
 
 回答をスクロール・コピーするときは `Esc Esc` でNormal modeへ移り、通常の移動と選択・`y` を使う。`i` でCodexへの入力に戻る。承認や実行中の中断はCodex画面の案内に従う。`<leader>oq` はプロセスの停止なので、単に隠す場合は `Alt-q` を使う。
 
-差分には同じ作業ツリー内の既存の変更も含まれる。Codex経由のEditはファイルを変更する操作で、Avanteの提案パッチとは異なり、後から「採用」を押す方式ではない。ステージ・取り消しはCodeDiffや既存のGit操作で必要な変更だけを選ぶ。
+差分には同じ作業ツリー内の既存の変更も含まれる。Codex経由のEditはファイルを変更する操作で、後から「採用」を押す方式ではない。ステージ・取り消しはCodeDiffや既存のGit操作で必要な変更だけを選ぶ。
 
 ## Codelens
 

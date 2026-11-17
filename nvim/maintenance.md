@@ -25,19 +25,6 @@ Cargo のローカルプラグインはネイティブライブラリが必要�
 初回配置後やライブラリが見つからない場合は `:Lazy build cargo.nvim` で
 `cargo build --locked --release` を実行してから Neovim を再起動する。
 
-Avante のネイティブライブラリは `target/lua` にビルドしてから `lua/` へ移す。
-使用済みの `.so` へ直接上書きすると、macOS の署名キャッシュと不整合が生じ、
-起動直後に `Code Signature Invalid` で終了することがあるため。
-再ビルドには、この設定を読み込んだ Neovim で `:Lazy build avante.nvim` を使う。
-この置き換え方は [Apple の更新手順](https://developer.apple.com/documentation/security/updating-mac-software)に沿い、
-[Avante の Makefile](https://github.com/avante-corp/avante.nvim/blob/main/Makefile)の `BUILD_DIR` を指定している。
-
-Avante のログレベルは、モジュールを読み込む前に `WARN` の文字列で指定する。
-[上流のログ処理](https://github.com/avante-corp/avante.nvim/blob/main/lua/avante/utils/log.lua)は対応表を走査しながら数値キーを追加しており、
-[Lua の仕様](https://www.lua.org/manual/5.1/manual.html#pdf-next)ではこの走査結果が保証されない。
-文字列での指定は、警告の出力を保ったまま `Invalid log level: 3` を回避する。
-上流で対応表の作り方が修正されたら、この指定を見直す。
-
 Python は [Ruff の推奨順序](https://docs.astral.sh/ruff/formatter/#sorting-imports)に合わせ、
 import 整理の後に整形する。Incline の診断件数は
 [`vim.diagnostic.count()`](https://neovim.io/doc/user/diagnostic/#vim.diagnostic.count())で取得し、
@@ -53,8 +40,7 @@ rtk proxy nvim --headless '+lua print("nvim-config-ok")' +qa
 
 遅延読み込みの設定を変えた場合は対象プラグインを読み込み、操作も確認する。外部変更と未保存編集のマージを変更した場合は `rtk proxy nvim --headless -u NONE -l nvim/tests/external_changes.lua` で空行、末尾改行、競合時の内容保持、Undoを検証する。
 
-`nvim/tests/plugin_config.lua` は `UIEnter` から通常の遅延読み込みを実行し、Avante の
-コマンド登録・ヘルプ実行・ログ・ライブラリ読み込み、Incline の診断件数、
+`nvim/tests/plugin_config.lua` は `UIEnter` から通常の遅延読み込みを実行し、Incline の診断件数、
 Ruff による import 整理・整形と2回目の整形で差分が出ないことを検証する。
 次の例は `HOME` と XDG ディレクトリを分離して実行する。設定はコピーし、導入済みの
 プラグイン・Mason・パーサーとローカル開発リポジトリを参照する。
@@ -94,8 +80,8 @@ rtk proxy env HOME="$nvim_test_dir/home" \
 | quickfix編集 | `quickfix_editing.lua` | 遅延読み込み、前後行の展開・折りたたみ、既存キーの共存、複数バッファへの反映と未保存内容の保持 |
 
 AI共通キーとYankyの変更は `keymap_conflicts.lua` で確認する。
-Claude Code・CopilotChatを先に読み込み、Avanteによる上書きがないこと、停止と更新の
-呼び分け、Visualのヤンク履歴を実キー入力で検証する。AIへの実処理だけを置き換える。
+Claude Code・CopilotChat・Yankyを順に読み込み、後から読み込んだプラグインが
+キーを上書きしないことと、Visualのヤンク履歴のキーを検証する。
 
 `nvim/tests/codex_workflow.lua` も通常は上記の分離環境で実行する。
 選択からEdit・送信・回答・追加依頼・CodeDiff・編集への復帰に加え、

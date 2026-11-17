@@ -42,9 +42,8 @@ edit these instructions here. Keep user-facing instructions in the README.
   Importing the Telescope Extra would also change structured picker and LSP keys;
   keep the targeted mappings unless that wider migration is requested.
 - Copilot supplies inline completion (`vim.g.ai_cmp = false`), while Blink
-  handles LSP completion and snippets. Avante automatic suggestions stay off
-  initially. Leave format-on-save to LazyVim so `<leader>uf` keeps working;
-  do not add Conform's own `format_on_save` callback.
+  handles LSP completion and snippets. Leave format-on-save to LazyVim so
+  `<leader>uf` keeps working; do not add Conform's own `format_on_save` callback.
 - Keep Japanese prose free of automatic spell checking and markdownlint.
   Preserve Quicker's `edit.autosave = false`. External-change merging must
   retain unsaved edits, conflict contents, final-newline handling, and Undo.
@@ -59,11 +58,9 @@ sequences remain available. Use `<leader>a*` for the shared AI clients,
 `<leader>o*` for Codex, `<leader>R*` for refactoring, and `<leader>h*` for hunks.
 Rust and Cargo.toml may share `<leader>r*` through buffer-local mappings.
 
-Declare shared AI shortcuts in the plugin's lazy.nvim `keys` spec. Keep
-Avante's `auto_set_keymaps = false`; its automatic mappings can overwrite
-another client's keys depending on load order. `<leader>an` rejects a Claude
-diff, `<leader>aN` opens a new Avante chat, and Avante refresh/stop use
-`<leader>aS` / `<leader>aX`. Keep selection hints aligned with the actual keys.
+Declare shared AI shortcuts in the plugin's lazy.nvim `keys` spec so they do
+not depend on plugin load order. `<leader>an` rejects a Claude diff. Keep
+selection hints aligned with the actual keys.
 
 Check mode and buffer scope as well as the key sequence. Disabling a LazyVim
 mapping must cover its original modes; for example, Yanky's old `<leader>p`
