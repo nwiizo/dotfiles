@@ -17,6 +17,12 @@ Keep always-needed facts in entrypoints, path-specific preferences in rules,
 and substantive task guidance in skills. Use paired personas for specialized
 judgment that actually benefits from a separate role.
 
-Shorten content to what the task needs; do not enforce a line target, add
-approval ceremonies, or treat a longer model context as a reason to retain noise.
+Review language and style prohibitions for an unclear replacement or scope.
+Express the intended behavior directly, with a short positive example when useful.
+Specify response language separately from terminology; retain familiar technical
+terms, proper names, and exact code. Keep wording preferences scoped to the
+expression and context the user identified. Preserve explicit safety, permission,
+and data-integrity boundaries with their original force and scope.
+
+Size instructions by relevance to the task and preserve existing authorization.
 Check affected references and report the scope and limits of verification.

@@ -43,6 +43,21 @@ General preferences belong to the client entrypoint; repository facts belong
 to its overview. Actual permissions are controlled by client configuration,
 not by prose. Do not turn a skill's recommendation into another approval round.
 
+Write language and style guidance as the desired behavior, with its context and
+a short positive example when needed. Specify Japanese prose separately from
+technical terminology: ソースコード, テスト, バージョン, and API remain ordinary
+choices in Japanese explanations. Scope wording preferences to the expression
+and context the user identified. Keep explicit safety, permission, and
+data-integrity boundaries intact when revising prohibitions.
+
+Choose a skill by the requested result and the problem it resolves. Writing in
+Japanese alone uses the client communication guidance; requested prose writing
+or polishing uses the relevant writing workflow. Honor explicit skill requests.
+When a workflow applies, complete its applicable required checks. Keep useful
+reasoning, examples, and tradeoffs in substantive answers, with detail proportional
+to the question. Review templates organize supported findings. Use scores when
+requested and positive observations when they explain a useful implementation choice.
+
 The implementation skill includes conditional preflight, completion-evidence,
 and review-finding guidance. They share the implementation result rather than
 requiring separate skill selection.
@@ -91,6 +106,22 @@ links, archived assets, and independently maintained external links.
 
 Static checks establish file structure and references.
 Verify instruction discovery in a fresh client session after startup changes.
+When changing skill selection or output guidance, inspect both clients against
+representative requests such as these:
+
+| Request | Expected scope and output |
+|---|---|
+| Fix a config value and report in Japanese | Implementation and native checks; ordinary Japanese reporting |
+| Explain a design choice and its alternatives | A supported recommendation, relevant tradeoffs and concrete examples |
+| Polish a Japanese article, or use a named writing skill | The requested writing workflow and its applicable checks |
+| Review a diff with no actionable findings | The result and material verification limits; no automatic score or praise section |
+| Review an English CLI in Japanese | Japanese review prose, exact CLI messages, assessment against the product's language policy |
+| Record progress during a long implementation | Private task records; temporary coding-style mode remains in the conversation |
+
+These cases guide static inspection and any separately authorized behavioral
+evaluation. Record actual model, inputs, outputs, and limits when running such an
+evaluation; a wording change or passing audit alone establishes no quality gain.
+
 Keep current instructions and task references here. Store historical investigation
 and adoption records under
 [`archive/agent-history/`](../archive/agent-history/engineering-sources.md);

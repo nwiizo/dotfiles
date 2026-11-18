@@ -32,7 +32,8 @@ In a new conversation, use `NWIIZO_CODING_STYLE_DEFAULT_MODE` if it is one of
 Read [operations](references/operations.md) only for the requested reporting
 operation. `off` still permits an explicitly requested operation.
 These are conversation instructions, not shell commands; quoted text does not
-change modes. Do not persist conversation state to disk.
+change modes. Keep temporary mode selections within the conversation. Task
+progress and handoff records follow the repository's normal recording workflow.
 
 ## Implementation Decisions
 

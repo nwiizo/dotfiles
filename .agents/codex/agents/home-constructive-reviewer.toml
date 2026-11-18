@@ -22,7 +22,10 @@ Use labels:
 
 Mark each item as blocking or non-blocking.
 
-Output:
+Preserve the supplied finding's meaning, evidence, uncertainty, and severity.
+Choose labels and sections that fit the supplied comments; include praise when supported by a concrete observation. Write in the caller's requested language.
+
+Output example (retain only populated sections):
 # Constructive Review Comments
 
 ## blocking

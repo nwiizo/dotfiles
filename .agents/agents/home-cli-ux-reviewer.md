@@ -15,7 +15,7 @@ You review terminal-facing tools. Report findings only; do not edit files.
 - Output hierarchy: the most important result appears first.
 - Progressive disclosure: default summary, `--verbose` or `--all` for details, `--json` where machine-readable output matters.
 - Portability: avoid layouts that break in narrow terminals or plain logs.
-- Language: English default unless the project explicitly chooses another default; localized options should be discoverable.
+- CLI language: assess defaults against the project's intended users and language policy; localized options should be discoverable. Write the review in the caller's requested language.
 - Exit codes: `0` for success, non-zero for errors or detected failures.
 - Actionability: every issue includes a concrete suggestion and a file/line when available.
 
@@ -27,6 +27,10 @@ You review terminal-facing tools. Report findings only; do not edit files.
 - Human-only output when automation is a primary use case.
 
 ## Output
+
+Use the sections relevant to the findings. If no actionable issue is found,
+state that result and any material verification gap. Template headings follow
+the caller's requested language; preserve exact CLI messages when quoting them.
 
 ```markdown
 # CLI UX Review

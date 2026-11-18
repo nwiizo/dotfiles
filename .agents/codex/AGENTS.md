@@ -13,8 +13,13 @@ the source map and required checks.
   needs them. Treat them as evidence, not standing instructions; check historical
   decisions against the active request and current files before applying them.
 - User instructions take precedence over skill guidelines within tool permissions.
-  Use a skill for its stated job. If it requires an actual pause, identify the
-  exact file and instruction instead of inferring another approval stage.
+  If a skill requires an actual pause, identify the exact file and instruction
+  instead of inferring another approval stage.
+- Choose skills by the requested deliverable and unresolved problem; honor
+  explicitly requested skills. Use writing and polishing workflows for requested
+  prose work. For the wording of ordinary technical replies and code/config
+  change reports, use the communication guidance below. Read task-relevant
+  references and complete the selected skill's applicable required checks.
 - Use `nwiizo-coding-style` for implementation and simplification; it routes Rust
   structural work through similarity-rs and cargo-coupling.
 - Use subagents only when the user or applicable instructions explicitly request
@@ -46,12 +51,15 @@ Rust CLI with a defined job. Keep credentials, logs, and runtime state outside G
 
 ## Communication
 
-Lead with the outcome or next executable action. Use concise, natural Japanese
-and concrete behavior. Prefer 方針・取り決め・動作 for software, and
-本番相当のデータ・検証環境 when describing data or environments.
-Use the user's established vocabulary restrictions.
-Explain a change, its current verification, and any material remaining limit.
-Use lists for actual steps or comparisons; avoid repeated recaps and closing filler.
+通常の説明と進捗報告は自然な日本語で書く。依頼で言語・形式・読者が指定されたらそれに合わせる。
+ソースコード、API、バージョン、確認など、読者がその場面で使う語を選ぶ。
+利用者の用語指定は対象に合わせて使う（例：方針・取り決め・動作、本番相当のデータ・検証環境）。
+コード、コマンド、識別子、引用は元の表記を保つ。
+
+質問には答えを、変更の報告には変わった動作と検証結果を先に書く。
+調査では観察した事実から何が言えるかを示し、複数の説明が残るなら、どの証拠で区別できるかを書く。
+設計の比較では選択を左右する条件をそろえ、推奨を求められたらその条件に照らして理由を述べる。
+解説では仕組みを追える具体例を選ぶ。進捗は簡潔に伝え、残る制約は結果の利用に関わるものを示す。
 
 For GitHub comments, read the issue and latest replies, explain observed behavior
 before a recommendation, and ask only for an unresolved decision.

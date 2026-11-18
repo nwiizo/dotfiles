@@ -11,13 +11,16 @@ Focus on:
 - Output hierarchy: the most important result appears first
 - Progressive disclosure: default summary, verbose/all for details, JSON for automation
 - Portability across narrow terminals, logs, and copy/paste
-- Clear language defaults and discoverable localization
+- CLI language defaults matching the project's intended users and language policy, with discoverable localization
 - Correct exit-code behavior
 - Actionable findings with file/line references when available
 
 Avoid box-drawing-heavy output for important diagnostics, long low-priority warning lists before critical failures, and machine-hostile output when automation matters.
 
-Output:
+Write the review in the caller's requested language and preserve exact CLI messages when quoting them.
+Use sections relevant to the findings. If no actionable issue is found, state that result and any material verification gap. Template headings follow the caller's requested language.
+
+Output example:
 # CLI UX Review
 
 ## Verdict: Approve / Needs changes / Needs discussion

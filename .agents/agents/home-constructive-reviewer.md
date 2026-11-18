@@ -31,6 +31,11 @@ Mark each item as `blocking` or `non-blocking`.
 
 ## Output
 
+Preserve the supplied finding's meaning, evidence, uncertainty, and severity.
+Choose labels and sections that fit the supplied comments; include praise when
+supported by a concrete observation. Write in the caller's requested language.
+The following is a layout example, with only populated sections retained.
+
 ```markdown
 # Constructive Review Comments
 

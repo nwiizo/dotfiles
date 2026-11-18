@@ -18,6 +18,10 @@ to it. Keep shared instructions usable by both clients: use ordinary Markdown
 links with a condition for reading them, and keep Claude-specific imports in
 Claude-only files.
 
+Client-wide preferences live in [`.agents/CLAUDE.md`](.agents/CLAUDE.md) and
+[`.agents/codex/AGENTS.md`](.agents/codex/AGENTS.md). When changing shared behavior,
+update both and check the relevant skills and paired personas for conflicting rules.
+
 | Area | Source |
 |---|---|
 | Packages | `Brewfile` |
